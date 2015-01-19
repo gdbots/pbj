@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Defines a self-describing Pbj message.",
+  "type": "object",
+  "properties": {
+    "_pbj": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+:[a-z0-9\\.-]+:([a-z0-9-]+)?:[a-z0-9-]+:[0-9]+-[0-9]+-[0-9]+\\.[0-9]+$"
+    }
+  },
+  "required": ["_pbj"]
+}
