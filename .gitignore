@@ -1,19 +1,10 @@
-# Symfony App Files #
-############
-*.cache
-bin/
-build/
-cache/
-logs/
-tmp/
-vendor/
-
 # Deployment/IDE Tools #
 ############
 autoload.php
 composer.lock
-composer.phar
-phpunit.xml
+/composer.phar
+/phpunit.xml
+/vendor/
 .buildpath
 *.iml
 .idea/
