@@ -100,12 +100,14 @@ class SchemaStore
      *
      * Note: use classical versioning
      *
+     * @param string $id
+     *
      * @return bool
      */
     protected function validateSchemaId($id)
     {
-        if (preg_match('/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/(v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?).yml(.*)/i', $id, $match) !== false) {
-            return !isset($match[10]) || !$match[10];
+        if (preg_match('/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/(v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?).yml(.*)/i', $id, $matches) !== false) {
+            return !isset($matches[10]) || !$matches[10];
         }
 
         return false;
