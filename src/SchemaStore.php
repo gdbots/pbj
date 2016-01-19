@@ -53,6 +53,10 @@ class SchemaStore
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
         }
 
+        if (!$this->validateSchemaId($id)) {
+            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        }
+
         $this->schemas[$id] = $schema;
     }
 
@@ -73,5 +77,37 @@ class SchemaStore
         }
 
         return null;
+    }
+
+    /**
+     * Validate the schema id.
+     *
+     * Format:
+     *  vendor/package/category/message/SCHEMAVERSION.yml
+     *
+     * Example:
+     *  gdbots/pbjx/event/event-execution-failed/1-0-0.yml
+     *
+     * ([\w\d_-]*)                               => vendor = gdbots
+     *  \/
+     * ([\w\d_-]*)                               => package = pbjx
+     *  \/
+     * ([\w\d_-]*)                               => category = event
+     *  \/
+     * ([\w\d_-]*)                               => message = event-execution-failed
+     *  \/
+     * (v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?)(.*) => version = 1-0-0
+     *
+     * Note: use classical versioning
+     *
+     * @return bool
+     */
+    protected function validateSchemaId($id)
+    {
+        if (preg_match('/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/(v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?).yml(.*)/i', $id, $match) !== false) {
+            return !isset($match[10]) || !$match[10];
+        }
+
+        return false;
     }
 }
