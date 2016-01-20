@@ -2,15 +2,38 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbj\SchemaId;
-
+/**
+ * The class stores directories with their schemas.
+ */
 class SchemaStore
 {
-    /** @var array */
-    protected $dirs = [];
+    /**
+     * Regular expression pattern for matching a valid SchemaId string.
+     *
+     * Schema Id Format:
+     *  pbj:vendor:package:category:message:version
+     *
+     * Formats:
+     *  VENDOR:   [a-z0-9-]+
+     *  PACKAGE:  [a-z0-9\.-]+
+     *  CATEGORY: ([a-z0-9-]+)? (clarifies the intent of the message, e.g. command, request, event, response, etc.)
+     *  MESSAGE:  [a-z0-9-]+
+     *  VERSION:  [0-9]+-[0-9]+-[0-9])
+     *
+     * Examples of fully qualified schema ids:
+     *  pbj:acme:videos:event:video-uploaded:1-0-0
+     *  pbj:acme:users:command:register-user:1-1-0
+     *  pbj:acme:api.videos:request:get-video:1-0-0
+     *
+     * @constant string
+     */
+    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$/';
 
     /** @var array */
-    protected $schemas = [];
+    protected static $dirs = [];
+
+    /** @var array */
+    protected static $schemas = [];
 
     /**
      * Adds a directory where schemas exist.
@@ -19,10 +42,10 @@ class SchemaStore
      *
      * @return this
      */
-    public function addDir($dir)
+    public static function addDir($dir)
     {
-        if (!in_array($dir, $this->dirs)) {
-            $this->dirs[] = $dir;
+        if (!isset(self::$dirs[$dir])) {
+            self:$dirs[$dir] = null;
         }
 
         return $this;
@@ -33,9 +56,9 @@ class SchemaStore
      *
      * @return array
      */
-    public function getDirs()
+    public static function getDirs()
     {
-        return $this->dirs;
+        return self::$dirs;
     }
 
     /**
@@ -49,17 +72,17 @@ class SchemaStore
      *
      * @throw \RuntimeException on duplicate schema id's
      */
-    public function addSchema($id, $schema)
+    protected static function addSchema($id, $schema)
     {
-        if (array_key_exists($dir, $this->schemas)) {
+        if (isset(self::$schemas[$id])) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
         }
 
-        if (!$this->validateSchemaId($id)) {
+        if (!self::validateSchemaId($id)) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
         }
 
-        $this->schemas[$id] = $schema;
+        self::$schemas[$id] = $schema;
     }
 
     /**
@@ -74,29 +97,22 @@ class SchemaStore
      */
     public function getSchemaById($id)
     {
-        if (array_key_exists($id, $this->schemas)) {
-            return $this->schemas[$id];
+        if (isset(self::$schemas[$id])) {
+            return self::$schemas[$id];
         }
 
-        return null;
+        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
     }
 
     /**
      * Validate the schema id.
      *
-     * Formats:
-     *   VENDOR:   [a-z0-9-]+
-     *   PACKAGE:  [a-z0-9\.-]+
-     *   CATEGORY: ([a-z0-9-]+)? (clarifies the intent of the message, e.g. command, request, event, response, etc.)
-     *   MESSAGE:  [a-z0-9-]+
-     *   VERSION:  ([0-9]+)-([0-9]+)-([0-9]+)
-     *
      * @param string $id
      *
      * @return bool
      */
-    protected function validateSchemaId($id)
+    protected static function validateSchemaId($id)
     {
-        return preg_match(SchemaId::VALID_PATTERN, $id, $matches) !== false;
+        return preg_match(self::VALID_PATTERN, $id, $matches) !== false;
     }
 }
