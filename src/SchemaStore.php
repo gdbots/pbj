@@ -2,9 +2,6 @@
 
 namespace Gdbots\Pbjc;
 
-/**
- * The class stores directories with their schemas.
- */
 class SchemaStore
 {
     /**
@@ -39,16 +36,10 @@ class SchemaStore
      * Adds a directory where schemas exist.
      *
      * @param string $dir
-     *
-     * @return this
      */
     public static function addDir($dir)
     {
-        if (!isset(self::$dirs[$dir])) {
-            self:$dirs[$dir] = null;
-        }
-
-        return $this;
+        self::$dirs[$dir] = true;
     }
 
     /**
@@ -58,7 +49,7 @@ class SchemaStore
      */
     public static function getDirs()
     {
-        return self::$dirs;
+        return array_keys(self::$dirs);
     }
 
     /**
@@ -67,8 +58,6 @@ class SchemaStore
      *
      * @param string $id
      * @param mixed  $schema
-     *
-     * @return this
      *
      * @throw \RuntimeException on duplicate schema id's
      */
