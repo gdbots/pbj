@@ -2,6 +2,8 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbj\SchemaId;
+
 class SchemaStore
 {
     /** @var array */
@@ -82,22 +84,12 @@ class SchemaStore
     /**
      * Validate the schema id.
      *
-     * Format:
-     *  vendor/package/category/message/SCHEMAVERSION.yml
-     *
-     *  ^(.*)      -- starts with capture group 1 (any string)
-     *  /          -- match a single directory-separator character
-     *  (          -- capture group 2 starts
-     *    [^/]*    -- greedily match as many non-directory separators as possible
-     *  )          -- capture group 1 ends
-     *  ..         -- repeat the same for group 3 and 4
-     *  /          -- match a single directory-separator character
-     *
-     *  -- semantic versions (@see https://github.com/sindresorhus/semver-regex)
-     *  (\bv?(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?\b)
-     *
-     *  -- ends with yml extension
-     *  .yml$
+     * Formats:
+     *   VENDOR:   [a-z0-9-]+
+     *   PACKAGE:  [a-z0-9\.-]+
+     *   CATEGORY: ([a-z0-9-]+)? (clarifies the intent of the message, e.g. command, request, event, response, etc.)
+     *   MESSAGE:  [a-z0-9-]+
+     *   VERSION:  ([0-9]+)-([0-9]+)-([0-9]+)
      *
      * @param string $id
      *
@@ -105,6 +97,6 @@ class SchemaStore
      */
     protected function validateSchemaId($id)
     {
-        return preg_match('/^(.*)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/(\bv?(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?\b).yml$/ig', $id, $matches);
+        return preg_match(SchemaId::VALID_PATTERN, $id, $matches) !== false;
     }
 }
