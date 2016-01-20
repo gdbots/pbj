@@ -39,16 +39,12 @@ class SchemaStore
      * Adds a directory where schemas exist.
      *
      * @param string $dir
-     *
-     * @return this
      */
     public static function addDir($dir)
     {
         if (!isset(self::$dirs[$dir])) {
-            self:$dirs[$dir] = null;
+            self::$dirs[$dir] = null;
         }
-
-        return $this;
     }
 
     /**
@@ -67,18 +63,17 @@ class SchemaStore
      *
      * @param string $id
      * @param mixed  $schema
-     *
-     * @return this
+     * @param bool   $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate schema id's
      */
-    protected static function addSchema($id, $schema)
+    public static function addSchema($id, $schema, $ignoreDuplication = false)
     {
-        if (isset(self::$schemas[$id])) {
+        if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
         }
 
-        if (!self::validateSchemaId($id)) {
+        if (!self::validateSchemaId($id) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
         }
 
@@ -95,7 +90,7 @@ class SchemaStore
      *
      * @return mixed|null
      */
-    public function getSchemaById($id)
+    public static function getSchemaById($id)
     {
         if (isset(self::$schemas[$id])) {
             return self::$schemas[$id];

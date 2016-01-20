@@ -1,0 +1,13 @@
+id: 'pbj:gdbots:pbj:mixin:command:1-0-0'
+mixin: true
+fields:
+  command_id:
+    type: time-uuid
+    required: true
+  microtime:
+    type: microtime
+    required: true
+  correlator:
+    type: message-ref
+php_options:
+  namespace: 'Gdbots\Schemas\Pbj\Command'
