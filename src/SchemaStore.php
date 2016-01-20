@@ -85,20 +85,19 @@ class SchemaStore
      * Format:
      *  vendor/package/category/message/SCHEMAVERSION.yml
      *
-     * Example:
-     *  gdbots/pbjx/event/event-execution-failed/1-0-0.yml
+     *  ^(.*)      -- starts with capture group 1 (any string)
+     *  /          -- match a single directory-separator character
+     *  (          -- capture group 2 starts
+     *    [^/]*    -- greedily match as many non-directory separators as possible
+     *  )          -- capture group 1 ends
+     *  ..         -- repeat the same for group 3 and 4
+     *  /          -- match a single directory-separator character
      *
-     * ([\w\d_-]*)                               => vendor = gdbots
-     *  \/
-     * ([\w\d_-]*)                               => package = pbjx
-     *  \/
-     * ([\w\d_-]*)                               => category = event
-     *  \/
-     * ([\w\d_-]*)                               => message = event-execution-failed
-     *  \/
-     * (v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?)(.*) => version = 1-0-0
+     *  -- semantic versions (@see https://github.com/sindresorhus/semver-regex)
+     *  (\bv?(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?\b)
      *
-     * Note: use classical versioning
+     *  -- ends with yml extension
+     *  .yml$
      *
      * @param string $id
      *
@@ -106,10 +105,6 @@ class SchemaStore
      */
     protected function validateSchemaId($id)
     {
-        if (preg_match('/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/([\w\d_-]*)\/(v?(\d{1,3})(\-\d+)?(\-\d+)?(\-\d+)?).yml(.*)/i', $id, $matches) !== false) {
-            return !isset($matches[10]) || !$matches[10];
-        }
-
-        return false;
+        return preg_match('/^(.*)\/([^\/]*)\/([^\/]*)\/([^\/]*)\/(\bv?(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?\b).yml$/ig', $id, $matches);
     }
 }
