@@ -2,9 +2,6 @@
 
 namespace Gdbots\Pbjc;
 
-/**
- * The class stores directories with their schemas.
- */
 class SchemaStore
 {
     /**
@@ -42,9 +39,7 @@ class SchemaStore
      */
     public static function addDir($dir)
     {
-        if (!isset(self::$dirs[$dir])) {
-            self::$dirs[$dir] = null;
-        }
+        self::$dirs[$dir] = true;
     }
 
     /**
@@ -54,7 +49,7 @@ class SchemaStore
      */
     public static function getDirs()
     {
-        return self::$dirs;
+        return array_keys(self::$dirs);
     }
 
     /**

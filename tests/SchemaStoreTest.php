@@ -14,15 +14,12 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
         SchemaStore::addDir($commandDir = __DIR__.'/Fixtures/schemas/command');
         SchemaStore::addDir($entityDir = __DIR__.'/Fixtures/schemas/entity');
 
-        $this->assertEquals(SchemaStore::getDirs(), [
-            $commandDir => null,
-            $entityDir => null
-        ]);
+        $this->assertEquals(SchemaStore::getDirs(), [$commandDir, $entityDir]);
     }
 
     public function testAddSchema()
     {
-        foreach (SchemaStore::getDirs() as $dir => $nothing) {
+        foreach (SchemaStore::getDirs() as $dir) {
             $files = Finder::create()->files()->in($dir)->name('*.yml');
 
             foreach ($files as $file) {
