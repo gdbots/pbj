@@ -76,6 +76,16 @@ class SchemaStore
     }
 
     /**
+     * Returns an array of schemas.
+     *
+     * @return array
+     */
+    public static function getSchemas()
+    {
+        return self::$schemas;
+    }
+
+    /**
      * Returns a schema by its id. This is NOT the \Gdbots\Pbj\Schema object.
      * It contains more info (from the yaml) about how to build this schema
      * into multiple languages. the pbj-php is specifically for php
