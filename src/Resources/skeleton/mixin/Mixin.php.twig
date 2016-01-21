@@ -1,0 +1,35 @@
+<?php
+
+namespace {{ namespace }};
+
+{% block use_statements %}
+use Gdbots\Pbj\AbstractMixin;
+use Gdbots\Pbj\FieldBuilder as Fb;
+use Gdbots\Pbj\SchemaId;
+use Gdbots\Pbj\Type as T;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ class_name }} extends AbstractMixin
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return SchemaId::fromString('{{ shema_id }}');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFields()
+    {
+        return [
+          {# todo: #}
+        ];
+    }
+{% endblock class_body %}
+}
