@@ -28,7 +28,112 @@ class {{ class_name }} extends AbstractMixin
     public function getFields()
     {
         return [
-          {# todo: #}
+          {% for name, attributes in fields %}
+            {% set typeName = null %}
+
+            {% if attributes.type == 'big-int' %}
+              {% set typeName = 'BigIntType' %}
+
+            {% elseif attributes.type == 'binary' %}
+              {% set typeName = 'BinaryType' %}
+
+            {% elseif attributes.type == 'blob' %}
+              {% set typeName = 'BlobType' %}
+
+            {% elseif attributes.type == 'boolean' %}
+              {% set typeName = 'BooleanType' %}
+
+            {% elseif attributes.type == 'date' %}
+              {% set typeName = 'DateType' %}
+
+            {% elseif attributes.type == 'date-time' %}
+              {% set typeName = 'DateTimeType' %}
+
+            {% elseif attributes.type == 'decimal' %}
+              {% set typeName = 'DecimalType' %}
+
+            {% elseif attributes.type == 'float' %}
+              {% set typeName = 'FloatType' %}
+
+            {% elseif attributes.type == 'geo-point' %}
+              {% set typeName = 'GeoPointType' %}
+
+            {% elseif attributes.type == 'identifier' %}
+              {% set typeName = 'IdentifierType' %}
+
+            {% elseif attributes.type == 'int' %}
+              {% set typeName = 'IntType' %}
+
+            {% elseif attributes.type == 'int-enum' %}
+              {% set typeName = 'IntEnumType' %}
+
+            {% elseif attributes.type == 'medium-blob' %}
+              {% set typeName = 'MediumBlobType' %}
+
+            {% elseif attributes.type == 'medium-int' %}
+              {% set typeName = 'MediumIntType' %}
+
+            {% elseif attributes.type == 'medium-text' %}
+              {% set typeName = 'MediumTextType' %}
+
+            {% elseif attributes.type == 'message' %}
+              {% set typeName = 'MessageType' %}
+
+            {% elseif attributes.type == 'message-ref' %}
+              {% set typeName = 'MessageRefType' %}
+
+            {% elseif attributes.type == 'microtime' %}
+              {% set typeName = 'MicrotimeType' %}
+
+            {% elseif attributes.type == 'signed-big-int' %}
+              {% set typeName = 'SignedBigIntType' %}
+
+            {% elseif attributes.type == 'signed-int' %}
+              {% set typeName = 'SignedIntType' %}
+
+            {% elseif attributes.type == 'signed-medium-int' %}
+              {% set typeName = 'SignedMediumIntType' %}
+
+            {% elseif attributes.type == 'signed-small-int' %}
+              {% set typeName = 'SignedSmallIntType' %}
+
+            {% elseif attributes.type == 'signed-tiny-int' %}
+              {% set typeName = 'SignedTinyIntType' %}
+
+            {% elseif attributes.type == 'small-int' %}
+              {% set typeName = 'SmallIntType' %}
+
+            {% elseif attributes.type == 'string' %}
+              {% set typeName = 'Stringype' %}
+
+            {% elseif attributes.type == 'string-enum' %}
+              {% set typeName = 'StringEnumType' %}
+
+            {% elseif attributes.type == 'text' %}
+              {% set typeName = 'TextType' %}
+
+            {% elseif attributes.type == 'time-uuid' %}
+              {% set typeName = 'TimeUuidType' %}
+
+            {% elseif attributes.type == 'timestamp' %}
+              {% set typeName = 'TimestampType' %}
+
+            {% elseif attributes.type == 'tiny-int' %}
+              {% set typeName = 'TinyIntType' %}
+
+            {% elseif attributes.type == 'uuid' %}
+              {% set typeName = 'UuidType' %}
+
+            {% endif %}
+
+            {% if typeName %}
+              Fb::create('{{ name }}', {{ typeName }}::create())
+                {% if attributes.required is defined and attributes.required %}
+                  ->required(),
+                {% endif %}
+                ->build(),
+            {% endif %}
+          {% endfor %}
         ];
     }
 {% endblock class_body %}

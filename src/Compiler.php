@@ -71,18 +71,35 @@ class Compiler
      */
     protected function generate()
     {
-        throw new \Exception('Not yet implemented');
+        foreach (SchemaStore::getSchemas() as &$schema) {
+            if (!isset($schema['is_compiled']) || !$schema['is_compiled']) {
+                if (!$typeClass = $this->guestTypeClass($schema)) {
+                    continue;
+                }
+
+                $generator = new $typeClass();
+                $generator->generate($schema, $this->output);
+
+                $schema['is_compiled'] = true;
+
+                // todo: handle recursive logic, if needed
+            }
+        }
     }
 
     /**
-     * Returns the type of the schema to generate.
+     * Returns the type class of the schema to generate.
      *
      * @param array $schema
      *
      * @return string
      */
-    protected function guestType(array $schema)
+    protected function guestTypeClass(array $schema)
     {
-        throw new \Exception('Not yet implemented');
+        if (isset($schema['mixin']) && $schema['mixin']) {
+            return '\\Gdbots\\Pbjc\\Generator\\MixinGenerator';
+        }
+
+        return null;
     }
 }
