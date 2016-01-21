@@ -181,7 +181,7 @@ abstract class Generator
      */
     protected function getTarget($output)
     {
-        return sprintf('%s/%s.%s', $output, $this->getFileName(), $this->extension);
+        return sprintf('%s/%s%s', $output, $this->getFileName(), $this->extension);
     }
 
     /**
