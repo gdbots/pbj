@@ -81,7 +81,8 @@ abstract class Generator
         $this->renderFile(
             $this->getTemplate(),
             $this->getTarget($output),
-            $this->getParameters()
+            $this->getParameters(),
+            empty($output)
         );
     }
 
@@ -143,11 +144,17 @@ abstract class Generator
      * @param string $template
      * @param string $target
      * @param array  $parameters
+     * @param bool   $print
      *
      * @return int
      */
-    protected function renderFile($template, $target, $parameters)
+    protected function renderFile($template, $target, $parameters, $print = false)
     {
+        if ($print) {
+            var_dump('<pre>', str_replace('<?php', '-?php', $this->render($template, $parameters)), '</pre>');
+            return;
+        }
+
         if (!is_dir(dirname($target))) {
             mkdir(dirname($target), 0777, true);
         }

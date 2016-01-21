@@ -16,7 +16,7 @@ class Compiler
     /**
      * @param string $output
      */
-    public function compile($output)
+    public function compile($output = null)
     {
         $this->output = $output;
 

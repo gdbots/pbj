@@ -12,4 +12,4 @@ use Gdbots\Pbjc\Compiler;
 SchemaStore::addDir($commandDir = __DIR__.'/../tests/Fixtures/schemas');
 
 $compile = new Compiler();
-$compile->compile('/path/to/output');
+$compile->compile();
