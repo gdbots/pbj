@@ -101,15 +101,15 @@ abstract class Generator
         }
 
         $this->schemaIdElements = [
-            'vendor' => $matches[0][1],
-            'package' => $matches[0][2],
-            'category' => $matches[0][3],
-            'message' => $matches[0][4],
+            'vendor' => $matches[1],
+            'package' => $matches[2],
+            'category' => $matches[3],
+            'message' => $matches[4],
             'version' => [
-                'full' => $matches[0][5],
-                'major' => $matches[0][6],
-                'minor' => $matches[0][7],
-                'patch' => $matches[0][8],
+                'full' => $matches[5],
+                'major' => $matches[6],
+                'minor' => $matches[7],
+                'patch' => $matches[8],
             ]
         ];
     }
