@@ -22,7 +22,7 @@ abstract class Generator
     protected $extension = '.php';
 
     /** @var string */
-    protected $filePrefix = '';
+    protected $prefix = '';
 
     /** @var string */
     protected $template = '';
@@ -49,9 +49,9 @@ abstract class Generator
      *
      * @return void
      */
-    public function setFilePrefix($prefix)
+    public function setPrefix($prefix)
     {
-        $this->filePrefix = $prefix;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -101,7 +101,7 @@ abstract class Generator
      */
     protected function getTarget($output)
     {
-        return sprintf('%s/%s%s%s', $output, $this->schema->getClassName(), $this->filePrefix, $this->extension);
+        return sprintf('%s/%s%s%s', $output, $this->schema->getClassName(), $this->prefix, $this->extension);
     }
 
     /**
@@ -109,7 +109,10 @@ abstract class Generator
      */
     protected function getParameters()
     {
-        return ['schema' => $this->schema];
+        return [
+            'schema' => $this->schema,
+            'prefix' => $this->prefix
+        ];
     }
 
     /**

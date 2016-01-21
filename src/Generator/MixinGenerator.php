@@ -16,5 +16,5 @@ class MixinGenerator extends Generator
     protected $template = 'mixin/Mixin.php.twig';
 
     /** @var string */
-    protected $filePrefix = 'Mixin';
+    protected $prefix = 'Mixin';
 }

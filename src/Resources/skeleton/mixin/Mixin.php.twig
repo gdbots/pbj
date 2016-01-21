@@ -10,7 +10,7 @@ use Gdbots\Pbj\Type as T;
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ schema.className }} extends AbstractMixin
+class {{ schema.className }}{{ prefix }} extends AbstractMixin
 {% endblock class_definition %}
 {
 {% block class_body %}
