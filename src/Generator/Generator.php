@@ -43,7 +43,12 @@ abstract class Generator
         'package' => null,
         'category' => null,
         'message' => null,
-        'version' => null
+        'version' => [
+            'full' => null,
+            'major' => null,
+            'minor' => null,
+            'patch' => null,
+        ]
     ];
 
     /**
@@ -100,15 +105,29 @@ abstract class Generator
             'package' => $matches[0][2],
             'category' => $matches[0][3],
             'message' => $matches[0][4],
-            'version' => $matches[0][5],
+            'version' => [
+                'full' => $matches[0][5],
+                'major' => $matches[0][6],
+                'minor' => $matches[0][7],
+                'patch' => $matches[0][8],
+            ]
         ];
     }
 
     /**
+     * @param string $element
+     * @param string $subelement
+     *
      * @return string|null
      */
-    public function getSchemaIdElement($element)
+    public function getSchemaIdElement($element, $subelement = null)
     {
+        if ($subelement) {
+            if (isset($this->schemaIdElements[$element][$subelement])) {
+                return $this->schemaIdElements[$element][$subelement];
+            }
+        }
+
         if (isset($this->schemaIdElements[$element])) {
             return $this->schemaIdElements[$element];
         }
@@ -170,9 +189,9 @@ abstract class Generator
      */
     protected function getFileName()
     {
-        return sprintf('%s%s%s',
+        return sprintf('%sV%s%s',
             $this->classify($this->getSchemaIdElement('message')),
-            $this->classify($this->getSchemaIdElement('version')),
+            $this->classify($this->getSchemaIdElement('version', 'major')),
             $this->filePrefix
         );
     }

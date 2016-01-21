@@ -24,7 +24,7 @@ class SchemaStore
      *
      * @constant string
      */
-    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$/';
+    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):(([0-9]+)-([0-9]+)-([0-9]+))$/';
 
     /** @var array */
     protected static $dirs = [];
