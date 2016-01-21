@@ -2,9 +2,7 @@
 
 namespace Gdbots\Pbjc\Generator;
 
-use Gdbots\Pbjc\SchemaStore;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser as YamlParser;
+use Gdbots\Pbjc\Schema;
 
 /**
  * Generator is the base class for all generators.
@@ -23,33 +21,14 @@ abstract class Generator
      */
     protected $extension = '.php';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $filePrefix = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $template = '';
 
-    /**
-     * Holds schema id elements.
-     *
-     * @var array
-     */
-    protected $schemaIdElements = [
-        'vendor' => null,
-        'package' => null,
-        'category' => null,
-        'message' => null,
-        'version' => [
-            'full' => null,
-            'major' => null,
-            'minor' => null,
-            'patch' => null,
-        ]
-    ];
+    /** @var Schema */
+    protected $schema;
 
     /**
      * Sets the extension to use when writing files to disk.
@@ -88,82 +67,22 @@ abstract class Generator
     }
 
     /**
-     * Parse and sets the schema id elements.
-     *
-     * @param string $id
-     *
-     * @return void
-     */
-    public function setSchemaIdElements($id)
-    {
-        if (preg_match(SchemaStore::VALID_PATTERN, $id, $matches) === false) {
-            throw new \InvalidArgumentException(sprintf('The "%s" does not follow the schemaId format.', $id));
-        }
-
-        $this->schemaIdElements = [
-            'vendor' => $matches[1],
-            'package' => $matches[2],
-            'category' => $matches[3],
-            'message' => $matches[4],
-            'version' => [
-                'full' => $matches[5],
-                'major' => $matches[6],
-                'minor' => $matches[7],
-                'patch' => $matches[8],
-            ]
-        ];
-    }
-
-    /**
-     * @param string $element
-     * @param string $subelement
-     *
-     * @return string|null
-     */
-    public function getSchemaIdElement($element, $subelement = null)
-    {
-        if ($subelement) {
-            if (isset($this->schemaIdElements[$element][$subelement])) {
-                return $this->schemaIdElements[$element][$subelement];
-            }
-        }
-
-        if (isset($this->schemaIdElements[$element])) {
-            return $this->schemaIdElements[$element];
-        }
-
-        return null;
-    }
-
-    /**
      * Generates and writes files for the given yaml file.
      *
-     * @param array  $schema
+     * @param Schema $schema
      * @param string $output
      *
      * @return void
      */
-    public function generate(array $schema, $output)
+    public function generate(Schema $schema, $output)
     {
-        $this->setSchemaIdElements($schema['id']);
+        $this->schema = $schema;
 
-        if ($this->isValid($schema)) {
-            $this->renderFile(
-                $this->getTemplate(),
-                $this->getTarget($output),
-                $this->getParameters($schema)
-            );
-        }
-    }
-
-    /**
-     * @param array $schema
-     *
-     * @return bool
-     */
-    protected function isValid(array $schema)
-    {
-        return true;
+        $this->renderFile(
+            $this->getTemplate(),
+            $this->getTarget($output),
+            $this->getParameters()
+        );
     }
 
     /**
@@ -181,27 +100,16 @@ abstract class Generator
      */
     protected function getTarget($output)
     {
-        return sprintf('%s/%s%s', $output, $this->getFileName(), $this->extension);
+        return sprintf('%s/%s%s%s', $output, $this->schema->getClassName(), $this->filePrefix, $this->extension);
     }
 
     /**
-     * @return string
-     */
-    protected function getFileName()
-    {
-        return sprintf('%sV%s%s',
-            $this->classify($this->getSchemaIdElement('message')),
-            $this->classify($this->getSchemaIdElement('version', 'major')),
-            $this->filePrefix
-        );
-    }
-
-    /**
-    * @param array $schema
-     *
      * @return array
      */
-    abstract protected function getParameters(array $schema);
+    protected function getParameters()
+    {
+        return ['schema' => $this->schema];
+    }
 
     /**
      * @param string $template
@@ -245,18 +153,5 @@ abstract class Generator
         }
 
         return file_put_contents($target, $this->render($template, $parameters));
-    }
-
-    /**
-     * Transforms the given string to a new string valid as a PHP class name
-     * ('app:my-project' -> 'AppMyProject', 'app:namespace:name' -> 'AppNamespaceName').
-     *
-     * @param string $string
-     *
-     * @return The string transformed to be a valid PHP class name
-     */
-    public function classify($string)
-    {
-        return str_replace(' ', '', ucwords(strtr($string, '_-:', '   ')));
     }
 }

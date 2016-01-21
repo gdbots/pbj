@@ -12,30 +12,9 @@ namespace Gdbots\Pbjc\Generator;
  */
 class MixinGenerator extends Generator
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $template = 'mixin/Mixin.php.twig';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function isValid(array $schema)
-    {
-        // todo
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getParameters(array $schema)
-    {
-        return [
-            'namespace' => $schema['php_options']['namespace'],
-            'class_name' => $this->getFileName(),
-            'shema_id' => $schema['id'],
-            'fields' => $schema['fields']
-        ];
-    }
+    /** @var string */
+    protected $filePrefix = 'Mixin';
 }

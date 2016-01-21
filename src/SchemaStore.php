@@ -69,12 +69,12 @@ class SchemaStore
      * the same id multi times.
      *
      * @param string $id
-     * @param mixed  $schema
+     * @param Schema $schema
      * @param bool   $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate schema id's
      */
-    public static function addSchema($id, $schema, $ignoreDuplication = false)
+    public static function addSchema($id, Schema $schema, $ignoreDuplication = false)
     {
         if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
