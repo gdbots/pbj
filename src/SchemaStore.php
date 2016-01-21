@@ -43,6 +43,18 @@ class SchemaStore
     }
 
     /**
+     * Adds an array of schema directories.
+     *
+     * @param array $dirs
+     */
+    public static function addDirs(array $dirs)
+    {
+        foreach ($dirs as $dir) {
+            self::addDir($dir);
+        }
+    }
+
+    /**
      * Returns an array of directories where schemas should exist.
      *
      * @return array
