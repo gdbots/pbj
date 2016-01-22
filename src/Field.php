@@ -11,6 +11,7 @@ use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
+use Gdbots\Pbjc\Type\StringEnumType;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class Field implements ToArray, \JsonSerializable
@@ -183,13 +184,19 @@ final class Field implements ToArray, \JsonSerializable
     /**
      * Create instrance from array
      *
-     * @param array $parameters
+     * @param string $name
+     * @param array  $parameters
      */
-    public static function fromArray(array $parameters)
+    public static function fromArray($name, array $parameters)
     {
+        $typeClass = sprintf(
+            '\\Gdbots\\Pbjc\\Type\\%sType',
+            StringUtils::toCamelFromSlug($parameters['type'])
+        );
+
         $args = [
-            'name' => null,
-            'type' => null,
+            'name' => $name,
+            'type' => $typeClass::create(),
             'rule' => null,
             'required' => false,
             'min_length' => null,
@@ -224,13 +231,26 @@ final class Field implements ToArray, \JsonSerializable
                         $args['default'] = $value['default'];
                     }
                 }
-                elseif ($property == 'type') {
-                    $typeClass = sprintf('\\Gdbots\\Pbjc\\Type\\%sType', StringUtils::toCamelFromSlug($parameters['type']));
-                    $args['type'] = $typeClass::create();
-                }
-                else {
+                elseif ($property != 'type' && isset($args[$property])) {
                     $args[$property] = $value;
                 }
+            }
+        }
+
+        if ($args['type'] instanceof StringEnumType) {
+            if ($args['language_options']->get('php') && $className = $args['class_name']) {
+                /* @todo: handle not existing class */
+                /* if (!class_exists($className)) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'Field [%s] Enum class [%s] does not exists.',
+                            $name,
+                            $className
+                        )
+                    );
+                } */
+
+                $args['default'] = sprintf('\\%s::%s', $className, array_search($args['default'], $parameters['enum']));
             }
         }
 

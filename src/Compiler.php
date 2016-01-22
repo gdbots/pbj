@@ -91,7 +91,7 @@ class Compiler
                             continue;
                         }
 
-                        $fields[] = Field::fromArray(array_merge($attributes, ['name' => $name]));
+                        $fields[] = Field::fromArray($name, $attributes);
                     }
                     break;
 
