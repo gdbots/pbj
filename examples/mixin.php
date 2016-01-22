@@ -9,7 +9,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Compiler;
 
-SchemaStore::addDir($commandDir = __DIR__.'/../tests/Fixtures/schemas');
+SchemaStore::addDir($commandDir = __DIR__.'/schemas');
 
 $compile = new Compiler();
 $compile->compile();
