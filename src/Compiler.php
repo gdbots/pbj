@@ -120,33 +120,66 @@ class Compiler
      */
     protected function generate()
     {
-        foreach (SchemaStore::getSchemas() as &$schema) {
+        $schemaLatestVersion = [];
+
+        foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->getOptions()->get('isCompiled')) {
-                if (!$typeClass = $this->guestTypeClass($schema)) {
+                if (!$classes = $this->guestGeneratorClass($schema)) {
                     continue;
                 }
-
-                $generator = new $typeClass();
-                $generator->generate($schema, $this->output);
+                if (!is_array($classes)) {
+                    $classes = [$classes];
+                }
+                foreach ($classes as $class) {
+                    $generator = new $class();
+                    if (!$generator->isOnlyLatest()) {
+                        $generator->generate($schema, $this->output);
+                    }
+                }
 
                 $schema->getOptions()->set('isCompiled', true);
 
                 // todo: handle recursive logic, if needed
             }
+
+            if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
+                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+            }
+            if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
+                ->getId()->getVersion() < $schema->getId()->getVersion()) {
+
+                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+            }
+        }
+
+        foreach ($schemaLatestVersion as $schema) {
+            if (!$classes = $this->guestGeneratorClass($schema)) {
+                continue;
+            }
+            if (!is_array($classes)) {
+                $classes = [$classes];
+            }
+            foreach ($classes as $class) {
+                $generator = new $class();
+                $generator->generate($schema, $this->output, true);
+            }
         }
     }
 
     /**
-     * Returns the type class of the schema to generate.
+     * Returns a generator class(s) based on schema.
      *
      * @param Schema $schema
      *
-     * @return string
+     * @return string|array
      */
-    protected function guestTypeClass(Schema $schema)
+    protected function guestGeneratorClass(Schema $schema)
     {
         if ($schema->getOptions()->get('mixin') === true) {
-            return '\\Gdbots\\Pbjc\\Generator\\MixinGenerator';
+            return [
+                '\\Gdbots\\Pbjc\\Generator\\MixinPhpGenerator',
+                '\\Gdbots\\Pbjc\\Generator\\MixinJsonGenerator'
+            ];
         }
 
         // todo: handle other generator classes

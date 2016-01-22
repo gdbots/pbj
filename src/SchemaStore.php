@@ -98,6 +98,19 @@ class SchemaStore
     }
 
     /**
+     * Returns an array of sorted schemas.
+     *
+     * @return array
+     */
+    public static function getSortedSchemas()
+    {
+        $schemas = self::$schemas;
+        ksort($schemas);
+        return $schemas;
+    }
+
+
+    /**
      * Returns a schema by its id. This is NOT the \Gdbots\Pbjc\Schema object.
      * It contains more info (from the yaml) about how to build this schema
      * into multiple languages. the pbj-php is specifically for php

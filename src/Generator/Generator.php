@@ -31,6 +31,9 @@ abstract class Generator
     /** @var Schema */
     protected $schema;
 
+    /** @var bool */
+    protected $isLatest = false;
+
     /**
      * Sets the extension to use when writing files to disk.
      *
@@ -72,12 +75,14 @@ abstract class Generator
      *
      * @param Schema $schema
      * @param string $output
+     * @param bool   $isLatest
      *
      * @return void
      */
-    public function generate(Schema $schema, $output)
+    public function generate(Schema $schema, $output, $isLatest = false)
     {
         $this->schema = $schema;
+        $this->isLatest = $isLatest;
 
         $this->renderFile(
             $this->getTemplate(),
@@ -85,6 +90,14 @@ abstract class Generator
             $this->getParameters(),
             empty($output)
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOnlyLatest()
+    {
+        return true;
     }
 
     /**
@@ -102,7 +115,15 @@ abstract class Generator
      */
     protected function getTarget($output)
     {
-        return sprintf('%s/%s%s%s', $output, $this->schema->getClassName(), $this->prefix, $this->extension);
+        return sprintf('%s/%s%s%s', $output, $this->getTargetFilename(), $this->prefix, $this->extension);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTargetFilename()
+    {
+        return $this->schema->getClassName();
     }
 
     /**

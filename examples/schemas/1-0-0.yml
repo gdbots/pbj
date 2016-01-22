@@ -1,0 +1,36 @@
+mixin: true
+id: 'pbj:gdbots:pbjc:mixin:example:1-0-0'
+fields:
+  _id:
+    type: identifier
+    required: true
+    overridable: true
+    php_options:
+      class_name: 'Gdbots\Identifiers\UuidIdentifier'
+      default: 'function() { return UuidIdentifier::generate(); }'
+  etag:
+    type: string
+    pattern: '/^[A-Za-z0-9_\-]+$/'
+    min_length: 10
+    max_length: 100
+  status_enum:
+    type: string-enum
+    enum:
+      ENALBED: true,
+      DISABLED: false
+    default: false
+    php_options:
+      class_name: 'Acme\Enum\Status'
+  channel_format:
+    type: string
+    format: 'slug'
+  created_at:
+    type: microtime
+    required: true
+  updated_at:
+    type: microtime
+    use_type_default: false
+mixins:
+  - 'gdbots:pbjc:mixin:related:v1'
+php_options:
+  namespace: 'Acme\Mixin'
