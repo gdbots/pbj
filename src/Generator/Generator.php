@@ -180,7 +180,7 @@ abstract class Generator
     protected function renderFile($template, $target, $parameters, $print = false)
     {
         if ($print) {
-            var_dump('<pre>', str_replace('<?php', '-?php', $this->render($template, $parameters)), '</pre>');
+            var_dump('<pre>', $target, str_replace('<?php', '-?php', $this->render($template, $parameters)), '</pre>');
             return;
         }
 

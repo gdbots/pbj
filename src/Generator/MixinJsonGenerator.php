@@ -28,12 +28,6 @@ class MixinJsonGenerator extends Generator
      */
     protected function getTargetFilename()
     {
-        $filename = $this->schema->getId();
-
-        if ($this->isLatest) {
-            $filename = str_replace($this->schema->getId()->getVersion(), 'latest', $filename);
-        }
-
-        return $filename;
+        return $this->isLatest ? 'latest' : $this->schema->getId()->getVersion();
     }
 }
