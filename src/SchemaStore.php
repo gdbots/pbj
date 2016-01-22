@@ -125,6 +125,6 @@ class SchemaStore
      */
     protected static function validateSchemaId($id)
     {
-        return preg_match(self::VALID_PATTERN, $id, $matches) !== false;
+        return preg_match(self::VALID_PATTERN, $id) !== false;
     }
 }
