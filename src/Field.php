@@ -222,17 +222,6 @@ final class Field implements ToArray, \JsonSerializable
                 if (substr($property, -7) == 'Options') {
                     $language = substr($property, 0, -7);
                     $args['language_options']->set($language, new ParameterBag($value));
-
-                    if ($language == 'php' && isset($value['class_name'])) {
-                        $args['class_name'] = $value['class_name'];
-                    }
-
-                    if (isset($value['default'])) {
-                        $args['default'] = $value['default'];
-                    }
-                }
-                elseif ($property != 'type' && isset($args[$property])) {
-                    $args[$property] = $value;
                 }
             }
         }
