@@ -12,9 +12,6 @@ class MixinJsonGenerator extends Generator
     /** @var string */
     protected $extension = '.json';
 
-    /** @var string */
-    protected $prefix = '-mixin';
-
     /**
      * {@inheritdoc}
      */
