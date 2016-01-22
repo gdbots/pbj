@@ -115,7 +115,13 @@ abstract class Generator
      */
     protected function getTarget($output)
     {
-        return sprintf('%s/%s%s%s', $output, $this->getTargetFilename(), $this->prefix, $this->extension);
+        return sprintf('%s/%s/%s%s%s',
+            $output,
+            str_replace(':', '/', $this->schema->getId()->getCurie()),
+            $this->getTargetFilename(),
+            $this->prefix,
+            $this->extension
+        );
     }
 
     /**
