@@ -29,7 +29,7 @@ class {{ schema.className }}{{ prefix }} extends AbstractMixin
     {
         return [
           {% for field in schema.fields %}
-            Fb::create('{{ field.name }}', {{ field.camelizedType }}::create())
+            Fb::create('{{ field.name }}', T\{{ class(field.type) }}::create())
               {% if field.required %}
                 ->required(),
               {% endif %}

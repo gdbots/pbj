@@ -17,6 +17,8 @@ fields:
     type: message
     required: true
     any_of: 'gdbots:pbj:mixin:event'
+    php_options:
+      class_name: 'Acme\Message\Hello'
   status_enum:
     type: string-enum
     enum:

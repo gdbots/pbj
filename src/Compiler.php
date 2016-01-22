@@ -87,31 +87,11 @@ class Compiler
 
                 case 'fields':
                     foreach ($value as $name => $attributes) {
-                        $field = new ParameterBag($attributes);
-
-                        if (!$field->has('type')) {
+                        if (!isset($attributes['type'])) {
                             continue;
                         }
 
-                        $fields[] = new Field(
-                            $name,
-                            $field->get('type'),
-                            (int) $field->get('rule'),
-                            (bool) $field->get('required', false),
-                            (int) $field->get('min_length'),
-                            (int) $field->get('max_length'),
-                            $field->get('pattern'),
-                            $field->get('format'),
-                            (int) $field->get('min'),
-                            (int) $field->get('max'),
-                            (int) $field->get('precision', 10),
-                            (int) $field->get('scale', 2),
-                            $field->get('default'),
-                            $field->get('className'),
-                            (array) $field->get('any_of'),
-                            $field->get('assertion'),
-                            (bool) $field->get('overridable', false)
-                        );
+                        $fields[] = Field::fromArray(array_merge($attributes, ['name' => $name]));
                     }
                     break;
 

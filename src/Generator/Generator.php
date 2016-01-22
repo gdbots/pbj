@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 
 /**
  * Generator is the base class for all generators.
@@ -135,12 +136,16 @@ abstract class Generator
      */
     protected function getTwigEnvironment()
     {
-        return new \Twig_Environment(new \Twig_Loader_Filesystem(self::SKELETON_DIR), array(
+        $twig = new \Twig_Environment(new \Twig_Loader_Filesystem(self::SKELETON_DIR), array(
             'debug' => true,
             'cache' => false,
             'strict_variables' => true,
             'autoescape' => false,
         ));
+
+        $twig->addExtension(new ClassExtension());
+
+        return $twig;
     }
 
     /**
