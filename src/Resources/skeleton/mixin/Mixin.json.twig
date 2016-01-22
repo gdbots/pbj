@@ -1,5 +1,5 @@
 {
-  schema_id: {{ schema.id }}
+  schema_id:'{{ schema.id }}',
   fields: {
     {% for field in schema.fields %}
       {{ field.name }}: {
