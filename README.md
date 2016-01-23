@@ -90,7 +90,7 @@ fields:
       DELETED: 'deleted'
     default: 'draft'
     php_options:
-      class_name 'Acme\Demo\Enum\StoryStatus'
+      class_name: 'Acme\Demo\Enum\StoryStatus'
 ```
 
 From the above example you can see we defined the enum keys and values as well as a default value. If no default was set, the first key will be used. We also define the PHP class name that will be used when outputting to a PHP file. In this case, an output of the `draft` value will look like: `\Acme\Demo\Enum\StoryStatus::DRAFT`.
