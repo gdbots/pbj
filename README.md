@@ -126,7 +126,7 @@ fields:
     pattern: <string>
     format: <Gdbots\Pbjc\Enum\Format>
     min: <int>
-    max <int>
+    max: <int>
     precision: <int>
     scale: <int>
     defualt: <mixed>
