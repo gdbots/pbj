@@ -111,7 +111,7 @@ fields:
 
 The `any_of` attribute define the message id that will be used to pull the message details.
 
-### Full Schma
+### Full Schma Options
 
 ```yaml
 id: 'pbj:vendor:package:category:message:1-0-0'
@@ -152,3 +152,30 @@ mixins:
 php_options:
   namespace: <string>
 ```
+
+# Basic Usage
+
+```php
+<?php
+
+use Gdbots\Pbjc\Compiler;
+
+$compile = new Compiler();
+$compile->compile('php', '/put/your/output/folder');
+```
+
+In order to compile you have to add the directory or directories where your
+YAML file exists:
+
+```php
+<?php
+
+use Gdbots\Pbjc\SchemaStore;
+
+SchemaStore::addDir('/your/schemas/path1');
+SchemaStore::addDir('/your/schemas/path2');
+//...
+```
+
+> **Note:** If no outout folder was provided the compiler will generate a print
+version of each of the schemas files.
