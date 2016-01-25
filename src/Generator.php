@@ -1,38 +1,37 @@
 <?php
 
-namespace Gdbots\Pbjc\Generator;
+namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Schema;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 
-/**
- * Generator is the base class for all generators.
- */
-abstract class Generator
+class Generator
 {
     /**
      * The directory to look for templates.
      */
-    const SKELETON_DIR = __DIR__.'/../Resources/skeleton/';
+    const SKELETON_DIR = __DIR__.'/Resources/skeleton/';
 
-    /**
-     * The extension to use for written files.
-     *
-     * @var string
-     */
+    /** @var string */
+    protected $language = 'php';
+
+    /** @var string */
     protected $extension = '.php';
 
     /** @var string */
     protected $prefix = '';
 
-    /** @var string */
-    protected $template = '';
-
     /** @var Schema */
     protected $schema;
 
-    /** @var bool */
-    protected $isLatest = false;
+    /**
+     * @param Schema $schema
+     * @param string $language
+     */
+    public function __construct(Schema $schema, $language = 'php')
+    {
+        $this->schema = $schema;
+        $this->language = $language;
+    }
 
     /**
      * Sets the extension to use when writing files to disk.
@@ -59,45 +58,22 @@ abstract class Generator
     }
 
     /**
-     * Sets a template.
-     *
-     * @param string $template
-     *
-     * @return void
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-    }
-
-    /**
      * Generates and writes files for the given yaml file.
      *
-     * @param Schema $schema
      * @param string $output
      * @param bool   $isLatest
+     * @param bool   $print
      *
      * @return void
      */
-    public function generate(Schema $schema, $output, $isLatest = false)
+    public function generate($output, $isLatest = false, $print = true)
     {
-        $this->schema = $schema;
-        $this->isLatest = $isLatest;
-
         $this->renderFile(
             $this->getTemplate(),
-            $this->getTarget($output),
+            $this->getTarget($output, $isLatest),
             $this->getParameters(),
-            empty($output)
+            $print
         );
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOnlyLatest()
-    {
-        return true;
     }
 
     /**
@@ -105,31 +81,35 @@ abstract class Generator
      */
     protected function getTemplate()
     {
-        return $this->template;
+        if ($this->schema->getOptions()->get('mixin') === true) {
+            return sprintf('%s/Mixin%s.twig', $this->language, $this->extension);
+        }
+
+        throw new \Exception('Missing schema template');
     }
 
     /**
      * @param string $output
+     * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($output)
+    protected function getTarget($output, $isLatest = false)
     {
+        // todo: generate file name based on language
+        $filename = $this->schema->getClassName();
+
+        if ($isLatest) {
+            // todo: rename filename to..
+        }
+
         return sprintf('%s/%s/%s%s%s',
             $output,
             str_replace(':', '/', $this->schema->getId()->getCurie()),
-            $this->getTargetFilename(),
+            $filename,
             $this->prefix,
             $this->extension
         );
-    }
-
-    /**
-     * @return string
-     */
-    protected function getTargetFilename()
-    {
-        return $this->schema->getClassName();
     }
 
     /**

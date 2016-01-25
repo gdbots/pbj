@@ -14,13 +14,14 @@ class Compiler
     protected $output = null;
 
     /**
+     * @param string $language
      * @param string $output
      */
-    public function compile($output = null)
+    public function compile($language, $output = null)
     {
         $this->output = $output;
 
-        $this->loadSchemas()->generate();
+        $this->loadSchemas()->generate($language);
     }
 
     /**
@@ -116,74 +117,41 @@ class Compiler
     /**
      * Generates and writes files for each schema.
      *
+     * @param string $language
+     *
      * @return this
      */
-    protected function generate()
+    protected function generate($language)
     {
         $schemaLatestVersion = [];
 
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->getOptions()->get('isCompiled')) {
-                if (!$classes = $this->guestGeneratorClass($schema)) {
-                    continue;
-                }
-                if (!is_array($classes)) {
-                    $classes = [$classes];
-                }
-                foreach ($classes as $class) {
-                    $generator = new $class();
-                    if (!$generator->isOnlyLatest()) {
-                        $generator->generate($schema, $this->output);
-                    }
-                }
+                $generator = new Generator($schema, $language);
+                $generator->generate($this->output);
 
                 $schema->getOptions()->set('isCompiled', true);
-
-                // todo: handle recursive logic, if needed
             }
 
-            if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
-                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
-            }
-            if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
-                ->getId()->getVersion() < $schema->getId()->getVersion()) {
+            switch ($language) {
+                case 'json':
+                    if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
+                        $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+                    }
 
-                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+                    if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
+                        ->getId()->getVersion() < $schema->getId()->getVersion()) {
+
+                        $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+                    }
+
+                    break;
             }
         }
 
         foreach ($schemaLatestVersion as $schema) {
-            if (!$classes = $this->guestGeneratorClass($schema)) {
-                continue;
-            }
-            if (!is_array($classes)) {
-                $classes = [$classes];
-            }
-            foreach ($classes as $class) {
-                $generator = new $class();
-                $generator->generate($schema, $this->output, true);
-            }
+            $generator = new Generator($schema, $language);
+            $generator->generate($this->output, true);
         }
-    }
-
-    /**
-     * Returns a generator class(s) based on schema.
-     *
-     * @param Schema $schema
-     *
-     * @return string|array
-     */
-    protected function guestGeneratorClass(Schema $schema)
-    {
-        if ($schema->getOptions()->get('mixin') === true) {
-            return [
-                '\\Gdbots\\Pbjc\\Generator\\MixinPhpGenerator',
-                '\\Gdbots\\Pbjc\\Generator\\MixinJsonGenerator'
-            ];
-        }
-
-        // todo: handle other generator classes
-
-        return null;
     }
 }

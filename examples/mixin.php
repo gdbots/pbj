@@ -12,4 +12,4 @@ use Gdbots\Pbjc\Compiler;
 SchemaStore::addDir(__DIR__.'/schemas');
 
 $compile = new Compiler();
-$compile->compile();
+$compile->compile('php');
