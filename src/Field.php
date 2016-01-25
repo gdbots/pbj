@@ -139,9 +139,9 @@ final class Field implements ToArray, \JsonSerializable
             );
         }
 
-        $required = (bool) $required;
+        $required       = (bool) $required;
         $useTypeDefault = (bool) $useTypeDefault;
-        $overridable = (bool) $overridable;
+        $overridable    = (bool) $overridable;
 
         /*
          * a message type allows for interfaces to be used
@@ -166,15 +166,15 @@ final class Field implements ToArray, \JsonSerializable
         }
         */
 
-        $this->name = $name;
-        $this->type = $type;
-        $this->required = $required;
-        $this->default = $default;
-        $this->useTypeDefault = $useTypeDefault;
-        $this->className = $className;
-        $this->anyOfClassNames = $anyOfClassNames;
-        $this->overridable = $overridable;
-        $this->languageOptions = $languageOptions;
+        $this->name             = $name;
+        $this->type             = $type;
+        $this->required         = $required;
+        $this->default          = $default;
+        $this->useTypeDefault   = $useTypeDefault;
+        $this->className        = $className;
+        $this->anyOfClassNames  = $anyOfClassNames;
+        $this->overridable      = $overridable;
+        $this->languageOptions  = $languageOptions;
 
         $this->applyFieldRule($rule);
         $this->applyStringOptions($minLength, $maxLength, $pattern, $format);
@@ -216,14 +216,27 @@ final class Field implements ToArray, \JsonSerializable
         ];
 
         foreach ($parameters as $property => $value) {
-            $property = lcfirst(StringUtils::toCamelFromSnake($property));
+            $classProperty = lcfirst(StringUtils::toCamelFromSnake($property));
+            if (property_exists(get_called_class(), $classProperty) && $property != 'type') {
+              $args[$property] = $value;
+            } else {
+                $language = substr($property, 0, -8); // remove "_options"
 
-            if (property_exists(get_called_class(), $property) || substr($property, -7) == 'Options') {
-                if (substr($property, -7) == 'Options') {
-                    $language = substr($property, 0, -7);
+                if (in_array($language, Compiler::LANGUAGES)) {
                     $args['language_options']->set($language, new ParameterBag($value));
                 }
             }
+        }
+
+        /**
+         * Handle special types:
+         */
+
+        if ($args['type'] instanceof StringType) {
+            $args['min_length'] = $args['min'];
+            $args['max_length'] = $args['max'];
+            $args['min'] = null;
+            $args['max'] = null;
         }
 
         if ($args['type'] instanceof StringEnumType) {
@@ -238,6 +251,10 @@ final class Field implements ToArray, \JsonSerializable
                         )
                     );
                 } */
+
+                if (substr($className, 0, 1) == '\\') {
+                    $className = substr($className, 1);
+                }
 
                 $args['default'] = sprintf('\\%s::%s', $className, array_search($args['default'], $parameters['enum']));
             }
