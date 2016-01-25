@@ -33,7 +33,8 @@ class {{ schema.className }}{{ prefix }} extends AbstractMixin
               {% if field.required %}
                 ->required(),
               {% endif %}
-              ->build(),
+              ->build(){% if not loop.last %},{% endif %}
+
           {% endfor %}
         ];
     }
