@@ -7,7 +7,6 @@ use Gdbots\Pbjc\Exception\InvalidLanguage;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser as YamlParser;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class Compiler
 {
@@ -109,8 +108,8 @@ class Compiler
     {
         $fields    = [];
         $mixins    = [];
-        $languages = new ParameterBag();
-        $options   = new ParameterBag();
+        $languages = [];
+        $options   = [];
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -131,19 +130,15 @@ class Compiler
                     break;
 
                 case 'php_options':
-                    $languages->set('php', new ParameterBag($value));
+                    $languages['php'] = $value;
                     break;
 
                 case 'json_options':
-                    $languages->set('json', new ParameterBag($value));
+                    $languages['json'] = $value;
                     break;
 
                 default:
-                    if (is_array($value)) {
-                        $value = new ParameterBag($value);
-                    }
-
-                    $options->set($key, $value);
+                    $options[$key] = $value;
             }
         }
 
@@ -164,11 +159,11 @@ class Compiler
     public function generate()
     {
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
-            if (!$schema->getOptions()->get('isCompiled')) {
+            if (!$schema->getOption('isCompiled')) {
                 $generator = new Generator($schema, $this->language);
                 $generator->generate($this->output);
 
-                $schema->getOptions()->set('isCompiled', true);
+                $schema->setOption('isCompiled', true);
             }
         }
     }

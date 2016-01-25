@@ -4,7 +4,6 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\ToArray;
 use Gdbots\Common\Util\StringUtils;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class Schema implements ToArray, \JsonSerializable
 {
@@ -17,10 +16,10 @@ final class Schema implements ToArray, \JsonSerializable
     /** @var array */
     private $mixins = [];
 
-    /** @var ParameterBag */
+    /** @var array */
     private $languages = [];
 
-    /** @var ParameterBag */
+    /** @var array */
     private $options = [];
 
     /** @var bool */
@@ -36,7 +35,7 @@ final class Schema implements ToArray, \JsonSerializable
      * @param array           $languages
      * @param array           $options
      */
-    public function __construct($id, array $fields = [], array $mixins = [], ParameterBag $languages = null, ParameterBag $options = null)
+    public function __construct($id, array $fields = [], array $mixins = [], array $languages = [], array $options = [])
     {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
 
@@ -75,8 +74,8 @@ final class Schema implements ToArray, \JsonSerializable
             'class_name' => $this->getClassName(),
             'fields'     => $this->fields,
             'mixins'     => $this->mixins,
-            'languages'  => $this->languages->getIterator(),
-            'options'    => $this->options->getIterator(),
+            'languages'  => $this->languages,
+            'options'    => $this->options,
         ];
     }
 
@@ -148,7 +147,7 @@ final class Schema implements ToArray, \JsonSerializable
      */
     public function getFields()
     {
-        return $this->fields;
+        return $this->fields ?: $this->fields = [];
     }
 
     /**
@@ -156,23 +155,125 @@ final class Schema implements ToArray, \JsonSerializable
      */
     public function getMixins()
     {
-        return $this->mixins;
+        return $this->mixins ?: $this->mixins = [];
     }
 
     /**
-     * @return ParameterBag
+     * @return array
      */
     public function getLanguages()
     {
-        return $this->languages;
+        return $this->languages ?: $this->languages = [];
     }
 
     /**
-     * @return ParameterBag
+     * @param string $language
+     * @param array  $options
+     *
+     * @return this
+     */
+    public function setLanguage($language, array $options = [])
+    {
+        if (!isset($this->languages[$language])) {
+            $this->languages[$language] = [];
+        }
+
+        $this->languages[$language] = $options;
+
+        return $this;
+    }
+
+    /**
+     * @param string $language
+     *
+     * @return array
+     */
+    public function getLanguageOptions($language)
+    {
+        if (isset($this->languages[$language])) {
+            return $this->languages[$language];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param string $language
+     * @param string key
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getLanguageOption($language, $key, $default = null)
+    {
+        if (isset($this->languages[$language][$key])) {
+            return $this->languages[$language][$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param string $language
+     * @param string key
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setLanguageOption($language, $key, $value)
+    {
+        if (isset($this->languages[$language])) {
+            $this->languages[$language] = [];
+        }
+
+        $this->languages[$language][$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return array
      */
     public function getOptions()
     {
-        return $this->options;
+        return $this->options ?: $this->options = [];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasOption($key)
+    {
+        return isset($this->options[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getOption($key, $default = null)
+    {
+        if (isset($this->options[$key])) {
+            return $this->options[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setOption($key, $value)
+    {
+        $this->options[$key] = $value;
+        return $this;
     }
 
     /**

@@ -12,7 +12,6 @@ use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\Type\StringEnumType;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 final class Field implements ToArray, \JsonSerializable
 {
@@ -84,50 +83,50 @@ final class Field implements ToArray, \JsonSerializable
     /** @var bool */
     private $overridable = false;
 
-    /** @var ParameterBag */
-    private $languageOptions;
+    /** @var array */
+    private $languages = [];
 
     /**
-     * @param string             $name
-     * @param Type               $type
-     * @param FieldRule          $rule
-     * @param bool               $required
-     * @param null|int           $minLength
-     * @param null|int           $maxLength
-     * @param null|string        $pattern
-     * @param null|string        $format
-     * @param null|int           $min
-     * @param null|int           $max
-     * @param int                $precision
-     * @param int                $scale
-     * @param null|mixed         $default
-     * @param bool               $useTypeDefault
-     * @param null|string        $className
-     * @param null|array         $anyOfClassNames
-     * @param bool               $overridable
-     * @param null|ParameterBag  $languageOptions
+     * @param string      $name
+     * @param Type        $type
+     * @param FieldRule   $rule
+     * @param bool        $required
+     * @param null|int    $minLength
+     * @param null|int    $maxLength
+     * @param null|string $pattern
+     * @param null|string $format
+     * @param null|int    $min
+     * @param null|int    $max
+     * @param int         $precision
+     * @param int         $scale
+     * @param null|mixed  $default
+     * @param bool        $useTypeDefault
+     * @param null|string $className
+     * @param null|array  $anyOfClassNames
+     * @param bool        $overridable
+     * @param array       $languages
      *
      * @throw \InvalidArgumentException
      */
     public function __construct(
         $name,
         Type $type,
-        FieldRule $rule = null,
-        $required = false,
-        $minLength = null,
-        $maxLength = null,
-        $pattern = null,
-        $format = null,
-        $min = null,
-        $max = null,
-        $precision = 10,
-        $scale = 2,
-        $default = null,
-        $useTypeDefault = true,
-        $className = null,
+        FieldRule $rule        = null,
+        $required              = false,
+        $minLength             = null,
+        $maxLength             = null,
+        $pattern               = null,
+        $format                = null,
+        $min                   = null,
+        $max                   = null,
+        $precision             = 10,
+        $scale                 = 2,
+        $default               = null,
+        $useTypeDefault        = true,
+        $className             = null,
         array $anyOfClassNames = null,
-        $overridable = false,
-        ParameterBag $languageOptions = null
+        $overridable           = false,
+        array $languages       = []
     ) {
         if (!$name || strlen($name) > 127 || preg_match(self::VALID_NAME_PATTERN, $name) === false) {
             throw new \InvalidArgumentException(
@@ -166,15 +165,15 @@ final class Field implements ToArray, \JsonSerializable
         }
         */
 
-        $this->name             = $name;
-        $this->type             = $type;
-        $this->required         = $required;
-        $this->default          = $default;
-        $this->useTypeDefault   = $useTypeDefault;
-        $this->className        = $className;
-        $this->anyOfClassNames  = $anyOfClassNames;
-        $this->overridable      = $overridable;
-        $this->languageOptions  = $languageOptions;
+        $this->name            = $name;
+        $this->type            = $type;
+        $this->required        = $required;
+        $this->default         = $default;
+        $this->useTypeDefault  = $useTypeDefault;
+        $this->className       = $className;
+        $this->anyOfClassNames = $anyOfClassNames;
+        $this->overridable     = $overridable;
+        $this->languages       = $languages;
 
         $this->applyFieldRule($rule);
         $this->applyStringOptions($minLength, $maxLength, $pattern, $format);
@@ -212,7 +211,7 @@ final class Field implements ToArray, \JsonSerializable
             'class_name' => null,
             'any_of' => null,
             'overridable' => false,
-            'language_options' => new ParameterBag()
+            'language_options' => []
         ];
 
         foreach ($parameters as $property => $value) {
@@ -223,7 +222,7 @@ final class Field implements ToArray, \JsonSerializable
                 $language = substr($property, 0, -8); // remove "_options"
 
                 if (in_array($language, Compiler::LANGUAGES)) {
-                    $args['language_options']->set($language, new ParameterBag($value));
+                    $args['language_options'][$language] = $value;
                 }
             }
         }
@@ -240,7 +239,7 @@ final class Field implements ToArray, \JsonSerializable
         }
 
         if ($args['type'] instanceof StringEnumType) {
-            if ($args['language_options']->get('php') && $className = $args['class_name']) {
+            if (isset($args['language_options']['php']) && $className = $args['class_name']) {
                 /* @todo: handle not existing class */
                 /* if (!class_exists($className)) {
                     throw new \InvalidArgumentException(
@@ -527,19 +526,76 @@ final class Field implements ToArray, \JsonSerializable
     }
 
     /**
+     * @return array
+     */
+    public function getLanguages()
+    {
+        return $this->languages ?: $this->languages = [];
+    }
+
+    /**
+     * @param string $language
+     * @param array  $options
+     *
+     * @return this
+     */
+    public function setLanguage($language, array $options = [])
+    {
+        if (!isset($this->languages[$language])) {
+            $this->languages[$language] = [];
+        }
+
+        $this->languages[$language] = $options;
+
+        return $this;
+    }
+
+    /**
      * @param string $language
      *
-     * @return mixed
+     * @return array
      */
     public function getLanguageOptions($language)
     {
-        if (!$this->languageOptions) {
-            $this->languageOptions = new ParameterBag();
+        if (isset($this->languages[$language])) {
+            return $this->languages[$language];
         }
-        if ($language) {
-            return $this->languageOptions->get($language);
+
+        return [];
+    }
+
+    /**
+     * @param string $language
+     * @param string key
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getLanguageOption($language, $key, $default = null)
+    {
+        if (isset($this->languages[$language][$key])) {
+            return $this->languages[$language][$key];
         }
-        return $this->languageOptions;
+
+        return $default;
+    }
+
+    /**
+     * @param string $language
+     * @param string key
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setLanguageOption($language, $key, $value)
+    {
+        if (isset($this->languages[$language])) {
+            $this->languages[$language] = [];
+        }
+
+        $this->languages[$language][$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -565,7 +621,7 @@ final class Field implements ToArray, \JsonSerializable
             'class_name'         => $this->className,
             'any_of_class_names' => $this->anyOfClassNames,
             'overridable'        => $this->overridable,
-            'language_options'   => $this->languageOptions
+            'language_options'   => $this->languages
         ];
     }
 
