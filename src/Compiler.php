@@ -56,6 +56,24 @@ class Compiler
                 }
             }
         }
+
+        $schemaLatestVersion = [];
+
+        foreach (SchemaStore::getSortedSchemas() as &$schema) {
+            if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
+                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+            }
+
+            if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
+                ->getId()->getVersion() < $schema->getId()->getVersion()) {
+
+                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
+            }
+        }
+
+        foreach ($schemaLatestVersion as &$schema) {
+            $schema->setIsLatestVersion(true);
+        }
     }
 
     /**
@@ -96,6 +114,7 @@ class Compiler
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'id':
+                case 'mixin':
                     break;
 
                 case 'fields':
@@ -123,6 +142,10 @@ class Compiler
 
         $schema = new Schema($data['id'], $fields, $mixins, $options);
 
+        if (isset($data['mixin']) && $data['mixin']) {
+            $schema->setIsMixin(true);
+        }
+
         return $schema;
     }
 
@@ -133,8 +156,6 @@ class Compiler
      */
     public function generate()
     {
-        $schemaLatestVersion = [];
-
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->getOptions()->get('isCompiled')) {
                 $generator = new Generator($schema, $this->language);
@@ -142,26 +163,6 @@ class Compiler
 
                 $schema->getOptions()->set('isCompiled', true);
             }
-
-            switch ($this->language) {
-                case 'json':
-                    if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
-                        $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
-                    }
-
-                    if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
-                        ->getId()->getVersion() < $schema->getId()->getVersion()) {
-
-                        $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
-                    }
-
-                    break;
-            }
-        }
-
-        foreach ($schemaLatestVersion as $schema) {
-            $generator = new Generator($schema, $this->language);
-            $generator->generate($this->output, true);
         }
     }
 }

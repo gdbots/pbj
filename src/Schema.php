@@ -20,6 +20,12 @@ final class Schema implements ToArray, \JsonSerializable
     /** @var ParameterBag */
     private $options = [];
 
+    /** @var bool */
+    private $isMixin = false;
+
+    /** @var bool */
+    private $isLatestVersion = false;
+
     /**
      * @param SchemaId|string $id
      * @param array           $fields
@@ -153,5 +159,43 @@ final class Schema implements ToArray, \JsonSerializable
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @param bool $bool
+     *
+     * @return this
+     */
+    public function setIsLatestVersion($bool)
+    {
+        $this->isLatestVersion = (bool) $bool;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLatestVersion()
+    {
+        return $this->isLatestVersion;
+    }
+
+    /**
+     * @param bool $bool
+     *
+     * @return this
+     */
+    public function setIsMixin($bool)
+    {
+        $this->isMixin = (bool) $bool;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMixin()
+    {
+        return $this->isMixin;
     }
 }

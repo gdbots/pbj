@@ -31,6 +31,12 @@ class Generator
     {
         $this->schema = $schema;
         $this->language = $language;
+
+        switch ($this->language) {
+            case 'json':
+                $this->extension = '.json';
+                break;
+        }
     }
 
     /**
@@ -61,19 +67,29 @@ class Generator
      * Generates and writes files for the given yaml file.
      *
      * @param string $output
-     * @param bool   $isLatest
      * @param bool   $print
      *
      * @return void
      */
-    public function generate($output, $isLatest = false, $print = true)
+    public function generate($output, $print = true)
     {
         $this->renderFile(
             $this->getTemplate(),
-            $this->getTarget($output, $isLatest),
+            $this->getTarget($output),
             $this->getParameters(),
             $print
         );
+
+        if ($this->schema->isLatestVersion() &&
+            $this->getTarget($output) != $this->getTarget($output, true)
+        ) {
+            $this->renderFile(
+                $this->getTemplate(),
+                $this->getTarget($output, true),
+                $this->getParameters(),
+                $print
+            );
+        }
     }
 
     /**
@@ -81,7 +97,7 @@ class Generator
      */
     protected function getTemplate()
     {
-        if ($this->schema->getOptions()->get('mixin') === true) {
+        if ($this->schema->isMixin()) {
             return sprintf('%s/Mixin%s.twig', $this->language, $this->extension);
         }
 
@@ -96,11 +112,16 @@ class Generator
      */
     protected function getTarget($output, $isLatest = false)
     {
-        // todo: generate file name based on language
-        $filename = $this->schema->getClassName();
+        switch ($this->language) {
+            case 'php':
+                $filename = $this->schema->getClassName();
 
-        if ($isLatest) {
-            // todo: rename filename to..
+                break;
+
+            case 'json':
+                $filename = $isLatest ? 'latest' : $this->schema->getId()->getVersion();
+
+                break;
         }
 
         return sprintf('%s/%s/%s%s%s',
