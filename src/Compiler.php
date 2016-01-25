@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbjc\Exception\InvalidLanguage;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser as YamlParser;
@@ -10,18 +11,31 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class Compiler
 {
+    /** @var array */
+    const LANGUAGES = ['php', 'json'];
+
     /** @var string */
-    protected $output = null;
+    protected $language;
+
+    /** @var string */
+    protected $output;
 
     /**
      * @param string $language
      * @param string $output
+     *
+     * @throw InvalidLanguage
      */
-    public function compile($language, $output = null)
+    public function __construct($language, $output = null)
     {
+        $this->language = strtolower($language);
         $this->output = $output;
 
-        $this->loadSchemas()->generate($language);
+        if (!in_array($this->language, self::LANGUAGES)) {
+            throw new InvalidLanguage(sprintf('Compile does not support "%s" language.', $this->language));
+        }
+
+        $this->loadSchemas();
     }
 
     /**
@@ -42,8 +56,6 @@ class Compiler
                 }
             }
         }
-
-        return $this;
     }
 
     /**
@@ -117,23 +129,21 @@ class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param string $language
-     *
      * @return this
      */
-    protected function generate($language)
+    public function generate()
     {
         $schemaLatestVersion = [];
 
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->getOptions()->get('isCompiled')) {
-                $generator = new Generator($schema, $language);
+                $generator = new Generator($schema, $this->language);
                 $generator->generate($this->output);
 
                 $schema->getOptions()->set('isCompiled', true);
             }
 
-            switch ($language) {
+            switch ($this->language) {
                 case 'json':
                     if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
                         $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
@@ -150,7 +160,7 @@ class Compiler
         }
 
         foreach ($schemaLatestVersion as $schema) {
-            $generator = new Generator($schema, $language);
+            $generator = new Generator($schema, $this->language);
             $generator->generate($this->output, true);
         }
     }
