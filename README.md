@@ -38,35 +38,37 @@ In addition, we allow to add language specific options which will be used while 
 #### Schema Field Types
 A schema field can have one of the following types – the table shows the type specified in the `.yml` file, and the options allowed:
 
-| Field Type | Example |
-| -----------| -------------- |
-| BigInt |  |
-| Binary |  |
-| Blob |  |
-| Boolean |  |
-| DateTime |  |
-| Date |  |
-| Decimal |  |
-| Float |  |
-| Identifier |  |
-| Float |  |
-| Int |  |
-| MediumBlob |  |
-| MediumInt |  |
-| MediumText |  |
-| Microtime |  |
-| SignedBigInt |  |
-| SignedInt |  |
-| SignedMediumInt |  |
-| SignedSmallInt |  |
-| SignedTinyInt |  |
-| SmallInt |  |
-| String |  |
-| Text |  |
-| Timestamp |  |
-| TimeUuid |  |
-| TinyInt |  |
-| UuidType |  |
+Field Type | Default| Min | Max | Max Bytes | Notes
+-----------| ------ | --- | --- | --------- | -----
+*BASE* | *null* | *-2147483648* | *2147483647* | *65535* |
+big-int | 0 | | | |
+binary | 0 | | | 255 |
+blob | 0 | | | 255 |
+boolean | false | | | |
+date | | | | |
+date-time | | | | |
+decimal | 0.0 | -1 | INF | |
+float | 0.0 | -1 | INF | |
+geo-point | | | | |
+identifier | | | | 100 |
+float | | | | |
+int | | 0 | 4294967295 | |
+medium-blob | | | | 16777215 |
+medium-int | | 0 | 16777215 | |
+medium-text | | | | 16777215 |
+microtime | | | | | | @see \Gdbots\Common\Microtime::create()
+signed-big-int | BigNumber(0) | | | |
+signed-int | | | | |
+signed-medium-int | | -8388608 | 8388607 | |
+signed-small-int | | -32768 | 32767 | |
+signed-tiny-int | | -128 | 127 | |
+small-int | | 0 | 65535 | |
+string | | | | 255 |
+text | | | | |
+time-uuid | | | | |
+timestamp | time() | | | | @see \Gdbots\Identifiers\TimeUuidIdentifier::generate()
+tiny-int | | 0 | 255 | |
+uuid | | | | | @see \Gdbots\Identifiers\UuidIdentifier::generate()
 
 #### Default Values
 When a schema is parsed, if the encoded schema does not contain a particular singular element, the corresponding field in the parsed object is set to the default value for that field. These defaults are type-specific:
@@ -121,8 +123,6 @@ fields:
     type: <Gdbots\Pbjc\Type\Type>
     rule: <Gdbots\Pbjc\Enum\FieldRule>
     required: <bool>
-    min_length: <int>
-    max_length: <int>
     pattern: <string>
     format: <Gdbots\Pbjc\Enum\Format>
     min: <int>
@@ -176,6 +176,3 @@ SchemaStore::addDir('/your/schemas/path1');
 SchemaStore::addDir('/your/schemas/path2');
 //...
 ```
-
-> **Note:** If no outout folder was provided the compiler will generate a print
-version of each of the schemas files.
