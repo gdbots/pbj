@@ -107,9 +107,10 @@ class Compiler
      */
     protected function createSchema(array $data)
     {
-        $fields  = [];
-        $mixins  = [];
-        $options = new ParameterBag();
+        $fields    = [];
+        $mixins    = [];
+        $languages = new ParameterBag();
+        $options   = new ParameterBag();
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -119,16 +120,22 @@ class Compiler
 
                 case 'fields':
                     foreach ($value as $name => $attributes) {
-                        if (!isset($attributes['type'])) {
-                            continue;
+                        if (isset($attributes['type'])) {
+                            $fields[] = Field::fromArray($name, $attributes);
                         }
-
-                        $fields[] = Field::fromArray($name, $attributes);
                     }
                     break;
 
                 case 'mixins':
                     $mixins = $value;
+                    break;
+
+                case 'php_options':
+                    $languages->set('php', new ParameterBag($value));
+                    break;
+
+                case 'json_options':
+                    $languages->set('json', new ParameterBag($value));
                     break;
 
                 default:
@@ -140,7 +147,7 @@ class Compiler
             }
         }
 
-        $schema = new Schema($data['id'], $fields, $mixins, $options);
+        $schema = new Schema($data['id'], $fields, $mixins, $languages, $options);
 
         if (isset($data['mixin']) && $data['mixin']) {
             $schema->setIsMixin(true);

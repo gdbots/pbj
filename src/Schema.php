@@ -18,6 +18,9 @@ final class Schema implements ToArray, \JsonSerializable
     private $mixins = [];
 
     /** @var ParameterBag */
+    private $languages = [];
+
+    /** @var ParameterBag */
     private $options = [];
 
     /** @var bool */
@@ -30,14 +33,16 @@ final class Schema implements ToArray, \JsonSerializable
      * @param SchemaId|string $id
      * @param array           $fields
      * @param array           $mixins
+     * @param array           $languages
      * @param array           $options
      */
-    public function __construct($id, array $fields = [], array $mixins = [], ParameterBag $options = null)
+    public function __construct($id, array $fields = [], array $mixins = [], ParameterBag $languages = null, ParameterBag $options = null)
     {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
 
-        $this->mixins = $mixins;
-        $this->options = $options;
+        $this->mixins    = $mixins;
+        $this->languages = $languages;
+        $this->options   = $options;
 
         foreach ($fields as $field) {
             $this->addField($field);
@@ -66,11 +71,12 @@ final class Schema implements ToArray, \JsonSerializable
     public function toArray()
     {
         return [
-            'id' => $this->id,
+            'id'         => $this->id,
             'class_name' => $this->getClassName(),
-            'fields' => $this->fields,
-            'mixins' => $this->mixins,
-            'options' => $this->options,
+            'fields'     => $this->fields,
+            'mixins'     => $this->mixins,
+            'languages'  => $this->languages->getIterator(),
+            'options'    => $this->options->getIterator(),
         ];
     }
 
@@ -151,6 +157,14 @@ final class Schema implements ToArray, \JsonSerializable
     public function getMixins()
     {
         return $this->mixins;
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getLanguages()
+    {
+        return $this->languages;
     }
 
     /**
