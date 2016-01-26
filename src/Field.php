@@ -218,6 +218,8 @@ final class Field implements ToArray, \JsonSerializable
             $classProperty = lcfirst(StringUtils::toCamelFromSnake($property));
             if (property_exists(get_called_class(), $classProperty) && $property != 'type') {
               $args[$property] = $value;
+            } elseif ($property == 'any_of' && isset($value['id'])) {
+                $args['any_of'] = (array) $value['id'];
             } else {
                 $language = substr($property, 0, -8); // remove "_options"
 
@@ -231,6 +233,7 @@ final class Field implements ToArray, \JsonSerializable
          * Handle special types:
          */
 
+        // use *_length for string type
         if ($args['type'] instanceof StringType) {
             $args['min_length'] = $args['min'];
             $args['max_length'] = $args['max'];
@@ -238,8 +241,17 @@ final class Field implements ToArray, \JsonSerializable
             $args['max'] = null;
         }
 
-        if ($args['type'] instanceof StringEnumType) {
-            if (isset($args['language_options']['php']) && $className = $args['class_name']) {
+        // generate PHP style default (using class)
+        if ($args['type'] instanceof IntEnumType
+            || $args['type'] instanceof StringEnumType
+        ) {
+            if (isset($args['default'])
+                && isset($args['language_options']['php']['class_name'])
+                && isset($parameters['enumerations']['enumeration'])
+            ) {
+                $className    = $args['language_options']['php']['class_name'];
+                $enumerations = $parameters['enumerations']['enumeration'];
+
                 /* @todo: handle not existing class */
                 /* if (!class_exists($className)) {
                     throw new \InvalidArgumentException(
@@ -255,7 +267,18 @@ final class Field implements ToArray, \JsonSerializable
                     $className = substr($className, 1);
                 }
 
-                $args['default'] = sprintf('\\%s::%s', $className, array_search($args['default'], $parameters['enum']));
+                // search for key by value
+                $key = null;
+                foreach ($enumerations as $enumeration) {
+                    if (strtolower($enumeration['value']) == strtolower($args['default'])) {
+                        $key = $enumeration['key'];
+                        break;
+                    }
+                }
+
+                if ($key) {
+                    $args['language_options']['php']['default'] = sprintf('\\%s::%s()', $className, strtoupper($key));
+                }
             }
         }
 
@@ -483,6 +506,14 @@ final class Field implements ToArray, \JsonSerializable
         }
 
         return $this->default;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseTypeDefault()
+    {
+        return $this->useTypeDefault;
     }
 
     /**

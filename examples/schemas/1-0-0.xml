@@ -18,6 +18,7 @@
     <field name="etag" type="string" pattern="/^[A-Za-z0-9_\-]+$/" min="10" max="100" />
 
     <field name="status_enum" type="string-enum" pattern="/^[A-Za-z0-9_\-]+$/" min="10" max="100">
+      <default>true</default>
       <enumerations>
         <enumeration key="ENALBED" value="true" />
         <enumeration key="DISABLED" value="false" />

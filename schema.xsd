@@ -36,6 +36,7 @@
 
   <xs:complexType name="field">
     <xs:sequence>
+      <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="any_of" type="pbjc:schema-identifiers" minOccurs="0" maxOccurs="1" />
       <xs:element name="enumerations" type="pbjc:field-enumeration" minOccurs="0" maxOccurs="1" />
       <xs:element name="php_options" type="pbjc:field-php-options" minOccurs="0" maxOccurs="1" />
@@ -51,7 +52,6 @@
     <xs:attribute name="rule" type="pbjc:enum-field-rule" use="optional" />
     <xs:attribute name="pattern" type="xs:string" use="optional" />
     <xs:attribute name="format" type="pbjc:enum-format" use="optional" />
-    <xs:attribute name="defualt" type="xs:string" use="optional" />
     <xs:attribute name="use_type_default" type="xs:boolean" default="false" />
     <xs:attribute name="class_name" type="xs:string" use="optional" />
     <xs:attribute name="overridable" type="xs:boolean" default="false" />
