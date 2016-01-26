@@ -3,7 +3,12 @@
   "fields": {
     {% import 'json/fields.json.twig' as fields %}
     {% for field in schema.fields %}
-      {{ attribute(fields, class(field.type), [field]) }}{% if not loop.last %},{% endif %}
+      {% if attribute(fields, class(field.type)) is defined %}
+        {{ attribute(fields, class(field.type), [field]) }}
+      {% else %}
+        {{ fields.BaseType(field) }}
+      {% endif %}
+      {% if not loop.last %},{% endif %}
     {% endfor %}
   }
 }
