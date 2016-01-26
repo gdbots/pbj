@@ -37,6 +37,10 @@ class Generator
                 $this->extension = '.json';
                 break;
         }
+
+        if ($this->schema->isMixin()) {
+            $this->prefix = 'Mixin';
+        }
     }
 
     /**
