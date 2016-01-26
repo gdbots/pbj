@@ -28,13 +28,9 @@ class {{ schema.className }}{{ prefix }} extends AbstractMixin
     public function getFields()
     {
         return [
+          {% import 'php/fields.php.twig' as fields %}
           {% for field in schema.fields %}
-            Fb::create('{{ field.name }}', T\{{ class(field.type) }}::create())
-              {% if field.required %}
-                ->required(),
-              {% endif %}
-              ->build(){% if not loop.last %},{% endif %}
-
+            {{ attribute(fields, class(field.type), [field]) }}{% if not loop.last %},{% endif %}
           {% endfor %}
         ];
     }

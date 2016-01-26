@@ -1,13 +1,9 @@
 {
   "schema_id": "{{ schema.id }}",
   "fields": {
+    {% import 'json/fields.json.twig' as fields %}
     {% for field in schema.fields %}
-      "{{ field.name }}": {
-        "type": "{{ field.type.typeName }}",
-        {% if field.required %}
-          "required": true
-        {% endif %}
-      }{% if not loop.last %},{% endif %}
+      {{ attribute(fields, class(field.type), [field]) }}{% if not loop.last %},{% endif %}
     {% endfor %}
   }
 }

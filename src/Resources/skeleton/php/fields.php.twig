@@ -1,0 +1,43 @@
+{% macro FieldCreate(field) %}
+          Field::create('{{ field.name }}', T\{{ class(field.type) }}::create())
+{% endmacro %}
+
+{% macro FieldAttributes(field) %}
+          {% if field.required %}
+              ->required(),
+          {% endif %}
+{% endmacro %}
+
+{% macro FieldEnd() %}
+              ->build()
+{% endmacro %}
+
+{% macro IdentifierType(field) %}
+    {{ _self.FieldCreate(field) }}
+    {{ _self.FieldAttributes(field) }}
+    {{ _self.FieldEnd() }}
+{% endmacro %}
+
+{% macro StringType(field) %}
+    {{ _self.FieldCreate(field) }}
+    {{ _self.FieldAttributes(field) }}
+    {{ _self.FieldEnd() }}
+{% endmacro %}
+
+{% macro MessageType(field) %}
+    {{ _self.FieldCreate(field) }}
+    {{ _self.FieldAttributes(field) }}
+    {{ _self.FieldEnd() }}
+{% endmacro %}
+
+{% macro StringEnumType(field) %}
+    {{ _self.FieldCreate(field) }}
+    {{ _self.FieldAttributes(field) }}
+    {{ _self.FieldEnd() }}
+{% endmacro %}
+
+{% macro MicrotimeType(field) %}
+    {{ _self.FieldCreate(field) }}
+    {{ _self.FieldAttributes(field) }}
+    {{ _self.FieldEnd() }}
+{% endmacro %}
