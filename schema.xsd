@@ -1,54 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://example.com/schemas/pbjc-schema"
-    xmlns:orm="http://example.com/schemas/pbjc-schema"
+    xmlns:pbjc="gdbots:pbjc:schema-mapping"
+    targetNamespace="gdbots:pbjc:schema-mapping"
     elementFormDefault="qualified">
 
   <xs:annotation>
     <xs:documentation><![CDATA[
-       This is the XML Schema for the object/relational
-       mapping file used by the Pbjc.
-     ]]></xs:documentation>
+      This is the XML Schema for the object/relational
+      mapping file used by the Pbjc.
+    ]]></xs:documentation>
   </xs:annotation>
 
-  <xs:element name="pbjc-mapping">
+  <xs:element name="schema-mapping">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="entity" type="pbjc:schema" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="entity" type="pbjc:entity" minOccurs="0" maxOccurs="unbounded" />
         <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/>
       </xs:sequence>
       <xs:anyAttribute namespace="##other"/>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="schema">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="fields" type="pbjc:fields" minOccurs="0" maxOccurs="1" />
-        <xs:element name="mixins" type="pbjc:schema-ids" minOccurs="0" maxOccurs="1" />
-        <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
-        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
-      </xs:sequence>
-      <xs:attribute name="id" type="xs:boolean" default="false" />
-      <xs:attribute name="mixin" type="xs:boolean" default="false" />
-      <xs:anyAttribute namespace="##other" />
-    </xs:complexType>
-  </xs:element>
-
-  <xs:complexType name="fields">
+  <xs:complexType name="entity">
     <xs:sequence>
-      <xs:element name="field" type="pbjcs:field" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="field" type="pbjc:field" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="mixins" type="pbjc:schema-identifiers" minOccurs="0" maxOccurs="1" />
+      <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
+    <xs:attribute name="id" type="pbjc:schema-identifier" use="required" />
+    <xs:attribute name="mixin" type="xs:boolean" default="false" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
   <xs:complexType name="field">
     <xs:sequence>
-      <xs:element name="any_of" type="pbjc:schema-ids" minOccurs="0" maxOccurs="unbounded" />
-      <xs:element name="php_options" type="pbjc:field-php-options" minOccurs="0" maxOccurs="unbounded" />
-      <xs:element name="enumerations" type="pbjc:field-enumeration" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="any_of" type="pbjc:schema-identifiers" minOccurs="0" maxOccurs="1" />
+      <xs:element name="enumerations" type="pbjc:field-enumeration" minOccurs="0" maxOccurs="1" />
+      <xs:element name="php_options" type="pbjc:field-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required" />
@@ -68,33 +58,34 @@
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:complexType name="schema-identifier-options">
+  <xs:complexType name="schema-identifiers">
     <xs:sequence>
-      <xs:element name="option" type="pbjcs:schema-identifier-option" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="id" type="pbjc:schema-identifier" minOccurs="0" maxOccurs="unbounded" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:complexType name="schema-identifier-option">
-    <xs:attribute name="id" type="pbjcs:schema-identifier" use="required" />
-    <xs:anyAttribute namespace="##other" />
-  </xs:complexType>
-
   <xs:complexType name="schema-php-options">
-    <xs:attribute name="namespace" type="xs:string" use="required" />
+    <xs:sequence>
+      <xs:element name="namespace" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
   <xs:complexType name="field-php-options">
-    <xs:attribute name="class_name" type="xs:string" use="required" />
-    <xs:attribute name="defualt" type="xs:string" use="optional" />
+    <xs:sequence>
+      <xs:element name="class_name" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
   <xs:complexType name="field-enumeration">
     <xs:sequence>
-      <xs:element name="enumeration" type="pbjcs:enumeration" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="enumeration" type="pbjc:enumeration" minOccurs="1" maxOccurs="unbounded" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />
@@ -108,7 +99,7 @@
 
   <xs:simpleType name="schema-identifier">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)(:v?([0-9]+)(-[0-9]+-[0-9]+)?)?)" />
+      <xs:pattern value="([a-z0-9-]+)?:?([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)(:v?([0-9]+)(-[0-9]+-[0-9]+)?)?" />
     </xs:restriction>
   </xs:simpleType>
 

@@ -4,6 +4,7 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\InvalidLanguage;
+use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 
 class Compiler
@@ -39,6 +40,8 @@ class Compiler
      * Reads all schemas from all stored directories.
      *
      * @return this
+     *
+     * @throws \InvalidArgumentException
      */
     protected function loadSchemas()
     {
@@ -46,10 +49,12 @@ class Compiler
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $file) {
-                if ($xmlObject = $this->parseFile($file)) {
-                    $schema = $this->createSchema($xmlObject);
+                if ($xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
+                    if ($xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+                        $schema = $this->createSchema($xmlData);
 
-                    SchemaStore::addSchema($schema->__toString(), $schema, true);
+                        SchemaStore::addSchema($schema->__toString(), $schema, true);
+                    }
                 }
             }
         }
@@ -74,81 +79,37 @@ class Compiler
     }
 
     /**
-     * Parses an XML file.
-     *
-     * @param string $file Path to a file
-     *
-     * @return \SimpleXMLElement
-     *
-     * @throws \InvalidArgumentException When loading of XML file returns error
-     */
-    protected function parseFile($file)
-    {
-        try {
-            return new \SimpleXMLElement(file_get_contents($file));
-        } catch (\Exception $e) {
-            $e->setParsedFile($file);
-
-            throw new \InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
-        }
-    }
-
-    /**
      * Converts XML data into Schema instance.
      *
-     * @param \SimpleXMLElement $xmlObject
+     * @param array $xmlData
      *
      * @return Schema
      */
-    protected function createSchema(\SimpleXMLElement $xmlObject)
+    protected function createSchema(array $xmlData)
     {
         $fields    = [];
         $mixins    = [];
         $languages = [];
 
-        $schemaXmlObject = $xmlObject->schema;
-        $id = $schemaXmlObject->attributes()->id->__toString();
-        $mixin = $schemaXmlObject->attributes()->mixin->__toString() === 'true';
-
-        if (isset($schemaXmlObject->field)) {
-            foreach ($schemaXmlObject->field as $field) {
-                $attributes = [];
-
-                foreach ($field->attributes() as $key => $value) {
-                    $attributes[$key] = $value->__toString();
-                }
-
-                if (isset($field->php_options)) {
-                    $phpOptions = $field->php_options;
-
-                    foreach ($phpOptions->attributes() as $key => $value) {
-                        $attributes['php_options'][$key] = $value->__toString();
-                    }
-                }
-
-                if (isset($attributes['type'])) {
-                    $fields[] = Field::fromArray($attributes['name'], $attributes);
+        if (isset($xmlData['entity']['field'])) {
+            foreach ($xmlData['entity']['field'] as $field) {
+                if (isset($field['type'])) {
+                    $fields[] = Field::fromArray($field['name'], $field);
                 }
             }
         }
 
-        if (isset($schemaXmlObject->mixins)) {
-            foreach ($schemaXmlObject->mixins as $option) {
-                $mixins[] = $option->option->attributes()->id->__toString();
-            }
+        if (isset($xmlData['entity']['mixins']['id'])) {
+            $mixins = (array) $xmlData['entity']['mixins']['id'];
         }
 
-        if (isset($schemaXmlObject->php_options)) {
-            $phpOptions = $schemaXmlObject->php_options;
-
-            foreach ($phpOptions->attributes() as $key => $value) {
-                $languages['php'][$key] = $value->__toString();
-            }
+        if (isset($xmlData['entity']['php_options'])) {
+            $languages['php'] = $xmlData['entity']['php_options'];
         }
 
-        $schema = new Schema($id, $fields, $mixins, $languages);
+        $schema = new Schema($xmlData['entity']['id'], $fields, $mixins, $languages);
 
-        if ($mixin) {
+        if ($xmlData['entity']['mixin']) {
             $schema->setIsMixin(true);
         }
 
