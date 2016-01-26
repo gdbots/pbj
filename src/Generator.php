@@ -64,7 +64,7 @@ class Generator
     }
 
     /**
-     * Generates and writes files for the given yaml file.
+     * Generates and writes files.
      *
      * @param string $output
      * @param bool   $print

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com/schemas/pbjc-schema"
+    xmlns:orm="http://example.com/schemas/pbjc-schema"
+    elementFormDefault="qualified">
+
+  <xs:annotation>
+    <xs:documentation><![CDATA[
+       This is the XML Schema for the object/relational
+       mapping file used by the Pbjc.
+     ]]></xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="pbjc-mapping">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="entity" type="pbjc:schema" minOccurs="0" maxOccurs="unbounded" />
+        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/>
+      </xs:sequence>
+      <xs:anyAttribute namespace="##other"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="schema">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="fields" type="pbjc:fields" minOccurs="0" maxOccurs="1" />
+        <xs:element name="mixins" type="pbjc:schema-ids" minOccurs="0" maxOccurs="1" />
+        <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
+        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:boolean" default="false" />
+      <xs:attribute name="mixin" type="xs:boolean" default="false" />
+      <xs:anyAttribute namespace="##other" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="fields">
+    <xs:sequence>
+      <xs:element name="field" type="pbjcs:field" minOccurs="1" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="field">
+    <xs:sequence>
+      <xs:element name="any_of" type="pbjc:schema-ids" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="php_options" type="pbjc:field-php-options" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="enumerations" type="pbjc:field-enumeration" minOccurs="0" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="pbjc:enum-type-name" use="required" />
+    <xs:attribute name="required" type="xs:boolean" default="false" />
+    <xs:attribute name="min" type="xs:integer" use="optional" />
+    <xs:attribute name="max" type="xs:integer" use="optional" />
+    <xs:attribute name="precision" type="xs:integer" use="optional" />
+    <xs:attribute name="scale" type="xs:integer" use="optional" />
+    <xs:attribute name="rule" type="pbjc:enum-field-rule" use="optional" />
+    <xs:attribute name="pattern" type="xs:string" use="optional" />
+    <xs:attribute name="format" type="pbjc:enum-format" use="optional" />
+    <xs:attribute name="defualt" type="xs:string" use="optional" />
+    <xs:attribute name="use_type_default" type="xs:boolean" default="false" />
+    <xs:attribute name="class_name" type="xs:string" use="optional" />
+    <xs:attribute name="overridable" type="xs:boolean" default="false" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="schema-identifier-options">
+    <xs:sequence>
+      <xs:element name="option" type="pbjcs:schema-identifier-option" minOccurs="1" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="schema-identifier-option">
+    <xs:attribute name="id" type="pbjcs:schema-identifier" use="required" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="schema-php-options">
+    <xs:attribute name="namespace" type="xs:string" use="required" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="field-php-options">
+    <xs:attribute name="class_name" type="xs:string" use="required" />
+    <xs:attribute name="defualt" type="xs:string" use="optional" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="field-enumeration">
+    <xs:sequence>
+      <xs:element name="enumeration" type="pbjcs:enumeration" minOccurs="1" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="enumeration">
+    <xs:attribute name="key" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" use="required" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:simpleType name="schema-identifier">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)(:v?([0-9]+)(-[0-9]+-[0-9]+)?)?)" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="enum-type-name">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+        @See \Gdbots\Common\Enum\TypeNAme.
+      ]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="big-int" />
+      <xs:enumeration value="binary" />
+      <xs:enumeration value="blob" />
+      <xs:enumeration value="boolean" />
+      <xs:enumeration value="date" />
+      <xs:enumeration value="date-time" />
+      <xs:enumeration value="decimal" />
+      <xs:enumeration value="float" />
+      <xs:enumeration value="geo-point" />
+      <xs:enumeration value="identifier" />
+      <xs:enumeration value="int" />
+      <xs:enumeration value="int-enum" />
+      <xs:enumeration value="medium-blob" />
+      <xs:enumeration value="medium-int" />
+      <xs:enumeration value="medium-text" />
+      <xs:enumeration value="message" />
+      <xs:enumeration value="message-ref" />
+      <xs:enumeration value="microtime" />
+      <xs:enumeration value="signed-big-int" />
+      <xs:enumeration value="signed-int" />
+      <xs:enumeration value="signed-medium-int" />
+      <xs:enumeration value="signed-small-int" />
+      <xs:enumeration value="signed-tiny-int" />
+      <xs:enumeration value="small-int" />
+      <xs:enumeration value="string" />
+      <xs:enumeration value="string-enum" />
+      <xs:enumeration value="text" />
+      <xs:enumeration value="time-uuid" />
+      <xs:enumeration value="timestamp" />
+      <xs:enumeration value="tiny-int" />
+      <xs:enumeration value="uuid" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="enum-field-rule">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+        @See \Gdbots\Common\Enum\FieldRule.
+      ]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1" />
+      <xs:maxInclusive value="4" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="enum-format">
+    <xs:annotation>
+      <xs:documentation><![CDATA[
+        @See \Gdbots\Common\Enum\Format.
+      ]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="unknown" />
+      <xs:enumeration value="date" />
+      <xs:enumeration value="date-time" />
+      <xs:enumeration value="dated-slug" />
+      <xs:enumeration value="email" />
+      <xs:enumeration value="hashtag" />
+      <xs:enumeration value="hostname" />
+      <xs:enumeration value="ipv4" />
+      <xs:enumeration value="ipv6" />
+      <xs:enumeration value="slug" />
+      <xs:enumeration value="uri" />
+      <xs:enumeration value="url" />
+      <xs:enumeration value="uuid" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

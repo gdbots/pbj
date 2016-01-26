@@ -5,8 +5,6 @@ namespace Gdbots\Pbjc;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\InvalidLanguage;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser as YamlParser;
 
 class Compiler
 {
@@ -45,11 +43,11 @@ class Compiler
     protected function loadSchemas()
     {
         foreach (SchemaStore::getDirs() as $dir) {
-            $files = Finder::create()->files()->in($dir)->name('*.yml');
+            $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $file) {
-                if ($data = $this->parseFile($file)) {
-                    $schema = $this->createSchema($data);
+                if ($xmlObject = $this->parseFile($file)) {
+                    $schema = $this->createSchema($xmlObject);
 
                     SchemaStore::addSchema($schema->__toString(), $schema, true);
                 }
@@ -76,21 +74,19 @@ class Compiler
     }
 
     /**
-     * Parses a YAML file.
+     * Parses an XML file.
      *
      * @param string $file Path to a file
      *
-     * @return array|null
+     * @return \SimpleXMLElement
      *
-     * @throws \InvalidArgumentException When loading of YAML file returns error
+     * @throws \InvalidArgumentException When loading of XML file returns error
      */
     protected function parseFile($file)
     {
-        $yamlParser = new YamlParser();
-
         try {
-            return $yamlParser->parse(file_get_contents($file));
-        } catch (ParseException $e) {
+            return new \SimpleXMLElement(file_get_contents($file));
+        } catch (\Exception $e) {
             $e->setParsedFile($file);
 
             throw new \InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
@@ -98,53 +94,61 @@ class Compiler
     }
 
     /**
-     * Converts YAML data into Schema instance.
+     * Converts XML data into Schema instance.
      *
-     * @param array $data
+     * @param \SimpleXMLElement $xmlObject
      *
      * @return Schema
      */
-    protected function createSchema(array $data)
+    protected function createSchema(\SimpleXMLElement $xmlObject)
     {
         $fields    = [];
         $mixins    = [];
         $languages = [];
-        $options   = [];
 
-        foreach ($data as $key => $value) {
-            switch ($key) {
-                case 'id':
-                case 'mixin':
-                    break;
+        $schemaXmlObject = $xmlObject->schema;
+        $id = $schemaXmlObject->attributes()->id->__toString();
+        $mixin = $schemaXmlObject->attributes()->mixin->__toString() === 'true';
 
-                case 'fields':
-                    foreach ($value as $name => $attributes) {
-                        if (isset($attributes['type'])) {
-                            $fields[] = Field::fromArray($name, $attributes);
-                        }
+        if (isset($schemaXmlObject->field)) {
+            foreach ($schemaXmlObject->field as $field) {
+                $attributes = [];
+
+                foreach ($field->attributes() as $key => $value) {
+                    $attributes[$key] = $value->__toString();
+                }
+
+                if (isset($field->php_options)) {
+                    $phpOptions = $field->php_options;
+
+                    foreach ($phpOptions->attributes() as $key => $value) {
+                        $attributes['php_options'][$key] = $value->__toString();
                     }
-                    break;
+                }
 
-                case 'mixins':
-                    $mixins = $value;
-                    break;
-
-                case 'php_options':
-                    $languages['php'] = $value;
-                    break;
-
-                case 'json_options':
-                    $languages['json'] = $value;
-                    break;
-
-                default:
-                    $options[$key] = $value;
+                if (isset($attributes['type'])) {
+                    $fields[] = Field::fromArray($attributes['name'], $attributes);
+                }
             }
         }
 
-        $schema = new Schema($data['id'], $fields, $mixins, $languages, $options);
+        if (isset($schemaXmlObject->mixins)) {
+            foreach ($schemaXmlObject->mixins as $option) {
+                $mixins[] = $option->option->attributes()->id->__toString();
+            }
+        }
 
-        if (isset($data['mixin']) && $data['mixin']) {
+        if (isset($schemaXmlObject->php_options)) {
+            $phpOptions = $schemaXmlObject->php_options;
+
+            foreach ($phpOptions->attributes() as $key => $value) {
+                $languages['php'][$key] = $value->__toString();
+            }
+        }
+
+        $schema = new Schema($id, $fields, $mixins, $languages);
+
+        if ($mixin) {
             $schema->setIsMixin(true);
         }
 

@@ -112,7 +112,7 @@ class SchemaStore
 
     /**
      * Returns a schema by its id. This is NOT the \Gdbots\Pbjc\Schema object.
-     * It contains more info (from the yaml) about how to build this schema
+     * It contains more info (from the xml) about how to build this schema
      * into multiple languages. the pbj-php is specifically for php
      * (assuming it's already been compiled).
      *

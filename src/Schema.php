@@ -75,7 +75,7 @@ final class Schema implements ToArray, \JsonSerializable
             'fields'     => $this->fields,
             'mixins'     => $this->mixins,
             'languages'  => $this->languages,
-            'options'    => $this->options,
+            'options'    => $this->options
         ];
     }
 

@@ -1,0 +1,30 @@
+<pbjc-mapping xmlns="http://example.com/schemas/pbjc-schema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://example.com/schemas/pbjc-schema ../../schema.xsd">
+
+  <schema id="pbj:gdbots:pbjc:mixin:example:1-0-0" mixin="true">
+    <field name="_id" type="identifier" required="true" overridable="true">
+      <php_options class_name="name" default="function() { return UuidIdentifier::generate(); }" />
+    </field>
+
+    <field name="etag" type="string" pattern="/^[A-Za-z0-9_\-]+$/" min="10" max="100" />
+
+    <field name="status_enum" type="string-enum" pattern="/^[A-Za-z0-9_\-]+$/" min="10" max="100">
+      <enumerations>
+        <enumeration key="ENALBED" value="true" />
+        <enumeration key="DISABLED" value="false" />
+      </enumerations>
+      <php_options class_name="Acme\Enum\Status" />
+    </field>
+
+    <field name="channel_format" type="string" format="slug" />
+    <field name="created_at" type="microtime" required="true" />
+    <field name="updated_at" type="microtime" required="true" />
+
+    <mixins>
+      <option id="gdbots:pbjc:mixin:related:v1" />
+    </mixins>
+
+    <php_options namespace="Acme\Mixin" />
+  </schema>
+</pbjc-mapping>
