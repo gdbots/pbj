@@ -1,0 +1,62 @@
+{%- macro draw_field(field) %}
+  Fb::create('{{ field.name }}', T\{{ class(field.type) }}::create())
+  {% if field.isASingleValue %}
+              ->asASingleValue()
+  {% endif %}
+  {%- if field.isASet %}
+              ->asASet()
+  {% endif %}
+  {%- if field.isAList %}
+              ->asAList()
+  {% endif %}
+  {%- if field.isAMap %}
+              ->asAMap()
+  {% endif %}
+  {%- if field.required %}
+              ->required(),
+  {% endif %}
+  {%- if field.minLength %}
+              ->minLength({{ field.minLength }}),
+  {% endif %}
+  {%- if field.maxLength %}
+              ->maxLength({{ field.maxLength }}),
+  {% endif %}
+  {%- if field.pattern %}
+              ->pattern('{{ field.pattern }}'),
+  {% endif %}
+  {%- if field.format %}
+              ->format(Format::{{ field.format|upper }}()),
+  {% endif %}
+  {%- if field.min %}
+              ->min({{ field.min }}),
+  {% endif %}
+  {%- if field.max %}
+              ->max({{ field.max }}),
+  {% endif %}
+  {%- if field.precision %}
+              ->precision({{ field.precision }}),
+  {% endif %}
+  {%- if field.scale %}
+              ->scale({{ field.scale }}),
+  {% endif %}
+  {%- if field.languageOption('php', 'default') %}
+              ->withDefault({{ field.languageOption('php', 'default')|json_encode }}),
+  {% elseif field.default %}
+              ->withDefault({{ field.default|json_encode }}),
+  {% endif %}
+  {%- if field.useTypeDefault %}
+              ->useTypeDefault(true),
+  {% endif %}
+  {%- if field.languageOption('php', 'class_name') %}
+              ->className('{{ field.languageOption('php', 'class_name') }}'),
+  {% elseif field.className %}
+              ->className('{{ field.className }}'),
+  {% endif %}
+  {%- if field.anyOfClassNames %}
+              ->anyOfClassNames({{ field.anyOfClassNames|json_encode }}),
+  {% endif %}
+  {%- if field.overridable %}
+              ->overridable(true),
+  {% endif %}
+              ->build()
+{%- endmacro %}

@@ -10,7 +10,7 @@ use Gdbots\Pbj\Type as T;
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ schema.className }}{{ prefix }} extends AbstractMixin
+class {{ schema.className }}Mixin extends AbstractMixin
 {% endblock class_definition %}
 {
 {% block class_body %}
@@ -28,15 +28,11 @@ class {{ schema.className }}{{ prefix }} extends AbstractMixin
     public function getFields()
     {
         return [
-          {% import 'php/fields.php.twig' as fields %}
-          {% for field in schema.fields %}
-            {% if attribute(fields, class(field.type)) is defined %}
-              {{ attribute(fields, class(field.type), [field]) }}
-            {% else %}
-              {{ fields.BaseType(field) }}
-            {% endif %}
-            {% if not loop.last %},{% endif %}
-          {% endfor %}
+          {% import 'php/macros.php.twig' as macros %}
+          {%- for field in schema.fields %}
+            {{- macros.draw_field(field) }}{%- if not loop.last %},{% endif %}
+
+          {% endfor -%}
         ];
     }
 {% endblock class_body %}
