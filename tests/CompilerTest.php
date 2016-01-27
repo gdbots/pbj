@@ -8,7 +8,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $compiler = new Compiler();
+        $compiler = new Compiler('php');
         $this->assertInstanceOf('Gdbots\Pbjc\Compiler', $compiler);
     }
 }

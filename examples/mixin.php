@@ -9,7 +9,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Compiler;
 
-SchemaStore::addDir(__DIR__.'/schemas');
+SchemaStore::addDir($commandDir = __DIR__.'/../tests/Fixtures/schemas/pbj/mixin/command');
+SchemaStore::addDir($entityDir = __DIR__.'/../tests/Fixtures/schemas/pbj/mixin/entity');
 
 $compile = new Compiler('php');
 $compile->generate();

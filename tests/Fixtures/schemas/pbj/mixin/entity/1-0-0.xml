@@ -1,0 +1,26 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:gdbots:pbj:mixin:entity:1-0-0" mixin="true">
+    <field name="_id" type="identifier" required="true">
+      <php_options>
+        <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+        <default>
+          <![CDATA[
+            function() {
+              return UuidIdentifier::generate();
+            }
+          ]]>
+        </default>
+      </php_options>
+    </field>
+
+    <field name="etag" type="string" pattern="/^[A-Za-z0-9_\-]+$/" max="100" />
+    <field name="created_at" type="microtime" required="true" />
+    <field name="updated_at" type="microtime" use_type_default="false" />
+
+    <php_options>
+      <namespace>Gdbots\Schemas\Pbj\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>
