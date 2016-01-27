@@ -47,12 +47,19 @@ class Generator
     protected function getTemplates()
     {
         switch ($this->language) {
-            case 'php': return [
-                'MessageInterface.php.twig' => '{className}',
-                'Interface.php.twig'        => '{className}V{major}',
-                'Mixin.php.twig'            => '{className}V{major}Mixin',
-                'Trait.php.twig'            => '{className}V{major}Trait'
-            ];
+            case 'php':
+                return $this->schema->isMixin()
+                    ? [
+                        'MessageInterface.php.twig' => '{className}',
+                        'Interface.php.twig'        => '{className}V{major}',
+                        'Mixin.php.twig'            => '{className}V{major}Mixin',
+                        'Trait.php.twig'            => '{className}V{major}Trait'
+                    ]
+                    : [
+                        'MessageInterface.php.twig' => '{className}',
+                        'AbstractMessage.php.twig'  => '{className}V{major}'
+                    ]
+                ;
         }
 
         throw new \InvalidArgumentException(sprintf('No extension for language "%s"', $this->language));

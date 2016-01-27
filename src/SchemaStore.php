@@ -130,6 +130,22 @@ class SchemaStore
     }
 
     /**
+     * @param string $id
+     *
+     * @return mixed|null
+     */
+    public function getSchemaByCurieWithMajorRev($id)
+    {
+        foreach(self::$schemas as $schema) {
+            if ($schema->getId()->getCurieWithMajorRev() == $id) {
+                return $schema;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+    }
+
+    /**
      * Validate the schema id.
      *
      * @param string $id

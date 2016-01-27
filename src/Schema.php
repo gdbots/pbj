@@ -13,7 +13,7 @@ final class Schema implements ToArray, \JsonSerializable
     /** @var Field[] */
     private $fields = [];
 
-    /** @var array */
+    /** @var Schema[] */
     private $mixins = [];
 
     /** @var array */
@@ -39,12 +39,15 @@ final class Schema implements ToArray, \JsonSerializable
     {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
 
-        $this->mixins    = $mixins;
         $this->languages = $languages;
         $this->options   = $options;
 
         foreach ($fields as $field) {
             $this->addField($field);
+        }
+
+        foreach ($mixins as $mixin) {
+            $this->addMixin($mixin);
         }
     }
 
@@ -151,19 +154,45 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * @return array
+     * @param string $schemaId
+     *
+     * @return bool
+     */
+    public function hasMixin($schemaId)
+    {
+        return isset($this->mixins[$schemaId]);
+    }
+
+    /**
+     * @param string $schemaId
+     */
+    private function addMixin($schemaId)
+    {
+        if (!$this->hasMixin($schemaId)) {
+            $this->mixins[$schemaId] = SchemaStore::getSchemaByCurieWithMajorRev($schemaId);
+        }
+    }
+
+    /**
+     * @param string $schemaId
+     *
+     * @return Schema|null
+     */
+    public function getMixinById($schemaId)
+    {
+        if (!isset($this->mixins[$name])) {
+            return $this->mixins[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Schema[]
      */
     public function getMixins()
     {
         return $this->mixins ?: $this->mixins = [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getLanguages()
-    {
-        return $this->languages ?: $this->languages = [];
     }
 
     /**
@@ -185,16 +214,20 @@ final class Schema implements ToArray, \JsonSerializable
 
     /**
      * @param string $language
+     * @param string key
+     * @param mixed  $value
      *
-     * @return array
+     * @return this
      */
-    public function getLanguageOptions($language)
+    public function setLanguageOption($language, $key, $value)
     {
         if (isset($this->languages[$language])) {
-            return $this->languages[$language];
+            $this->languages[$language] = [];
         }
 
-        return [];
+        $this->languages[$language][$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -215,28 +248,24 @@ final class Schema implements ToArray, \JsonSerializable
 
     /**
      * @param string $language
-     * @param string key
-     * @param mixed  $value
      *
-     * @return this
+     * @return array
      */
-    public function setLanguageOption($language, $key, $value)
+    public function getLanguageOptions($language)
     {
         if (isset($this->languages[$language])) {
-            $this->languages[$language] = [];
+            return $this->languages[$language];
         }
 
-        $this->languages[$language][$key] = $value;
-
-        return $this;
+        return [];
     }
 
     /**
      * @return array
      */
-    public function getOptions()
+    public function getLanguages()
     {
-        return $this->options ?: $this->options = [];
+        return $this->languages ?: $this->languages = [];
     }
 
     /**
@@ -247,6 +276,18 @@ final class Schema implements ToArray, \JsonSerializable
     public function hasOption($key)
     {
         return isset($this->options[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setOption($key, $value)
+    {
+        $this->options[$key] = $value;
+        return $this;
     }
 
     /**
@@ -265,15 +306,11 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return this
+     * @return array
      */
-    public function setOption($key, $value)
+    public function getOptions()
     {
-        $this->options[$key] = $value;
-        return $this;
+        return $this->options ?: $this->options = [];
     }
 
     /**
