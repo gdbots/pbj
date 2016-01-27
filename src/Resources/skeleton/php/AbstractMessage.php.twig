@@ -44,7 +44,7 @@ class {{ schema.className }}V{{ schema.id.version.major }} extends AbstractMessa
               {% endfor -%}
             ], [
               {% for mixin in schema.mixins %}
-                {{ mixin.className }}V{{ mixin.id.version.major }}::create(){%- if not loop.last %},{% endif %}
+                {{ mixin.className }}V{{ mixin.id.version.major }}Mixin::create(){%- if not loop.last %},{% endif %}
               {% endfor %}
             ]
         );
