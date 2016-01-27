@@ -11,8 +11,5 @@ use Gdbots\Pbjc\Compiler;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
-$jsonCompile = new Compiler('json');
-$jsonCompile->generate();
-
-$phpCompile = new Compiler('php');
-$phpCompile->generate();
+$compile = new Compiler('php');
+$compile->generate();

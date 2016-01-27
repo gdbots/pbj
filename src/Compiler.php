@@ -10,7 +10,7 @@ use Symfony\Component\Finder\Finder;
 class Compiler
 {
     /** @var array */
-    const LANGUAGES = ['php', 'json'];
+    const LANGUAGES = ['php'];
 
     /** @var string */
     protected $language;
