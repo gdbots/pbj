@@ -126,7 +126,7 @@ class Compiler
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->getOption('isCompiled')) {
                 $generator = new Generator($schema, $this->language);
-                $generator->generate($this->output);
+                $generator->generate($this->output, !$this->output);
 
                 $schema->setOption('isCompiled', true);
             }

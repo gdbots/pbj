@@ -277,7 +277,7 @@ final class Field implements ToArray, \JsonSerializable
                 }
 
                 if ($key) {
-                    $args['language_options']['php']['default'] = sprintf('\\%s::%s()', $className, strtoupper($key));
+                    $args['language_options']['php']['default'] = sprintf('%s::%s()', substr($className, strrpos($className, '\\')+1), strtoupper($key));
                 }
             }
         }

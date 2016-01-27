@@ -96,16 +96,16 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * Returns the major version qualified class name. This should be used later to
+     * Returns the qualified (base) class name. This should be used later to
      * generate a PHP class name.
      *
-     * e.g. "MessageV1"
+     * e.g. "Message"
      *
      * @return string
      */
     public function getClassName()
     {
-        return sprintf('%sV%d', StringUtils::toCamelFromSlug($this->id->getMessage()), $this->id->getVersion()->getMajor());
+        return StringUtils::toCamelFromSlug($this->id->getMessage());
     }
 
     /**

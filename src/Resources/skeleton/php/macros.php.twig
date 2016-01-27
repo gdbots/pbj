@@ -40,7 +40,7 @@
               ->scale({{ field.scale }}),
   {% endif %}
   {%- if field.languageOption('php', 'default') %}
-              ->withDefault({{ field.languageOption('php', 'default')|json_encode }}),
+              ->withDefault({{ field.languageOption('php', 'default') }}),
   {% elseif field.default %}
               ->withDefault({{ field.default|json_encode }}),
   {% endif %}

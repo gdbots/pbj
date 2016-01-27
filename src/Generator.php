@@ -14,12 +14,6 @@ class Generator
     /** @var string */
     protected $language = 'php';
 
-    /** @var string */
-    protected $extension = '.php';
-
-    /** @var string */
-    protected $prefix = '';
-
     /** @var Schema */
     protected $schema;
 
@@ -31,40 +25,37 @@ class Generator
     {
         $this->schema = $schema;
         $this->language = $language;
+    }
 
+    /**
+     * Gets the extension to use when writing files to disk.
+     *
+     * @return string
+     */
+    public function getExtension()
+    {
         switch ($this->language) {
-            case 'json':
-                $this->extension = '.json';
-                break;
+            case 'php': return '.php';
         }
 
-        if ($this->schema->isMixin()) {
-            $this->prefix = 'Mixin';
-        }
+        throw new \InvalidArgumentException(sprintf('No extension for language "%s"', $this->language));
     }
 
     /**
-     * Sets the extension to use when writing files to disk.
-     *
-     * @param string $extension
-     *
-     * @return void
+     * @return array
      */
-    public function setExtension($extension)
+    protected function getTemplates()
     {
-        $this->extension = $extension;
-    }
+        switch ($this->language) {
+            case 'php': return [
+                'MessageInterface.php.twig' => '{className}',
+                'Interface.php.twig'        => '{className}V{major}',
+                'Mixin.php.twig'            => '{className}V{major}Mixin',
+                'Trait.php.twig'            => '{className}V{major}Trait'
+            ];
+        }
 
-    /**
-     * Sets a file prefix.
-     *
-     * @param string $prefix
-     *
-     * @return void
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
+        throw new \InvalidArgumentException(sprintf('No extension for language "%s"', $this->language));
     }
 
     /**
@@ -77,63 +68,53 @@ class Generator
      */
     public function generate($output, $print = true)
     {
-        $this->renderFile(
-            $this->getTemplate(),
-            $this->getTarget($output),
-            $this->getParameters(),
-            $print
-        );
-
-        if ($this->schema->isLatestVersion() &&
-            $this->getTarget($output) != $this->getTarget($output, true)
-        ) {
+        foreach ($this->getTemplates() as $template => $filename) {
             $this->renderFile(
-                $this->getTemplate(),
-                $this->getTarget($output, true),
+                $template,
+                $this->getTarget($output, $filename),
                 $this->getParameters(),
                 $print
             );
         }
-    }
 
-    /**
-     * @return string
-     */
-    protected function getTemplate()
-    {
-        if ($this->schema->isMixin()) {
-            return sprintf('%s/Mixin%s.twig', $this->language, $this->extension);
+        if ($this->schema->isLatestVersion()) {
+            foreach ($this->getTemplates() as $template => $filename) {
+                if ($this->getTarget($output, $filename) != $this->getTarget($output, $filename, true)) {
+                    $this->renderFile(
+                        $template,
+                        $this->getTarget($output, $name, true),
+                        $this->getParameters(),
+                        $print
+                    );
+                }
+            }
         }
-
-        throw new \Exception('Missing schema template');
     }
 
     /**
      * @param string $output
+     * @param string $filename
      * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($output, $isLatest = false)
+    protected function getTarget($output, $filename, $isLatest = false)
     {
-        switch ($this->language) {
-            case 'php':
-                $filename = $this->schema->getClassName();
+        $filename = str_replace([
+            '{className}',
+            '{version}',
+            '{major}',
+        ], [
+            $this->schema->getClassName(),
+            $this->schema->getId()->getVersion()->__toString(),
+            $this->schema->getId()->getVersion()->getMajor(),
+        ], $filename);
 
-                break;
-
-            case 'json':
-                $filename = $isLatest ? 'latest' : $this->schema->getId()->getVersion();
-
-                break;
-        }
-
-        return sprintf('%s/%s/%s%s%s',
+        return sprintf('%s/%s/%s%s',
             $output,
             str_replace(':', '/', $this->schema->getId()->getCurie()),
             $filename,
-            $this->prefix,
-            $this->extension
+            $this->getExtension()
         );
     }
 
@@ -143,8 +124,7 @@ class Generator
     protected function getParameters()
     {
         return [
-            'schema' => $this->schema,
-            'prefix' => $this->prefix
+            'schema' => $this->schema
         ];
     }
 
@@ -190,6 +170,8 @@ class Generator
      */
     protected function renderFile($template, $target, $parameters, $print = false)
     {
+        $template = sprintf('%s/%s', $this->language, $template);
+
         if ($print) {
             var_dump('<pre>', $target, str_replace('<?php', '-?php', $this->render($template, $parameters)), '</pre>');
             return;

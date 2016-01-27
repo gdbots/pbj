@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ schema.languages.php.namespace }};
+
+{% block use_statements %}
+use Gdbots\Pbj\Message;
+{% endblock use_statements %}
+
+{% block class_definition %}
+interface {{ schema.className }} extends Message
+{% endblock class_definition %}
+{
+{% block class_body %}
+{% endblock class_body %}
+}
