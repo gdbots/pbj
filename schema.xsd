@@ -25,11 +25,11 @@
   <xs:complexType name="entity">
     <xs:sequence>
       <xs:element name="field" type="pbjc:field" minOccurs="1" maxOccurs="unbounded" />
-      <xs:element name="mixins" type="pbjc:schema-identifiers" minOccurs="0" maxOccurs="1" />
+      <xs:element name="mixins" type="pbjc:schema-curie-major-ids" minOccurs="0" maxOccurs="1" />
       <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
-    <xs:attribute name="id" type="pbjc:schema-identifier" use="required" />
+    <xs:attribute name="id" type="pbjc:schema-identifier-regex" use="required" />
     <xs:attribute name="mixin" type="xs:boolean" default="false" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
@@ -37,7 +37,7 @@
   <xs:complexType name="field">
     <xs:sequence>
       <xs:element name="default" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="any_of" type="pbjc:schema-identifiers" minOccurs="0" maxOccurs="1" />
+      <xs:element name="any_of" type="pbjc:schema-curie-ids" minOccurs="0" maxOccurs="1" />
       <xs:element name="enumerations" type="pbjc:field-enumeration" minOccurs="0" maxOccurs="1" />
       <xs:element name="php_options" type="pbjc:field-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
@@ -57,9 +57,17 @@
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:complexType name="schema-identifiers">
+  <xs:complexType name="schema-curie-major-ids">
     <xs:sequence>
-      <xs:element name="id" type="pbjc:schema-identifier" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="id" type="pbjc:schema-curie-major-regex" minOccurs="0" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="schema-curie-ids">
+    <xs:sequence>
+      <xs:element name="id" type="pbjc:schema-curie-regex" minOccurs="0" maxOccurs="unbounded" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />
@@ -96,7 +104,19 @@
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:simpleType name="schema-identifier">
+  <xs:simpleType name="schema-curie-regex">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([a-z0-9-]+)?:?([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="schema-curie-major-regex">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([a-z0-9-]+)?:?([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)(:v?([0-9]+)(-[0-9]+-[0-9]+)?)?" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="schema-identifier-regex">
     <xs:restriction base="xs:string">
       <xs:pattern value="([a-z0-9-]+)?:?([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)(:v?([0-9]+)(-[0-9]+-[0-9]+)?)?" />
     </xs:restriction>
