@@ -53,7 +53,6 @@
     <xs:attribute name="pattern" type="xs:string" use="optional" />
     <xs:attribute name="format" type="pbjc:enum-format" use="optional" />
     <xs:attribute name="use_type_default" type="xs:boolean" default="false" />
-    <xs:attribute name="class_name" type="xs:string" use="optional" />
     <xs:attribute name="overridable" type="xs:boolean" default="false" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
