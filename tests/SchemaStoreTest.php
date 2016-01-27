@@ -54,8 +54,8 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDir()
     {
-        SchemaStore::addDir(__DIR__.'/Fixtures/schemas/pbj/mixin/command');
-        SchemaStore::addDir(__DIR__.'/Fixtures/schemas/pbj/mixin/entity');
+        SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbj');
+        SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx');
 
         $this->assertCount(2, SchemaStore::getDirs());
     }
