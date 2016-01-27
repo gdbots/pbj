@@ -24,13 +24,21 @@
 
   <xs:complexType name="entity">
     <xs:sequence>
-      <xs:element name="field" type="pbjc:field" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="fields" type="pbjc:fields" minOccurs="0" maxOccurs="1" />
       <xs:element name="mixins" type="pbjc:schema-curie-major-ids" minOccurs="0" maxOccurs="1" />
       <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:attribute name="id" type="pbjc:schema-identifier-regex" use="required" />
     <xs:attribute name="mixin" type="xs:boolean" default="false" />
+    <xs:anyAttribute namespace="##other" />
+  </xs:complexType>
+
+  <xs:complexType name="fields">
+    <xs:sequence>
+      <xs:element name="field" type="pbjc:field" minOccurs="0" maxOccurs="unbounded" />
+      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xs:sequence>
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 

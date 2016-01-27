@@ -2,9 +2,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <entity id="pbj:gdbots:pbj:mixin:command:1-0-0" mixin="true">
-    <field name="command_id" type="time-uuid" required="true" />
-    <field name="microtime" type="microtime" required="true" />
-    <field name="correlator" type="message-ref" />
+    <fields>
+      <field name="command_id" type="time-uuid" required="true" />
+      <field name="microtime" type="microtime" required="true" />
+      <field name="correlator" type="message-ref" />
+    </fields>
 
     <php_options>
       <namespace>Gdbots\Schemas\Pbj\Command</namespace>

@@ -91,8 +91,8 @@ class Compiler
         $mixins    = [];
         $languages = [];
 
-        if (isset($xmlData['entity']['field'])) {
-            foreach ($xmlData['entity']['field'] as $field) {
+        if (isset($xmlData['entity']['fields']['field'])) {
+            foreach ($xmlData['entity']['fields']['field'] as $field) {
                 if (isset($field['type'])) {
                     $fields[] = Field::fromArray($field['name'], $field);
                 }
