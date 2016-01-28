@@ -142,29 +142,6 @@ final class Field implements ToArray, \JsonSerializable
         $useTypeDefault = (bool) $useTypeDefault;
         $overridable    = (bool) $overridable;
 
-        /*
-         * a message type allows for interfaces to be used
-         * as the "className".  so long as the provided argument
-         * passes the instanceof check it's okay.
-         */
-        /* @todo: handle classes */
-        /*
-        if ($type->getTypeValue() === TypeName::MESSAGE) {
-            if (!class_exists($className) && !interface_exists($className)) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Field [%s] className [%s] must be a class or interface.',
-                        $name,
-                        $className
-                    )
-                );
-            }
-        } elseif ($className === null || class_exists($className)) {
-            // anyOf is only supported on nested messages
-            $anyOfClassNames = null;
-        }
-        */
-
         $this->name            = $name;
         $this->type            = $type;
         $this->required        = $required;
