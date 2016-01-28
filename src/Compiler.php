@@ -109,7 +109,7 @@ class Compiler
 
             $attribute = sprintf('%s_options', $language);
             if (isset($xmlData[$attribute])) {
-                $languages['php'] = array_merge($languages['php'], $xmlData[$attribute]);
+                $languages[$language] = $xmlData[$attribute];
             }
         }
 
@@ -134,11 +134,16 @@ class Compiler
                 }
             }
 
-            if (isset($xmlData['enums']['php_options'])) {
-                $languages['php']['enums'] = $xmlData['enums']['php_options'];
+            foreach (self::LANGUAGES as $language) {
+                $languages[$language]['enums'] = [];
+
+                $attribute = sprintf('%s_options', $language);
+                if (isset($xmlData['enums'][$attribute])) {
+                    $languages[$language]['enums'] = $xmlData['enums'][$attribute];
+                }
             }
 
-            // use php schema namespace as a default
+            // php: use schema namespace as a default
             if (!isset($languages['php']['enums']['namespace']) || !$languages['php']['enums']['namespace']) {
                 $languages['php']['enums'] = [
                     'namespace' => $languages['php']['namespace']
@@ -157,6 +162,8 @@ class Compiler
                             if (is_array($schema)) {
                                 $schema = $this->createSchema($schema);
                             }
+
+                            // php only
                             if ($namespace = $schema->getLanguageOption('php', 'namespace')) {
                                 $anyOfClassNames[] = $namespace;
                             }
@@ -184,9 +191,11 @@ class Compiler
 
                                 $field['enums'] = $options['enums'][$field['enum']['name']];
 
-                                // force same php options
-                                if ($phpEnums = $schema->getLanguageOption('php', 'enums')) {
-                                    $languages['php']['enums'] = $phpEnums;
+                                // inherit the same options
+                                foreach (self::LANGUAGES as $language) {
+                                    if ($phpEnums = $schema->getLanguageOption($language, 'enums')) {
+                                        $languages[$language]['enums'] = $phpEnums;
+                                    }
                                 }
                             }
                         }
