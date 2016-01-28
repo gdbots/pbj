@@ -45,13 +45,14 @@ class Compiler
      */
     protected function loadSchemas()
     {
-        foreach (SchemaStore::getDirs() as $dir) {
+        foreach (SchemaStore::getDirs() as $dir => $isDependent) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $file) {
                 if ($xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
                     if ($xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
                         $schema = $this->createSchema($xmlData);
+                        $schema->setIsDependent($isDependent);
 
                         SchemaStore::addSchema($schema->__toString(), $schema, true);
                     }
@@ -109,7 +110,7 @@ class Compiler
 
         $schema = new Schema($xmlData['entity']['id'], $fields, $mixins, $languages);
 
-        if ($xmlData['entity']['mixin']) {
+        if (isset($xmlData['entity']['mixin']) && $xmlData['entity']['mixin']) {
             $schema->setIsMixin(true);
         }
 
@@ -124,7 +125,7 @@ class Compiler
     public function generate()
     {
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
-            if (!$schema->getOption('isCompiled')) {
+            if (!$schema->isDependent() && !$schema->getOption('isCompiled')) {
                 $generator = new Generator($schema, $this->language);
                 $generator->generate($this->output, !$this->output);
 

@@ -36,10 +36,27 @@ class SchemaStore
      * Adds a directory where schemas exist.
      *
      * @param string $dir
+     * @param bool   $isDependent
      */
-    public static function addDir($dir)
+    public static function addDir($dir, $isDependent = false)
     {
-        self::$dirs[$dir] = true;
+        self::$dirs[$dir] = $isDependent;
+    }
+
+    /**
+     * Checks whether the directory is marked as a dependent.
+     *
+     * @param string $dir
+     *
+     * @return bool
+     */
+    public static function isDirDependent($dir)
+    {
+        if (isset(self::$dirs[$dir])) {
+            return self::$dirs[$dir];
+        }
+
+        return false;
     }
 
     /**
@@ -49,8 +66,8 @@ class SchemaStore
      */
     public static function addDirs(array $dirs)
     {
-        foreach ($dirs as $dir) {
-            self::addDir($dir);
+        foreach ($dirs as $dir => $isDependent) {
+            self::addDir($dir, $isDependent);
         }
     }
 
@@ -61,7 +78,7 @@ class SchemaStore
      */
     public static function getDirs()
     {
-        return array_keys(self::$dirs);
+        return self::$dirs;
     }
 
     /**
@@ -134,7 +151,7 @@ class SchemaStore
      *
      * @return mixed|null
      */
-    public function getSchemaByCurieWithMajorRev($id)
+    public static function getSchemaByCurieWithMajorRev($id)
     {
         foreach(self::$schemas as $schema) {
             if ($schema->getId()->getCurieWithMajorRev() == $id) {

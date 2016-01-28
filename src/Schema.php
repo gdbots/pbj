@@ -28,6 +28,9 @@ final class Schema implements ToArray, \JsonSerializable
     /** @var bool */
     private $isLatestVersion = false;
 
+    /** @var bool */
+    private $isDependent = false;
+
     /**
      * @param SchemaId|string $id
      * @param array           $fields
@@ -318,6 +321,25 @@ final class Schema implements ToArray, \JsonSerializable
      *
      * @return this
      */
+    public function setIsMixin($bool)
+    {
+        $this->isMixin = (bool) $bool;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMixin()
+    {
+        return $this->isMixin;
+    }
+
+    /**
+     * @param bool $bool
+     *
+     * @return this
+     */
     public function setIsLatestVersion($bool)
     {
         $this->isLatestVersion = (bool) $bool;
@@ -337,17 +359,17 @@ final class Schema implements ToArray, \JsonSerializable
      *
      * @return this
      */
-    public function setIsMixin($bool)
+    public function setIsDependent($bool)
     {
-        $this->isMixin = (bool) $bool;
+        $this->isDependent = (bool) $bool;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isMixin()
+    public function isDependent()
     {
-        return $this->isMixin;
+        return $this->isDependent;
     }
 }
