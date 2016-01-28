@@ -156,14 +156,16 @@ class Compiler
     /**
      * Generates and writes files for each schema.
      *
+     * @param bool $print
+     *
      * @return this
      */
-    public function generate()
+    public function generate($print = false)
     {
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->isDependent() && !$schema->getOption('isCompiled')) {
                 $generator = new Generator($schema, $this->language);
-                $generator->generate($this->output, !$this->output);
+                $generator->generate($this->output, $print);
 
                 $schema->setOption('isCompiled', true);
             }

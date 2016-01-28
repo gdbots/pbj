@@ -74,7 +74,7 @@ class Generator
      *
      * @return void
      */
-    public function generate($output, $print = true)
+    public function generate($output, $print = false)
     {
         foreach ($this->getTemplates() as $template => $filename) {
             $this->renderFile(
