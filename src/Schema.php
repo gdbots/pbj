@@ -167,12 +167,14 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * @param string $schemaId
+     * @param Schema $schema
      */
-    private function addMixin($schemaId)
+    private function addMixin($schema)
     {
+        $schemaId = $schema->getId()->__toString();
+
         if (!$this->hasMixin($schemaId)) {
-            $this->mixins[$schemaId] = SchemaStore::getSchemaByCurieWithMajorRev($schemaId);
+            $this->mixins[$schemaId] = $schema;
         }
     }
 
@@ -183,8 +185,8 @@ final class Schema implements ToArray, \JsonSerializable
      */
     public function getMixinById($schemaId)
     {
-        if (!isset($this->mixins[$name])) {
-            return $this->mixins[$name];
+        if (!isset($this->mixins[$schemaId])) {
+            return $this->mixins[$schemaId];
         }
 
         return null;

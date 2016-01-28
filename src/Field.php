@@ -195,8 +195,8 @@ final class Field implements ToArray, \JsonSerializable
             $classProperty = lcfirst(StringUtils::toCamelFromSnake($property));
             if (property_exists(get_called_class(), $classProperty) && $property != 'type') {
               $args[$property] = $value;
-            } elseif ($property == 'any_of' && isset($value['id'])) {
-                $args['any_of'] = (array) $value['id'];
+            } elseif ($property == 'any_of') {
+                $args['any_of'] = (array) $value;
             } else {
                 $language = substr($property, 0, -8); // remove "_options"
 

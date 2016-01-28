@@ -85,13 +85,13 @@ class SchemaStore
      * Adds a schema. An exception will be thorwn when attempting to load
      * the same id multi times.
      *
-     * @param string $id
-     * @param Schema $schema
-     * @param bool   $ignoreDuplication
+     * @param string       $id
+     * @param array|Schema $schema
+     * @param bool         $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate schema id's
      */
-    public static function addSchema($id, Schema $schema, $ignoreDuplication = false)
+    public static function addSchema($id, $schema, $ignoreDuplication = false)
     {
         if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
@@ -126,7 +126,6 @@ class SchemaStore
         return $schemas;
     }
 
-
     /**
      * Returns a schema by its id. This is NOT the \Gdbots\Pbjc\Schema object.
      * It contains more info (from the xml) about how to build this schema
@@ -135,7 +134,7 @@ class SchemaStore
      *
      * @param string $id
      *
-     * @return mixed|null
+     * @return array|\Gdbots\Pbjc\Schema|null
      */
     public static function getSchemaById($id)
     {
@@ -149,12 +148,42 @@ class SchemaStore
     /**
      * @param string $id
      *
-     * @return mixed|null
+     * @return array|\Gdbots\Pbjc\Schema|null
      */
     public static function getSchemaByCurieWithMajorRev($id)
     {
         foreach(self::$schemas as $schema) {
-            if ($schema->getId()->getCurieWithMajorRev() == $id) {
+            $schemaId = null;
+            if (is_array($schema)) {
+                $schemaId = SchemaId::fromString($schema['id'])->getCurieWithMajorRev();
+            }
+            if ($schema instanceof Schema) {
+                $schemaId = $schema->getId()->getCurieWithMajorRev();
+            }
+            if ($schemaId == $id) {
+                return $schema;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return array|\Gdbots\Pbjc\Schema|null
+     */
+    public static function getSchemaByCurie($id)
+    {
+        foreach(self::$schemas as $schema) {
+            $schemaId = null;
+            if (is_array($schema)) {
+                $schemaId = SchemaId::fromString($schema['id'])->getCurie();
+            }
+            if ($schema instanceof Schema) {
+                $schemaId = $schema->getId()->getCurie();
+            }
+            if ($schemaId == $id) {
                 return $schema;
             }
         }
