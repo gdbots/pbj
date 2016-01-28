@@ -102,6 +102,7 @@ class SchemaStore
         }
 
         self::$schemas[$id] = $schema;
+        ksort(self::$schemas);
     }
 
     /**
@@ -112,18 +113,6 @@ class SchemaStore
     public static function getSchemas()
     {
         return self::$schemas;
-    }
-
-    /**
-     * Returns an array of sorted schemas.
-     *
-     * @return array
-     */
-    public static function getSortedSchemas()
-    {
-        $schemas = self::$schemas;
-        ksort($schemas);
-        return $schemas;
     }
 
     /**
