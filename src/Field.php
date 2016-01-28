@@ -63,16 +63,16 @@ final class Field implements ToArray, \JsonSerializable
     private $max;
 
     /** @var int */
-    private $precision = 10;
+    private $precision;
 
     /** @var int */
-    private $scale = 2;
+    private $scale;
 
     /** @var mixed */
     private $default;
 
     /** @var bool */
-    private $useTypeDefault = true;
+    private $useTypeDefault = false;
 
     /** @var string */
     private $className;
@@ -119,10 +119,10 @@ final class Field implements ToArray, \JsonSerializable
         $format                = null,
         $min                   = null,
         $max                   = null,
-        $precision             = 10,
-        $scale                 = 2,
+        $precision             = null,
+        $scale                 = null,
         $default               = null,
-        $useTypeDefault        = true,
+        $useTypeDefault        = false,
         $className             = null,
         array $anyOfClassNames = null,
         $overridable           = false,
@@ -181,10 +181,10 @@ final class Field implements ToArray, \JsonSerializable
             'format' => null,
             'min' => null,
             'max' => null,
-            'precision' => 10,
-            'scale' => 2,
+            'precision' => null,
+            'scale' => null,
             'default' => null,
-            'use_type_default' => true,
+            'use_type_default' => false,
             'class_name' => null,
             'any_of' => null,
             'overridable' => false,
@@ -304,7 +304,7 @@ final class Field implements ToArray, \JsonSerializable
         if (null !== $format && in_array($format, Format::values())) {
             $this->format = Format::create($format);
         } else {
-            $this->format = Format::UNKNOWN();
+            //$this->format = Format::UNKNOWN();
         }
     }
 
@@ -329,7 +329,7 @@ final class Field implements ToArray, \JsonSerializable
             }
         }
 
-        $this->precision = NumberUtils::bound((int) $precision, 1, 65);
+        $this->precision = NumberUtils::bound((int) $precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
         $this->scale = NumberUtils::bound((int) $scale, 0, $this->precision);
     }
 
@@ -410,9 +410,6 @@ final class Field implements ToArray, \JsonSerializable
      */
     public function getMaxLength()
     {
-        if (null === $this->maxLength) {
-            return $this->type->getMaxBytes();
-        }
         return $this->maxLength;
     }
 
@@ -437,9 +434,6 @@ final class Field implements ToArray, \JsonSerializable
      */
     public function getMin()
     {
-        if (null === $this->min) {
-            return $this->type->getMin();
-        }
         return $this->min;
     }
 
@@ -448,9 +442,6 @@ final class Field implements ToArray, \JsonSerializable
      */
     public function getMax()
     {
-        if (null === $this->max) {
-            return $this->type->getMax();
-        }
         return $this->max;
     }
 
