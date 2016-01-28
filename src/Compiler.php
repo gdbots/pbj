@@ -190,13 +190,31 @@ class Compiler
                                 }
 
                                 $field['enums'] = $options['enums'][$field['enum']['name']];
+                            }
+                        }
 
-                                // inherit the same options
-                                foreach (self::LANGUAGES as $language) {
-                                    if ($phpEnums = $schema->getLanguageOption($language, 'enums')) {
-                                        $languages[$language]['enums'] = $phpEnums;
-                                    }
+                        // inherit the same options
+                        foreach (self::LANGUAGES as $language) {
+                            if (!$enums = $schema->getLanguageOption($language, 'enums')) {
+                                $enums = $languages[$language]['enums'];
+                            }
+
+                            $languages[$language]['enums'] = $enums;
+
+                            // php only
+                            if ($language == 'php') {
+                                if (substr($enums['namespace'], 0, 1) == '\\') {
+                                    $enums['namespace'] = substr($enums['namespace'], 1);
                                 }
+
+                                $field['php_options']['class_name'] =
+                                    sprintf('%s\%s%sV%d',
+                                        $enums['namespace'],
+                                        $schema->getClassName(),
+                                        StringUtils::toCamelFromSlug($field['enum']['name']),
+                                        $schema->getId()->getVersion()->getMajor()
+                                    )
+                                ;
                             }
                         }
 

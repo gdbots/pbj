@@ -219,6 +219,31 @@ final class Field implements ToArray, \JsonSerializable
             $args['max'] = null;
         }
 
+        if ($args['type'] instanceof IntEnumType || $args['type'] instanceof StringEnumType) {
+
+            // php: create default value and set the Enum class name
+            if (isset($args['default'])
+                && isset($args['language_options']['php']['class_name'])
+                && isset($args['options']['enums'])
+            ) {
+                $className    = $args['language_options']['php']['class_name'];
+                $enumerations = $args['options']['enums'];
+
+                // search for key by value
+                $found = null;
+                foreach ($enumerations as $key => $value) {
+                    if (strtolower($value) == strtolower($args['default'])) {
+                        $found = $key;
+                        break;
+                    }
+                }
+
+                if ($found) {
+                    $args['language_options']['php']['default'] = sprintf('%s::%s', substr($className, strrpos($className, '\\')+1), strtoupper($found));
+                }
+            }
+        }
+
         $class = new \ReflectionClass(get_called_class());
         return $class->newInstanceArgs(array_values($args));
     }
