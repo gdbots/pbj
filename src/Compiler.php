@@ -164,7 +164,8 @@ class Compiler
     {
         foreach (SchemaStore::getSortedSchemas() as &$schema) {
             if (!$schema->isDependent() && !$schema->getOption('isCompiled')) {
-                $generator = new Generator($schema, $this->language);
+                $generatorClassName = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
+                $generator = new $generatorClassName($schema);
                 $generator->generate($this->output, $print);
 
                 $schema->setOption('isCompiled', true);

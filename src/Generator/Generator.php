@@ -1,45 +1,33 @@
 <?php
 
-namespace Gdbots\Pbjc;
+namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
+use Gdbots\Pbjc\Schema;
 
-class Generator
+abstract class Generator
 {
     /**
      * The directory to look for templates.
      */
-    const SKELETON_DIR = __DIR__.'/Resources/skeleton/';
+    const SKELETON_DIR = __DIR__.'/../Resources/skeleton/';
 
     /** @var string */
-    protected $language = 'php';
+    protected $language;
+
+    /** @var string */
+    protected $extension;
 
     /** @var Schema */
     protected $schema;
 
     /**
      * @param Schema $schema
-     * @param string $language
      */
-    public function __construct(Schema $schema, $language = 'php')
+    public function __construct(Schema $schema)
     {
         $this->schema = $schema;
-        $this->language = $language;
-    }
-
-    /**
-     * Gets the extension to use when writing files to disk.
-     *
-     * @return string
-     */
-    public function getExtension()
-    {
-        switch ($this->language) {
-            case 'php': return '.php';
-        }
-
-        throw new \InvalidArgumentException(sprintf('No extension for language "%s"', $this->language));
     }
 
     /**
@@ -47,23 +35,7 @@ class Generator
      */
     protected function getTemplates()
     {
-        switch ($this->language) {
-            case 'php':
-                return $this->schema->isMixin()
-                    ? [
-                        'MessageInterface.php.twig' => '{className}',
-                        'Interface.php.twig'        => '{className}V{major}',
-                        'Mixin.php.twig'            => '{className}V{major}Mixin',
-                        'Trait.php.twig'            => '{className}V{major}Trait'
-                    ]
-                    : [
-                        'MessageInterface.php.twig' => '{className}',
-                        'AbstractMessage.php.twig'  => '{className}V{major}'
-                    ]
-                ;
-        }
-
-        throw new \InvalidArgumentException(sprintf('No extension for language "%s"', $this->language));
+        throw new \InvalidArgumentException('No yet implemented');
     }
 
     /**
@@ -90,7 +62,7 @@ class Generator
                 if ($this->getTarget($output, $filename) != $this->getTarget($output, $filename, true)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($output, $name, true),
+                        $this->getTarget($output, $name, null, true),
                         $this->getParameters(),
                         $print
                     );
@@ -102,11 +74,12 @@ class Generator
     /**
      * @param string $output
      * @param string $filename
+     * @param string $directory
      * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($output, $filename, $isLatest = false)
+    protected function getTarget($output, $filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{className}',
@@ -118,21 +91,19 @@ class Generator
             $this->schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
-        $directory = sprintf('%s/%s/%s',
-            StringUtils::toCamelFromSlug($this->schema->getId()->getVendor()),
-            StringUtils::toCamelFromSlug($this->schema->getId()->getPackage()),
-            StringUtils::toCamelFromSlug($this->schema->getId()->getCategory())
-        );
-
-        if ($this->language == 'php') {
-            $directory = str_replace('\\', '/', $this->schema->getLanguageOption('php', 'namespace'));
+        if (!$directory) {
+            $directory = sprintf('%s/%s/%s',
+                StringUtils::toCamelFromSlug($this->schema->getId()->getVendor()),
+                StringUtils::toCamelFromSlug($this->schema->getId()->getPackage()),
+                StringUtils::toCamelFromSlug($this->schema->getId()->getCategory())
+            );
         }
 
         return sprintf('%s/%s/%s%s',
             $output,
             $directory,
             $filename,
-            $this->getExtension()
+            $this->extension
         );
     }
 
@@ -191,8 +162,7 @@ class Generator
         $template = sprintf('%s/%s', $this->language, $template);
 
         if ($print) {
-            var_dump('<pre>', $target, str_replace('<?php', '-?php', $this->render($template, $parameters)), '</pre>');
-            return;
+            return $this->printFile($template, $target, $parameters);
         }
 
         if (!is_dir(dirname($target))) {
@@ -200,5 +170,17 @@ class Generator
         }
 
         return file_put_contents($target, $this->render($template, $parameters));
+    }
+
+    /**
+     * @param string $template
+     * @param string $target
+     * @param array  $parameters
+     *
+     * @return void
+     */
+    protected function printFile($template, $target, $parameters)
+    {
+        echo $this->render($template, $parameters);
     }
 }
