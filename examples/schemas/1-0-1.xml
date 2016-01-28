@@ -1,0 +1,40 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:article:1-0-1" mixin="true">
+    <fields>
+      <field name="_id" type="identifier" required="true">
+        <php_options>
+          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier::generate();
+              }
+            ]]>
+          </default>
+        </php_options>
+      </field>
+
+      <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
+      <field name="title" type="text" required="true" />
+
+      <field name="failure_reason" type="string-enum">
+        <default>empty</default>
+        <enum provider="acme:blog:entity:article:v1" name="reason" />
+      </field>
+    </fields>
+
+    <enums>
+      <enum name="reason">
+        <option key="EMPTY" value="empty" />
+        <option key="INVALID" value="invalid" />
+        <option key="DELETED" value="deleted" />
+      </enum>
+    </enums>
+
+    <php_options>
+      <namespace>Acme\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

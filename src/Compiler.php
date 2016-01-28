@@ -63,7 +63,7 @@ class Compiler
         // resolve and mark schemas as latest
         $schemaLatestVersion = [];
 
-        foreach (SchemaStore::getSortedSchemas() as $schema) {
+        foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
                 $schema = $this->createSchema($schema);
             }
@@ -92,12 +92,47 @@ class Compiler
      * @param array $xmlData
      *
      * @return Schema
+     *
+     * @throw \RuntimeException
      */
     protected function createSchema(array $xmlData)
     {
         $fields    = [];
         $mixins    = [];
         $languages = [];
+        $options   = [];
+
+        foreach (self::LANGUAGES as $language) {
+            $languages[$language] = [];
+        }
+
+        $schemaId = SchemaId::fromString($xmlData['id']);
+
+        if (isset($xmlData['enums']['enum'])) {
+            $options['enums'] = [];
+
+            // handle single enum
+            if (isset($xmlData['enums']['enum']['name'])) {
+                $xmlData['enums']['enum'] = [$xmlData['enums']['enum']];
+            }
+
+            foreach ($xmlData['enums']['enum'] as $enum) {
+                $options['enums'][$enum['name']] = [];
+
+                // handle single option
+                if (isset($enum['option']['key'])) {
+                    $enum['option'] = [$enum['option']];
+                }
+
+                foreach ($enum['option'] as $option) {
+                    $options['enums'][$enum['name']][$option['key']] = $option['value'];
+                }
+            }
+
+            if (isset($xmlData['enums']['php_options'])) {
+                $languages['php']['enums'] = $xmlData['enums']['php_options'];
+            }
+        }
 
         if (isset($xmlData['fields']['field'])) {
             foreach ($xmlData['fields']['field'] as $field) {
@@ -105,8 +140,8 @@ class Compiler
                     if (isset($field['any_of'])) {
                         $anyOfClassNames = [];
 
-                        foreach ($field['any_of'] as $schemaId) {
-                            $schema = SchemaStore::getSchemaByCurie($schemaId);
+                        foreach ($field['any_of'] as $curie) {
+                            $schema = SchemaStore::getSchemaByCurie($curie, $schemaId);
                             if (is_array($schema)) {
                                 $schema = $this->createSchema($schema);
                             }
@@ -118,6 +153,31 @@ class Compiler
                         $field['any_of'] = $anyOfClassNames;
                     }
 
+                    if (isset($field['enum'])) {
+                        $schema = SchemaStore::getSchemaByCurieWithMajorRev($field['enum']['provider'], $schemaId);
+                        if (is_array($schema)) {
+                            $schema = $this->createSchema($schema);
+                        }
+
+                        $enums = $schema->getOption('enums');
+
+                        if ($enums && isset($enums[$field['enum']['name']])) {
+                            $field['enums'] = $enums[$field['enum']['name']];
+
+                            if (isset($options['enums'][$field['enum']['name']])) {
+                                $diff = array_diff($field['enums'], $options['enums'][$field['enum']['name']]);
+                                if (count($diff) > 0) {
+                                    throw new \RuntimeException(sprintf('No Enum keys ["%s"] can be removed from the same schema version.', implode('", "', array_keys($diff))));
+                                }
+
+                                $field['enums'] = $options['enums'][$field['enum']['name']];
+                            }
+                        }
+
+                        // not needed
+                        unset($field['enum']);
+                    }
+
                     $fields[] = Field::fromArray($field['name'], $field);
                 }
             }
@@ -126,8 +186,13 @@ class Compiler
         if (isset($xmlData['mixins']['id'])) {
             $mixins = [];
 
-            foreach ((array) $xmlData['mixins']['id'] as $schemaId) {
-                $schema = SchemaStore::getSchemaByCurieWithMajorRev($schemaId);
+            // handle single id
+            if (is_string($xmlData['mixins']['id'])) {
+                $xmlData['mixins']['id'] = [$xmlData['mixins']['id']];
+            }
+
+            foreach ($xmlData['mixins']['id'] as $curieWithMajorRev) {
+                $schema = SchemaStore::getSchemaByCurieWithMajorRev($curieWithMajorRev, $schemaId);
                 if (is_array($schema)) {
                     $schema = $this->createSchema($schema);
                 }
@@ -137,10 +202,10 @@ class Compiler
         }
 
         if (isset($xmlData['php_options'])) {
-            $languages['php'] = $xmlData['php_options'];
+            $languages['php'] = array_merge($languages['php'], $xmlData['php_options']);
         }
 
-        $schema = new Schema($xmlData['id'], $fields, $mixins, $languages);
+        $schema = new Schema($schemaId->__toString(), $fields, $mixins, $languages, $options);
 
         if (isset($xmlData['mixin']) && $xmlData['mixin']) {
             $schema->setIsMixin(true);
@@ -162,7 +227,7 @@ class Compiler
      */
     public function generate($print = false)
     {
-        foreach (SchemaStore::getSortedSchemas() as &$schema) {
+        foreach (SchemaStore::getSchemas() as &$schema) {
             if (!$schema->isDependent() && !$schema->getOption('isCompiled')) {
                 $generatorClassName = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
                 $generator = new $generatorClassName($schema);

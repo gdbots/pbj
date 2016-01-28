@@ -16,14 +16,14 @@ First let's look at a very simple example. Let's say you want to define a **mixi
 <schema-mapping xmlns="gdbots:pbjc:schema-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <entity id="pbj:acme:demo:mixin:story:1-0-0" mixin="true">
+  <entity id="pbj:acme:blog:entity:article:1-0-0" mixin="true">
     <fields>
       <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
       <field name="title" type="text" required="true" />
     </fields>
 
     <php_options>
-      <namespace>Acme\Demo\Mixin</namespace>
+      <namespace>Acme\Blog\Entity</namespace>
     </php_options>
   </entity>
 </schema-mapping>
@@ -82,23 +82,28 @@ When a schema is parsed, if the encoded schema does not contain a particular sin
     - For each of the other field types, the default value is null.
 
 #### Enumerations
-When you're defining a schema, you might want one of its fields to only have one of a pre-defined list of values. For example, let's say you want to add a `StoryStatus` enum field, where the values can be `PUBLISHED`, `DRAFT` or `DELETED`.
+When you're defining a schema, you might want one of its fields to only have one of a pre-defined list of values. For example, let's say you want to add a `Reason` enum field, where the values can be `INVALID`, `FAILED` or `DELETED`.
 
 ```xml
-<field name="status" type="string-enum">
-  <default>draft</default>
-  <enumerations>
-    <enumeration key="DRAFT" value="draft" />
-    <enumeration key="PUBLISHED" value="published" />
-    <enumeration key="DELETED" value="deleted" />
-  </enumerations>
-  <php_options>
-    <class_name>Acme\Demo\Enum\StoryStatus</namespace>
-  </php_options>
-</field>
+<fields>
+  <field name="failure_reason" type="string-enum">
+    <default>invalid</default>
+    <enum provider="gdbots:pbjx:request:request-failed-response:v1" name="reason" />
+  </field>
+</fields>
+
+<enums>
+  <enum name="reason">
+    <option key="INVALID" value="invalid" />
+    <option key="FAILED" value="failed" />
+    <option key="DELETED" value="deleted" />
+  </enum>
+<enums>
 ```
 
-From the above example you can see we defined the enum keys and values as well as a default value. If no default was set, the first key will be used. We also define the PHP class name that will be used when outputting to a PHP file. In this case, an output of the `draft` value will look like: `\Acme\Demo\Enum\StoryStatus::DRAFT`.
+From the above example you can see we defined the enum keys and values for a specific schema and called it directly from the field.
+
+> **Note:** We can also define the PHP namespace where the enum class will be generated to.
 
 There are 2 kinds of enum types, `StringEnum` and `IntEnum`. We separated to simplified the field type and values.
 
@@ -108,9 +113,9 @@ There are 2 kinds of enum types, `StringEnum` and `IntEnum`. We separated to sim
 You can use `Message` and `MessageRef` as field types. For example, let's say you wanted to include related messages in each Story schema:
 
 ```xml
-<field name="related" type="message">
+<field name="failed_request" type="message">
   <any_of>
-    <id>gdbots:pbj:mixin:related</id>
+    <id>gdbots:pbj:mixin:request</id>
   </any_of>
 </field>
 ```
@@ -141,15 +146,12 @@ The `any_of` attribute define the message id that will be used to pull the messa
       >
         <default>{string}</default>
 
+        <enum provider="{pbj:vendor:package:category:vmajor}" name="{string}" />
+
         <any_of>
           <id>{pbj:vendor:package:category}</id>
           <!-- ... -->
         </any_of>
-
-        <enumerations>
-          <enumeration key="{string}" value="{string}" />
-          <!-- ... -->
-        </enumerations>
 
         <php_options>
           <class_name>{string}</class_name>
@@ -162,6 +164,16 @@ The `any_of` attribute define the message id that will be used to pull the messa
       <id>{pbj:vendor:package:category:vmajor}</id>
       <!-- ... -->
     </mixins>
+
+    <enums>
+      <enum>
+        <option key="{string}" value="{string}" />
+        <!-- ... -->
+      </enum>
+      <php_options>
+        <namespace>{string}</namespace>
+      </php_options>
+    <enums>
 
     <php_options>
       <namespace>{string}</namespace>

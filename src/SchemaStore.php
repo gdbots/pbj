@@ -135,49 +135,81 @@ class SchemaStore
     }
 
     /**
-     * @param string $id
+     * @param string   $curieWithMajorRev
+     * @param SchemaId $schemaId
      *
      * @return array|\Gdbots\Pbjc\Schema|null
      */
-    public static function getSchemaByCurieWithMajorRev($id)
+    public static function getSchemaByCurieWithMajorRev($curieWithMajorRev, SchemaId $schemaId = null)
     {
+        $found = null;
+        $foundRequested = null;
+
         foreach(self::$schemas as $schema) {
-            $schemaId = null;
+            $sid = null;
             if (is_array($schema)) {
-                $schemaId = SchemaId::fromString($schema['id'])->getCurieWithMajorRev();
+                $sid = SchemaId::fromString($schema['id']);
             }
             if ($schema instanceof Schema) {
-                $schemaId = $schema->getId()->getCurieWithMajorRev();
+                $sid = $schema->getId();
             }
-            if ($schemaId == $id) {
-                return $schema;
+            if ($sid && $sid->getCurieWithMajorRev() == $curieWithMajorRev) {
+                if ($sid->getVersion() < $schemaId->getVersion()) {
+                    $found = $schema;
+                }
+                if ($sid->getVersion() == $schemaId->getVersion()) {
+                    $foundRequested = $schema;
+                }
             }
         }
 
-        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        if ($found) {
+            return $found;
+        }
+        if ($foundRequested) {
+            return $foundRequested;
+        }
+
+        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $curieWithMajorRev));
     }
 
     /**
-     * @param string $id
+     * @param string   $curie
+     * @param SchemaId $schemaId
      *
      * @return array|\Gdbots\Pbjc\Schema|null
      */
-    public static function getSchemaByCurie($id)
+    public static function getSchemaByCurie($curie, SchemaId $schemaId = null)
     {
+        $found = null;
+        $foundRequested = null;
+
         foreach(self::$schemas as $schema) {
-            $schemaId = null;
+            $sid = null;
             if (is_array($schema)) {
-                $schemaId = SchemaId::fromString($schema['id'])->getCurie();
+                $sid = SchemaId::fromString($schema['id']);
             }
             if ($schema instanceof Schema) {
-                $schemaId = $schema->getId()->getCurie();
+                $sid = $schema->getId();
             }
-            if ($schemaId == $id) {
-                return $schema;
+            if ($sid && $sid->getCurie() == $curie) {
+                if ($sid->getVersion() < $schemaId->getVersion()) {
+                    $found = $schema;
+                }
+                if ($sid->getVersion() == $schemaId->getVersion()) {
+                    $foundRequested = $schema;
+                }
             }
         }
 
-        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        if ($found) {
+            return $found;
+        }
+        if ($foundRequested) {
+            return $foundRequested;
+        }
+
+        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $curie));
     }
 
     /**
