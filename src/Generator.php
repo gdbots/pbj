@@ -117,9 +117,11 @@ class Generator
             $this->schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
-        return sprintf('%s/%s/%s%s',
+        return sprintf('%s/%s/%s/%s/%s%s',
             $output,
-            str_replace(':', '/', $this->schema->getId()->getCurie()),
+            $this->schema->getId()->getVendor(),
+            $this->schema->getId()->getPackage(),
+            $this->schema->getId()->getCategory(),
             $filename,
             $this->getExtension()
         );
