@@ -75,9 +75,6 @@ final class Field implements ToArray, \JsonSerializable
     /** @var bool */
     private $useTypeDefault = false;
 
-    /** @var string */
-    private $className;
-
     /** @var array */
     private $anyOfClassNames;
 
@@ -105,7 +102,6 @@ final class Field implements ToArray, \JsonSerializable
      * @param int         $scale
      * @param null|mixed  $default
      * @param bool        $useTypeDefault
-     * @param null|string $className
      * @param null|array  $anyOfClassNames
      * @param bool        $overridable
      * @param array       $languages
@@ -128,7 +124,6 @@ final class Field implements ToArray, \JsonSerializable
         $scale                 = null,
         $default               = null,
         $useTypeDefault        = false,
-        $className             = null,
         array $anyOfClassNames = null,
         $overridable           = false,
         array $languages       = [],
@@ -153,7 +148,6 @@ final class Field implements ToArray, \JsonSerializable
         $this->required        = $required;
         $this->default         = $default;
         $this->useTypeDefault  = $useTypeDefault;
-        $this->className       = $className;
         $this->anyOfClassNames = $anyOfClassNames;
         $this->overridable     = $overridable;
         $this->languages       = $languages;
@@ -192,7 +186,6 @@ final class Field implements ToArray, \JsonSerializable
             'scale' => null,
             'default' => null,
             'use_type_default' => false,
-            'class_name' => null,
             'any_of' => null,
             'overridable' => false,
             'language_options' => [],
@@ -203,28 +196,14 @@ final class Field implements ToArray, \JsonSerializable
             $classProperty = lcfirst(StringUtils::toCamelFromSnake($property));
             if (property_exists(get_called_class(), $classProperty) && $property != 'type') {
               $args[$property] = $value;
-            } elseif ($property == 'any_of') {
-                $args['any_of'] = (array) $value;
-            } elseif ($property == 'enumerations' && isset($value['enumeration'])) {
-                $enumerations = [];
-
-                if (isset($value['enumeration']['key'])) {
-                    $value['enumeration'] = [$value['enumeration']];
-                }
-
-                foreach ($value['enumeration'] as $enumeration) {
-                    $enumerations[$enumeration['key']] = $enumeration['value'];
-                }
-
-                if (count($enumerations) > 0) {
-                    $args['options']['enumerations'] = $enumerations;
-                }
-            } else {
+            } elseif (substr($property, -8) == '_options') {
                 $language = substr($property, 0, -8); // remove "_options"
 
                 if (in_array($language, Compiler::LANGUAGES)) {
                     $args['language_options'][$language] = $value;
                 }
+            } elseif (!empty($value)) {
+                $args['options'][$property] = $value;
             }
         }
 
@@ -238,32 +217,6 @@ final class Field implements ToArray, \JsonSerializable
             $args['max_length'] = $args['max'];
             $args['min'] = null;
             $args['max'] = null;
-        }
-
-        // generate PHP style default (using class)
-        if ($args['type'] instanceof IntEnumType
-            || $args['type'] instanceof StringEnumType
-        ) {
-            if (isset($args['default'])
-                && isset($args['language_options']['php']['class_name'])
-                && isset($args['options']['enumerations'])
-            ) {
-                $className    = $args['language_options']['php']['class_name'];
-                $enumerations = $args['options']['enumerations'];
-
-                // search for key by value
-                $found = null;
-                foreach ($enumerations as $key => $value) {
-                    if (strtolower($value) == strtolower($args['default'])) {
-                        $found = $key;
-                        break;
-                    }
-                }
-
-                if ($found) {
-                    $args['language_options']['php']['default'] = sprintf('%s::%s', substr($className, strrpos($className, '\\')+1), strtoupper($found));
-                }
-            }
         }
 
         $class = new \ReflectionClass(get_called_class());
@@ -494,22 +447,6 @@ final class Field implements ToArray, \JsonSerializable
     /**
      * @return bool
      */
-    public function hasClassName()
-    {
-        return null !== $this->className;
-    }
-
-    /**
-     * @return string
-     */
-    public function getClassName()
-    {
-        return $this->className;
-    }
-
-    /**
-     * @return bool
-     */
     public function hasAnyOfClassNames()
     {
         return null !== $this->anyOfClassNames;
@@ -669,7 +606,6 @@ final class Field implements ToArray, \JsonSerializable
             'scale'              => $this->scale,
             'default'            => $this->getDefault(),
             'use_type_default'   => $this->useTypeDefault,
-            'class_name'         => $this->className,
             'any_of_class_names' => $this->anyOfClassNames,
             'overridable'        => $this->overridable,
             'language_options'   => $this->languages,

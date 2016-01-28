@@ -49,8 +49,6 @@
   {% endif %}
   {%- if field.languageOption('php', 'class_name') %}
               ->className('{{ field.languageOption('php', 'class_name') }}'),
-  {% elseif field.className %}
-              ->className('{{ field.className }}'),
   {% endif %}
   {%- if field.anyOfClassNames %}
               ->anyOfClassNames({{ field.anyOfClassNames|json_encode }}),
