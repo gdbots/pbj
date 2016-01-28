@@ -11,6 +11,7 @@ use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
+use Gdbots\Pbjc\Type\IntEnumType;
 use Gdbots\Pbjc\Type\StringEnumType;
 
 final class Field implements ToArray, \JsonSerializable
@@ -86,6 +87,9 @@ final class Field implements ToArray, \JsonSerializable
     /** @var array */
     private $languages = [];
 
+    /** @var array */
+    private $options = [];
+
     /**
      * @param string      $name
      * @param Type        $type
@@ -105,6 +109,7 @@ final class Field implements ToArray, \JsonSerializable
      * @param null|array  $anyOfClassNames
      * @param bool        $overridable
      * @param array       $languages
+     * @param array       $options
      *
      * @throw \InvalidArgumentException
      */
@@ -126,7 +131,8 @@ final class Field implements ToArray, \JsonSerializable
         $className             = null,
         array $anyOfClassNames = null,
         $overridable           = false,
-        array $languages       = []
+        array $languages       = [],
+        array $options         = []
     ) {
         if (!$name || strlen($name) > 127 || preg_match(self::VALID_NAME_PATTERN, $name) === false) {
             throw new \InvalidArgumentException(
@@ -151,6 +157,7 @@ final class Field implements ToArray, \JsonSerializable
         $this->anyOfClassNames = $anyOfClassNames;
         $this->overridable     = $overridable;
         $this->languages       = $languages;
+        $this->options         = $options;
 
         $this->applyFieldRule($rule);
         $this->applyStringOptions($minLength, $maxLength, $pattern, $format);
@@ -188,7 +195,8 @@ final class Field implements ToArray, \JsonSerializable
             'class_name' => null,
             'any_of' => null,
             'overridable' => false,
-            'language_options' => []
+            'language_options' => [],
+            'options' => []
         ];
 
         foreach ($parameters as $property => $value) {
@@ -197,6 +205,20 @@ final class Field implements ToArray, \JsonSerializable
               $args[$property] = $value;
             } elseif ($property == 'any_of') {
                 $args['any_of'] = (array) $value;
+            } elseif ($property == 'enumerations' && isset($value['enumeration'])) {
+                $enumerations = [];
+
+                if (isset($value['enumeration']['key'])) {
+                    $value['enumeration'] = [$value['enumeration']];
+                }
+
+                foreach ($value['enumeration'] as $enumeration) {
+                    $enumerations[$enumeration['key']] = $enumeration['value'];
+                }
+
+                if (count($enumerations) > 0) {
+                    $args['options']['enumerations'] = $enumerations;
+                }
             } else {
                 $language = substr($property, 0, -8); // remove "_options"
 
@@ -224,25 +246,10 @@ final class Field implements ToArray, \JsonSerializable
         ) {
             if (isset($args['default'])
                 && isset($args['language_options']['php']['class_name'])
-                && isset($parameters['enumerations']['enumeration'])
+                && isset($args['options']['enumerations'])
             ) {
                 $className    = $args['language_options']['php']['class_name'];
-                $enumerations = $parameters['enumerations']['enumeration'];
-
-                /* @todo: handle not existing class */
-                /* if (!class_exists($className)) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'Field [%s] Enum class [%s] does not exists.',
-                            $name,
-                            $className
-                        )
-                    );
-                } */
-
-                if (substr($className, 0, 1) == '\\') {
-                    $className = substr($className, 1);
-                }
+                $enumerations = $args['options']['enumerations'];
 
                 // search for key by value
                 $key = null;
@@ -598,6 +605,51 @@ final class Field implements ToArray, \JsonSerializable
     }
 
     /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasOption($key)
+    {
+        return isset($this->options[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setOption($key, $value)
+    {
+        $this->options[$key] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getOption($key, $default = null)
+    {
+        if (isset($this->options[$key])) {
+            return $this->options[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options ?: $this->options = [];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toArray()
@@ -620,7 +672,8 @@ final class Field implements ToArray, \JsonSerializable
             'class_name'         => $this->className,
             'any_of_class_names' => $this->anyOfClassNames,
             'overridable'        => $this->overridable,
-            'language_options'   => $this->languages
+            'language_options'   => $this->languages,
+            'options'            => $this->options
         ];
     }
 
