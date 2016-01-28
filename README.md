@@ -7,24 +7,26 @@ pbjc-php
 Compiler for converting pbj schemas into jsonschema, php, js, etc.
 
 # Language Guide
-This guide describes how to use the YAML language to structure your schema file syntax and how to generate data classes files.
+This guide describes how to use the XML language to structure your schema file syntax and how to generate data classes files.
 
 ### Defining A Schema
-First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.yml` file you use to define the schema.
+First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.xml` file you use to define the schema.
 
-```yaml
-id: 'pbj:acme:demo:mixin:story:1-0-0'
-mixin: true
-fields:
-  slug:
-    type: string
-    pattern: '/^[A-Za-z0-9_\-]+$/'
-    required: true
-  title:
-    type: text
-    required: true
-php_options:
-  namespace: 'Acme\Demo\Mixin'
+```xml
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:demo:mixin:story:1-0-0" mixin="true">
+    <fields>
+      <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
+      <field name="title" type="text" required="true" />
+    </fields>
+
+    <php_options>
+      <namespace>Acme\Demo\Mixin</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>
 ```
 
 Each schema required a few basic elements: id and fields.
@@ -36,7 +38,7 @@ Since we are creating a mixin schema, we set in the second line `mixin = true`.
 In addition, we allow to add language specific options which will be used while generating the language output file.
 
 #### Schema Field Types
-A schema field can have one of the following types – the table shows the type specified in the `.yml` file, and the options allowed:
+A schema field can have one of the following types – the table shows the type specified in the `.xml` file, and the options allowed:
 
 Field Type | Default| Min | Max | Max Bytes | Notes
 -----------| ------ | --- | --- | --------- | -----
@@ -82,17 +84,18 @@ When a schema is parsed, if the encoded schema does not contain a particular sin
 #### Enumerations
 When you're defining a schema, you might want one of its fields to only have one of a pre-defined list of values. For example, let's say you want to add a `StoryStatus` enum field, where the values can be `PUBLISHED`, `DRAFT` or `DELETED`.
 
-```yaml
-fields:
-  status:
-    type: string-enum
-    enum:
-      DRAFT: 'draft'
-      PUBLISHED: 'published'
-      DELETED: 'deleted'
-    default: 'draft'
-    php_options:
-      class_name: 'Acme\Demo\Enum\StoryStatus'
+```xml
+<field name="status" type="string-enum">
+  <default>draft</default>
+  <enumerations>
+    <enumeration key="DRAFT" value="draft" />
+    <enumeration key="PUBLISHED" value="published" />
+    <enumeration key="DELETED" value="deleted" />
+  </enumerations>
+  <php_options>
+    <class_name>Acme\Demo\Enum\StoryStatus</namespace>
+  </php_options>
+</field>
 ```
 
 From the above example you can see we defined the enum keys and values as well as a default value. If no default was set, the first key will be used. We also define the PHP class name that will be used when outputting to a PHP file. In this case, an output of the `draft` value will look like: `\Acme\Demo\Enum\StoryStatus::DRAFT`.
@@ -104,53 +107,67 @@ There are 2 kinds of enum types, `StringEnum` and `IntEnum`. We separated to sim
 #### Using Message Types
 You can use `Message` and `MessageRef` as field types. For example, let's say you wanted to include related messages in each Story schema:
 
-```yaml
-fields:
-  related:
-    type: message
-    any_of: 'gdbots:pbj:mixin:related'
+```xml
+<field name="related" type="message">
+  <any_of>
+    <id>gdbots:pbj:mixin:related</id>
+  </any_of>
+</field>
 ```
 
 The `any_of` attribute define the message id that will be used to pull the message details.
 
 ### Full Schma Options
 
-```yaml
-id: 'pbj:vendor:package:category:message:1-0-0'
-mixin: <bool> // optional
-fields:
-  name: //pattern = '/^([a-zA-Z_]{1}[a-zA-Z0-9_]+)$/'
-    type: <Gdbots\Pbjc\Type\Type>
-    rule: <Gdbots\Pbjc\Enum\FieldRule>
-    required: <bool>
-    pattern: <string>
-    format: <Gdbots\Pbjc\Enum\Format>
-    min: <int>
-    max: <int>
-    precision: <int>
-    scale: <int>
-    defualt: <mixed>
-    use_type_default: <bool>
-    class_name: <string>
-    any_of: <string> or <array>
-    overridable: <bool>
-    enum:
-      key1: value2
-      key2: value2
+```xml
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    // optional: per language
-    php_options:
-      class_name: <string>
-      // todo: add all other keys
+  <entity id="{pbj:vendor:package:category:message:major-minor-patch}" mixin="{bool}">
+    <fields>
+      <field
+        name="{/^([a-zA-Z_]{1}[a-zA-Z0-9_]+)$/}"
+        type="{\Gdbots\Pbjc\Type\Type}"
+        required="{bool}"
+        min="{int}"
+        max="{int}"
+        precision="{int}"
+        scale="{int}"
+        rule="{\Gdbots\Pbjc\Enum\FieldRule}"
+        pattern="{string}"
+        format="{Gdbots\Pbjc\Enum\Format}"
+        use_type_default="{bool}"
+        overridable="{bool}"
+      >
+        <default>{string}</default>
 
-// optional: contain list of embedded mixins
-mixins:
-  'mixin-id-1'
-  'mixin-id-2'
+        <any_of>
+          <id>{pbj:vendor:package:category}</id>
+          <!-- ... -->
+        </any_of>
 
-// optional: per language
-php_options:
-  namespace: <string>
+        <enumerations>
+          <enumeration key="{string}" value="{string}" />
+          <!-- ... -->
+        </enumerations>
+
+        <php_options>
+          <class_name>{string}</class_name>
+          <default>{string}</default>
+        </php_options>
+      </field>
+    </fields>
+
+    <mixins>
+      <id>{pbj:vendor:package:category:vmajor}</id>
+      <!-- ... -->
+    </mixins>
+
+    <php_options>
+      <namespace>{string}</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>
 ```
 
 # Basic Usage
@@ -165,7 +182,7 @@ $compile->compile('php', '/put/your/output/folder');
 ```
 
 In order to compile you have to add the directory or directories where your
-YAML file exists:
+XML file exists:
 
 ```php
 <?php
@@ -176,3 +193,5 @@ SchemaStore::addDir('/your/schemas/path1');
 SchemaStore::addDir('/your/schemas/path2');
 //...
 ```
+
+> **Note:** use `SchemaStore::addDir('/your/schemas/path2', true);` to set dependent directory.
