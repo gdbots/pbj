@@ -52,6 +52,8 @@ class Compiler
             foreach ($files as $file) {
                 if ($xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
                     if ($xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+                        $xmlData['entity']['is_dependent'] = $isDependent;
+
                         SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
                     }
                 }
@@ -142,6 +144,10 @@ class Compiler
 
         if (isset($xmlData['mixin']) && $xmlData['mixin']) {
             $schema->setIsMixin(true);
+        }
+
+        if (isset($xmlData['is_dependent']) && $xmlData['is_dependent']) {
+            $schema->setIsDependent(true);
         }
 
         return $schema;
