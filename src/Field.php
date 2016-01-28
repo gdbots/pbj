@@ -252,16 +252,16 @@ final class Field implements ToArray, \JsonSerializable
                 $enumerations = $args['options']['enumerations'];
 
                 // search for key by value
-                $key = null;
-                foreach ($enumerations as $enumeration) {
-                    if (strtolower($enumeration['value']) == strtolower($args['default'])) {
-                        $key = $enumeration['key'];
+                $found = null;
+                foreach ($enumerations as $key => $value) {
+                    if (strtolower($value) == strtolower($args['default'])) {
+                        $found = $key;
                         break;
                     }
                 }
 
-                if ($key) {
-                    $args['language_options']['php']['default'] = sprintf('%s::%s()', substr($className, strrpos($className, '\\')+1), strtoupper($key));
+                if ($found) {
+                    $args['language_options']['php']['default'] = sprintf('%s::%s', substr($className, strrpos($className, '\\')+1), strtoupper($found));
                 }
             }
         }
