@@ -97,6 +97,8 @@ class Compiler
      */
     protected function createSchema(array $xmlData)
     {
+        $schemaId = SchemaId::fromString($xmlData['id']);
+
         $fields    = [];
         $mixins    = [];
         $languages = [];
@@ -104,9 +106,12 @@ class Compiler
 
         foreach (self::LANGUAGES as $language) {
             $languages[$language] = [];
-        }
 
-        $schemaId = SchemaId::fromString($xmlData['id']);
+            $attribute = sprintf('%s_options', $language);
+            if (isset($xmlData[$attribute])) {
+                $languages['php'] = array_merge($languages['php'], $xmlData[$attribute]);
+            }
+        }
 
         if (isset($xmlData['enums']['enum'])) {
             $options['enums'] = [];
@@ -131,6 +136,13 @@ class Compiler
 
             if (isset($xmlData['enums']['php_options'])) {
                 $languages['php']['enums'] = $xmlData['enums']['php_options'];
+            }
+
+            // use php schema namespace as a default
+            if (!isset($languages['php']['enums']['namespace']) || !$languages['php']['enums']['namespace']) {
+                $languages['php']['enums'] = [
+                    'namespace' => $languages['php']['namespace']
+                ];
             }
         }
 
@@ -171,6 +183,11 @@ class Compiler
                                 }
 
                                 $field['enums'] = $options['enums'][$field['enum']['name']];
+
+                                // force same php options
+                                if ($phpEnums = $schema->getLanguageOption('php', 'enums')) {
+                                    $languages['php']['enums'] = $phpEnums;
+                                }
                             }
                         }
 
@@ -199,10 +216,6 @@ class Compiler
 
                 $mixins[] = $schema;
             }
-        }
-
-        if (isset($xmlData['php_options'])) {
-            $languages['php'] = array_merge($languages['php'], $xmlData['php_options']);
         }
 
         $schema = new Schema($schemaId->__toString(), $fields, $mixins, $languages, $options);
