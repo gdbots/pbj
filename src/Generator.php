@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 
 class Generator
@@ -117,11 +118,19 @@ class Generator
             $this->schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
-        return sprintf('%s/%s/%s/%s/%s%s',
+        $directory = sprintf('%s/%s/%s',
+            StringUtils::toCamelFromSlug($this->schema->getId()->getVendor()),
+            StringUtils::toCamelFromSlug($this->schema->getId()->getPackage()),
+            StringUtils::toCamelFromSlug($this->schema->getId()->getCategory())
+        );
+
+        if ($this->language == 'php') {
+            $directory = str_replace('\\', '/', $this->schema->getLanguageOption('php', 'namespace'));
+        }
+
+        return sprintf('%s/%s/%s%s',
             $output,
-            $this->schema->getId()->getVendor(),
-            $this->schema->getId()->getPackage(),
-            $this->schema->getId()->getCategory(),
+            $directory,
             $filename,
             $this->getExtension()
         );
