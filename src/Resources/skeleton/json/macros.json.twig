@@ -17,18 +17,37 @@
     "required": [{% for field in required %}"{{ field }}"{% if not loop.last %}, {% endif %}{% endfor %}],
   {% endif %}
 
-  {% set anyOfClassNames = [] %}
+  {% set defs = [] %}
   {% for field in schema.fields %}
     {% if field.anyOfClassNames %}
-      {% set anyOfClassNames = anyOfClassNames|merge(field.anyOfClassNames) %}
+      {% set defs = defs|merge(field.anyOfClassNames) %}
     {% endif %}
   {% endfor %}
-  {% if anyOfClassNames|length %}
+  {% if schema.mixins %}
+    {% set defs = defs|merge(schema.mixins) %}
+  {% endif %}
+  {% if defs|length %}
     "definitions": {
-      {% for s in anyOfClassNames %}
-        "{{ s.className|lower }}": {{ _self.draw_schema(s) }}{% if not loop.last %},{% endif %}
+      {% set shown = [] %}
+      {% for def in defs %}
+        {% if def.id not in shown %}
+           "{{ def.className|lower }}": {{ _self.draw_schema(def) }}{% if not loop.last %},{% endif %}
+           {% set shown = shown|merge([def.id]) %}
+         {% endif %}
       {% endfor %}
+    },
+  {% endif %}
+
+  {% if schema.mixins %}
+    "additionalProperties": {
+      "mixin": {
+        {% for mixin in schema.mixins %}
+          { "$ref": "#/definitions/{{ mixin.className|lower }}" }{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      }
     }
+  {% else %}
+    "additionalProperties": false
   {% endif %}
 }
 {% endmacro %}

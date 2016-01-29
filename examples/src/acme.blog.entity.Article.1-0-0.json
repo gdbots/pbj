@@ -55,6 +55,8 @@
         "request_id",
         "microtime"
       ],
+      "additionalProperties": false
     }
-  }
+  },
+  "additionalProperties": false
 }
