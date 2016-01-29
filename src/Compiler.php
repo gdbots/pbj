@@ -104,13 +104,11 @@ class Compiler
         $languages = [];
         $options   = [];
 
-        foreach (self::LANGUAGES as $language) {
-            $languages[$language] = [];
+        $selectLanguageOptionsKey = sprintf('%s_options', $this->language);
 
-            $attribute = sprintf('%s_options', $language);
-            if (isset($xmlData[$attribute])) {
-                $languages[$language] = $xmlData[$attribute];
-            }
+        $languages[$this->language] = [];
+        if (isset($xmlData[$selectLanguageOptionsKey])) {
+            $languages[$this->language] = $xmlData[$selectLanguageOptionsKey];
         }
 
         if (isset($xmlData['enums']['enum'])) {
@@ -134,13 +132,9 @@ class Compiler
                 }
             }
 
-            foreach (self::LANGUAGES as $language) {
-                $languages[$language]['enums'] = [];
-
-                $attribute = sprintf('%s_options', $language);
-                if (isset($xmlData['enums'][$attribute])) {
-                    $languages[$language]['enums'] = $xmlData['enums'][$attribute];
-                }
+            $languages[$this->language]['enums'] = [];
+            if (isset($xmlData['enums'][$selectLanguageOptionsKey])) {
+                $languages[$this->language]['enums'] = $xmlData['enums'][$selectLanguageOptionsKey];
             }
 
             // php: use schema namespace as a default
@@ -194,28 +188,26 @@ class Compiler
                         }
 
                         // inherit the same options
-                        foreach (self::LANGUAGES as $language) {
-                            if (!$enums = $schema->getLanguageOption($language, 'enums')) {
-                                $enums = $languages[$language]['enums'];
+                        if (!$enums = $schema->getLanguageOption($this->language, 'enums')) {
+                            $enums = $languages[$this->language]['enums'];
+                        }
+
+                        $languages[$this->language]['enums'] = $enums;
+
+                        // php only
+                        if ($this->language == 'php') {
+                            if (substr($enums['namespace'], 0, 1) == '\\') {
+                                $enums['namespace'] = substr($enums['namespace'], 1);
                             }
 
-                            $languages[$language]['enums'] = $enums;
-
-                            // php only
-                            if ($language == 'php') {
-                                if (substr($enums['namespace'], 0, 1) == '\\') {
-                                    $enums['namespace'] = substr($enums['namespace'], 1);
-                                }
-
-                                $field['php_options']['class_name'] =
-                                    sprintf('%s\%s%sV%d',
-                                        $enums['namespace'],
-                                        $schema->getClassName(),
-                                        StringUtils::toCamelFromSlug($field['enum']['name']),
-                                        $schema->getId()->getVersion()->getMajor()
-                                    )
-                                ;
-                            }
+                            $field['php_options']['class_name'] =
+                                sprintf('%s\%s%sV%d',
+                                    $enums['namespace'],
+                                    $schema->getClassName(),
+                                    StringUtils::toCamelFromSlug($field['enum']['name']),
+                                    $schema->getId()->getVersion()->getMajor()
+                                )
+                            ;
                         }
 
                         // not needed
