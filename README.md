@@ -189,9 +189,12 @@ The `any_of` attribute define the message id that will be used to pull the messa
 
 use Gdbots\Pbjc\Compiler;
 
-$compile = new Compiler();
-$compile->compile('php', '/put/your/output/folder');
+$compile = new Compiler('/put/your/output/folder');
+$compile->generate('php');
 ```
+
+> **Note:** corrently compiler support `php` and `json` languages.
+> **Note:** to print a preview of the files genereted, run `$compile->generate('php', true)`.
 
 In order to compile you have to add the directory or directories where your
 XML file exists:
