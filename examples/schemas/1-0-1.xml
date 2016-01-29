@@ -32,14 +32,14 @@
         <option key="DELETED" value="deleted" />
       </enum>
 
-      <enum name="enabled">
+      <enum name="enabled" type="int">
         <option key="YES" value="1" />
         <option key="NO" value="0" />
       </enum>
     </enums>
 
     <php_options>
-      <namespace>Acme\Blog\Entity</namespace>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
     </php_options>
   </entity>
 </schema-mapping>

@@ -14,12 +14,12 @@
         <option key="DELETED" value="deleted" />
       </enum>
       <php_options>
-        <namespace>Acme\Blog\Enum</namespace>
+        <namespace>Acme\Schemas\Blog\Enum</namespace>
       </php_options>
     </enums>
 
     <php_options>
-      <namespace>Acme\Blog\Entity</namespace>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
     </php_options>
   </entity>
 </schema-mapping>
