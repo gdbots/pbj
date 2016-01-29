@@ -1,0 +1,100 @@
+{%- macro draw_schema(schema) %}
+{
+  "id": "{{ schema.id }}",
+  "properties": {
+    {%- for field in schema.fields %}
+      {{- _self.draw_field(field) }}{%- if not loop.last %},{% endif %}
+
+    {% endfor -%}
+  },
+
+  {% set required = [] %}
+  {% for field in schema.fields %}
+    {% if field.required %}
+      {% set required = required|merge([field.name]) %}
+    {% endif %}
+  {% endfor %}
+  {% if required|length %}
+    "required": [{%- for field in required %}"{{ field }}"{%- if not loop.last %}, {% endif %}{% endfor -%}],
+  {% endif %}
+
+  {% set anyOfClassNames = [] %}
+  {% for field in schema.fields %}
+    {% if field.anyOfClassNames %}
+      {% set anyOfClassNames = anyOfClassNames|merge(field.anyOfClassNames) %}
+    {% endif %}
+  {% endfor %}
+  {% if anyOfClassNames|length %}
+    "definitions": {
+      {% for s in anyOfClassNames %}
+        "{{ s.className|lower }}": {{ _self.draw_schema(s) }}{%- if not loop.last %},{% endif %}
+      {% endfor %}
+    }
+  {% endif %}
+}
+{%- endmacro %}
+
+{%- macro draw_field(field) %}
+  "{{ field.name }}": {
+        "type": "{{ field.type.typeName }}",
+  {% if field.isASingleValue %}
+      "aSingleValue": true,
+  {% endif %}
+  {%- if field.isASet %}
+      "aSet": true,
+  {% endif %}
+  {%- if field.isAList %}
+      "aList": true,
+  {% endif %}
+  {%- if field.isAMap %}
+      "aMap": true,
+  {% endif %}
+  {%- if field.required %}
+      "required": true,
+  {% endif %}
+  {%- if field.minLength %}
+      "min_length": {{ field.minLength }},
+  {% endif %}
+  {%- if field.maxLength %}
+      "max_length": {{ field.maxLength }},
+  {% endif %}
+  {%- if field.pattern %}
+      "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
+  {% endif %}
+  {%- if field.format %}
+      "format": "{{ field.format }}",
+  {% endif %}
+  {%- if field.min %}
+      "min": {{ field.min }},
+  {% endif %}
+  {%- if field.max %}
+      "max": {{ field.max }},
+  {% endif %}
+  {%- if field.precision %}
+      "precision": {{ field.precision }},
+  {% endif %}
+  {%- if field.scale %}
+      "scale": {{ field.scale }},
+  {% endif %}
+  {%- if field.default %}
+      "with_default": {{ field.default|json_encode }},
+  {% endif %}
+  {%- if field.useTypeDefault %}
+      "use_type_default": true,
+  {% endif %}
+  {%- if field.anyOfClassNames %}
+      "any_of_class_names": [
+        {% for schema in field.anyOfClassNames %}
+          { "$ref": "#/definitions/{{ schema.className|lower }}" }{%- if not loop.last %}, {% endif %}
+
+        {% endfor %}
+      ],
+  {% endif %}
+  {%- if field.overridable %}
+      "overridable": true,
+  {% endif %}
+  {%- if field.option('enums') %}
+      "enums": [{% for option in field.option('enums') %}{{ option|json_encode }}{%- if not loop.last %}, {% endif %}{% endfor %}],
+  {% endif %}
+    }
+{%- endmacro %}

@@ -51,7 +51,7 @@
               ->className('{{ field.languageOption('php', 'class_name') }}'),
   {% endif %}
   {%- if field.anyOfClassNames %}
-              ->anyOfClassNames({{ field.anyOfClassNames|json_encode }}),
+              ->anyOfClassNames([{% for schema in field.anyOfClassNames %}"{{ schema.languageOption('php', 'namespace') }}"{%- if not loop.last %}, {% endif %}{% endfor %}]),
   {% endif %}
   {%- if field.overridable %}
               ->overridable(true),

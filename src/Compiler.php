@@ -10,7 +10,7 @@ use Symfony\Component\Finder\Finder;
 class Compiler
 {
     /** @var array */
-    const LANGUAGES = ['php'];
+    const LANGUAGES = ['php', 'json'];
 
     /** @var string */
     protected $language;
@@ -142,7 +142,12 @@ class Compiler
             }
 
             // php: use schema namespace as a default
-            if (!isset($languages['php']['enums']['namespace']) || !$languages['php']['enums']['namespace']) {
+            if ($this->language == 'php' &&
+                (
+                    !isset($languages['php']['enums']['namespace'])
+                    || !$languages['php']['enums']['namespace']
+                )
+            ) {
                 $languages['php']['enums'] = [
                     'namespace' => $languages['php']['namespace']
                 ];
@@ -152,22 +157,25 @@ class Compiler
         if (isset($xmlData['fields']['field'])) {
             foreach ($xmlData['fields']['field'] as $field) {
                 if (isset($field['type'])) {
-                    if (isset($field['any_of'])) {
+                    if (isset($field['any_of']['id'])) {
+                        // handle single class
+                        if (!is_array($field['any_of']['id'])) {
+                            $field['any_of']['id'] = [$field['any_of']['id']];
+                        }
+
                         $anyOfClassNames = [];
 
-                        foreach ($field['any_of'] as $curie) {
+                        foreach ($field['any_of']['id'] as $curie) {
                             $schema = SchemaStore::getSchemaByCurie($curie, $schemaId);
                             if (is_array($schema)) {
-                                $schema = $this->createSchema($schema);
-                            }
-
-                            // php only
-                            if ($namespace = $schema->getLanguageOption('php', 'namespace')) {
-                                $anyOfClassNames[] = $namespace;
+                                $anyOfClassNames[] = $this->createSchema($schema);
                             }
                         }
 
-                        $field['any_of'] = $anyOfClassNames;
+                        $field['any_of_class_names'] = $anyOfClassNames;
+
+                        // not needed
+                        unset($field['any_of']);
                     }
 
                     if (isset($field['enum'])) {

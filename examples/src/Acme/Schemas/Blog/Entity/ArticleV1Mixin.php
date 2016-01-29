@@ -43,6 +43,11 @@ class ArticleV1Mixin extends AbstractMixin
                 ->asASingleValue()
                 ->required(),
                 ->build(),
+            Fb::create('failed_request', T\MessageType::create())
+                ->asASingleValue()
+                ->required(),
+                ->anyOfClassNames(["Gdbots\Schemas\Pbj\Request"]),
+                ->build(),
             Fb::create('failure_reason', T\StringEnumType::create())
                 ->asASingleValue()
                 ->withDefault(ArticleReasonV1::EMPTY()),

@@ -19,6 +19,12 @@
       <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
       <field name="title" type="text" required="true" />
 
+      <field name="failed_request" type="message" required="true">
+        <any_of>
+          <id>gdbots:pbj:mixin:request</id>
+        </any_of>
+      </field>
+
       <field name="failure_reason" type="string-enum">
         <default>empty</default>
         <enum provider="acme:blog:entity:article:v1" name="reason" />

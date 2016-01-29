@@ -186,7 +186,7 @@ final class Field implements ToArray, \JsonSerializable
             'scale' => null,
             'default' => null,
             'use_type_default' => false,
-            'any_of' => null,
+            'any_of_class_names' => null,
             'overridable' => false,
             'language_options' => [],
             'options' => []

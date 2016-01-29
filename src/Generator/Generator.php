@@ -61,10 +61,10 @@ abstract class Generator
 
         if ($this->schema->isLatestVersion()) {
             foreach ($this->getTemplates() as $template => $filename) {
-                if ($this->getTarget($output, $filename) != $this->getTarget($output, $filename, true)) {
+                if ($this->getTarget($output, $filename, null) != $this->getTarget($output, $filename, null, true)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($output, $name, null, true),
+                        $this->getTarget($output, $filename, null, true),
                         $this->getParameters(),
                         $print
                     );
@@ -96,23 +96,32 @@ abstract class Generator
     {
         $filename = str_replace([
             '{className}',
+            '{vendor}',
+            '{package}',
+            '{category}',
             '{version}',
             '{major}',
         ], [
             $this->schema->getClassName(),
+            $this->schema->getId()->getVendor(),
+            $this->schema->getId()->getPackage(),
+            $this->schema->getId()->getCategory(),
             $this->schema->getId()->getVersion()->__toString(),
             $this->schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
-        if (!$directory) {
+        if ($directory === null) {
             $directory = sprintf('%s/%s/%s',
                 StringUtils::toCamelFromSlug($this->schema->getId()->getVendor()),
                 StringUtils::toCamelFromSlug($this->schema->getId()->getPackage()),
                 StringUtils::toCamelFromSlug($this->schema->getId()->getCategory())
             );
         }
+        if ($directory) {
+            $directory .= '/';
+        }
 
-        return sprintf('%s/%s/%s%s',
+        return sprintf('%s/%s%s%s',
             $output,
             $directory,
             $filename,
