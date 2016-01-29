@@ -130,7 +130,7 @@ class Compiler
                 }
 
                 foreach ($enum['option'] as $option) {
-                    $options['enums'][$enum['name']][$option['key']] = $option['value'];
+                    $options['enums'][$enum['name']][$option['key']] = $enum['type'] == 'int' ? intval($option['value']) : $option['value'];
                 }
             }
 
@@ -272,6 +272,10 @@ class Compiler
                 $generatorClassName = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
                 $generator = new $generatorClassName($schema);
                 $generator->generate($this->output, $print);
+
+                if ($schema->getOption($this->language, 'enums')) {
+                    $generator->generateEnums($this->output, $print);
+                }
 
                 $schema->setOption('isCompiled', true);
             }

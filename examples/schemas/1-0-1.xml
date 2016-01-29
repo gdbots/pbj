@@ -31,6 +31,11 @@
         <option key="INVALID" value="invalid" />
         <option key="DELETED" value="deleted" />
       </enum>
+
+      <enum name="enabled">
+        <option key="YES" value="1" />
+        <option key="NO" value="0" />
+      </enum>
     </enums>
 
     <php_options>

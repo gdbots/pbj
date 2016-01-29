@@ -1,0 +1,17 @@
+<?php
+
+namespace {{ namespace }};
+
+{% block use_statements %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+interface {{ className }}
+{% endblock class_definition %}
+{
+{% block class_body %}
+  {%- for key, value in options %}
+    const {{ key}} = {% if is_int %}{{ value }}{% else %}"{{ value }}"{% endif %};
+  {% endfor -%}
+{% endblock class_body %}
+}

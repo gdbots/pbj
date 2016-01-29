@@ -33,10 +33,12 @@ abstract class Generator
     /**
      * @return array
      */
-    protected function getTemplates()
-    {
-        throw new \InvalidArgumentException('No yet implemented');
-    }
+    abstract protected function getTemplates();
+
+    /**
+     * @return string
+     */
+    abstract protected function getEnumTemplate();
 
     /**
      * Generates and writes files.
@@ -69,6 +71,17 @@ abstract class Generator
                 }
             }
         }
+    }
+
+    /**
+     * @param string $output
+     * @param bool   $print
+     *
+     * @return void
+     */
+    public function generateEnums($output, $print = false)
+    {
+        // do nothing
     }
 
     /**

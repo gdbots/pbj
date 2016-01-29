@@ -97,8 +97,16 @@
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" type="pbjc:schema-enum-type" default="string" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
+
+  <xs:simpleType name="schema-enum-type">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="string" />
+      <xs:enumeration value="int" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="schema-enum-option">
     <xs:attribute name="key" type="xs:string" use="required" />
