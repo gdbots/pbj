@@ -27,7 +27,6 @@ class ArticleV1Mixin extends AbstractMixin
     {
         return [
             Fb::create('_id', T\IdentifierType::create())
-                ->asASingleValue()
                 ->required(),
                 ->withDefault(function() {
                 return UuidIdentifier::generate();
@@ -35,21 +34,17 @@ class ArticleV1Mixin extends AbstractMixin
                 ->className('Gdbots\Identifiers\UuidIdentifier'),
                 ->build(),
             Fb::create('slug', T\StringType::create())
-                ->asASingleValue()
                 ->required(),
                 ->pattern('/^[A-Za-z0-9_\-]+$/'),
                 ->build(),
             Fb::create('title', T\TextType::create())
-                ->asASingleValue()
                 ->required(),
                 ->build(),
             Fb::create('failed_request', T\MessageType::create())
-                ->asASingleValue()
                 ->required(),
                 ->anyOfClassNames(["Gdbots\Schemas\Pbj\Request"]),
                 ->build(),
             Fb::create('failure_reason', T\StringEnumType::create())
-                ->asASingleValue()
                 ->withDefault(ArticleReasonV1::EMPTY()),
                 ->className('Acme\Schemas\Blog\Enum\ArticleReasonV1'),
                 ->build()

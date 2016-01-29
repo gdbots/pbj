@@ -3,18 +3,15 @@
   "properties": {
     "slug": {
       "type": "string",
-      "aSingleValue": true,
       "required": true,
       "pattern": "/^[A-Za-z0-9_\\-]+$/",
     },
     "title": {
       "type": "text",
-      "aSingleValue": true,
       "required": true,
     },
     "failed_request": {
       "type": "message",
-      "aSingleValue": true,
       "required": true,
       "anyOfClassNames": [
         {
@@ -24,7 +21,6 @@
     },
     "failure_reason": {
       "type": "text",
-      "aSingleValue": true,
     }
   },
   "required": [
@@ -38,17 +34,14 @@
       "properties": {
         "request_id": {
           "type": "time-uuid",
-          "aSingleValue": true,
           "required": true,
         },
         "microtime": {
           "type": "microtime",
-          "aSingleValue": true,
           "required": true,
         },
         "correlator": {
           "type": "message-ref",
-          "aSingleValue": true,
         }
       },
       "required": [

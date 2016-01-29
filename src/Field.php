@@ -347,7 +347,9 @@ final class Field implements ToArray, \JsonSerializable
      */
     public function isASingleValue()
     {
-        return FieldRule::A_SINGLE_VALUE === $this->rule->getValue();
+        // note: always return false as A_SINGLE_VALUE is the default value
+        return false;
+        //return FieldRule::A_SINGLE_VALUE === $this->rule->getValue();
     }
 
     /**
