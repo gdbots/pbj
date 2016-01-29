@@ -1,59 +1,72 @@
-    {
+{
   "id": "pbj:acme:blog:entity:article:1-0-1",
-  "properties": {  "_id": {
-        "type": "identifier",
-        "aSingleValue": true,
-        "required": true,
-      },
-      "slug": {
-        "type": "string",
-        "aSingleValue": true,
-        "required": true,
-        "pattern": "/^[A-Za-z0-9_\\-]+$/",
-      },
-      "title": {
-        "type": "text",
-        "aSingleValue": true,
-        "required": true,
-      },
-      "failed_request": {
-        "type": "message",
-        "aSingleValue": true,
-        "required": true,
-        "any_of_class_names": [
-                  { "$ref": "#/definitions/request" }
-              ],
-      },
-      "failure_reason": {
-        "type": "string-enum",
-        "aSingleValue": true,
-        "with_default": "empty",
-        "enums": ["empty", "invalid", "deleted"],
-      }
+  "properties": {
+    "_id": {
+      "type": "identifier",
+      "aSingleValue": true,
+      "required": true,
     },
-
-                                                                                "required": ["_id", "slug", "title", "failed_request"],
-  
-                                                  "definitions": {
-              "request": {
-  "id": "pbj:gdbots:pbj:mixin:request:1-0-0",
-  "properties": {  "request_id": {
-        "type": "time-uuid",
-        "aSingleValue": true,
-        "required": true,
-      },
-      "microtime": {
-        "type": "microtime",
-        "aSingleValue": true,
-        "required": true,
-      },
-      "correlator": {
-        "type": "message-ref",
-        "aSingleValue": true,
-      }
+    "slug": {
+      "type": "string",
+      "aSingleValue": true,
+      "required": true,
+      "pattern": "/^[A-Za-z0-9_\\-]+$/",
     },
-
-                                                "required": ["request_id", "microtime"],
-  
-                        }          }
+    "title": {
+      "type": "text",
+      "aSingleValue": true,
+      "required": true,
+    },
+    "failed_request": {
+      "type": "message",
+      "aSingleValue": true,
+      "required": true,
+      "any_of_class_names": [
+        {
+          "$ref": "#/definitions/request"
+        }
+      ],
+    },
+    "failure_reason": {
+      "type": "string-enum",
+      "aSingleValue": true,
+      "with_default": "empty",
+      "enums": [
+        "empty",
+        "invalid",
+        "deleted"
+      ],
+    }
+  },
+  "required": [
+    "_id",
+    "slug",
+    "title",
+    "failed_request"
+  ],
+  "definitions": {
+    "request": {
+      "id": "pbj:gdbots:pbj:mixin:request:1-0-0",
+      "properties": {
+        "request_id": {
+          "type": "time-uuid",
+          "aSingleValue": true,
+          "required": true,
+        },
+        "microtime": {
+          "type": "microtime",
+          "aSingleValue": true,
+          "required": true,
+        },
+        "correlator": {
+          "type": "message-ref",
+          "aSingleValue": true,
+        }
+      },
+      "required": [
+        "request_id",
+        "microtime"
+      ],
+    }
   }
+}
