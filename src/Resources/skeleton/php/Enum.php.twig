@@ -17,7 +17,7 @@ final class {{ className }} extends Enum
 {
 {% block class_body %}
   {%- for key, value in options %}
-    const {{ key}} = {% if is_int %}{{ value }}{% else %}"{{ value }}"{% endif %};
+    const {{ key}} = {% if is_int %}{{ value }}{% else %}'{{ value }}'{% endif %};
   {% endfor -%}
 {% endblock class_body %}
 }

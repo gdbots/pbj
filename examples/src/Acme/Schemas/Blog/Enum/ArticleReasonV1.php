@@ -11,7 +11,7 @@ use Gdbots\Common\Enum;
   */
 final class ArticleReasonV1 extends Enum
 {
-    const EMPTY = "empty";
-      const INVALID = "invalid";
-      const DELETED = "deleted";
+    const EMPTY = 'empty';
+      const INVALID = 'invalid';
+      const DELETED = 'deleted';
   }

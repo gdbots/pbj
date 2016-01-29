@@ -42,7 +42,7 @@ class ArticleV1Mixin extends AbstractMixin
                 ->build(),
             Fb::create('failed_request', T\MessageType::create())
                 ->required(),
-                ->anyOfClassNames(["Gdbots\Schemas\Pbj\Request"]),
+                ->anyOfClassNames(['Gdbots\Schemas\Pbj\Request']),
                 ->build(),
             Fb::create('failure_reason', T\StringEnumType::create())
                 ->withDefault(ArticleReasonV1::EMPTY()),
