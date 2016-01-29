@@ -64,7 +64,7 @@ class JsonGenerator extends Generator
      *
      * @return string
      */
-    public static function prettyPrint($json)
+    public function prettyPrint($json)
     {
         $result = '';
         $level = 0;
