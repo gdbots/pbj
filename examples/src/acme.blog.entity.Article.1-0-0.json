@@ -16,7 +16,7 @@
       "type": "message",
       "aSingleValue": true,
       "required": true,
-      "any_of_class_names": [
+      "anyOfClassNames": [
         {
           "$ref": "#/definitions/request"
         }

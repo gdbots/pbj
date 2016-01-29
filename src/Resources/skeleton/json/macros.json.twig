@@ -52,10 +52,10 @@
       "required": true,
     {% endif %}
     {% if field.minLength %}
-      "min_length": {{ field.minLength }},
+      "minLength": {{ field.minLength }},
     {% endif %}
     {% if field.maxLength %}
-      "max_length": {{ field.maxLength }},
+      "maxLength": {{ field.maxLength }},
     {% endif %}
     {% if field.pattern %}
       "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
@@ -76,13 +76,13 @@
       "scale": {{ field.scale }},
     {% endif %}
     {% if field.default %}
-      "with_default": {{ field.default|json_encode }},
+      "withDefault": {{ field.default|json_encode }},
     {% endif %}
     {% if field.useTypeDefault %}
-      "use_type_default": true,
+      "useTypeDefault": true,
     {% endif %}
     {% if field.anyOfClassNames %}
-      "any_of_class_names": [
+      "anyOfClassNames": [
         {% for schema in field.anyOfClassNames %}
           { "$ref": "#/definitions/{{ schema.className|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
@@ -92,7 +92,7 @@
       "overridable": true,
     {% endif %}
     {% if field.option('enums') %}
-      "enums": [{% for option in field.option('enums') %}{{ option|json_encode }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      "enum": [{% for option in field.option('enums') %}{{ option|json_encode }}{% if not loop.last %}, {% endif %}{% endfor %}],
     {% endif %}
   }
 {% endmacro %}

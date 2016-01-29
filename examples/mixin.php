@@ -14,5 +14,5 @@ SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbj', true
 SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx', true);
 
 $compile = new Compiler(__DIR__.'/src');
-$compile->generate('php', true);
-$compile->generate('json', true);
+$compile->generate('php');
+$compile->generate('json');

@@ -21,7 +21,7 @@
       "type": "message",
       "aSingleValue": true,
       "required": true,
-      "any_of_class_names": [
+      "anyOfClassNames": [
         {
           "$ref": "#/definitions/request"
         }
@@ -30,8 +30,8 @@
     "failure_reason": {
       "type": "string-enum",
       "aSingleValue": true,
-      "with_default": "empty",
-      "enums": [
+      "withDefault": "empty",
+      "enum": [
         "empty",
         "invalid",
         "deleted"
