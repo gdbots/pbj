@@ -194,6 +194,7 @@ $compile->generate('php');
 ```
 
 > **Note:** corrently compiler support `php` and `json` languages.
+
 > **Note:** to print a preview of the files genereted, run `$compile->generate('php', true)`.
 
 In order to compile you have to add the directory or directories where your
