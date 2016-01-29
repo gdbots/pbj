@@ -122,13 +122,17 @@ class Compiler
             foreach ($xmlData['enums']['enum'] as $enum) {
                 $options['enums'][$enum['name']] = [];
 
+                if (!isset($enum['type'])) {
+                    $enum['type'] = 'string';
+                }
+
                 // handle single option
                 if (isset($enum['option']['key'])) {
                     $enum['option'] = [$enum['option']];
                 }
 
                 foreach ($enum['option'] as $option) {
-                    $options['enums'][$enum['name']][$option['key']] = $enum['type'] == 'int' ? intval($option['value']) : $option['value'];
+                    $options['enums'][$enum['name']][$option['key']] = $enum['type'] == 'int' ? intval($option['value']) : (string) $option['value'];
                 }
             }
 

@@ -3,10 +3,16 @@
 namespace {{ namespace }};
 
 {% block use_statements %}
+use Gdbots\Common\Enum;
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }}
+/**
+  {% for key, value in options %}
+* @method static {{ className }} {{ key}}()
+  {% endfor %}
+*/
+final class {{ className }} extends Enum
 {% endblock class_definition %}
 {
 {% block class_body %}
