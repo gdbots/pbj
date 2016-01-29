@@ -13,8 +13,6 @@ SchemaStore::addDir(__DIR__.'/schemas');
 SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbj', true);
 SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx', true);
 
-$compile = new Compiler('php', __DIR__.'/src');
-$compile->generate();
-
-$compile = new Compiler('json', __DIR__.'/src');
-$compile->generate();
+$compile = new Compiler(__DIR__.'/src');
+$compile->generate('php', true);
+$compile->generate('json', true);

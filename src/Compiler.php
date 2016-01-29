@@ -13,25 +13,16 @@ class Compiler
     const LANGUAGES = ['php', 'json'];
 
     /** @var string */
-    protected $language;
-
-    /** @var string */
     protected $output;
 
     /**
-     * @param string $language
      * @param string $output
      *
      * @throw InvalidLanguage
      */
-    public function __construct($language, $output = null)
+    public function __construct($output = null)
     {
-        $this->language = strtolower($language);
         $this->output = $output;
-
-        if (!in_array($this->language, self::LANGUAGES)) {
-            throw new InvalidLanguage(sprintf('Compile does not support "%s" language.', $this->language));
-        }
 
         $this->loadSchemas();
     }
@@ -104,11 +95,13 @@ class Compiler
         $languages = [];
         $options   = [];
 
-        $selectLanguageOptionsKey = sprintf('%s_options', $this->language);
+        foreach (self::LANGUAGES as $language) {
+            $selectLanguageOptionsKey = sprintf('%s_options', $language);
 
-        $languages[$this->language] = [];
-        if (isset($xmlData[$selectLanguageOptionsKey])) {
-            $languages[$this->language] = $xmlData[$selectLanguageOptionsKey];
+            $languages[$language] = [];
+            if (isset($xmlData[$selectLanguageOptionsKey])) {
+                $languages[$language] = $xmlData[$selectLanguageOptionsKey];
+            }
         }
 
         if (isset($xmlData['enums']['enum'])) {
@@ -136,21 +129,25 @@ class Compiler
                 }
             }
 
-            $languages[$this->language]['enums'] = [];
-            if (isset($xmlData['enums'][$selectLanguageOptionsKey])) {
-                $languages[$this->language]['enums'] = $xmlData['enums'][$selectLanguageOptionsKey];
-            }
+            foreach (self::LANGUAGES as $language) {
+                $selectLanguageOptionsKey = sprintf('%s_options', $language);
 
-            // php: use schema namespace as a default
-            if ($this->language == 'php' &&
-                (
-                    !isset($languages['php']['enums']['namespace'])
-                    || !$languages['php']['enums']['namespace']
-                )
-            ) {
-                $languages['php']['enums'] = [
-                    'namespace' => $languages['php']['namespace']
-                ];
+                $languages[$language]['enums'] = [];
+                if (isset($xmlData['enums'][$selectLanguageOptionsKey])) {
+                    $languages[$language]['enums'] = $xmlData['enums'][$selectLanguageOptionsKey];
+                }
+
+                // php: use schema namespace as a default
+                if ($language == 'php' &&
+                    (
+                        !isset($languages['php']['enums']['namespace'])
+                        || !$languages['php']['enums']['namespace']
+                    )
+                ) {
+                    $languages['php']['enums'] = [
+                        'namespace' => $languages['php']['namespace']
+                    ];
+                }
             }
         }
 
@@ -200,26 +197,28 @@ class Compiler
                         }
 
                         // inherit the same options
-                        if (!$enums = $schema->getLanguageOption($this->language, 'enums')) {
-                            $enums = $languages[$this->language]['enums'];
-                        }
-
-                        $languages[$this->language]['enums'] = $enums;
-
-                        // php only
-                        if ($this->language == 'php') {
-                            if (substr($enums['namespace'], 0, 1) == '\\') {
-                                $enums['namespace'] = substr($enums['namespace'], 1);
+                        foreach (self::LANGUAGES as $language) {
+                            if (!$enums = $schema->getLanguageOption($language, 'enums')) {
+                                $enums = $languages[$language]['enums'];
                             }
 
-                            $field['php_options']['class_name'] =
-                                sprintf('%s\%s%sV%d',
-                                    $enums['namespace'],
-                                    $schema->getClassName(),
-                                    StringUtils::toCamelFromSlug($field['enum']['name']),
-                                    $schema->getId()->getVersion()->getMajor()
-                                )
-                            ;
+                            $languages[$language]['enums'] = $enums;
+
+                            // php only
+                            if ($language == 'php') {
+                                if (substr($enums['namespace'], 0, 1) == '\\') {
+                                    $enums['namespace'] = substr($enums['namespace'], 1);
+                                }
+
+                                $field['php_options']['class_name'] =
+                                    sprintf('%s\%s%sV%d',
+                                        $enums['namespace'],
+                                        $schema->getClassName(),
+                                        StringUtils::toCamelFromSlug($field['enum']['name']),
+                                        $schema->getId()->getVersion()->getMajor()
+                                    )
+                                ;
+                            }
                         }
 
                         // not needed
@@ -265,23 +264,30 @@ class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param bool $print
+     * @param string $language
+     * @param bool   $print
      *
      * @return this
      */
-    public function generate($print = false)
+    public function generate($language, $print = false)
     {
+        if (!in_array($language, self::LANGUAGES)) {
+            throw new InvalidLanguage(sprintf('Compile does not support "%s" language.', $language));
+        }
+
         foreach (SchemaStore::getSchemas() as &$schema) {
-            if (!$schema->isDependent() && !$schema->getOption('isCompiled')) {
-                $generatorClassName = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
+            $isCompiled = sprintf('is%sCompiled', ucfirst($language));
+
+            if (!$schema->isDependent() && !$schema->getOption($isCompiled)) {
+                $generatorClassName = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
                 $generator = new $generatorClassName($schema);
                 $generator->generate($this->output, $print);
 
-                if ($schema->getOption($this->language, 'enums')) {
+                if ($schema->getOption($language, 'enums')) {
                     $generator->generateEnums($this->output, $print);
                 }
 
-                $schema->setOption('isCompiled', true);
+                $schema->setOption($isCompiled, true);
             }
         }
     }
