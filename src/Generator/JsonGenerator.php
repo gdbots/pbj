@@ -107,11 +107,11 @@ class JsonGenerator extends Generator
                         $post = ' ';
                         break;
 
-                    case " ":
+                    case ' ':
                     case "\t":
                     case "\n":
                     case "\r":
-                        $char = "";
+                        $char = '';
                         $endsLineLevel = $newLineLevel;
                         $newLineLevel = null;
                         break;
@@ -119,7 +119,7 @@ class JsonGenerator extends Generator
             }
 
             if ($newLineLevel !== null) {
-                $result .= "\n".str_repeat("  ", $newLineLevel);
+                $result .= "\n".str_repeat('  ', $newLineLevel);
             }
 
             $result .= $char.$post;
