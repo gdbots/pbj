@@ -27,26 +27,26 @@ class ArticleV1Mixin extends AbstractMixin
     {
         return [
             Fb::create('_id', T\IdentifierType::create())
-                ->required(),
+                ->required()
                 ->withDefault(function() {
                 return UuidIdentifier::generate();
-              }),
-                ->className('Gdbots\Identifiers\UuidIdentifier'),
+              })
+                ->className('Gdbots\Identifiers\UuidIdentifier')
                 ->build(),
             Fb::create('slug', T\StringType::create())
-                ->required(),
-                ->pattern('/^[A-Za-z0-9_\-]+$/'),
+                ->required()
+                ->pattern('/^[A-Za-z0-9_\-]+$/')
                 ->build(),
             Fb::create('title', T\TextType::create())
-                ->required(),
+                ->required()
                 ->build(),
             Fb::create('failed_request', T\MessageType::create())
-                ->required(),
-                ->anyOfClassNames(['Gdbots\Schemas\Pbj\Request']),
+                ->required()
+                ->anyOfClassNames(['Gdbots\Schemas\Pbj\Request'])
                 ->build(),
             Fb::create('failure_reason', T\StringEnumType::create())
-                ->withDefault(ArticleReasonV1::EMPTY()),
-                ->className('Acme\Schemas\Blog\Enum\ArticleReasonV1'),
+                ->withDefault(ArticleReasonV1::EMPTY())
+                ->className('Acme\Schemas\Blog\Enum\ArticleReasonV1')
                 ->build()
           ];
     }

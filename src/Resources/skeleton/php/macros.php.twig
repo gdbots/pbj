@@ -13,48 +13,48 @@
               ->asAMap()
   {% endif %}
   {%- if field.required %}
-              ->required(),
+              ->required()
   {% endif %}
   {%- if field.minLength %}
-              ->minLength({{ field.minLength }}),
+              ->minLength({{ field.minLength }})
   {% endif %}
   {%- if field.maxLength %}
-              ->maxLength({{ field.maxLength }}),
+              ->maxLength({{ field.maxLength }})
   {% endif %}
   {%- if field.pattern %}
-              ->pattern('{{ field.pattern }}'),
+              ->pattern('{{ field.pattern }}')
   {% endif %}
   {%- if field.format %}
-              ->format(Format::{{ field.format|upper }}()),
+              ->format(Format::{{ field.format|upper }}())
   {% endif %}
   {%- if field.min %}
-              ->min({{ field.min }}),
+              ->min({{ field.min }})
   {% endif %}
   {%- if field.max %}
-              ->max({{ field.max }}),
+              ->max({{ field.max }})
   {% endif %}
   {%- if field.precision %}
-              ->precision({{ field.precision }}),
+              ->precision({{ field.precision }})
   {% endif %}
   {%- if field.scale %}
-              ->scale({{ field.scale }}),
+              ->scale({{ field.scale }})
   {% endif %}
   {%- if field.languageOption('php', 'default') %}
-              ->withDefault({{ field.languageOption('php', 'default') }}),
+              ->withDefault({{ field.languageOption('php', 'default') }})
   {% elseif field.default %}
-              ->withDefault({{ field.default|json_encode }}),
+              ->withDefault({{ field.default|json_encode }})
   {% endif %}
   {%- if field.useTypeDefault %}
-              ->useTypeDefault(true),
+              ->useTypeDefault(true)
   {% endif %}
   {%- if field.languageOption('php', 'class_name') %}
-              ->className('{{ field.languageOption('php', 'class_name') }}'),
+              ->className('{{ field.languageOption('php', 'class_name') }}')
   {% endif %}
   {%- if field.anyOfClassNames %}
-              ->anyOfClassNames([{% for schema in field.anyOfClassNames %}'{{ schema.languageOption('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}]),
+              ->anyOfClassNames([{% for schema in field.anyOfClassNames %}'{{ schema.languageOption('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
   {% endif %}
   {%- if field.overridable %}
-              ->overridable(true),
+              ->overridable(true)
   {% endif %}
               ->build()
 {%- endmacro %}
