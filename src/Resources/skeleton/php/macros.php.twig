@@ -47,11 +47,14 @@
   {%- if field.useTypeDefault %}
               ->useTypeDefault(true)
   {% endif %}
-  {%- if field.languageOption('php', 'class_name') %}
-              ->className('{{ field.languageOption('php', 'class_name') }}')
-  {% endif %}
   {%- if field.anyOfClassNames %}
+    {%- if field.anyOfClassNames|length == 1 %}
+              ->className('{{ field.anyOfClassNames.0.languageOption('php', 'namespace') }}')
+    {% else %}
               ->anyOfClassNames([{% for schema in field.anyOfClassNames %}'{{ schema.languageOption('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
+    {% endif -%}
+  {% elseif field.languageOption('php', 'class_name') %}
+              ->className('{{ field.languageOption('php', 'class_name') }}')
   {% endif %}
   {%- if field.overridable %}
               ->overridable(true)
