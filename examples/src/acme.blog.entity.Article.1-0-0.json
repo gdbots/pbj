@@ -1,55 +1,55 @@
 {
-  "id": "pbj:acme:blog:entity:article:1-0-0",
-  "properties": {
-    "slug": {
-      "type": "string",
-      "required": true,
-      "pattern": "/^[A-Za-z0-9_\\-]+$/",
-    },
-    "title": {
-      "type": "text",
-      "required": true,
-    },
-    "failed_request": {
-      "type": "message",
-      "required": true,
-      "anyOfClassNames": [
-        {
-          "$ref": "#/definitions/request"
-        }
-      ],
-    },
-    "failure_reason": {
-      "type": "text",
-    }
-  },
-  "required": [
-    "slug",
-    "title",
-    "failed_request"
-  ],
-  "definitions": {
-    "request": {
-      "id": "pbj:gdbots:pbj:mixin:request:1-0-0",
-      "properties": {
-        "request_id": {
-          "type": "time-uuid",
-          "required": true,
+    "id": "pbj:acme:blog:entity:article:1-0-0",
+    "properties": {
+        "slug": {
+            "type": "string",
+            "required": true,
+            "pattern": "\/^[A-Za-z0-9_\\-]+$\/"
         },
-        "microtime": {
-          "type": "microtime",
-          "required": true,
+        "title": {
+            "type": "text",
+            "required": true
         },
-        "correlator": {
-          "type": "message-ref",
+        "failed_request": {
+            "type": "message",
+            "required": true,
+            "anyOfClassNames": [
+                {
+                    "$ref": "#\/definitions\/request"
+                }
+            ]
+        },
+        "failure_reason": {
+            "type": "text"
         }
-      },
-      "required": [
-        "request_id",
-        "microtime"
-      ],
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false
+    },
+    "required": [
+        "slug",
+        "title",
+        "failed_request"
+    ],
+    "definitions": {
+        "request": {
+            "id": "pbj:gdbots:pbj:mixin:request:1-0-0",
+            "properties": {
+                "request_id": {
+                    "type": "time-uuid",
+                    "required": true
+                },
+                "microtime": {
+                    "type": "microtime",
+                    "required": true
+                },
+                "correlator": {
+                    "type": "message-ref"
+                }
+            },
+            "required": [
+                "request_id",
+                "microtime"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
 }
