@@ -1,36 +1,53 @@
 {
-  "id": "pbj:acme:blog:entity:article:1-0-1",
+  "$schema": "http:\/\/json-schema.org\/schema#",
+  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/1-0-1.json",
+  "type": "object",
   "properties": {
     "_id": {
-      "type": "identifier",
-      "required": true
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "identifier"
+      }
     },
     "slug": {
       "type": "string",
       "required": true,
-      "pattern": "\/^[A-Za-z0-9_\\-]+$\/"
+      "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
+      "additionalProperties": {
+        "customType": "string"
+      }
     },
     "title": {
-      "type": "text",
-      "required": true
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "text"
+      }
     },
     "failed_request": {
-      "type": "message",
+      "type": "object",
       "required": true,
-      "anyOfClassNames": [
+      "anyOf": [
         {
           "$ref": "#\/definitions\/request"
         }
-      ]
+      ],
+      "additionalProperties": {
+        "customType": "message"
+      }
     },
     "failure_reason": {
-      "type": "string-enum",
-      "withDefault": "empty",
+      "type": "string",
       "enum": [
         "empty",
         "invalid",
         "deleted"
-      ]
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "withDefault": "empty"
+      }
     }
   },
   "required": [
@@ -41,18 +58,28 @@
   ],
   "definitions": {
     "request": {
-      "id": "pbj:gdbots:pbj:mixin:request:1-0-0",
+      "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/1-0-0.json",
+      "type": "object",
       "properties": {
         "request_id": {
-          "type": "time-uuid",
-          "required": true
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "time-uuid"
+          }
         },
         "microtime": {
-          "type": "microtime",
-          "required": true
+          "type": "number",
+          "required": true,
+          "additionalProperties": {
+            "customType": "microtime"
+          }
         },
         "correlator": {
-          "type": "message-ref"
+          "type": "object",
+          "additionalProperties": {
+            "customType": "message-ref"
+          }
         }
       },
       "required": [
