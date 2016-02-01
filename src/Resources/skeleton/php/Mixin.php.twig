@@ -16,7 +16,7 @@ use {{ field.languageOption('php', 'class_name') }};
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ schema.className }}V{{ schema.id.version.major }}Mixin extends AbstractMixin
+final class {{ schema.className }}V{{ schema.id.version.major }}Mixin extends AbstractMixin
 {% endblock class_definition %}
 {
 {% block class_body %}

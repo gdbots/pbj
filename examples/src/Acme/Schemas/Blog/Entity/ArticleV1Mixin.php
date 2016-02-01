@@ -10,7 +10,7 @@ use Gdbots\Pbj\Enum\Format;
 use Gdbots\Identifiers\UuidIdentifier;
 use Acme\Schemas\Blog\Enum\ArticleReasonV1;
 
-class ArticleV1Mixin extends AbstractMixin
+final class ArticleV1Mixin extends AbstractMixin
 {
     /**
      * {@inheritdoc}

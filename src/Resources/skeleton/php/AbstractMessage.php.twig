@@ -21,7 +21,7 @@ use {{ mixin.languages.php.namespace }}\{{ mixin.className }}V{{ mixin.id.versio
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ schema.className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ schema.className }}{% for mixin in schema.mixins %}, {{ mixin.className }}V{{ mixin.id.version.major }}{% endfor %}
+final class {{ schema.className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ schema.className }}{% for mixin in schema.mixins %}, {{ mixin.className }}V{{ mixin.id.version.major }}{% endfor %}
 {% if schema.mixins|length %}
   {# note: linebreak for cleaner print #}
 
