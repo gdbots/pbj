@@ -28,6 +28,18 @@ class Compiler
     }
 
     /**
+     * @param string $output
+     *
+     * @return this
+     */
+    public function setOutputDirectory($output)
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
+    /**
      * Reads all schemas from all stored directories.
      *
      * @return this
@@ -45,7 +57,11 @@ class Compiler
                     if ($xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
                         $xmlData['entity']['is_dependent'] = $isDependent;
 
-                        SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
+                        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename())-1);
+
+                        if ($this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
+                            SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
+                        }
                     }
                 }
             }
@@ -75,6 +91,27 @@ class Compiler
         foreach ($schemaLatestVersion as &$schema) {
             $schema->setIsLatestVersion(true);
         }
+    }
+
+    /**
+     * Validate the the dir sctructure match the schema id.
+     *
+     * @param array $schemaId
+     * @param array $dir
+     *
+     * @return bool
+     */
+    protected function validateXmlSchemaId($schemaId, $dir)
+    {
+        $schemaId = SchemaId::fromString($schemaId);
+
+        $schemaPath = sprintf('%s/%s/%s',
+            $schemaId->getVendor(),
+            $schemaId->getPackage(),
+            $schemaId->getCategory()
+        );
+
+        return (bool) strrpos($dir, $schemaPath);
     }
 
     /**
