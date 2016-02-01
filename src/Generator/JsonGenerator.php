@@ -16,9 +16,8 @@ class JsonGenerator extends Generator
     protected function getTemplates()
     {
         return [
-                'Message.json.twig'  => '{vendor}.{package}.{category}.{className}.{version}'
-            ]
-        ;
+            'Message.json.twig'  => '{version}'
+        ];
     }
 
     /**
@@ -38,7 +37,13 @@ class JsonGenerator extends Generator
             $filename = str_replace('{version}', 'latest', $filename);
         }
 
-        return parent::getTarget($output, $filename, false, $isLatest);
+        $directory = sprintf('%s/%s/%s',
+            $this->schema->getId()->getVendor(),
+            $this->schema->getId()->getPackage(),
+            $this->schema->getId()->getCategory()
+        );
+
+        return parent::getTarget($output, $filename, $directory, $isLatest);
     }
 
     /**
@@ -54,7 +59,7 @@ class JsonGenerator extends Generator
      */
     protected function render($template, $parameters)
     {
-        return json_encode(
+        return str_replace('    ', '  ', json_encode(
             json_decode(
                 str_replace(
                     [
@@ -71,6 +76,6 @@ class JsonGenerator extends Generator
                 )
             ),
             JSON_PRETTY_PRINT
-        );
+        ));
     }
 }

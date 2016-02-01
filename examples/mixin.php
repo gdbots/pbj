@@ -15,4 +15,12 @@ SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx', tru
 
 $compile = new Compiler(__DIR__.'/src');
 $compile->generate('php', true);
+
+/**
+ * Update output directory to point to the `root` where json files will be stored
+ * or just create a new `Compiler` object.
+ *
+ * @see Gdbots\Pbjc\Generator\JsonGenerator::getTarget with output structure
+ */
+$compile->setOutputDirectory(__DIR__.'/schemas');
 $compile->generate('json', true);
