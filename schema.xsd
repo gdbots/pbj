@@ -210,9 +210,11 @@
         @See \Gdbots\Common\Enum\FieldRule.
       ]]></xs:documentation>
     </xs:annotation>
-    <xs:restriction base="xs:integer">
-      <xs:minInclusive value="1" />
-      <xs:maxInclusive value="4" />
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="a-single-value" />
+      <xs:enumeration value="a-set" />
+      <xs:enumeration value="a-list" />
+      <xs:enumeration value="a-map" />
     </xs:restriction>
   </xs:simpleType>
 

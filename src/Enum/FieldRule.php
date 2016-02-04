@@ -12,8 +12,8 @@ use Gdbots\Common\Enum;
  */
 final class FieldRule extends Enum
 {
-    const A_SINGLE_VALUE = 1;
-    const A_SET          = 2;
-    const A_LIST         = 3;
-    const A_MAP          = 4;
+    const A_SINGLE_VALUE = 'a-simple-value';
+    const A_SET          = 'a-set';
+    const A_LIST         = 'a-list';
+    const A_MAP          = 'a-map';
 }

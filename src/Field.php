@@ -244,6 +244,10 @@ final class Field implements ToArray, \JsonSerializable
             }
         }
 
+        if ($args['rule']) {
+            $args['rule'] = FieldRule::create($args['rule']);
+        }
+
         $class = new \ReflectionClass(get_called_class());
         return $class->newInstanceArgs(array_values($args));
     }
