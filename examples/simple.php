@@ -10,8 +10,7 @@ use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Compiler;
 
 SchemaStore::addDir(__DIR__.'/schemas');
-SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbj', true);
-SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx', true);
+SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas', true);
 
 $compile = new Compiler(__DIR__.'/src');
 $compile->generate('php', true);
