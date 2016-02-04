@@ -37,10 +37,11 @@ class JsonGenerator extends Generator
             $filename = str_replace('{version}', 'latest', $filename);
         }
 
-        $directory = sprintf('%s/%s/%s',
+        $directory = sprintf('%s/%s/%s/%s',
             $this->schema->getId()->getVendor(),
             $this->schema->getId()->getPackage(),
-            $this->schema->getId()->getCategory()
+            $this->schema->getId()->getCategory(),
+            $this->schema->getId()->getMessage()
         );
 
         return parent::getTarget($output, $filename, $directory, $isLatest);
