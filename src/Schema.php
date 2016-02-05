@@ -13,12 +13,6 @@ final class Schema implements ToArray, \JsonSerializable
     /** @var Field[] */
     private $fields = [];
 
-    /** @var Schema[] */
-    private $mixins = [];
-
-    /** @var array */
-    private $languages = [];
-
     /** @var array */
     private $options = [];
 
@@ -34,23 +28,16 @@ final class Schema implements ToArray, \JsonSerializable
     /**
      * @param SchemaId|string $id
      * @param array           $fields
-     * @param array           $mixins
-     * @param array           $languages
      * @param array           $options
      */
-    public function __construct($id, array $fields = [], array $mixins = [], array $languages = [], array $options = [])
+    public function __construct($id, array $fields = [], array $options = [])
     {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
 
-        $this->languages = $languages;
-        $this->options   = $options;
+        $this->options = $options;
 
         foreach ($fields as $field) {
             $this->addField($field);
-        }
-
-        foreach ($mixins as $mixin) {
-            $this->addMixin($mixin);
         }
     }
 
@@ -71,47 +58,11 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return [
-            'id'         => $this->id,
-            'class_name' => $this->getClassName(),
-            'fields'     => $this->fields,
-            'mixins'     => $this->mixins,
-            'languages'  => $this->languages,
-            'options'    => $this->options
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    /**
      * @return SchemaId
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Returns the qualified (base) class name. This should be used later to
-     * generate a PHP class name.
-     *
-     * e.g. "Message"
-     *
-     * @return string
-     */
-    public function getClassName()
-    {
-        return StringUtils::toCamelFromSlug($this->id->getMessage());
     }
 
     /**
@@ -127,7 +78,7 @@ final class Schema implements ToArray, \JsonSerializable
     /**
      * @param Field $field
      */
-    private function addField(Field $field)
+    public function addField(Field $field)
     {
         if (!$this->hasField($field->getName())) {
             $this->fields[$field->getName()] = $field;
@@ -154,123 +105,6 @@ final class Schema implements ToArray, \JsonSerializable
     public function getFields()
     {
         return $this->fields ?: $this->fields = [];
-    }
-
-    /**
-     * @param string $schemaId
-     *
-     * @return bool
-     */
-    public function hasMixin($schemaId)
-    {
-        return isset($this->mixins[$schemaId]);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function addMixin($schema)
-    {
-        $schemaId = $schema->getId()->__toString();
-
-        if (!$this->hasMixin($schemaId)) {
-            $this->mixins[$schemaId] = $schema;
-        }
-    }
-
-    /**
-     * @param string $schemaId
-     *
-     * @return Schema|null
-     */
-    public function getMixinById($schemaId)
-    {
-        if (!isset($this->mixins[$schemaId])) {
-            return $this->mixins[$schemaId];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Schema[]
-     */
-    public function getMixins()
-    {
-        return $this->mixins ?: $this->mixins = [];
-    }
-
-    /**
-     * @param string $language
-     * @param array  $options
-     *
-     * @return this
-     */
-    public function setLanguage($language, array $options = [])
-    {
-        if (!isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language] = $options;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param string key
-     * @param mixed  $value
-     *
-     * @return this
-     */
-    public function setLanguageOption($language, $key, $value)
-    {
-        if (isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language][$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param string key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguageOption($language, $key, $default = null)
-    {
-        if (isset($this->languages[$language][$key])) {
-            return $this->languages[$language][$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param string $language
-     *
-     * @return array
-     */
-    public function getLanguageOptions($language)
-    {
-        if (isset($this->languages[$language])) {
-            return $this->languages[$language];
-        }
-
-        return [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getLanguages()
-    {
-        return $this->languages ?: $this->languages = [];
     }
 
     /**
@@ -305,6 +139,38 @@ final class Schema implements ToArray, \JsonSerializable
     {
         if (isset($this->options[$key])) {
             return $this->options[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param string $key
+     * @param string $subkey
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setOptionSubOption($key, $subkey, $value)
+    {
+        if (!isset($this->options[$key])) {
+            $this->options[$key] = [];
+        }
+        $this->options[$key][$subkey] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param string $subkey
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getOptionSubOption($key, $subkey, $default = null)
+    {
+        if (isset($this->options[$key][$subkey])) {
+            return $this->options[$key][$subkey];
         }
 
         return $default;
@@ -373,5 +239,25 @@ final class Schema implements ToArray, \JsonSerializable
     public function isDependent()
     {
         return $this->isDependent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return [
+            'id'      => $this->id,
+            'fields'  => $this->fields,
+            'options' => $this->options
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }

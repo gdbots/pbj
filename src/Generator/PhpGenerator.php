@@ -44,9 +44,28 @@ class PhpGenerator extends Generator
      */
     protected function getTarget($output, $filename, $directory = null, $isLatest = false)
     {
-        $directory = str_replace('\\', '/', $this->schema->getLanguageOption('php', 'namespace'));
+        $filename = str_replace([
+            '{className}'
+        ], [
+            StringUtils::toCamelFromSlug($this->schema->getId()->getMessage())
+        ], $filename);
+
+        $directory = str_replace('\\', '/', $this->schema->getOptionSubOption('php', 'namespace'));
 
         return parent::getTarget($output, $filename, $directory, $isLatest);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getParameters()
+    {
+        return array_merge(
+            parent::getParameters(),
+            [
+                'className' => StringUtils::toCamelFromSlug($this->schema->getId()->getMessage())
+            ]
+        );
     }
 
     /**
@@ -64,9 +83,9 @@ class PhpGenerator extends Generator
     {
         $enums = $this->schema->getOption('enums', []);
 
-        foreach ($enums as $name => $options) {
-            if (!$phpOptions = $this->schema->getLanguageOption('php', 'enums')) {
-                $phpOptions = $this->schema->getLanguageOptions('php');
+        foreach ($enums as $enum) {
+            if (!$phpOptions = $this->schema->getOptionSubOption('php', 'enums')) {
+                $phpOptions = $this->schema->getOption('php');
             }
 
             $namespace = $phpOptions['namespace'];
@@ -76,8 +95,8 @@ class PhpGenerator extends Generator
 
             $className =
                 sprintf('%s%sV%d',
-                    $this->schema->getClassName(),
-                    StringUtils::toCamelFromSlug($name),
+                    StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
+                    StringUtils::toCamelFromSlug($enum->getName()),
                     $this->schema->getId()->getVersion()->getMajor()
                 )
             ;
@@ -97,8 +116,8 @@ class PhpGenerator extends Generator
                 array_merge($this->getParameters(), [
                     'namespace' => $namespace,
                     'className' => $className,
-                    'options' => $options,
-                    'is_int' => is_int(current($options))
+                    'options' => $enum->getValues(),
+                    'is_int' => is_int(current($enum->getValues()))
                 ]),
                 $print
             );

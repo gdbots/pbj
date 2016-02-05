@@ -4,6 +4,7 @@ namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
+use Gdbots\Pbjc\Twig\Extension\StringExtension;
 use Gdbots\Pbjc\Schema;
 
 abstract class Generator
@@ -95,14 +96,12 @@ abstract class Generator
     protected function getTarget($output, $filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
-            '{className}',
             '{vendor}',
             '{package}',
             '{category}',
             '{version}',
             '{major}',
         ], [
-            $this->schema->getClassName(),
             $this->schema->getId()->getVendor(),
             $this->schema->getId()->getPackage(),
             $this->schema->getId()->getCategory(),
@@ -167,6 +166,7 @@ abstract class Generator
         ));
 
         $twig->addExtension(new ClassExtension());
+        $twig->addExtension(new StringExtension());
 
         return $twig;
     }

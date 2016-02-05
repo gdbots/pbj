@@ -1,12 +1,12 @@
 <?php
 
-namespace {{ schema.languages.php.namespace }};
+namespace {{ schema.options.php.namespace }};
 
 {% block use_statements %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ schema.className }}V{{ schema.id.version.major }} extends {{ schema.className }}
+interface {{ className }}V{{ schema.id.version.major }} extends {{ className }}
 {% endblock class_definition %}
 {
 {% block class_body %}

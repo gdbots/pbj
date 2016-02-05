@@ -11,8 +11,6 @@ use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
-use Gdbots\Pbjc\Type\IntEnumType;
-use Gdbots\Pbjc\Type\StringEnumType;
 
 final class Field implements ToArray, \JsonSerializable
 {
@@ -36,12 +34,6 @@ final class Field implements ToArray, \JsonSerializable
     /** @var bool */
     private $required = false;
 
-    /** @var int */
-    private $minLength;
-
-    /** @var int */
-    private $maxLength;
-
     /**
      * A regular expression to match against for string types.
      * @link http://spacetelescope.github.io/understanding-json-schema/reference/string.html#pattern
@@ -56,6 +48,12 @@ final class Field implements ToArray, \JsonSerializable
      * @var Format
      */
     private $format;
+
+    /** @var int */
+    private $minLength;
+
+    /** @var int */
+    private $maxLength;
 
     /** @var int */
     private $min;
@@ -76,59 +74,22 @@ final class Field implements ToArray, \JsonSerializable
     private $useTypeDefault = false;
 
     /** @var array */
-    private $anyOfClassNames;
+    private $anyOf;
 
     /** @var bool */
     private $overridable = false;
 
     /** @var array */
-    private $languages = [];
-
-    /** @var array */
     private $options = [];
 
     /**
-     * @param string      $name
-     * @param Type        $type
-     * @param FieldRule   $rule
-     * @param bool        $required
-     * @param null|int    $minLength
-     * @param null|int    $maxLength
-     * @param null|string $pattern
-     * @param null|string $format
-     * @param null|int    $min
-     * @param null|int    $max
-     * @param int         $precision
-     * @param int         $scale
-     * @param null|mixed  $default
-     * @param bool        $useTypeDefault
-     * @param null|array  $anyOfClassNames
-     * @param bool        $overridable
-     * @param array       $languages
-     * @param array       $options
+     * @param string $name
+     * @param array  $parameters
      *
      * @throw \InvalidArgumentException
      */
-    public function __construct(
-        $name,
-        Type $type,
-        FieldRule $rule        = null,
-        $required              = false,
-        $minLength             = null,
-        $maxLength             = null,
-        $pattern               = null,
-        $format                = null,
-        $min                   = null,
-        $max                   = null,
-        $precision             = null,
-        $scale                 = null,
-        $default               = null,
-        $useTypeDefault        = false,
-        array $anyOfClassNames = null,
-        $overridable           = false,
-        array $languages       = [],
-        array $options         = []
-    ) {
+    public function __construct($name, array $parameters)
+    {
         if (!$name || strlen($name) > 127 || preg_match(self::VALID_NAME_PATTERN, $name) === false) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -139,127 +100,84 @@ final class Field implements ToArray, \JsonSerializable
             );
         }
 
-        $required       = (bool) $required;
-        $useTypeDefault = (bool) $useTypeDefault;
-        $overridable    = (bool) $overridable;
+        foreach ($parameters as $key => $value) {
+            $classProperty = lcfirst(StringUtils::toCamelFromSnake($key));
 
-        $this->name            = $name;
-        $this->type            = $type;
-        $this->required        = $required;
-        $this->default         = $default;
-        $this->useTypeDefault  = $useTypeDefault;
-        $this->anyOfClassNames = $anyOfClassNames;
-        $this->overridable     = $overridable;
-        $this->languages       = $languages;
-        $this->options         = $options;
+            // existing properties
+            if (property_exists(get_called_class(), $classProperty)) {
+                switch ($key) {
+                    case 'type':
+                        $class = sprintf(
+                            '\\Gdbots\\Pbjc\\Type\\%sType',
+                            StringUtils::toCamelFromSlug($parameters['type'])
+                        );
 
-        $this->applyFieldRule($rule);
-        $this->applyStringOptions($minLength, $maxLength, $pattern, $format);
-        $this->applyNumericOptions($min, $max, $precision, $scale);
-    }
-
-    /**
-     * Create instrance from array
-     *
-     * @param string $name
-     * @param array  $parameters
-     */
-    public static function fromArray($name, array $parameters)
-    {
-        $typeClass = sprintf(
-            '\\Gdbots\\Pbjc\\Type\\%sType',
-            StringUtils::toCamelFromSlug($parameters['type'])
-        );
-
-        $args = [
-            'name' => $name,
-            'type' => $typeClass::create(),
-            'rule' => null,
-            'required' => false,
-            'min_length' => null,
-            'max_length' => null,
-            'pattern' => null,
-            'format' => null,
-            'min' => null,
-            'max' => null,
-            'precision' => null,
-            'scale' => null,
-            'default' => null,
-            'use_type_default' => false,
-            'any_of_class_names' => null,
-            'overridable' => false,
-            'language_options' => [],
-            'options' => []
-        ];
-
-        foreach ($parameters as $property => $value) {
-            $classProperty = lcfirst(StringUtils::toCamelFromSnake($property));
-            if (property_exists(get_called_class(), $classProperty) && $property != 'type') {
-              $args[$property] = $value;
-            } elseif (substr($property, -8) == '_options') {
-                $language = substr($property, 0, -8); // remove "_options"
-
-                if (in_array($language, Compiler::LANGUAGES)) {
-                    $args['language_options'][$language] = $value;
-                }
-            } elseif (!empty($value)) {
-                $args['options'][$property] = $value;
-            }
-        }
-
-        /**
-         * Handle special types:
-         */
-
-        // use *_length for string type
-        if ($args['type'] instanceof StringType) {
-            $args['min_length'] = $args['min'];
-            $args['max_length'] = $args['max'];
-            $args['min'] = null;
-            $args['max'] = null;
-        }
-
-        if ($args['type'] instanceof IntEnumType || $args['type'] instanceof StringEnumType) {
-
-            // php: create default value and set the Enum class name
-            if (isset($args['default'])
-                && isset($args['language_options']['php']['class_name'])
-                && isset($args['options']['enums'])
-            ) {
-                $className    = $args['language_options']['php']['class_name'];
-                $enumerations = $args['options']['enums'];
-
-                // search for key by value
-                $found = null;
-                foreach ($enumerations as $key => $value) {
-                    if (strtolower($value) == strtolower($args['default'])) {
-                        $found = $key;
+                        $value = $class::create();
                         break;
-                    }
+
+                    case 'rule':
+                        if (null !== $value && in_array($value, FieldRule::values())) {
+                            $value = FieldRule::create($value);
+                        }
+                        break;
+
+                    case 'format':
+                        if (null !== $value && in_array($value, Format::values())) {
+                            $value = Format::create($value);
+                        }
+                        break;
+
+                    case 'required':
+                    case 'use_type_default':
+                    case 'overridable':
+
+                        break;
+
+                    case 'min':
+                    case 'max':
+                    case 'minLength':
+                    case 'maxLength':
+                    case 'precision':
+                    case 'scale':
+                        $value = (int) $value;
+                        break;
+
+                    case 'options':
+                        foreach ($value as $k => $v) {
+                            $this->setOption($k, $v);
+                        }
+
+                        continue 2;
                 }
 
-                if ($found) {
-                    $args['language_options']['php']['default'] = sprintf('%s::%s()', substr($className, strrpos($className, '\\')+1), strtoupper($found));
-                }
+                $this->$classProperty = $value;
+            }
+
+            // lanauge options
+            elseif (substr($key, -8) == '_options') {
+                $language = substr($key, 0, -8); // remove "_options"
+
+                $this->setOption($language, $value);
+            }
+
+            // other
+            elseif (!empty($value)) {
+
+                $this->setOption($key, $value);
             }
         }
 
-        if ($args['rule']) {
-            $args['rule'] = FieldRule::create($args['rule']);
-        }
-
-        $class = new \ReflectionClass(get_called_class());
-        return $class->newInstanceArgs(array_values($args));
+        $this->applyFieldRule();
+        $this->applyStringOptions();
+        $this->applyNumericOptions();
     }
 
     /**
-     * @param FieldRule $rule
-     *
      * @throws \InvalidArgumentException
      */
-    private function applyFieldRule(FieldRule $rule = null)
+    private function applyFieldRule()
     {
-        $this->rule = $rule ?: FieldRule::A_SINGLE_VALUE();
+        $this->rule = $this->rule ?: FieldRule::A_SINGLE_VALUE();
         if ($this->isASet() && $this->type->allowedInSet()) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -272,45 +190,32 @@ final class Field implements ToArray, \JsonSerializable
     }
 
     /**
-     * @param null|int    $minLength
-     * @param null|int    $maxLength
-     * @param null|string $pattern
-     * @param null|string $format
+     * @return void
      */
-    private function applyStringOptions($minLength = null, $maxLength = null, $pattern = null, $format = null)
+    private function applyStringOptions()
     {
-        $minLength = (int) $minLength;
-        $maxLength = (int) $maxLength;
-        if ($maxLength > 0) {
-            $this->maxLength = $maxLength;
-            $this->minLength = NumberUtils::bound($minLength, 0, $this->maxLength);
-        } else {
-            // arbitrary string minimum range
-            $this->minLength = NumberUtils::bound($minLength, 0, $this->type->getMaxBytes());
+        // use *Length for string type
+        if ($this->type instanceof StringType) {
+            $this->minLength = $this->min;
+            $this->maxLength = $this->max;
+            $this->min = null;
+            $this->max = null;
         }
 
-        $this->pattern = $pattern;
-        if (null !== $format && in_array($format, Format::values())) {
-            $this->format = Format::create($format);
+        if ($this->maxLength > 0) {
+            $this->minLength = NumberUtils::bound($this->minLength, 0, $this->maxLength);
         } else {
-            //$this->format = Format::UNKNOWN();
+            // arbitrary string minimum range
+            $this->minLength = NumberUtils::bound($this->minLength, 0, $this->type->getMaxBytes());
         }
     }
 
     /**
-     * @param null|int $min
-     * @param null|int $max
-     * @param int      $precision
-     * @param int      $scale
+     * @return void
      */
-    private function applyNumericOptions($min = null, $max = null, $precision = 10, $scale = 2)
+    private function applyNumericOptions()
     {
-        if (null !== $max) {
-            $this->max = (int) $max;
-        }
-
-        if (null !== $min) {
-            $this->min = (int) $min;
+        if (null !== $this->min) {
             if (null !== $this->max) {
                 if ($this->min > $this->max) {
                     $this->min = $this->max;
@@ -318,8 +223,8 @@ final class Field implements ToArray, \JsonSerializable
             }
         }
 
-        $this->precision = NumberUtils::bound((int) $precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
-        $this->scale = NumberUtils::bound((int) $scale, 0, $this->precision);
+        $this->precision = NumberUtils::bound($this->precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
+        $this->scale = NumberUtils::bound($this->scale, 0, $this->precision);
     }
 
     /**
@@ -351,9 +256,8 @@ final class Field implements ToArray, \JsonSerializable
      */
     public function isASingleValue()
     {
-        // note: always return false as A_SINGLE_VALUE is the default value
-        return false;
         //return FieldRule::A_SINGLE_VALUE === $this->rule->getValue();
+        return false;
     }
 
     /**
@@ -478,17 +382,17 @@ final class Field implements ToArray, \JsonSerializable
     /**
      * @return bool
      */
-    public function hasAnyOfClassNames()
+    public function hasAnyOf()
     {
-        return null !== $this->anyOfClassNames;
+        return null !== $this->anyOf;
     }
 
     /**
      * @return array
      */
-    public function getAnyOfClassNames()
+    public function getAnyOf()
     {
-        return $this->anyOfClassNames;
+        return $this->anyOf;
     }
 
     /**
@@ -497,79 +401,6 @@ final class Field implements ToArray, \JsonSerializable
     public function isOverridable()
     {
         return $this->overridable;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLanguages()
-    {
-        return $this->languages ?: $this->languages = [];
-    }
-
-    /**
-     * @param string $language
-     * @param array  $options
-     *
-     * @return this
-     */
-    public function setLanguage($language, array $options = [])
-    {
-        if (!isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language] = $options;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     *
-     * @return array
-     */
-    public function getLanguageOptions($language)
-    {
-        if (isset($this->languages[$language])) {
-            return $this->languages[$language];
-        }
-
-        return [];
-    }
-
-    /**
-     * @param string $language
-     * @param string key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguageOption($language, $key, $default = null)
-    {
-        if (isset($this->languages[$language][$key])) {
-            return $this->languages[$language][$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param string $language
-     * @param string key
-     * @param mixed  $value
-     *
-     * @return this
-     */
-    public function setLanguageOption($language, $key, $value)
-    {
-        if (isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language][$key] = $value;
-
-        return $this;
     }
 
     /**
@@ -610,6 +441,38 @@ final class Field implements ToArray, \JsonSerializable
     }
 
     /**
+     * @param string $key
+     * @param string $subkey
+     * @param mixed  $value
+     *
+     * @return this
+     */
+    public function setOptionSubOption($key, $subkey, $value)
+    {
+        if (!isset($this->options[$key])) {
+            $this->options[$key] = [];
+        }
+        $this->options[$key][$subkey] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param string $subkey
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getOptionSubOption($key, $subkey, $default = null)
+    {
+        if (isset($this->options[$key][$subkey])) {
+            return $this->options[$key][$subkey];
+        }
+
+        return $default;
+    }
+
+    /**
      * @return array
      */
     public function getOptions()
@@ -623,24 +486,23 @@ final class Field implements ToArray, \JsonSerializable
     public function toArray()
     {
         return [
-            'name'               => $this->name,
-            'type'               => $this->type->getTypeValue(),
-            'rule'               => $this->rule->getName(),
-            'required'           => $this->required,
-            'min_length'         => $this->minLength,
-            'max_length'         => $this->maxLength,
-            'pattern'            => $this->pattern,
-            'format'             => $this->format->getValue(),
-            'min'                => $this->min,
-            'max'                => $this->max,
-            'precision'          => $this->precision,
-            'scale'              => $this->scale,
-            'default'            => $this->getDefault(),
-            'use_type_default'   => $this->useTypeDefault,
-            'any_of_class_names' => $this->anyOfClassNames,
-            'overridable'        => $this->overridable,
-            'language_options'   => $this->languages,
-            'options'            => $this->options
+            'name'             => $this->name,
+            'type'             => $this->type->getTypeValue(),
+            'rule'             => $this->rule->getName(),
+            'required'         => $this->required,
+            'pattern'          => $this->pattern,
+            'format'           => $this->format->getValue(),
+            'min_length'       => $this->minLength,
+            'max_length'       => $this->maxLength,
+            'min'              => $this->min,
+            'max'              => $this->max,
+            'precision'        => $this->precision,
+            'scale'            => $this->scale,
+            'default'          => $this->getDefault(),
+            'use_type_default' => $this->useTypeDefault,
+            'any_of'           => $this->anyOf,
+            'overridable'      => $this->overridable,
+            'options'          => $this->options
         ];
     }
 

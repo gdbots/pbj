@@ -24,30 +24,30 @@
 
   {% set defs = [] %}
   {% for field in schema.fields %}
-    {% if field.anyOfClassNames %}
-      {% set defs = defs|merge(field.anyOfClassNames) %}
+    {% if field.anyOf %}
+      {% set defs = defs|merge(field.anyOf) %}
     {% endif %}
   {% endfor %}
-  {% if schema.mixins %}
-    {% set defs = defs|merge(schema.mixins) %}
+  {% if schema.options.mixins is defined and schema.options.mixins|length %}
+    {% set defs = defs|merge(schema.options.mixins) %}
   {% endif %}
   {% if defs|length %}
     "definitions": {
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.className|lower }}": {{ _self.draw_schema(def, deep+1) }}{% if not loop.last %},{% endif %}
+           "{{ def.id.message|toCamelFromSlug|lower }}": {{ _self.draw_schema(def, deep+1) }}{% if not loop.last %},{% endif %}
            {% set shown = shown|merge([def.id]) %}
          {% endif %}
       {% endfor %}
     },
   {% endif %}
 
-  {% if schema.mixins %}
+  {% if schema.options.mixins is defined and schema.options.mixins|length %}
     "additionalProperties": {
       "mixin": {
-        {% for mixin in schema.mixins %}
-          { "$ref": "#/definitions/{{ mixin.className|lower }}" }{% if not loop.last %}, {% endif %}
+        {% for mixin in schema.options.mixins %}
+          { "$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
       }
     }
@@ -92,15 +92,15 @@
     {% if field.pattern %}
       "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
     {% endif %}
-    {% if field.anyOfClassNames %}
+    {% if field.anyOf %}
       "anyOf": [
-        {% for schema in field.anyOfClassNames %}
-          { "$ref": "#/definitions/{{ schema.className|lower }}" }{% if not loop.last %}, {% endif %}
+        {% for schema in field.anyOf %}
+          { "$ref": "#/definitions/{{ schema.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
       ],
     {% endif %}
-    {% if field.option('enums') %}
-      "enum": [{% for option in field.option('enums') %}{{ option|json_encode }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    {% if field.options.enum is defined and field.options.enum|length %}
+      "enum": [{% for value in field.options.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
     {% endif %}
     "additionalProperties": {
       "customType": "{{ field.type.typeName }}",

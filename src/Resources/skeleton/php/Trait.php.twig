@@ -1,13 +1,13 @@
 <?php
 
-namespace {{ schema.languages.php.namespace }};
+namespace {{ schema.options.php.namespace }};
 
 {% block use_statements %}
 use Gdbots\Pbj\MessageRef;
 use Gdbots\Pbj\Schema;
 {% for field in schema.fields %}
-{% if field.languageOption('php', 'class_name') %}
-use {{ field.languageOption('php', 'class_name') }};
+{% if field.optionSubOption('php', 'class_name') %}
+use {{ field.optionSubOption('php', 'class_name') }};
 {% endif %}
 {% endfor %}
 {% endblock use_statements %}
@@ -17,7 +17,7 @@ use {{ field.languageOption('php', 'class_name') }};
  * @method static Schema schema
  * @method mixed get($fieldName, $default = null)
  */
-trait {{ schema.className }}V{{ schema.id.version.major }}Trait
+trait {{ className }}V{{ schema.id.version.major }}Trait
 {% endblock class_definition %}
 {
 {% block class_body %}

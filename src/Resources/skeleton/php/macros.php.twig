@@ -39,22 +39,22 @@
   {%- if field.scale %}
               ->scale({{ field.scale }})
   {% endif %}
-  {%- if field.languageOption('php', 'default') %}
-              ->withDefault({{ field.languageOption('php', 'default') }})
+  {%- if field.optionSubOption('php', 'default') %}
+              ->withDefault({{ field.optionSubOption('php', 'default') }})
   {% elseif field.default %}
               ->withDefault({{ field.default|json_encode }})
   {% endif %}
   {%- if field.useTypeDefault %}
               ->useTypeDefault(true)
   {% endif %}
-  {%- if field.anyOfClassNames %}
-    {%- if field.anyOfClassNames|length == 1 %}
-              ->className('{{ field.anyOfClassNames.0.languageOption('php', 'namespace') }}')
+  {%- if field.anyOf %}
+    {%- if field.anyOf|length == 1 %}
+              ->className('{{ field.anyOf.0.options.php.namespace }}')
     {% else %}
-              ->anyOfClassNames([{% for schema in field.anyOfClassNames %}'{{ schema.languageOption('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
+              ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.options.php.namespace }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
     {% endif -%}
-  {% elseif field.languageOption('php', 'class_name') %}
-              ->className('{{ field.languageOption('php', 'class_name') }}')
+  {% elseif field.optionSubOption('php', 'class_name') %}
+              ->className('{{ field.optionSubOption('php', 'class_name') }}')
   {% endif %}
   {%- if field.overridable %}
               ->overridable(true)

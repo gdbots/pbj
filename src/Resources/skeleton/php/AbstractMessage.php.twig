@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ schema.languages.php.namespace }};
+namespace {{ schema.options.php.namespace }};
 
 {% block use_statements %}
 use Gdbots\Pbj\AbstractMessage;
@@ -9,19 +9,19 @@ use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
 use Gdbots\Pbj\Enum\Format;
 {% for field in schema.fields %}
-{% if field.languageOption('php', 'class_name') %}
-use {{ field.languageOption('php', 'class_name') }};
+{% if field.optionSubOption('php', 'class_name') %}
+use {{ field.optionSubOption('php', 'class_name') }};
 {% endif %}
 {% endfor %}
-{% for mixin in schema.mixins %}
-use {{ mixin.languages.php.namespace }}\{{ mixin.className }}V{{ mixin.id.version.major }};
-use {{ mixin.languages.php.namespace }}\{{ mixin.className }}V{{ mixin.id.version.major }}Mixin;
-use {{ mixin.languages.php.namespace }}\{{ mixin.className }}V{{ mixin.id.version.major }}Trait;
+{% for mixin in schema.option('mixins', []) %}
+use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }};
+use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin;
+use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
 {% endfor %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ schema.className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ schema.className }}{% for mixin in schema.mixins %}, {{ mixin.className }}V{{ mixin.id.version.major }}{% endfor %}
+final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ className }}{% for mixin in schema.mixins %}, {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}{% endfor %}
 {% if schema.mixins|length %}
   {# note: linebreak for cleaner print #}
 
@@ -30,7 +30,7 @@ final class {{ schema.className }}V{{ schema.id.version.major }} extends Abstrac
 {
 {% block class_body %}
     {%- for mixin in schema.mixins %}
-    use {{ mixin.className }}V{{ mixin.id.version.major }}Trait;
+    use {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
     {% endfor %}
 
     /**
@@ -46,7 +46,7 @@ final class {{ schema.className }}V{{ schema.id.version.major }} extends Abstrac
           {% endfor -%}
         ], [
           {%- for mixin in schema.mixins %}
-            {{- mixin.className }}V{{ mixin.id.version.major }}Mixin::create(){%- if not loop.last %}, {% endif %}
+            {{- mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){%- if not loop.last %}, {% endif %}
           {%- endfor -%}
         ]);
     }
