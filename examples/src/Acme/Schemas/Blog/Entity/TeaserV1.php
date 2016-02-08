@@ -3,6 +3,6 @@
 namespace Acme\Schemas\Blog\Entity;
 
 
-interface ArticleV1 extends Article
+interface TeaserV1 extends Teaser
 {
 }
