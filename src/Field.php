@@ -178,7 +178,7 @@ final class Field implements ToArray, \JsonSerializable
     private function applyFieldRule()
     {
         $this->rule = $this->rule ?: FieldRule::A_SINGLE_VALUE();
-        if ($this->isASet() && $this->type->allowedInSet()) {
+        if ($this->isASet() && !$this->type->allowedInSet()) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Field [%s] with type [%s] cannot be used in a set.',
