@@ -57,7 +57,10 @@ abstract class Compiler
                                 if ($schema = SchemaStore::getSchemaById($xmlData['entity']['id'])) {
                                     if ($schema instanceof Schema) {
                                         if (!$schema->getOption($this->language)) {
-                                            $schema->setOption($this->language, $this->processXmlLanguageOptions($xmlData));
+                                            $schema->setOption(
+                                                $this->language,
+                                                $this->processXmlLanguageOptions($xmlData)
+                                            );
 
                                             continue;
                                         }
@@ -112,7 +115,8 @@ abstract class Compiler
     {
         $schemaId = SchemaId::fromString($schemaId);
 
-        $schemaPath = sprintf('%s/%s/%s',
+        $schemaPath = sprintf(
+            '%s/%s/%s',
             $schemaId->getVendor(),
             $schemaId->getPackage(),
             $schemaId->getCategory()
@@ -151,19 +155,19 @@ abstract class Compiler
             $this->processXmlEnums($schema, $xmlData['enums']['enum']);
 
             // add enums language options
-            $selectLanguageOptionsKey = sprintf('%s_options', $this->language);
-            if (isset($xmlData['enums'][$selectLanguageOptionsKey])) {
-                $schema->setOptionSubOption($this->language, 'enums', $xmlData['enums'][$selectLanguageOptionsKey]);
+            $langOptionsKey = sprintf('%s_options', $this->language);
+            if (isset($xmlData['enums'][$langOptionsKey])) {
+                $schema->setOptionSubOption($this->language, 'enums', $xmlData['enums'][$langOptionsKey]);
             }
 
             // inherit from previous version
-            $s = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-            if ($s instanceof Schema &&
-                $s->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
+            $prevSchemaVersion = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
+            if ($prevSchemaVersion instanceof Schema &&
+                $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
             ) {
                 $schema->setOptionSubOption($this->language, 'enums', array_merge(
                     $schema->getOptionSubOption($this->language, 'enums', []),
-                    $s->getOptionSubOption($this->language, 'enums', [])
+                    $prevSchemaVersion->getOptionSubOption($this->language, 'enums', [])
                 ));
 
                 $enumNames = [];
@@ -171,7 +175,7 @@ abstract class Compiler
                     $enumNames[] = $enum->getName();
                 }
 
-                foreach ($s->getOption('enums', []) as $enum) {
+                foreach ($prevSchemaVersion->getOption('enums', []) as $enum) {
                     if (!in_array($enum->getName(), $enumNames)) {
                         $schema->setOption('enums', array_merge(
                             $schema->getOption('enums', []),
@@ -216,9 +220,9 @@ abstract class Compiler
      */
     protected function processXmlLanguageOptions(array $data)
     {
-        $selectLanguageOptionsKey = sprintf('%s_options', $this->language);
-        if (isset($data[$selectLanguageOptionsKey])) {
-            return $data[$selectLanguageOptionsKey];
+        $langOptionsKey = sprintf('%s_options', $this->language);
+        if (isset($data[$langOptionsKey])) {
+            return $data[$langOptionsKey];
         }
 
         return [];
@@ -247,16 +251,19 @@ abstract class Compiler
             }
 
             // validate from previous version
-            $s = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-            if ($s instanceof Schema &&
-                $s->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
+            $prevSchemaVersion = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
+            if ($prevSchemaVersion instanceof Schema &&
+                $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
             ) {
-                $enums = $s->getOption('enums');
+                $enums = $prevSchemaVersion->getOption('enums');
                 foreach ($enums as $enum) {
                     if ($enum->getName() == $item['name']) {
                         $diff = array_diff($enum->getValues(), $values);
                         if (count($diff) > 0) {
-                            throw new \RuntimeException(sprintf('No Enum keys ["%s"] can be removed from the same schema version.', implode('", "', array_keys($diff))));
+                            throw new \RuntimeException(sprintf(
+                                'No Enum keys ["%s"] can be removed from the same schema version.',
+                                implode('", "', array_keys($diff))
+                            ));
                         }
 
                         break;
@@ -304,10 +311,12 @@ abstract class Compiler
                         continue;
                     }
 
-                    $s = SchemaStore::getSchemaByCurie($curie, $schema->getId());
-                    if (is_array($s)) {
-                        $item['any_of'][] = $this->createSchema($s);
+                    $anyOfSchema = SchemaStore::getSchemaByCurie($curie, $schema->getId());
+                    if (is_array($anyOfSchema)) {
+                        $anyOfSchema = $this->createSchema($anyOfSchema);
                     }
+
+                    $item['any_of'][] = $anyOfSchema;
                 }
             }
             if (isset($item['any_of']) && count($item['any_of']) === 0) {
@@ -316,23 +325,23 @@ abstract class Compiler
 
             if (isset($item['enum'])) {
                 if ($item['enum']['provider'] == $schema->getId()->getCurieWithMajorRev()) {
-                    $s = $schema;
+                    $providerSchema = $schema;
                 } else {
-                    $s = SchemaStore::getSchemaByCurieWithMajorRev($item['enum']['provider'], $schema->getId());
-                    if (is_array($s)) {
-                        $s = $this->createSchema($s);
+                    $providerSchema = SchemaStore::getSchemaByCurieWithMajorRev($item['enum']['provider'], $schema->getId());
+                    if (is_array($providerSchema)) {
+                        $providerSchema = $this->createSchema($s);
                     }
 
                     // use current schema if the same and previous version
-                    if ($s->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev() &&
-                        $s->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
+                    if ($providerSchema->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev() &&
+                        $providerSchema->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
                     ) {
-                        $s = $schema;
+                        $providerSchemas = $schema;
                     }
                 }
 
                 /** @var $enums Enum[] */
-                if ($enums = $s->getOption('enums')) {
+                if ($enums = $providerSchema->getOption('enums')) {
                     foreach ($enums as $enum) {
                         if ($enum->getName() == $item['enum']['name']) {
                             $item['options']['enum'] = $enum;
@@ -362,15 +371,15 @@ abstract class Compiler
                 continue;
             }
 
-            $s = SchemaStore::getSchemaByCurieWithMajorRev($curieWithMajorRev, $schema->getId());
-            if (is_array($s)) {
-                $s = $this->createSchema($s);
+            $mixinSchema = SchemaStore::getSchemaByCurieWithMajorRev($curieWithMajorRev, $schema->getId());
+            if (is_array($mixinSchema)) {
+                $mixinSchemas = $this->createSchema($mixinSchema);
             }
 
             $schema->setOption('mixins', array_merge(
                 $schema->getOption('mixins', []),
                 [
-                    $s
+                    $mixinSchema
                 ]
             ));
         }
@@ -407,5 +416,4 @@ abstract class Compiler
      * @return \Gdbots\Pbjc\Generator\Generator
      */
     abstract public function createGenerator(Schema $schema);
-
 }
