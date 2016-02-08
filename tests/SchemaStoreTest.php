@@ -19,18 +19,18 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
             // fields
             [
-                Field::fromArray('command_id', [
+                new Field('command_id', [
                     'type' => 'time-uuid',
                     'required' => true
                 ]),
-                Field::fromArray('microtime', [
+                new Field('microtime', [
                     'type' => 'microtime',
                     'required' => true
                 ]),
-                Field::fromArray('correlator', [
+                new Field('correlator', [
                     'type' => 'message-ref'
                 ]),
-                Field::fromArray('retries', [
+                new Field('retries', [
                     'type' => 'tiny-int'
                 ])
             ],
