@@ -336,7 +336,7 @@ abstract class Compiler
                     if ($providerSchema->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev() &&
                         $providerSchema->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
                     ) {
-                        $providerSchemas = $schema;
+                        $providerSchema = $schema;
                     }
                 }
 
