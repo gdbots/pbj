@@ -373,7 +373,7 @@ abstract class Compiler
 
             $mixinSchema = SchemaStore::getSchemaByCurieWithMajorRev($curieWithMajorRev, $schema->getId());
             if (is_array($mixinSchema)) {
-                $mixinSchemas = $this->createSchema($mixinSchema);
+                $mixinSchema = $this->createSchema($mixinSchema);
             }
 
             $schema->setOption('mixins', array_merge(
