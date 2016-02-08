@@ -329,7 +329,7 @@ abstract class Compiler
                 } else {
                     $providerSchema = SchemaStore::getSchemaByCurieWithMajorRev($item['enum']['provider'], $schema->getId());
                     if (is_array($providerSchema)) {
-                        $providerSchema = $this->createSchema($s);
+                        $providerSchema = $this->createSchema($providerSchema);
                     }
 
                     // use current schema if the same and previous version
