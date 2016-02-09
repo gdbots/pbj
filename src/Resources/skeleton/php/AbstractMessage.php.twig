@@ -14,22 +14,22 @@ use {{ field.optionSubOption('php', 'class_name') }};
 {% endif %}
 {% endfor %}
 {% for mixin in schema.option('mixins', []) %}
-use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }};
-use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin;
-use {{ mixin.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
+use {{ mixin.options.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }};
+use {{ mixin.options.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin;
+use {{ mixin.options.php.namespace }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
 {% endfor %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ className }}{% for mixin in schema.mixins %}, {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}{% endfor %}
-{% if schema.mixins|length %}
+final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ className }}{% for mixin in schema.option('mixins', []) %}, {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}{% endfor %}
+{% if schema.option('mixins', [])|length %}
   {# note: linebreak for cleaner print #}
 
 {% endif %}
 {% endblock class_definition %}
 {
 {% block class_body %}
-    {%- for mixin in schema.mixins %}
+    {%- for mixin in schema.option('mixins', []) %}
     use {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
     {% endfor %}
 
@@ -45,7 +45,7 @@ final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessag
 
           {% endfor -%}
         ], [
-          {%- for mixin in schema.mixins %}
+          {%- for mixin in schema.option('mixins', []) %}
             {{- mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){%- if not loop.last %}, {% endif %}
           {%- endfor -%}
         ]);
