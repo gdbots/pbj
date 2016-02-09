@@ -209,7 +209,7 @@ class SchemaStore
                             $sid = $schema->getId();
                         }
                         if ($sid->getVersion() < $schemaId->getVersion()) {
-                            $lastestVersion = end($lastestMajor);
+                            $lastestVersion = $schema;
                         }
                     }
                 }
@@ -232,7 +232,7 @@ class SchemaStore
                             $sid = $schema->getId();
                         }
                         if ($sid->getVersion() < $schemaId->getVersion()) {
-                            $lastestVersion = end($lastestMajor);
+                            $lastestVersion = $schema;
                         }
                     }
                 }
