@@ -159,31 +159,31 @@ abstract class Compiler
             if (isset($xmlData['enums'][$langOptionsKey])) {
                 $schema->setOptionSubOption($this->language, 'enums', $xmlData['enums'][$langOptionsKey]);
             }
+        }
 
-            // inherit from previous version
-            $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-            if ($prevSchemaVersion instanceof Schema &&
-                $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
-            ) {
-                $schema->setOptionSubOption($this->language, 'enums', array_merge(
-                    $schema->getOptionSubOption($this->language, 'enums', []),
-                    $prevSchemaVersion->getOptionSubOption($this->language, 'enums', [])
-                ));
+        // inherit from previous version
+        $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
+        if ($prevSchemaVersion instanceof Schema &&
+            $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
+        ) {
+            $schema->setOptionSubOption($this->language, 'enums', array_merge(
+                $schema->getOptionSubOption($this->language, 'enums', []),
+                $prevSchemaVersion->getOptionSubOption($this->language, 'enums', [])
+            ));
 
-                $enumNames = [];
-                foreach ($schema->getOption('enums', []) as $enum) {
-                    $enumNames[] = $enum->getName();
-                }
+            $enumNames = [];
+            foreach ($schema->getOption('enums', []) as $enum) {
+                $enumNames[] = $enum->getName();
+            }
 
-                foreach ($prevSchemaVersion->getOption('enums', []) as $enum) {
-                    if (!in_array($enum->getName(), $enumNames)) {
-                        $schema->setOption('enums', array_merge(
-                            $schema->getOption('enums', []),
-                            [
-                                $enum
-                            ]
-                        ));
-                    }
+            foreach ($prevSchemaVersion->getOption('enums', []) as $enum) {
+                if (!in_array($enum->getName(), $enumNames)) {
+                    $schema->setOption('enums', array_merge(
+                        $schema->getOption('enums', []),
+                        [
+                            $enum
+                        ]
+                    ));
                 }
             }
         }

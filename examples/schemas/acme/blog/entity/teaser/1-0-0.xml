@@ -1,0 +1,65 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:teaser:1-0-0" mixin="true">
+    <fields>
+      <field name="_id" type="identifier" required="true">
+        <php_options>
+          <class_name>Wb\Teasers\TeaserId</class_name>
+          <default>
+            <![CDATA[
+              function() {
+                return TeaserId::generate();
+              }
+            ]]>
+          </default>
+        </php_options>
+      </field>
+
+      <field name="publish_status" type="string-enum">
+        <default>draft</default>
+        <enum provider="acme:blog:entity:teaser:v1" name="publish_status" />
+      </field>
+
+      <field name="published_at" type="microtime" />
+
+      <field name="title" type="string" />
+      <field name="short_title" type="string" />
+      <field name="tiny_title" type="string" />
+      <field name="excerpt" type="text" />
+      <field name="excerpt_html" type="text" />
+      <field name="thumbnails" type="string" format="url" rule="a-map" />
+    </fields>
+
+    <enums>
+      <enum name="publish_status">
+        <option key="PUBLISHED" value="published" />
+        <option key="DRAFT" value="draft" />
+        <option key="DELETED" value="deleted" />
+      </enum>
+
+      <enum name="content_type">
+        <option key="UNKNOWN" value="unknown" />
+        <option key="ARTICLE" value="article" />
+        <option key="AUDIO" value="audio" />
+        <option key="COLLECTION" value="collection" />
+        <option key="LINK" value="link" />
+        <option key="PHOTO" value="photo" />
+        <option key="POLL" value="poll" />
+        <option key="PROFILE" value="profile" />
+        <option key="QUOTE" value="quote" />
+        <option key="SOLICIT" value="solicit" />
+        <option key="TEXT" value="text" />
+        <option key="VIDEO" value="video" />
+      </enum>
+
+      <php_options>
+        <namespace>Acme\Schemas\Blog\Enum</namespace>
+      </php_options>
+    </enums>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

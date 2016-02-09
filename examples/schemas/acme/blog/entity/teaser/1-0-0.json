@@ -1,0 +1,74 @@
+{
+  "$schema": "http:\/\/json-schema.org\/schema#",
+  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/1-0-0.json",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "identifier"
+      }
+    },
+    "publish_status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft",
+        "deleted"
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "withDefault": "draft"
+      }
+    },
+    "published_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "microtime"
+      }
+    },
+    "title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string"
+      }
+    },
+    "short_title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string"
+      }
+    },
+    "tiny_title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string"
+      }
+    },
+    "excerpt": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "excerpt_html": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "thumbnails": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string",
+        "aMap": true,
+        "format": "url"
+      }
+    }
+  },
+  "required": [
+    "_id"
+  ],
+  "additionalProperties": false
+}
