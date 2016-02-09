@@ -18,7 +18,7 @@
 
       <field name="publish_status" type="string-enum">
         <default>draft</default>
-        <enum provider="acme:blog:entity:teaser:v1" name="publish_status" />
+        <enum provider="acme:blog:entity:teaser:v1" name="publish-status" />
       </field>
 
       <field name="published_at" type="microtime" />
@@ -32,13 +32,13 @@
     </fields>
 
     <enums>
-      <enum name="publish_status">
+      <enum name="publish-status">
         <option key="PUBLISHED" value="published" />
         <option key="DRAFT" value="draft" />
         <option key="DELETED" value="deleted" />
       </enum>
 
-      <enum name="content_type">
+      <enum name="content-type">
         <option key="UNKNOWN" value="unknown" />
         <option key="ARTICLE" value="article" />
         <option key="AUDIO" value="audio" />

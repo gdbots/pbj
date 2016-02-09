@@ -8,8 +8,8 @@ use Gdbots\Pbj\SchemaId;
 use Gdbots\Pbj\Type as T;
 use Gdbots\Pbj\Enum\Format;
 use Wb\Teasers\TeaserId;
-use Acme\Schemas\Blog\Enum\TeaserPublish_statusV1;
-use Acme\Schemas\Blog\Enum\TeaserContent_typeV1;
+use Acme\Schemas\Blog\Enum\TeaserPublishStatusV1;
+use Acme\Schemas\Blog\Enum\TeaserContentTypeV1;
 use Wb\Teasers\Entity\Teaserable;
 
 final class TeaserV1Mixin extends AbstractMixin
@@ -36,8 +36,8 @@ final class TeaserV1Mixin extends AbstractMixin
                 ->className('Wb\Teasers\TeaserId')
                 ->build(),
             Fb::create('publish_status', T\StringEnumType::create())
-                ->withDefault(TeaserPublish_statusV1::DRAFT())
-                ->className('Acme\Schemas\Blog\Enum\TeaserPublish_statusV1')
+                ->withDefault(TeaserPublishStatusV1::DRAFT())
+                ->className('Acme\Schemas\Blog\Enum\TeaserPublishStatusV1')
                 ->build(),
             Fb::create('published_at', T\MicrotimeType::create())
                 ->build(),
@@ -54,8 +54,8 @@ final class TeaserV1Mixin extends AbstractMixin
             Fb::create('private', T\BooleanType::create())
                 ->build(),
             Fb::create('content_type', T\StringEnumType::create())
-                ->withDefault(TeaserContent_typeV1::UNKNOWN())
-                ->className('Acme\Schemas\Blog\Enum\TeaserContent_typeV1')
+                ->withDefault(TeaserContentTypeV1::UNKNOWN())
+                ->className('Acme\Schemas\Blog\Enum\TeaserContentTypeV1')
                 ->build(),
             Fb::create('title', T\StringType::create())
                 ->build(),
