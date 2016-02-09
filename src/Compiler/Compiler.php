@@ -45,31 +45,32 @@ abstract class Compiler
         foreach (SchemaStore::getDirs() as $dir => $isDependent) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
-            foreach ($files as $file) {
-                if ($xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../../schema.xsd')) {
-                    if ($xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-                        $xmlData['entity']['is_dependent'] = $isDependent;
-
-                        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename())-1);
-
-                        if ($this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
-                            if ($schema = SchemaStore::getSchemaById($xmlData['entity']['id'], null, true)) {
-                                if ($schema instanceof SchemaDescriptor) {
-                                    if (!$schema->getOption($this->language)) {
-                                        $schema->setOption(
-                                            $this->language,
-                                            $this->processXmlLanguageOptions($xmlData)
-                                        );
-
-                                        continue;
-                                    }
-                                }
-                            }
-
-                            SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
-                        }
-                    }
+            foreach ($files as $key => $file) {
+                // invalid schema
+                if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../../schema.xsd')) {
+                    continue;
                 }
+
+                // bad \DOMDocument
+                if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+                    continue;
+                }
+
+                $xmlData['entity']['is_dependent'] = $isDependent;
+
+                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename())-1);
+
+                // invalid scherma id
+                if (!$this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
+                    continue;
+                }
+
+                // ignore duplicates
+                if (SchemaStore::getSchemaById($xmlData['entity']['id'], null, true)) {
+                    continue;
+                }
+
+                SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
             }
         }
 
