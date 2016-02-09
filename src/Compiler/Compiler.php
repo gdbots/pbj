@@ -85,7 +85,9 @@ abstract class Compiler
                 $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
             }
             if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
-                ->getId()->getVersion() < $schema->getId()->getVersion()
+                ->getId()->getVersion()->compare(
+                    $schema->getId()->getVersion()
+                ) === -1
             ) {
                 $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
             }
@@ -157,33 +159,6 @@ abstract class Compiler
             }
         }
 
-        // inherit from previous version
-        $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-        if ($prevSchemaVersion instanceof SchemaDescriptor &&
-            $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
-        ) {
-            $schema->setOptionSubOption($this->language, 'enums', array_merge(
-                $schema->getOptionSubOption($this->language, 'enums', []),
-                $prevSchemaVersion->getOptionSubOption($this->language, 'enums', [])
-            ));
-
-            $enumNames = [];
-            foreach ($schema->getOption('enums', []) as $enum) {
-                $enumNames[] = $enum->getName();
-            }
-
-            foreach ($prevSchemaVersion->getOption('enums', []) as $enum) {
-                if (!in_array($enum->getName(), $enumNames)) {
-                    $schema->setOption('enums', array_merge(
-                        $schema->getOption('enums', []),
-                        [
-                            $enum
-                        ]
-                    ));
-                }
-            }
-        }
-
         if (isset($xmlData['fields']['field'])) {
             $this->processXmlFields($schema, $xmlData['fields']['field']);
         }
@@ -192,7 +167,63 @@ abstract class Compiler
             $this->processXmlMixins($schema, $xmlData['mixins']['id']);
         }
 
+        if ($prevSchema = SchemaStore::getSchemaById($schemaId->getCurieWithMajorRev(), $schemaId, false)) {
+            if (is_array($prevSchema)) {
+                $prevSchema = $this->createSchema($prevSchema);
+            }
+
+            // convert schema's to arra and compare values
+            $currentSchemaArray = json_decode(json_encode($schema), true);
+            $prevSchemaArray = json_decode(json_encode($prevSchema), true);
+
+            // check if something got removed or cahnged
+            $diff = $this->arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
+
+            // removed schema id - going to be diff ofcorse.. doh
+            if (isset($diff['id'])) {
+                unset($diff['id']);
+            }
+
+            if (count($diff) > 0) {
+                throw new \RuntimeException(sprintf(
+                    'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
+                    $schemaId->__toString(),
+                    json_encode($diff)
+                ));
+            }
+        }
+
         return $schema;
+    }
+
+    /**
+     * @param array $array1
+     * @param array $array2
+     *
+     * @return array
+     */
+    protected function arrayRecursiveDiff(array $array1, array $array2)
+    {
+        $diff = array();
+
+        foreach ($array1 as $key => $value) {
+            if (array_key_exists($key, $array2)) {
+                if (is_array($value)) {
+                    $recursiveDiff = $this->arrayRecursiveDiff($value, $array2[$key]);
+                    if (count($recursiveDiff)) {
+                        $diff[$key] = $recursiveDiff;
+                    }
+                } else {
+                    if ($value != $array2[$key]) {
+                        $diff[$key] = $value;
+                    }
+                }
+            } else {
+                $diff[$key] = $value;
+            }
+        }
+
+        return $diff;
     }
 
     /**
@@ -246,27 +277,6 @@ abstract class Compiler
                 ;
             }
 
-            // validate from previous version
-            $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-            if ($prevSchemaVersion instanceof SchemaDescriptor &&
-                $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
-            ) {
-                $enums = $prevSchemaVersion->getOption('enums');
-                foreach ($enums as $enum) {
-                    if ($enum->getName() == $item['name']) {
-                        $diff = array_diff($enum->getValues(), $values);
-                        if (count($diff) > 0) {
-                            throw new \RuntimeException(sprintf(
-                                'No Enum keys ["%s"] can be removed from the same schema version.',
-                                implode('", "', array_keys($diff))
-                            ));
-                        }
-
-                        break;
-                    }
-                }
-            }
-
             $enum = new EnumDescriptor($item['name'], $values);
 
             $schema->setOption('enums', array_merge(
@@ -282,7 +292,7 @@ abstract class Compiler
      * @param SchemaDescriptor $schema
      * @param array            $data
      */
-    protected function processXmlFields(SchemaDescriptor $schema, $data)
+    protected function processXmlFields(SchemaDescriptor $schema, array $data)
     {
         $data = $this->convertXmlDataToArray($data);
         foreach ($data as $item) {
@@ -327,13 +337,6 @@ abstract class Compiler
                     if (is_array($providerSchema)) {
                         $providerSchema = $this->createSchema($providerSchema);
                     }
-
-                    // use current schema if the same and previous version
-                    if ($providerSchema->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev() &&
-                        $providerSchema->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
-                    ) {
-                        $providerSchema = $schema;
-                    }
                 }
 
                 /** @var $enums EnumDescriptor[] */
@@ -345,6 +348,14 @@ abstract class Compiler
                             break;
                         }
                     }
+                }
+
+                if (!isset($item['options']['enum'])) {
+                    throw new \RuntimeException(sprintf(
+                        'No Enum with provider ["%s"] and name ["%s"] exist.',
+                        $item['enum']['provider'],
+                        $item['enum']['name']
+                    ));
                 }
 
                 unset($item['enum']);

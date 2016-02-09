@@ -73,6 +73,25 @@
         <option key="EXPIRED" value="expired" />
         <option key="DELETED" value="deleted" />
       </enum>
+
+      <enum name="content-type">
+        <option key="UNKNOWN" value="unknown" />
+        <option key="ARTICLE" value="article" />
+        <option key="AUDIO" value="audio" />
+        <option key="COLLECTION" value="collection" />
+        <option key="LINK" value="link" />
+        <option key="PHOTO" value="photo" />
+        <option key="POLL" value="poll" />
+        <option key="PROFILE" value="profile" />
+        <option key="QUOTE" value="quote" />
+        <option key="SOLICIT" value="solicit" />
+        <option key="TEXT" value="text" />
+        <option key="VIDEO" value="video" />
+      </enum>
+
+      <php_options>
+        <namespace>Acme\Schemas\Blog\Enum</namespace>
+      </php_options>
     </enums>
 
     <php_options>

@@ -129,7 +129,7 @@ final class FieldDescriptor extends Descriptor
                     case 'required':
                     case 'use_type_default':
                     case 'overridable':
-
+                        $value = (bool) $value;
                         break;
 
                     case 'min':
@@ -161,14 +161,22 @@ final class FieldDescriptor extends Descriptor
 
             // other
             elseif (!empty($value)) {
-
                 $this->setOption($key, $value);
             }
         }
 
+        $this->applyDefaults();
         $this->applyFieldRule();
         $this->applyStringOptions();
         $this->applyNumericOptions();
+    }
+
+    /**
+     * @return void
+     */
+    private function applyDefaults()
+    {
+        $this->format = $this->format ?: Format::UNKNOWN();
     }
 
     /**
@@ -320,6 +328,10 @@ final class FieldDescriptor extends Descriptor
      */
     public function getFormat()
     {
+        if ($this->format === Format::UNKNOWN()) {
+            return null;
+        }
+
         return $this->format;
     }
 

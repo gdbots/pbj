@@ -14,7 +14,7 @@ class PhpCompiler extends Compiler
     /**
      * {@inheritdoc}
      */
-    protected function processXmlFields(SchemaDescriptor $schema, $data)
+    protected function processXmlFields(SchemaDescriptor $schema, array $data)
     {
         parent::processXmlFields($schema, $data);
 

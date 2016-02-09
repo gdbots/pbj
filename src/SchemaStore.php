@@ -204,6 +204,8 @@ class SchemaStore
                 $lastestVersion = end($lastestMajor);
 
                 if ($schemaId) {
+                    $lastestVersion = null;
+
                     foreach ($lastestMajor as $version => $schema) {
                         if (is_array($schema)) {
                             $sid = SchemaId::fromString($schema['id']);
@@ -211,7 +213,7 @@ class SchemaStore
                         if ($schema instanceof SchemaDescriptor) {
                             $sid = $schema->getId();
                         }
-                        if ($sid->getVersion() < $schemaId->getVersion()) {
+                        if ($sid->getVersion()->compare($schemaId->getVersion()) === -1) {
                             $lastestVersion = $schema;
                         }
                     }
@@ -227,6 +229,8 @@ class SchemaStore
                 $lastestVersion = end($selectedMajor);
 
                 if ($schemaId) {
+                    $lastestVersion = null;
+
                     foreach ($selectedMajor as $version => $schema) {
                         if (is_array($schema)) {
                             $sid = SchemaId::fromString($schema['id']);
@@ -234,7 +238,7 @@ class SchemaStore
                         if ($schema instanceof SchemaDescriptor) {
                             $sid = $schema->getId();
                         }
-                        if ($sid->getVersion() < $schemaId->getVersion()) {
+                        if ($sid->getVersion()->compare($schemaId->getVersion()) === -1) {
                             $lastestVersion = $schema;
                         }
                     }

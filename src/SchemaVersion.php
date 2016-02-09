@@ -124,4 +124,17 @@ final class SchemaVersion implements \JsonSerializable
     {
         return $this->patch;
     }
+
+    /**
+     * Returns -1 if the curerent version is lower than the second, 0 if they are equal,
+     * and 1 if the second is lower.
+     *
+     * @param SchemaVersion $version
+     *
+     * @return int
+     */
+    public function compare(SchemaVersion $version)
+    {
+        return version_compare($this->__toString(), $version->__toString());
+    }
 }
