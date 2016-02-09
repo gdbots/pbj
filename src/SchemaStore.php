@@ -24,7 +24,21 @@ class SchemaStore
      *
      * @constant string
      */
-    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):(([0-9]+)-([0-9]+)-([0-9]+))$/';
+    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+)-([0-9]+)-([0-9]+)$/';
+
+    /**
+     * e.g. "vendor:package:category:message"
+     *
+     * @constant string
+     */
+    const VALID_CURIE_PATTERN = '/^([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$/';
+
+    /**
+     * e.g. "vendor:package:category:message:v1"
+     *
+     * @constant string
+     */
+    const VALID_MAJOR_VERSION_PATTERN = '/^([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):v([0-9]+)$/';
 
     /** @var array */
     protected static $dirs = [];
@@ -93,15 +107,33 @@ class SchemaStore
      */
     public static function addSchema($id, $schema, $ignoreDuplication = false)
     {
-        if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
-        }
-
-        if (!self::validateSchemaId($id) && !$ignoreDuplication) {
+        if (!$schemaElements = self::parseSchemaId($id)) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
         }
 
-        self::$schemas[$id] = $schema;
+        $curie = sprintf(
+            '%s:%s:%s:%s',
+            $schemaElements['vendor'],
+            $schemaElements['package'],
+            $schemaElements['category'],
+            $schemaElements['message']
+        );
+
+        $version = sprintf(
+            '%s-%s-%s',
+            $schemaElements['version']['major'],
+            $schemaElements['version']['minor'],
+            $schemaElements['version']['patch']
+        );
+
+        if (isset(self::$schemas[$curie][$schemaElements['version']['major']][$version]) && !$ignoreDuplication) {
+            throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
+        }
+
+        self::$schemas[$curie][$schemaElements['version']['major']][$version] = $schema;
+
+        ksort(self::$schemas[$curie][$schemaElements['version']['major']]);
+        ksort(self::$schemas[$curie]);
         ksort(self::$schemas);
     }
 
@@ -112,7 +144,23 @@ class SchemaStore
      */
     public static function getSchemas()
     {
-        return self::$schemas;
+        $schemas = [];
+
+        foreach (self::$schemas as $curie => $majors) {
+            foreach ($majors as $major => $versions) {
+                foreach ($versions as $schema) {
+                    $id = is_array($schema)
+                        ? $schema['id']
+                        : $schema->getId()->__toString();
+
+                    $schemas[$id] = $schema;
+                }
+            }
+        }
+
+        ksort($schemas);
+
+        return $schemas;
     }
 
     /**
@@ -122,94 +170,136 @@ class SchemaStore
      * (assuming it's already been compiled).
      *
      * @param string $id
+     * @param SchemaId $schemaId
      *
      * @return array|\Gdbots\Pbjc\Schema|null
      */
-    public static function getSchemaById($id)
+    public static function getSchemaById($id, SchemaId $schemaId = null)
     {
-        if (isset(self::$schemas[$id])) {
-            return self::$schemas[$id];
+        if (!$schemaElements = self::parseSchemaId($id)) {
+            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        }
+
+        $curie = sprintf(
+            '%s:%s:%s:%s',
+            $schemaElements['vendor'],
+            $schemaElements['package'],
+            $schemaElements['category'],
+            $schemaElements['message']
+        );
+
+        $version = sprintf(
+            '%s-%s-%s',
+            $schemaElements['version']['major'],
+            $schemaElements['version']['minor'],
+            $schemaElements['version']['patch']
+        );
+
+        if ($version == '--') {
+            if (isset(self::$schemas[$curie])) {
+                $lastestMajor = end(self::$schemas[$curie]);
+                $lastestVersion = end($lastestMajor);
+
+                if ($schemaId) {
+                    foreach ($lastestMajor as $version => $schema) {
+                        if (is_array($schema)) {
+                            $sid = SchemaId::fromString($schema['id']);
+                        }
+                        if ($schema instanceof Schema) {
+                            $sid = $schema->getId();
+                        }
+                        if ($sid->getVersion() < $schemaId->getVersion()) {
+                            $lastestVersion = end($lastestMajor);
+                        }
+                    }
+                }
+
+                return $lastestVersion;
+            }
+        }
+
+        if (preg_match('/^([0-9]+)--/', $version)) {
+            if (isset(self::$schemas[$curie][$schemaElements['version']['major']])) {
+                $selectedMajor = self::$schemas[$curie][$schemaElements['version']['major']];
+                $lastestVersion = end($selectedMajor);
+
+                if ($schemaId) {
+                    foreach ($selectedMajor as $version => $schema) {
+                        if (is_array($schema)) {
+                            $sid = SchemaId::fromString($schema['id']);
+                        }
+                        if ($schema instanceof Schema) {
+                            $sid = $schema->getId();
+                        }
+                        if ($sid->getVersion() < $schemaId->getVersion()) {
+                            $lastestVersion = end($lastestMajor);
+                        }
+                    }
+                }
+
+                return $lastestVersion;
+            }
+        }
+
+        if (isset(self::$schemas[$curie][$schemaElements['version']['major']][$version])) {
+            return self::$schemas[$curie][$schemaElements['version']['major']][$version];
         }
 
         throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
     }
 
     /**
-     * @param string   $curieWithMajorRev
-     * @param SchemaId $schemaId
+     * Parse the schema id.
      *
-     * @return array|\Gdbots\Pbjc\Schema|null
-     */
-    public static function getSchemaByCurieWithMajorRev($curieWithMajorRev, SchemaId $schemaId = null)
-    {
-        $found = null;
-        $foundRequested = null;
-
-        foreach(self::$schemas as $schema) {
-            $sid = null;
-            if (is_array($schema)) {
-                $sid = SchemaId::fromString($schema['id']);
-            }
-            if ($schema instanceof Schema) {
-                $sid = $schema->getId();
-            }
-            if ($sid && $sid->getCurieWithMajorRev() == $curieWithMajorRev) {
-                if ($sid->getVersion() < $schemaId->getVersion()) {
-                    $found = $schema;
-                }
-                if ($sid->getVersion() == $schemaId->getVersion()) {
-                    $foundRequested = $schema;
-                }
-            }
-        }
-
-        if ($found) {
-            return $found;
-        }
-        if ($foundRequested) {
-            return $foundRequested;
-        }
-
-        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $curieWithMajorRev));
-    }
-
-    /**
-     * @param string   $curie
-     * @param SchemaId $schemaId
+     * @param string $id
      *
-     * @return array|\Gdbots\Pbjc\Schema|null
+     * @return array|null
      */
-    public static function getSchemaByCurie($curie, SchemaId $schemaId = null)
+    protected static function parseSchemaId($id)
     {
-        $found = null;
-        $foundRequested = null;
-
-        foreach(self::$schemas as $schema) {
-            $sid = null;
-            if (is_array($schema)) {
-                $sid = SchemaId::fromString($schema['id']);
-            }
-            if ($schema instanceof Schema) {
-                $sid = $schema->getId();
-            }
-            if ($sid && $sid->getCurie() == $curie) {
-                if ($sid->getVersion() < $schemaId->getVersion()) {
-                    $found = $schema;
-                }
-                if ($sid->getVersion() == $schemaId->getVersion()) {
-                    $foundRequested = $schema;
-                }
-            }
+        if (preg_match(self::VALID_PATTERN, $id, $matches)) {
+            return [
+                'vendor' => $matches[1],
+                'package' => $matches[2],
+                'category' => $matches[3],
+                'message' => $matches[4],
+                'version' => [
+                    'major' => $matches[5],
+                    'minor' => $matches[6],
+                    'patch' => $matches[7]
+                ]
+            ];
         }
 
-        if ($found) {
-            return $found;
-        }
-        if ($foundRequested) {
-            return $foundRequested;
+        if (preg_match(self::VALID_MAJOR_VERSION_PATTERN, $id, $matches)) {
+            return [
+                'vendor' => $matches[1],
+                'package' => $matches[2],
+                'category' => $matches[3],
+                'message' => $matches[4],
+                'version' => [
+                    'major' => $matches[5],
+                    'minor' => null,
+                    'patch' => null
+                ]
+            ];
         }
 
-        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $curie));
+        if (preg_match(self::VALID_CURIE_PATTERN, $id, $matches)) {
+            return [
+                'vendor' => $matches[1],
+                'package' => $matches[2],
+                'category' => $matches[3],
+                'message' => $matches[4],
+                'version' => [
+                    'major' => null,
+                    'minor' => null,
+                    'patch' => null
+                ]
+            ];
+        }
+
+        return null;
     }
 
     /**

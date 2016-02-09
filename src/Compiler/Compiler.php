@@ -161,7 +161,7 @@ abstract class Compiler
             }
 
             // inherit from previous version
-            $prevSchemaVersion = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
+            $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
             if ($prevSchemaVersion instanceof Schema &&
                 $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
             ) {
@@ -251,7 +251,7 @@ abstract class Compiler
             }
 
             // validate from previous version
-            $prevSchemaVersion = SchemaStore::getSchemaByCurieWithMajorRev($schema->getId()->getCurieWithMajorRev(), $schema->getId());
+            $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
             if ($prevSchemaVersion instanceof Schema &&
                 $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
             ) {
@@ -311,7 +311,7 @@ abstract class Compiler
                         continue;
                     }
 
-                    $anyOfSchema = SchemaStore::getSchemaByCurie($curie, $schema->getId());
+                    $anyOfSchema = SchemaStore::getSchemaById($curie, $schema->getId());
                     if (is_array($anyOfSchema)) {
                         $anyOfSchema = $this->createSchema($anyOfSchema);
                     }
@@ -327,7 +327,7 @@ abstract class Compiler
                 if ($item['enum']['provider'] == $schema->getId()->getCurieWithMajorRev()) {
                     $providerSchema = $schema;
                 } else {
-                    $providerSchema = SchemaStore::getSchemaByCurieWithMajorRev($item['enum']['provider'], $schema->getId());
+                    $providerSchema = SchemaStore::getSchemaById($item['enum']['provider'], $schema->getId());
                     if (is_array($providerSchema)) {
                         $providerSchema = $this->createSchema($providerSchema);
                     }
@@ -371,7 +371,7 @@ abstract class Compiler
                 continue;
             }
 
-            $mixinSchema = SchemaStore::getSchemaByCurieWithMajorRev($curieWithMajorRev, $schema->getId());
+            $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev, $schema->getId());
             if (is_array($mixinSchema)) {
                 $mixinSchema = $this->createSchema($mixinSchema);
             }
