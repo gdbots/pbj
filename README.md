@@ -193,7 +193,7 @@ $compile = new PhpCompiler('/put/your/output/folder');
 $compile->generate();
 ```
 
-> **Note:** to print a preview of the files genereted, run `$compile->generate(true)`.
+> **Note:** to get a list of all files with their content, run `$files = $compile->generate(true)`.
 
 In order to compile you have to add the directory or directories where your
 XML file exists:

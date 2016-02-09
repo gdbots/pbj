@@ -12,8 +12,18 @@ use Gdbots\Pbjc\Compiler\JsonCompiler;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
+echo '<pre>';
+
 $compile = new PhpCompiler(__DIR__.'/src');
-$compile->generate(true);
+$files = $compile->generate(true);
+foreach ($files as $file => $output) {
+    highlight_file($file);
+
+    echo '<hr />';
+}
 
 $compile = new JsonCompiler(__DIR__.'/schemas');
-$compile->generate(true);
+$files = $compile->generate(true);
+foreach ($files as $file => $output) {
+    echo $output.'<hr />';
+}

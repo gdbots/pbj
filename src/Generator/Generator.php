@@ -23,12 +23,62 @@ abstract class Generator
     /** @var SchemaDescriptor */
     protected $schema;
 
+    /** @var bool */
+    protected $outputDisabled = false;
+
+    /** @var array */
+    protected $files = [];
+
     /**
      * @param SchemaDescriptor $schema
      */
-    public function __construct(SchemaDescriptor $schema)
+    public function setSchema(SchemaDescriptor $schema)
     {
         $this->schema = $schema;
+    }
+
+    /**
+     * Disables rendering output.
+     *
+     * @return this
+     */
+    public function disableOutput()
+    {
+        $this->outputDisabled = true;
+
+        return $this;
+    }
+
+    /**
+     * Enables rendering output.
+     *
+     * @return this
+     */
+    public function enableOutput()
+    {
+        $this->outputDisabled = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns true in case the output is disabled, false otherwise.
+     *
+     * @return bool
+     */
+    public function isOutputDisabled()
+    {
+        return $this->outputDisabled;
+    }
+
+    /**
+     * Returns list of files (with output target).
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**
@@ -45,18 +95,16 @@ abstract class Generator
      * Generates and writes files.
      *
      * @param string $output
-     * @param bool   $print
      *
      * @return void
      */
-    public function generate($output, $print = false)
+    public function generate($output)
     {
         foreach ($this->getTemplates() as $template => $filename) {
             $this->renderFile(
                 $template,
                 $this->getTarget($output, $filename),
-                $this->getParameters(),
-                $print
+                $this->getParameters()
             );
         }
 
@@ -66,8 +114,7 @@ abstract class Generator
                     $this->renderFile(
                         $template,
                         $this->getTarget($output, $filename, null, true),
-                        $this->getParameters(),
-                        $print
+                        $this->getParameters()
                     );
                 }
             }
@@ -76,11 +123,10 @@ abstract class Generator
 
     /**
      * @param string $output
-     * @param bool   $print
      *
      * @return void
      */
-    public function generateEnums($output, $print = false)
+    public function generateEnums($output)
     {
         // do nothing
     }
@@ -175,34 +221,23 @@ abstract class Generator
      * @param string $template
      * @param string $target
      * @param array  $parameters
-     * @param bool   $print
-     *
-     * @return int
-     */
-    protected function renderFile($template, $target, $parameters, $print = false)
-    {
-        $template = sprintf('%s/%s', $this->language, $template);
-
-        if ($print) {
-            return $this->printFile($template, $target, $parameters);
-        }
-
-        if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
-        }
-
-        return file_put_contents($target, $this->render($template, $parameters));
-    }
-
-    /**
-     * @param string $template
-     * @param string $target
-     * @param array  $parameters
      *
      * @return void
      */
-    protected function printFile($template, $target, $parameters)
+    protected function renderFile($template, $target, $parameters)
     {
-        echo $this->render($template, $parameters);
+        $template = sprintf('%s/%s', $this->language, $template);
+
+        $render = $this->render($template, $parameters);
+
+        $this->files[$target] = $render;
+
+        if (!$this->outputDisabled) {
+            if (!is_dir(dirname($target))) {
+                mkdir(dirname($target), 0777, true);
+            }
+
+            file_put_contents($target, $render);
+        }
     }
 }

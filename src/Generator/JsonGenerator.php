@@ -50,14 +50,6 @@ class JsonGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function printFile($template, $target, $parameters)
-    {
-        echo sprintf("<pre>Filename = %s\n\n%s</pre><hr />", $target, $this->render($template, $parameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function render($template, $parameters)
     {
         return str_replace('    ', '  ', json_encode(

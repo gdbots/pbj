@@ -1,260 +1,260 @@
 {
-  "$schema": "http:\/\/json-schema.org\/schema#",
-  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/1-0-1.json",
-  "type": "object",
-  "properties": {
-    "_id": {
-      "type": "string",
-      "required": true,
-      "additionalProperties": {
-        "customType": "identifier"
-      }
-    },
-    "publish_status": {
-      "type": "string",
-      "enum": [
-        "published",
-        "draft",
-        "pending",
-        "expired",
-        "deleted"
-      ],
-      "additionalProperties": {
-        "customType": "string-enum",
-        "withDefault": "draft"
-      }
-    },
-    "published_at": {
-      "type": "number",
-      "additionalProperties": {
-        "customType": "microtime"
-      }
-    },
-    "expires_at": {
-      "type": "number",
-      "additionalProperties": {
-        "customType": "timestamp"
-      }
-    },
-    "target_curie": {
-      "type": "string",
-      "pattern": "\/^[a-z0-9-]+:[a-z0-9-]+$\/",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "target_node_ref": {
-      "type": "string",
-      "pattern": "\/^[a-z0-9-]+:[a-z0-9\\\/-]+$\/",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "target_published_at": {
-      "type": "number",
-      "additionalProperties": {
-        "customType": "timestamp"
-      }
-    },
-    "private": {
-      "type": "boolean",
-      "additionalProperties": {
-        "customType": "boolean"
-      }
-    },
-    "content_type": {
-      "type": "string",
-      "enum": [
-        "unknown",
-        "article",
-        "audio",
-        "collection",
-        "link",
-        "photo",
-        "poll",
-        "profile",
-        "quote",
-        "solicit",
-        "text",
-        "video"
-      ],
-      "additionalProperties": {
-        "customType": "string-enum",
-        "withDefault": "unknown"
-      }
-    },
-    "title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "short_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "tiny_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "excerpt": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
-      }
-    },
-    "excerpt_html": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
-      }
-    },
-    "icon_label": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "read_more_label": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "og_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "og_description": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
-      }
-    },
-    "seo_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "seo_keywords": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aSet": true
-      }
-    },
-    "target_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "channel": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "format": "slug"
-      }
-    },
-    "channel_title": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "hashtags": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aSet": true,
-        "format": "hashtag"
-      }
-    },
-    "internal_hashtags": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aSet": true,
-        "format": "hashtag"
-      }
-    },
-    "lists": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aSet": true,
-        "format": "slug"
-      }
-    },
-    "galleries": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aSet": true,
-        "format": "slug"
-      }
-    },
-    "thumbnails": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "aMap": true,
-        "format": "url"
-      }
-    },
-    "sponsor": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string",
-        "format": "url"
-      }
-    },
-    "img_credit": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "string"
-      }
-    },
-    "img_caption": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
-      }
-    },
-    "geo_location": {
+      "$schema": "http:\/\/json-schema.org\/schema#",
+      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/1-0-1.json",
       "type": "object",
-      "additionalProperties": {
-        "customType": "geo-point"
-      }
-    },
-    "search_text": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
-      }
-    },
-    "sync_with_target": {
-      "type": "boolean",
-      "additionalProperties": {
-        "customType": "boolean"
-      }
-    },
-    "target": {
-      "type": "object",
-      "additionalProperties": {
-        "customType": "message"
-      }
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier"
+          }
+        },
+        "publish_status": {
+          "type": "string",
+          "enum": [
+            "published",
+            "draft",
+            "pending",
+            "expired",
+            "deleted"
+          ],
+          "additionalProperties": {
+            "customType": "string-enum",
+            "withDefault": "draft"
+          }
+        },
+        "published_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime"
+          }
+        },
+        "expires_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "timestamp"
+          }
+        },
+        "target_curie": {
+          "type": "string",
+          "pattern": "\/^[a-z0-9-]+:[a-z0-9-]+$\/",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "target_node_ref": {
+          "type": "string",
+          "pattern": "\/^[a-z0-9-]+:[a-z0-9\\\/-]+$\/",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "target_published_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "timestamp"
+          }
+        },
+        "private": {
+          "type": "boolean",
+          "additionalProperties": {
+            "customType": "boolean"
+          }
+        },
+        "content_type": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "article",
+            "audio",
+            "collection",
+            "link",
+            "photo",
+            "poll",
+            "profile",
+            "quote",
+            "solicit",
+            "text",
+            "video"
+          ],
+          "additionalProperties": {
+            "customType": "string-enum",
+            "withDefault": "unknown"
+          }
+        },
+        "title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "short_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "tiny_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "excerpt": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "excerpt_html": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "icon_label": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "read_more_label": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "og_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "og_description": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "seo_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "seo_keywords": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aSet": true
+          }
+        },
+        "target_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "channel": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "format": "slug"
+          }
+        },
+        "channel_title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "hashtags": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aSet": true,
+            "format": "hashtag"
+          }
+        },
+        "internal_hashtags": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aSet": true,
+            "format": "hashtag"
+          }
+        },
+        "lists": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aSet": true,
+            "format": "slug"
+          }
+        },
+        "galleries": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aSet": true,
+            "format": "slug"
+          }
+        },
+        "thumbnails": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "aMap": true,
+            "format": "url"
+          }
+        },
+        "sponsor": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string",
+            "format": "url"
+          }
+        },
+        "img_credit": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "img_caption": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "geo_location": {
+          "type": "object",
+          "additionalProperties": {
+            "customType": "geo-point"
+          }
+        },
+        "search_text": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "sync_with_target": {
+          "type": "boolean",
+          "additionalProperties": {
+            "customType": "boolean"
+          }
+        },
+        "target": {
+          "type": "object",
+          "additionalProperties": {
+            "customType": "message"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "additionalProperties": false
     }
-  },
-  "required": [
-    "_id"
-  ],
-  "additionalProperties": false
-}

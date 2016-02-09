@@ -71,15 +71,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function printFile($template, $target, $parameters)
-    {
-        echo sprintf("<pre>Filename = %s\n\n%s</pre><hr />", $target, str_replace('<?php', '-?php', $this->render($template, $parameters)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function generateEnums($output, $print = false)
+    public function generateEnums($output)
     {
         $enums = $this->schema->getOption('enums', []);
 
@@ -118,8 +110,7 @@ class PhpGenerator extends Generator
                     'className' => $className,
                     'options' => $enum->getValues(),
                     'is_int' => is_int(current($enum->getValues()))
-                ]),
-                $print
+                ])
             );
         }
     }

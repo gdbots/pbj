@@ -58,8 +58,8 @@ class PhpCompiler extends Compiler
     /**
      * {@inheritdoc}
      */
-    public function createGenerator(SchemaDescriptor $schema)
+    public function createGenerator()
     {
-        return new PhpGenerator($schema);
+        return new PhpGenerator();
     }
 }
