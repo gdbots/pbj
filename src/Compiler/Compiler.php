@@ -4,9 +4,9 @@ namespace Gdbots\Pbjc\Compiler;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\InvalidLanguage;
-use Gdbots\Pbjc\Enum;
-use Gdbots\Pbjc\Field;
-use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Descriptor\EnumDescriptor;
+use Gdbots\Pbjc\Descriptor\FieldDescriptor;
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaId;
 use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\XmlUtils;
@@ -55,7 +55,7 @@ abstract class Compiler
                         if ($this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
                             try {
                                 if ($schema = SchemaStore::getSchemaById($xmlData['entity']['id'])) {
-                                    if ($schema instanceof Schema) {
+                                    if ($schema instanceof SchemaDescriptor) {
                                         if (!$schema->getOption($this->language)) {
                                             $schema->setOption(
                                                 $this->language,
@@ -126,18 +126,18 @@ abstract class Compiler
     }
 
     /**
-     * Converts XML data into Schema instance.
+     * Converts XML data into SchemaDescriptor instance.
      *
      * @param array $xmlData
      *
-     * @return Schema
+     * @return SchemaDescriptor
      *
      * @throw \RuntimeException
      */
     protected function createSchema(array $xmlData)
     {
         $schemaId = SchemaId::fromString($xmlData['id']);
-        $schema   = new Schema($schemaId->__toString());
+        $schema   = new SchemaDescriptor($schemaId->__toString());
 
         if (isset($xmlData['mixin']) && $xmlData['mixin']) {
             $schema->setIsMixin(true);
@@ -163,7 +163,7 @@ abstract class Compiler
 
         // inherit from previous version
         $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-        if ($prevSchemaVersion instanceof Schema &&
+        if ($prevSchemaVersion instanceof SchemaDescriptor &&
             $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
         ) {
             $schema->setOptionSubOption($this->language, 'enums', array_merge(
@@ -229,10 +229,10 @@ abstract class Compiler
     }
 
     /**
-     * @param Schema $schema
-     * @param array  $data
+     * @param SchemaDescriptor $schema
+     * @param array            $data
      */
-    protected function processXmlEnums(Schema $schema, array $data)
+    protected function processXmlEnums(SchemaDescriptor $schema, array $data)
     {
         $data = $this->convertXmlDataToArray($data, 'name');
         foreach ($data as $item) {
@@ -252,7 +252,7 @@ abstract class Compiler
 
             // validate from previous version
             $prevSchemaVersion = SchemaStore::getSchemaById($schema->getId()->getCurieWithMajorRev(), $schema->getId());
-            if ($prevSchemaVersion instanceof Schema &&
+            if ($prevSchemaVersion instanceof SchemaDescriptor &&
                 $prevSchemaVersion->getId()->getVersion()->__toString() < $schema->getId()->getVersion()->__toString()
             ) {
                 $enums = $prevSchemaVersion->getOption('enums');
@@ -271,7 +271,7 @@ abstract class Compiler
                 }
             }
 
-            $enum = new Enum($item['name'], $values);
+            $enum = new EnumDescriptor($item['name'], $values);
 
             $schema->setOption('enums', array_merge(
                 $schema->getOption('enums', []),
@@ -283,10 +283,10 @@ abstract class Compiler
     }
 
     /**
-     * @param Schema $schema
-     * @param array  $data
+     * @param SchemaDescriptor $schema
+     * @param array            $data
      */
-    protected function processXmlFields(Schema $schema, $data)
+    protected function processXmlFields(SchemaDescriptor $schema, $data)
     {
         $data = $this->convertXmlDataToArray($data);
         foreach ($data as $item) {
@@ -302,7 +302,7 @@ abstract class Compiler
             if (isset($item['any_of']['id'])) {
                 $anyOf = $this->convertXmlDataToArray($item['any_of']['id']);
 
-                /** @var $item['any_of'] Schema[] */
+                /** @var $item['any_of'] SchemaDescriptor[] */
                 $item['any_of'] = [];
 
                 foreach ($anyOf as $curie) {
@@ -340,7 +340,7 @@ abstract class Compiler
                     }
                 }
 
-                /** @var $enums Enum[] */
+                /** @var $enums EnumDescriptor[] */
                 if ($enums = $providerSchema->getOption('enums')) {
                     foreach ($enums as $enum) {
                         if ($enum->getName() == $item['enum']['name']) {
@@ -354,15 +354,15 @@ abstract class Compiler
                 unset($item['enum']);
             }
 
-            $schema->addField(new Field($item['name'], $item));
+            $schema->addField(new FieldDescriptor($item['name'], $item));
         }
     }
 
     /**
-     * @param Schema       $schema
-     * @param array|string $data
+     * @param SchemaDescriptor $schema
+     * @param array|string     $data
      */
-    protected function processXmlMixins(Schema $schema, $data)
+    protected function processXmlMixins(SchemaDescriptor $schema, $data)
     {
         $data = $this->convertXmlDataToArray($data);
         foreach ($data as $curieWithMajorRev) {
@@ -411,9 +411,9 @@ abstract class Compiler
     /**
      * Returns a Generator instance.
      *
-     * @param Schema $schema
+     * @param SchemaDescriptor $schema
      *
      * @return \Gdbots\Pbjc\Generator\Generator
      */
-    abstract public function createGenerator(Schema $schema);
+    abstract public function createGenerator(SchemaDescriptor $schema);
 }

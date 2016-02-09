@@ -1,16 +1,16 @@
 <?php
 
-namespace Gdbots\Pbjc;
+namespace Gdbots\Pbjc\Descriptor;
 
-use Gdbots\Common\ToArray;
 use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbjc\SchemaId;
 
-final class Schema implements ToArray, \JsonSerializable
+final class SchemaDescriptor extends Descriptor
 {
     /** @var SchemaId */
     private $id;
 
-    /** @var Field[] */
+    /** @var FieldDescriptor[] */
     private $fields = [];
 
     /** @var array */
@@ -76,9 +76,9 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * @param Field $field
+     * @param FieldDescriptor $field
      */
-    public function addField(Field $field)
+    public function addField(FieldDescriptor $field)
     {
         if (!$this->hasField($field->getName())) {
             $this->fields[$field->getName()] = $field;
@@ -88,7 +88,7 @@ final class Schema implements ToArray, \JsonSerializable
     /**
      * @param string $name
      *
-     * @return Field|null
+     * @return FieldDescriptor|null
      */
     public function getField($name)
     {
@@ -100,7 +100,7 @@ final class Schema implements ToArray, \JsonSerializable
     }
 
     /**
-     * @return Field[]
+     * @return FieldDescriptor[]
      */
     public function getFields()
     {
@@ -251,13 +251,5 @@ final class Schema implements ToArray, \JsonSerializable
             'fields'  => $this->fields,
             'options' => $this->options
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

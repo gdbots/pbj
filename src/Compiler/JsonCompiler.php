@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Compiler;
 
-use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 use Gdbots\Pbjc\Generator\JsonGenerator;
 
 class JsonCompiler extends Compiler
@@ -13,7 +13,7 @@ class JsonCompiler extends Compiler
     /**
      * {@inheritdoc}
      */
-    public function createGenerator(Schema $schema)
+    public function createGenerator(SchemaDescriptor $schema)
     {
         return new JsonGenerator($schema);
     }

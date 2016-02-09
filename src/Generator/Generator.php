@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 use Gdbots\Pbjc\Twig\Extension\StringExtension;
-use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 
 abstract class Generator
 {
@@ -20,13 +20,13 @@ abstract class Generator
     /** @var string */
     protected $extension;
 
-    /** @var Schema */
+    /** @var SchemaDescriptor */
     protected $schema;
 
     /**
-     * @param Schema $schema
+     * @param SchemaDescriptor $schema
      */
-    public function __construct(Schema $schema)
+    public function __construct(SchemaDescriptor $schema)
     {
         $this->schema = $schema;
     }

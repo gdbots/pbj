@@ -3,7 +3,7 @@
 namespace Gdbots\Pbjc\Compiler;
 
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 use Gdbots\Pbjc\Generator\PhpGenerator;
 
 class PhpCompiler extends Compiler
@@ -14,7 +14,7 @@ class PhpCompiler extends Compiler
     /**
      * {@inheritdoc}
      */
-    protected function processXmlFields(Schema $schema, $data)
+    protected function processXmlFields(SchemaDescriptor $schema, $data)
     {
         parent::processXmlFields($schema, $data);
 
@@ -58,7 +58,7 @@ class PhpCompiler extends Compiler
     /**
      * {@inheritdoc}
      */
-    public function createGenerator(Schema $schema)
+    public function createGenerator(SchemaDescriptor $schema)
     {
         return new PhpGenerator($schema);
     }

@@ -1,8 +1,7 @@
 <?php
 
-namespace Gdbots\Pbjc;
+namespace Gdbots\Pbjc\Descriptor;
 
-use Gdbots\Common\ToArray;
 use Gdbots\Common\Util\ArrayUtils;
 use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
@@ -12,7 +11,7 @@ use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
 
-final class Field implements ToArray, \JsonSerializable
+final class FieldDescriptor extends Descriptor
 {
     /**
      * Regular expression pattern for matching a valid field name.  The pattern allows
@@ -504,13 +503,5 @@ final class Field implements ToArray, \JsonSerializable
             'overridable'      => $this->overridable,
             'options'          => $this->options
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

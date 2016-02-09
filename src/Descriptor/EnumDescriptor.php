@@ -1,10 +1,8 @@
 <?php
 
-namespace Gdbots\Pbjc;
+namespace Gdbots\Pbjc\Descriptor;
 
-use Gdbots\Common\ToArray;
-
-final class Enum implements ToArray, \JsonSerializable
+final class EnumDescriptor extends Descriptor
 {
     /** @var name */
     private $name = [];
@@ -84,13 +82,5 @@ final class Enum implements ToArray, \JsonSerializable
             'name'   => $this->name,
             'values' => $this->values
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

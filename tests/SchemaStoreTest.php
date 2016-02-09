@@ -2,8 +2,8 @@
 
 namespace Gdbots\Tests\Pbjc;
 
-use Gdbots\Pbjc\Field;
-use Gdbots\Pbjc\Schema;
+use Gdbots\Pbjc\Descriptor\FieldDescriptor;
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
 class SchemaStoreTest extends \PHPUnit_Framework_TestCase
@@ -13,24 +13,24 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->schema = new Schema(
+        $this->schema = new SchemaDescriptor(
             // id
             'pbj:gdbots:pbj:mixin:command:1-0-1',
 
             // fields
             [
-                new Field('command_id', [
+                new FieldDescriptor('command_id', [
                     'type' => 'time-uuid',
                     'required' => true
                 ]),
-                new Field('microtime', [
+                new FieldDescriptor('microtime', [
                     'type' => 'microtime',
                     'required' => true
                 ]),
-                new Field('correlator', [
+                new FieldDescriptor('correlator', [
                     'type' => 'message-ref'
                 ]),
-                new Field('retries', [
+                new FieldDescriptor('retries', [
                     'type' => 'tiny-int'
                 ])
             ],

@@ -2,6 +2,8 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
+
 class SchemaStore
 {
     /**
@@ -99,9 +101,9 @@ class SchemaStore
      * Adds a schema. An exception will be thorwn when attempting to load
      * the same id multi times.
      *
-     * @param string       $id
-     * @param array|Schema $schema
-     * @param bool         $ignoreDuplication
+     * @param string                 $id
+     * @param array|SchemaDescriptor $schema
+     * @param bool                   $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate schema id's
      */
@@ -164,7 +166,7 @@ class SchemaStore
     }
 
     /**
-     * Returns a schema by its id. This is NOT the \Gdbots\Pbjc\Schema object.
+     * Returns a schema by its id. This is NOT the SchemaDescriptor object.
      * It contains more info (from the xml) about how to build this schema
      * into multiple languages. the pbj-php is specifically for php
      * (assuming it's already been compiled).
@@ -172,7 +174,7 @@ class SchemaStore
      * @param string $id
      * @param SchemaId $schemaId
      *
-     * @return array|\Gdbots\Pbjc\Schema|null
+     * @return array|SchemaDescriptor|null
      */
     public static function getSchemaById($id, SchemaId $schemaId = null)
     {
@@ -205,7 +207,7 @@ class SchemaStore
                         if (is_array($schema)) {
                             $sid = SchemaId::fromString($schema['id']);
                         }
-                        if ($schema instanceof Schema) {
+                        if ($schema instanceof SchemaDescriptor) {
                             $sid = $schema->getId();
                         }
                         if ($sid->getVersion() < $schemaId->getVersion()) {
@@ -228,7 +230,7 @@ class SchemaStore
                         if (is_array($schema)) {
                             $sid = SchemaId::fromString($schema['id']);
                         }
-                        if ($schema instanceof Schema) {
+                        if ($schema instanceof SchemaDescriptor) {
                             $sid = $schema->getId();
                         }
                         if ($sid->getVersion() < $schemaId->getVersion()) {
