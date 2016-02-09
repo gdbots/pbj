@@ -173,10 +173,11 @@ class SchemaStore
      *
      * @param string $id
      * @param SchemaId $schemaId
+     * @param bool     $ignoreNotFound
      *
      * @return array|SchemaDescriptor|null
      */
-    public static function getSchemaById($id, SchemaId $schemaId = null)
+    public static function getSchemaById($id, SchemaId $schemaId = null, $ignoreNotFound = false)
     {
         if (!$schemaElements = self::parseSchemaId($id)) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
@@ -247,7 +248,11 @@ class SchemaStore
             return self::$schemas[$curie][$schemaElements['version']['major']][$version];
         }
 
-        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        if (!$ignoreNotFound) {
+            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        }
+
+        return false;
     }
 
     /**

@@ -53,21 +53,17 @@ abstract class Compiler
                         $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename())-1);
 
                         if ($this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
-                            try {
-                                if ($schema = SchemaStore::getSchemaById($xmlData['entity']['id'])) {
-                                    if ($schema instanceof SchemaDescriptor) {
-                                        if (!$schema->getOption($this->language)) {
-                                            $schema->setOption(
-                                                $this->language,
-                                                $this->processXmlLanguageOptions($xmlData)
-                                            );
+                            if ($schema = SchemaStore::getSchemaById($xmlData['entity']['id'], null, true)) {
+                                if ($schema instanceof SchemaDescriptor) {
+                                    if (!$schema->getOption($this->language)) {
+                                        $schema->setOption(
+                                            $this->language,
+                                            $this->processXmlLanguageOptions($xmlData)
+                                        );
 
-                                            continue;
-                                        }
+                                        continue;
                                     }
                                 }
-                            } catch (\Exception $e) {
-                                // the schema with id X is invalid - no added yet
                             }
 
                             SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
