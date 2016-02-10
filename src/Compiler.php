@@ -79,10 +79,9 @@ final class Compiler
             }
         }
 
-        $parser = new SchemaParser();
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
-                $schema = $parser->createSchema($schema)->getSchema();
+                $schema = SchemaParser::create($schema);
             }
 
             // update

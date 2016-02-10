@@ -8,118 +8,111 @@ namespace Gdbots\Pbjc;
 class SchemaParser
 {
     /**
-     * Holds the current processed schema.
-     *
-     * @var SchemaDescriptor
-     */
-    protected $schema;
-
-    /**
-     * Returns the new instance.
-     *
-     * @return this
-     */
-    public static function getInstance()
-    {
-        return new self();
-    }
-
-    /**
-     * Creates a Schema instance from a given set of metadata.
+     * Builds a Schema instance from a given set of data.
      *
      * @param array $data
      *
-     * @return this
+     * @return SchemaDescriptor
      */
-    public function createSchema(array $data)
+    public static function create(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
-        $this->schema = new SchemaDescriptor($schemaId->__toString());
+        $schema = new SchemaDescriptor($schemaId->__toString());
 
         if (isset($data['mixin']) && $data['mixin']) {
-            $this->schema->setIsMixin(true);
+            $schema->setIsMixin(true);
         }
 
         if (isset($data['is_dependent']) && $data['is_dependent']) {
-            $this->schema->setIsDependent(true);
+            $schema->setIsDependent(true);
         }
 
         // default language options
-        $options = $this->getLanguageOptions($data);
+        $options = self::getLanguageOptions($data);
         foreach ($options as $language => $option) {
-            $this->schema->setOption($language, $option);
+            $schema->setOption($language, $option);
         }
 
         // assign enums
         if (isset($data['enums'])) {
             if (isset($data['enums']['enum'])) {
-                $enums = $this->fixArray($data['enums']['enum'], 'name');
+                $enums = self::fixArray($data['enums']['enum'], 'name');
                 foreach ($enums as $enum) {
-                    $this->addEnum($enum);
+                    $enum = self::getEnumDescriptor($enum);
+
+                    $schema->setOption('enums', array_merge(
+                        $schema->getOption('enums', []),
+                        [
+                            $enum,
+                        ]
+                    ));
                 }
             }
 
             // add enums language options
-            $options = $this->getLanguageOptions($data['enums']);
+            $options = self::getLanguageOptions($data['enums']);
             foreach ($options as $language => $option) {
-                $this->schema->setOptionSubOption($language, 'enums', $option);
+                $schema->setOptionSubOption($language, 'enums', $option);
             }
         }
 
         if (isset($data['fields']['field'])) {
-            $fields = $this->fixArray($data['fields']['field']);
+            $fields = self::fixArray($data['fields']['field']);
             foreach ($fields as $field) {
-                $this->addField($field);
+                if ($field = self::getFieldDescriptor($schema, $field)) {
+                     $schema->addField($field);
+                }
             }
         }
 
         if (isset($data['mixins']['id'])) {
-            $mixins = $this->fixArray($data['mixins']['id']);
+            $mixins = self::fixArray($data['mixins']['id']);
             foreach ($mixins as $curieWithMajorRev) {
-                $this->addMixin($curieWithMajorRev);
+                if ($mixin = self::getMixin($schema, $curieWithMajorRev)) {
+                    $schema->setOption('mixins', array_merge(
+                        $schema->getOption('mixins', []),
+                        [
+                            $mixin,
+                        ]
+                    ));
+                }
             }
         }
 
-        if (count($diff = $this->validate()) > 0) {
+        if (count($diff = self::validate($schema)) > 0) {
             throw new \RuntimeException(sprintf(
                 'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
-                $this->schema->getId()->__toString(),
+                $schema->getId()->__toString(),
                 json_encode($diff)
             ));
         }
 
-        return $this;
-    }
-
-    /**
-     * @return SchemaDescriptor
-     */
-    public function getSchema()
-    {
-        return $this->schema;
+        return $schema;
     }
 
     /**
      * Validate schema against previous version.
      *
+     * @param SchemaDescriptor $schema
+     *
      * @return array
      */
-    protected function validate()
+    protected static function validate(SchemaDescriptor $schema)
     {
-        if (!$prevSchema = SchemaStore::getPreviousSchema($this->schema->getId())) {
+        if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
             return [];
         }
 
         if (is_array($prevSchema)) {
-            $prevSchema = self::getInstance()->createSchema($prevSchema);
+            $prevSchema = self::create($prevSchema);
         }
 
         // convert schema's to arra and compare values
-        $currentSchemaArray = json_decode(json_encode($this->schema), true);
+        $currentSchemaArray = json_decode(json_encode($schema), true);
         $prevSchemaArray = json_decode(json_encode($prevSchema), true);
 
         // check if something got removed or cahnged
-        $diff = $this->arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
+        $diff = self::arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
 
         // removed schema id - going to be diff ofcorse.. doh
         if (isset($diff['id'])) {
@@ -135,14 +128,14 @@ class SchemaParser
      *
      * @return array
      */
-    protected function arrayRecursiveDiff(array $array1, array $array2)
+    protected static function arrayRecursiveDiff(array $array1, array $array2)
     {
         $diff = array();
 
         foreach ($array1 as $key => $value) {
             if (array_key_exists($key, $array2)) {
                 if (is_array($value)) {
-                    $recursiveDiff = $this->arrayRecursiveDiff($value, $array2[$key]);
+                    $recursiveDiff = self::arrayRecursiveDiff($value, $array2[$key]);
                     if (count($recursiveDiff)) {
                         $diff[$key] = $recursiveDiff;
                     }
@@ -165,7 +158,7 @@ class SchemaParser
      *
      * @return array
      */
-    protected function fixArray($data, $key = null)
+    protected static function fixArray($data, $key = null)
     {
         if (!is_array($data) || ($key && isset($data[$key]))) {
             $data = [$data];
@@ -179,7 +172,7 @@ class SchemaParser
      *
      * @return array
      */
-    protected function getLanguageOptions(array $data)
+    protected static function getLanguageOptions(array $data)
     {
         $options = [];
 
@@ -196,8 +189,10 @@ class SchemaParser
 
     /**
      * @param array $enum
+     *
+     * @return EnumDescriptor
      */
-    protected function addEnum(array $enum)
+    protected static function getEnumDescriptor(array $enum)
     {
         // force default type to be "string"
         if (!isset($enum['type'])) {
@@ -205,7 +200,7 @@ class SchemaParser
         }
 
         $values = [];
-        $keys = $this->fixArray($enum['option'], 'key');
+        $keys = self::fixArray($enum['option'], 'key');
         foreach ($keys as $key) {
             $values[$key['key']] = $enum['type'] == 'int'
                 ? intval($key['value'])
@@ -213,20 +208,16 @@ class SchemaParser
             ;
         }
 
-        $enum = new EnumDescriptor($enum['name'], $values);
-
-        $this->schema->setOption('enums', array_merge(
-            $this->schema->getOption('enums', []),
-            [
-                $enum,
-            ]
-        ));
+        return new EnumDescriptor($enum['name'], $values);
     }
 
     /**
-     * @param array $field
+     * @param SchemaDescriptor $schema
+     * @param array            $field
+     *
+     * @return FieldDescriptor|null
      */
-    protected function addField(array $field)
+    protected static function getFieldDescriptor(SchemaDescriptor $schema, array $field)
     {
         // ignore if no type was assign
         if (!isset($field['type'])) {
@@ -238,8 +229,9 @@ class SchemaParser
         }
 
         if (isset($field['any_of']['id'])) {
-            $field['any_of'] = $this->getAnyOf(
-                $this->fixArray($field['any_of']['id'])
+            $field['any_of'] = self::getAnyOf(
+                $schema,
+                self::fixArray($field['any_of']['id'])
             );
         }
         if (isset($field['any_of']) && count($field['any_of']) === 0) {
@@ -248,7 +240,7 @@ class SchemaParser
 
         if (isset($field['enum'])) {
             /** @var $providerSchema SchemaDescriptor */
-            $providerSchema = $this->getEnumProvider($field['enum']['provider']);
+            $providerSchema = self::getEnumProvider($schema, $field['enum']['provider']);
 
             /** @var $enums EnumDescriptor[] */
             if ($enums = $providerSchema->getOption('enums')) {
@@ -272,27 +264,28 @@ class SchemaParser
             unset($field['enum']);
         }
 
-        $this->schema->addField(new FieldDescriptor($field['name'], $field));
+        return new FieldDescriptor($field['name'], $field);
     }
 
     /**
-     * @param array $curies
+     * @param SchemaDescriptor $schema
+     * @param array            $curies
      *
      * @return array
      */
-    protected function getAnyOf($curies)
+    protected static function getAnyOf($schema, $curies)
     {
         $schemas = [];
 
         foreach ($curies as $curie) {
             // can't add yourself to anyof
-            if ($curie == $this->schema->getId()->getCurie()) {
+            if ($curie == $schema->getId()->getCurie()) {
                 continue;
             }
 
             $schema = SchemaStore::getSchemaById($curie);
             if (is_array($schema)) {
-                $schema = self::getInstance()->createSchema($schema);
+                $schema = self::create($schema);
             }
 
             $schemas[] = $schema;
@@ -302,44 +295,43 @@ class SchemaParser
     }
 
     /**
-     * @param string $curieWithMajorRev
+     * @param SchemaDescriptor $schema
+     * @param string           $curieWithMajorRev
      *
      * @return SchemaDescriptor
      */
-    protected function getEnumProvider($curieWithMajorRev)
+    protected static function getEnumProvider(SchemaDescriptor $schema, $curieWithMajorRev)
     {
-        if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
-            return $this->schema;
+        if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
+            return $schema;
         }
 
         $schema = SchemaStore::getSchemaById($curieWithMajorRev);
         if (is_array($schema)) {
-            $schema = self::getInstance()->createSchema($schema);
+            $schema = self::create($schema);
         }
 
         return $schema;
     }
 
     /**
-     * @param string $curieWithMajorRev
+     * @param SchemaDescriptor $schema
+     * @param string           $curieWithMajorRev
+     *
+     * @return SchemaDescriptor|null
      */
-    protected function addMixin($curieWithMajorRev)
+    protected static function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
     {
         // can't add yourself to mixins
-        if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
-            continue;
+        if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
+            return;
         }
 
-        $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev);
-        if (is_array($mixinSchema)) {
-            $mixinSchema = self::getInstance()->createSchema($mixinSchema);
+        $schema = SchemaStore::getSchemaById($curieWithMajorRev);
+        if (is_array($schema)) {
+            $schema = self::create($schema);
         }
 
-        $this->schema->setOption('mixins', array_merge(
-            $this->schema->getOption('mixins', []),
-            [
-                $mixinSchema,
-            ]
-        ));
+        return $schema;
     }
 }
