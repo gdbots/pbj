@@ -317,7 +317,14 @@ class SchemaStore
                 return;
             }
 
-            $prev = self::$schemas[$ids[$key]];
+            if (!$prev = self::$schemas[$ids[$key]]) {
+                return;
+            }
+
+            // ignore lowest version
+            if (is_array($prev)) {
+                return;
+            }
 
             if ($prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
                 && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
