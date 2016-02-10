@@ -66,7 +66,7 @@ abstract class Compiler
                 }
 
                 // ignore duplicates
-                if (SchemaStore::getSchemaById($xmlData['entity']['id'], null, true)) {
+                if (SchemaStore::getSchemaById($xmlData['entity']['id'], true)) {
                     continue;
                 }
 
@@ -75,29 +75,16 @@ abstract class Compiler
         }
 
         // resolve and mark schemas as latest
-        $schemaLatestVersion = [];
-
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
                 $schema = $this->createSchema($schema);
-            }
-
-            if (!isset($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()])) {
-                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
-            }
-            if ($schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()]
-                ->getId()->getVersion()->compare(
-                    $schema->getId()->getVersion()
-                ) === -1
-            ) {
-                $schemaLatestVersion[$schema->getId()->getCurieWithMajorRev()] = $schema;
             }
 
             // update
             SchemaStore::addSchema($schema->__toString(), $schema, true);
         }
 
-        foreach ($schemaLatestVersion as &$schema) {
+        foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {
             $schema->setIsLatestVersion(true);
         }
     }
@@ -168,7 +155,7 @@ abstract class Compiler
             $this->processXmlMixins($schema, $xmlData['mixins']['id']);
         }
 
-        if ($prevSchema = SchemaStore::getSchemaById($schemaId->getCurieWithMajorRev(), $schemaId, false)) {
+        if ($prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
             if (is_array($prevSchema)) {
                 $prevSchema = $this->createSchema($prevSchema);
             }
@@ -314,11 +301,11 @@ abstract class Compiler
 
                 foreach ($anyOf as $curie) {
                     // can't add yourself to anyof
-                    if ($curie == $schema->getId()->getCurieWithMajorRev()) {
+                    if ($curie == $schema->getId()->getCurie()) {
                         continue;
                     }
 
-                    $anyOfSchema = SchemaStore::getSchemaById($curie, $schema->getId());
+                    $anyOfSchema = SchemaStore::getSchemaById($curie);
                     if (is_array($anyOfSchema)) {
                         $anyOfSchema = $this->createSchema($anyOfSchema);
                     }
@@ -334,7 +321,7 @@ abstract class Compiler
                 if ($item['enum']['provider'] == $schema->getId()->getCurieWithMajorRev()) {
                     $providerSchema = $schema;
                 } else {
-                    $providerSchema = SchemaStore::getSchemaById($item['enum']['provider'], $schema->getId());
+                    $providerSchema = SchemaStore::getSchemaById($item['enum']['provider']);
                     if (is_array($providerSchema)) {
                         $providerSchema = $this->createSchema($providerSchema);
                     }
@@ -379,7 +366,7 @@ abstract class Compiler
                 continue;
             }
 
-            $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev, $schema->getId());
+            $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev);
             if (is_array($mixinSchema)) {
                 $mixinSchema = $this->createSchema($mixinSchema);
             }
