@@ -187,9 +187,9 @@ The `any_of` attribute define the message id that will be used to pull the messa
 ```php
 <?php
 
-use Gdbots\Pbjc\Compiler\PhpCompiler;
+use Gdbots\Pbjc\Compiler;
 
-$compile = new PhpCompiler('/put/your/output/folder');
+$compile = new Compiler('php', '/put/your/output/folder');
 $compile->generate();
 ```
 
