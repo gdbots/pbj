@@ -71,9 +71,9 @@ abstract class Compiler
         $schemaTool = new SchemaTool();
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
-                $schema = $schemaTool->createSchema($schema);
+                $schema = $schemaTool->createSchema($schema)->getSchema();
 
-                if (count($diff = $schemaTool->validate($schema)) > 0) {
+                if (count($diff = $schemaTool->validate()) > 0) {
                     throw new \RuntimeException(sprintf(
                         'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
                         $schema->getId()->__toString(),

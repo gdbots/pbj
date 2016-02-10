@@ -12,65 +12,78 @@ use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
 class SchemaTool
 {
     /**
+     * Holds the current processed schema.
+     *
+     * @var SchemaDescriptor
+     */
+    protected $schema;
+
+    /**
      * Creates a Schema instance from a given set of metadata.
      *
      * @param array $data
      *
-     * @return SchemaDescriptor
+     * @return this
      */
     public function createSchema(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
-        $schema = new SchemaDescriptor($schemaId->__toString());
+        $this->schema = new SchemaDescriptor($schemaId->__toString());
 
         if (isset($data['mixin']) && $data['mixin']) {
-            $schema->setIsMixin(true);
+            $this->schema->setIsMixin(true);
         }
 
         if (isset($data['is_dependent']) && $data['is_dependent']) {
-            $schema->setIsDependent(true);
+            $this->schema->setIsDependent(true);
         }
 
         // default language options
         $options = $this->getLanguageOptions($data);
         foreach ($options as $language => $option) {
-            $schema->setOption($language, $option);
+            $this->schema->setOption($language, $option);
         }
 
         // assign enums
         if (isset($data['enums'])) {
             if (isset($data['enums']['enum'])) {
-                $this->setEnums($schema, $data['enums']['enum']);
+                $this->setEnums($data['enums']['enum']);
             }
 
             // add enums language options
             $options = $this->getLanguageOptions($data['enums']);
             foreach ($options as $language => $option) {
-                $schema->setOptionSubOption($language, 'enums', $option);
+                $this->schema->setOptionSubOption($language, 'enums', $option);
             }
         }
 
         if (isset($data['fields']['field'])) {
-            $this->setFields($schema, $data['fields']['field']);
+            $this->setFields($data['fields']['field']);
         }
 
         if (isset($data['mixins']['id'])) {
-            $this->setMixins($schema, $data['mixins']['id']);
+            $this->setMixins($data['mixins']['id']);
         }
 
-        return $schema;
+        return $this;
+    }
+
+    /**
+     * @return SchemaDescriptor
+     */
+    public function getSchema()
+    {
+        return $this->schema;
     }
 
     /**
      * Validate schema against previous version.
      *
-     * @param SchemaDescriptor $schema
-     *
      * @return array
      */
-    public function validate(SchemaDescriptor $schema)
+    public function validate()
     {
-        if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
+        if (!$prevSchema = SchemaStore::getPreviousSchema($this->schema->getId())) {
             return [];
         }
 
@@ -79,7 +92,7 @@ class SchemaTool
         }
 
         // convert schema's to arra and compare values
-        $currentSchemaArray = json_decode(json_encode($schema), true);
+        $currentSchemaArray = json_decode(json_encode($this->schema), true);
         $prevSchemaArray = json_decode(json_encode($prevSchema), true);
 
         // check if something got removed or cahnged
@@ -159,10 +172,9 @@ class SchemaTool
     }
 
     /**
-     * @param SchemaDescriptor $schema
      * @param array            $data
      */
-    protected function setEnums(SchemaDescriptor $schema, array $data)
+    protected function setEnums(array $data)
     {
         $data = $this->fixArray($data, 'name');
         foreach ($data as $item) {
@@ -182,8 +194,8 @@ class SchemaTool
 
             $enum = new EnumDescriptor($item['name'], $values);
 
-            $schema->setOption('enums', array_merge(
-                $schema->getOption('enums', []),
+            $this->schema->setOption('enums', array_merge(
+                $this->schema->getOption('enums', []),
                 [
                     $enum,
                 ]
@@ -192,10 +204,9 @@ class SchemaTool
     }
 
     /**
-     * @param SchemaDescriptor $schema
      * @param array            $data
      */
-    protected function setFields(SchemaDescriptor $schema, array $data)
+    protected function setFields(array $data)
     {
         $data = $this->fixArray($data);
         foreach ($data as $item) {
@@ -216,7 +227,7 @@ class SchemaTool
 
                 foreach ($anyOf as $curie) {
                     // can't add yourself to anyof
-                    if ($curie == $schema->getId()->getCurie()) {
+                    if ($curie == $this->schema->getId()->getCurie()) {
                         continue;
                     }
 
@@ -233,8 +244,8 @@ class SchemaTool
             }
 
             if (isset($item['enum'])) {
-                if ($item['enum']['provider'] == $schema->getId()->getCurieWithMajorRev()) {
-                    $providerSchema = $schema;
+                if ($item['enum']['provider'] == $this->schema->getId()->getCurieWithMajorRev()) {
+                    $providerSchema = $this->schema;
                 } else {
                     $providerSchema = SchemaStore::getSchemaById($item['enum']['provider']);
                     if (is_array($providerSchema)) {
@@ -264,20 +275,19 @@ class SchemaTool
                 unset($item['enum']);
             }
 
-            $schema->addField(new FieldDescriptor($item['name'], $item));
+            $this->schema->addField(new FieldDescriptor($item['name'], $item));
         }
     }
 
     /**
-     * @param SchemaDescriptor $schema
      * @param array|string     $data
      */
-    protected function setMixins(SchemaDescriptor $schema, $data)
+    protected function setMixins($data)
     {
         $data = $this->fixArray($data);
         foreach ($data as $curieWithMajorRev) {
             // can't add yourself to mixins
-            if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
+            if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
                 continue;
             }
 
@@ -286,8 +296,8 @@ class SchemaTool
                 $mixinSchema = $this->createSchema($mixinSchema);
             }
 
-            $schema->setOption('mixins', array_merge(
-                $schema->getOption('mixins', []),
+            $this->schema->setOption('mixins', array_merge(
+                $this->schema->getOption('mixins', []),
                 [
                     $mixinSchema,
                 ]
