@@ -1,0 +1,30 @@
+{
+  "$schema": "http:\/\/json-schema.org\/schema#",
+  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/comment\/1-0-0.json",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "identifier"
+      }
+    },
+    "comment": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "published_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "microtime"
+      }
+    }
+  },
+  "required": [
+    "_id"
+  ],
+  "additionalProperties": false
+}

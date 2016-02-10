@@ -1,34 +1,32 @@
 <schema-mapping xmlns="gdbots:pbjc:schema-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <entity id="pbj:acme:blog:entity:teaser:1-0-0" mixin="true">
+  <entity id="pbj:acme:blog:entity:article:1-0-0" mixin="true">
     <fields>
       <field name="_id" type="identifier" required="true">
         <php_options>
-          <class_name>Wb\Teasers\TeaserId</class_name>
+          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
           <default>
             <![CDATA[
               function() {
-                return TeaserId::generate();
+                return UuidIdentifier::generate();
               }
             ]]>
           </default>
         </php_options>
       </field>
 
-      <field name="publish_status" type="string-enum">
-        <default>draft</default>
-        <enum provider="acme:blog:entity:teaser:v1" name="publish-status" />
-      </field>
-
-      <field name="published_at" type="microtime" />
-
       <field name="title" type="string" />
-      <field name="short_title" type="string" />
-      <field name="tiny_title" type="string" />
       <field name="excerpt" type="text" />
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="a-map" />
+
+      <field name="publish_status" type="string-enum">
+        <default>draft</default>
+        <enum provider="acme:blog:entity:article:v1" name="publish-status" />
+      </field>
+
+      <field name="published_at" type="microtime" />
     </fields>
 
     <enums>

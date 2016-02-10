@@ -1,0 +1,77 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:article:1-0-1" mixin="true">
+    <fields>
+      <field name="_id" type="identifier" required="true">
+        <php_options>
+          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier::generate();
+              }
+            ]]>
+          </default>
+        </php_options>
+      </field>
+
+      <field name="title" type="string" />
+      <field name="excerpt" type="text" />
+      <field name="excerpt_html" type="text" />
+      <field name="thumbnails" type="string" format="url" rule="a-map" />
+      <field name="private" type="boolean" />
+
+      <field name="content_type" type="string-enum">
+        <default>unknown</default>
+        <enum provider="acme:blog:entity:article:v1" name="content-type" />
+      </field>
+
+      <field name="publish_status" type="string-enum">
+        <default>draft</default>
+        <enum provider="acme:blog:entity:article:v1" name="publish-status" />
+      </field>
+
+      <field name="published_at" type="microtime" />
+      <field name="expires_at" type="timestamp" use_type_default="false" />
+
+      <field name="comments" type="message">
+        <any_of>
+          <id>acme:blog:entity:comment</id>
+        </any_of>
+      </field>
+    </fields>
+
+    <mixins>
+      <id>acme:blog:entity:comment:v1</id>
+    </mixins>
+
+    <enums>
+      <enum name="publish-status">
+        <option key="PUBLISHED" value="published" />
+        <option key="DRAFT" value="draft" />
+        <option key="PENDING" value="pending" />
+        <option key="EXPIRED" value="expired" />
+        <option key="DELETED" value="deleted" />
+      </enum>
+
+      <enum name="content-type">
+        <option key="UNKNOWN" value="unknown" />
+        <option key="ARTICLE" value="article" />
+        <option key="LINK" value="link" />
+        <option key="PHOTO" value="photo" />
+        <option key="QUOTE" value="quote" />
+        <option key="TEXT" value="text" />
+        <option key="VIDEO" value="video" />
+      </enum>
+
+      <php_options>
+        <namespace>Acme\Schemas\Blog\Enum</namespace>
+      </php_options>
+    </enums>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

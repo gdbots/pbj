@@ -1,0 +1,140 @@
+{
+  "$schema": "http:\/\/json-schema.org\/schema#",
+  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/article\/1-0-1.json",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "identifier"
+      }
+    },
+    "title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string"
+      }
+    },
+    "excerpt": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "excerpt_html": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "thumbnails": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string",
+        "aMap": true,
+        "format": "url"
+      }
+    },
+    "private": {
+      "type": "boolean",
+      "additionalProperties": {
+        "customType": "boolean"
+      }
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "article",
+        "link",
+        "photo",
+        "quote",
+        "text",
+        "video"
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "withDefault": "unknown"
+      }
+    },
+    "publish_status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft",
+        "pending",
+        "expired",
+        "deleted"
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "withDefault": "draft"
+      }
+    },
+    "published_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "microtime"
+      }
+    },
+    "expires_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "timestamp"
+      }
+    },
+    "comments": {
+      "type": "object",
+      "anyOf": [
+        {
+          "$ref": "#\/definitions\/comment"
+        }
+      ],
+      "additionalProperties": {
+        "customType": "message"
+      }
+    }
+  },
+  "required": [
+    "_id"
+  ],
+  "definitions": {
+    "comment": {
+      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/comment\/1-0-0.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier"
+          }
+        },
+        "comment": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "published_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": {
+    "mixin": [
+      {
+        "$ref": "#\/definitions\/comment"
+      }
+    ]
+  }
+}

@@ -4,15 +4,14 @@ namespace Acme\Schemas\Blog\Entity;
 
 use Gdbots\Pbj\MessageRef;
 use Gdbots\Pbj\Schema;
-use Wb\Teasers\TeaserId;
-use Acme\Schemas\Blog\Enum\TeaserPublishStatusV1;
-use Acme\Schemas\Blog\Enum\TeaserContentTypeV1;
-use Wb\Teasers\Entity\Teaserable;
+use Gdbots\Identifiers\UuidIdentifier;
+use Acme\Schemas\Blog\Enum\ArticleContentTypeV1;
+use Acme\Schemas\Blog\Enum\ArticlePublishStatusV1;
 
 /**
  * @method static Schema schema
  * @method mixed get($fieldName, $default = null)
  */
-trait TeaserV1Trait
+trait ArticleV1Trait
 {
 }

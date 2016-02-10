@@ -1,0 +1,27 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:comment:1-0-0" mixin="true">
+    <fields>
+      <field name="_id" type="identifier" required="true">
+        <php_options>
+          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier::generate();
+              }
+            ]]>
+          </default>
+        </php_options>
+      </field>
+
+      <field name="comment" type="text" />
+      <field name="published_at" type="microtime" />
+    </fields>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>
