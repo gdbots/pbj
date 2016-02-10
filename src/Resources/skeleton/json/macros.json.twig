@@ -4,7 +4,7 @@
     {% set deep = 0 %}
     "$schema": "http://json-schema.org/schema#",
   {% endif %}
-  "id": "http://yourdomain.com/schemas/{{ schema.id.vendor }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.version }}.json",
+  "id": "http://yourdomain.com/schemas/{{ schema.id.vendor }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.version }}.json",
   "type": "object",
   "properties": {
     {% for field in schema.fields %}
@@ -45,11 +45,11 @@
 
   {% if schema.options.mixins is defined and schema.options.mixins|length %}
     "additionalProperties": {
-      "mixin": {
+      "mixin": [
         {% for mixin in schema.options.mixins %}
-          { "$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
+          {"$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
-      }
+      ]
     }
   {% else %}
     "additionalProperties": false
