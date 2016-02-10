@@ -32,7 +32,7 @@ class SchemaTool
         }
 
         // default language options
-        $languages = $this->processXmlLanguageOptions($data);
+        $languages = $this->setLanguageOptions($data);
         foreach ($languages as $language => $value) {
             $schema->setOption($language, $value);
         }
@@ -40,51 +40,57 @@ class SchemaTool
         // assign enums
         if (isset($data['enums'])) {
             if (isset($data['enums']['enum'])) {
-                $this->processXmlEnums($schema, $data['enums']['enum']);
+                $this->setEnums($schema, $data['enums']['enum']);
             }
 
             // add enums language options
-            $languages = $this->processXmlLanguageOptions($data['enums']);
+            $languages = $this->setLanguageOptions($data['enums']);
             foreach ($languages as $language => $value) {
                 $schema->setOptionSubOption($language, 'enums', $value);
             }
         }
 
         if (isset($data['fields']['field'])) {
-            $this->processXmlFields($schema, $data['fields']['field']);
+            $this->setFields($schema, $data['fields']['field']);
         }
 
         if (isset($data['mixins']['id'])) {
-            $this->processXmlMixins($schema, $data['mixins']['id']);
-        }
-
-        if ($prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
-            if (is_array($prevSchema)) {
-                $prevSchema = $this->createSchema($prevSchema);
-            }
-
-            // convert schema's to arra and compare values
-            $currentSchemaArray = json_decode(json_encode($schema), true);
-            $prevSchemaArray = json_decode(json_encode($prevSchema), true);
-
-            // check if something got removed or cahnged
-            $diff = $this->arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
-
-            // removed schema id - going to be diff ofcorse.. doh
-            if (isset($diff['id'])) {
-                unset($diff['id']);
-            }
-
-            if (count($diff) > 0) {
-                throw new \RuntimeException(sprintf(
-                    'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
-                    $schemaId->__toString(),
-                    json_encode($diff)
-                ));
-            }
+            $this->setMixins($schema, $data['mixins']['id']);
         }
 
         return $schema;
+    }
+
+    /**
+     * Validate schema against previous version.
+     *
+     * @param SchemaDescriptor $schema
+     *
+     * @return array
+     */
+    public function validate(SchemaDescriptor $schema)
+    {
+        if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
+            return [];
+        }
+
+        if (is_array($prevSchema)) {
+            $prevSchema = $this->createSchema($prevSchema);
+        }
+
+        // convert schema's to arra and compare values
+        $currentSchemaArray = json_decode(json_encode($schema), true);
+        $prevSchemaArray = json_decode(json_encode($prevSchema), true);
+
+        // check if something got removed or cahnged
+        $diff = $this->arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
+
+        // removed schema id - going to be diff ofcorse.. doh
+        if (isset($diff['id'])) {
+            unset($diff['id']);
+        }
+
+        return $diff;
     }
 
     /**
@@ -123,7 +129,7 @@ class SchemaTool
      *
      * @return array
      */
-    protected function convertXmlDataToArray($data, $key = null)
+    protected function fixArray($data, $key = null)
     {
         if (!is_array($data) || ($key && isset($data[$key]))) {
             $data = [$data];
@@ -137,7 +143,7 @@ class SchemaTool
      *
      * @return array
      */
-    protected function processXmlLanguageOptions(array $data)
+    protected function setLanguageOptions(array $data)
     {
         $options = [];
 
@@ -156,9 +162,9 @@ class SchemaTool
      * @param SchemaDescriptor $schema
      * @param array            $data
      */
-    protected function processXmlEnums(SchemaDescriptor $schema, array $data)
+    protected function setEnums(SchemaDescriptor $schema, array $data)
     {
-        $data = $this->convertXmlDataToArray($data, 'name');
+        $data = $this->fixArray($data, 'name');
         foreach ($data as $item) {
             // force default type to be "string"
             if (!isset($item['type'])) {
@@ -166,7 +172,7 @@ class SchemaTool
             }
 
             $values = [];
-            $keys = $this->convertXmlDataToArray($item['option'], 'key');
+            $keys = $this->fixArray($item['option'], 'key');
             foreach ($keys as $key) {
                 $values[$key['key']] = $item['type'] == 'int'
                     ? intval($key['value'])
@@ -189,9 +195,9 @@ class SchemaTool
      * @param SchemaDescriptor $schema
      * @param array            $data
      */
-    protected function processXmlFields(SchemaDescriptor $schema, array $data)
+    protected function setFields(SchemaDescriptor $schema, array $data)
     {
-        $data = $this->convertXmlDataToArray($data);
+        $data = $this->fixArray($data);
         foreach ($data as $item) {
             // ignore if no type was assign
             if (!isset($item['type'])) {
@@ -203,7 +209,7 @@ class SchemaTool
             }
 
             if (isset($item['any_of']['id'])) {
-                $anyOf = $this->convertXmlDataToArray($item['any_of']['id']);
+                $anyOf = $this->fixArray($item['any_of']['id']);
 
                 /* @var $item['any_of'] SchemaDescriptor[] */
                 $item['any_of'] = [];
@@ -266,9 +272,9 @@ class SchemaTool
      * @param SchemaDescriptor $schema
      * @param array|string     $data
      */
-    protected function processXmlMixins(SchemaDescriptor $schema, $data)
+    protected function setMixins(SchemaDescriptor $schema, $data)
     {
-        $data = $this->convertXmlDataToArray($data);
+        $data = $this->fixArray($data);
         foreach ($data as $curieWithMajorRev) {
             // can't add yourself to mixins
             if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
