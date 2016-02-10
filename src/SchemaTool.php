@@ -19,6 +19,16 @@ class SchemaTool
     protected $schema;
 
     /**
+     * Returns the singleton instance.
+     *
+     * @return this
+     */
+    public static function getInstance()
+    {
+        return new self();
+    }
+
+    /**
      * Creates a Schema instance from a given set of metadata.
      *
      * @param array $data
@@ -47,7 +57,10 @@ class SchemaTool
         // assign enums
         if (isset($data['enums'])) {
             if (isset($data['enums']['enum'])) {
-                $this->setEnums($data['enums']['enum']);
+                $enums = $this->fixArray($data['enums']['enum'], 'name');
+                foreach ($enums as $enum) {
+                    $this->addEnum($enum);
+                }
             }
 
             // add enums language options
@@ -58,11 +71,25 @@ class SchemaTool
         }
 
         if (isset($data['fields']['field'])) {
-            $this->setFields($data['fields']['field']);
+            $fields = $this->fixArray($data['fields']['field']);
+            foreach ($fields as $field) {
+                $this->addField($field);
+            }
         }
 
         if (isset($data['mixins']['id'])) {
-            $this->setMixins($data['mixins']['id']);
+            $mixins = $this->fixArray($data['mixins']['id']);
+            foreach ($mixins as $curieWithMajorRev) {
+                $this->addMixin($curieWithMajorRev);
+            }
+        }
+
+        if (count($diff = $this->validate()) > 0) {
+            throw new \RuntimeException(sprintf(
+                'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
+                $this->schema->getId()->__toString(),
+                json_encode($diff)
+            ));
         }
 
         return $this;
@@ -81,14 +108,14 @@ class SchemaTool
      *
      * @return array
      */
-    public function validate()
+    protected function validate()
     {
         if (!$prevSchema = SchemaStore::getPreviousSchema($this->schema->getId())) {
             return [];
         }
 
         if (is_array($prevSchema)) {
-            $prevSchema = $this->createSchema($prevSchema);
+            $prevSchema = self::getInstance()->createSchema($prevSchema);
         }
 
         // convert schema's to arra and compare values
@@ -172,136 +199,151 @@ class SchemaTool
     }
 
     /**
-     * @param array            $data
+     * @param array $enum
      */
-    protected function setEnums(array $data)
+    protected function addEnum(array $enum)
     {
-        $data = $this->fixArray($data, 'name');
-        foreach ($data as $item) {
-            // force default type to be "string"
-            if (!isset($item['type'])) {
-                $item['type'] = 'string';
-            }
-
-            $values = [];
-            $keys = $this->fixArray($item['option'], 'key');
-            foreach ($keys as $key) {
-                $values[$key['key']] = $item['type'] == 'int'
-                    ? intval($key['value'])
-                    : (string) $key['value']
-                ;
-            }
-
-            $enum = new EnumDescriptor($item['name'], $values);
-
-            $this->schema->setOption('enums', array_merge(
-                $this->schema->getOption('enums', []),
-                [
-                    $enum,
-                ]
-            ));
+        // force default type to be "string"
+        if (!isset($enum['type'])) {
+            $enum['type'] = 'string';
         }
+
+        $values = [];
+        $keys = $this->fixArray($enum['option'], 'key');
+        foreach ($keys as $key) {
+            $values[$key['key']] = $enum['type'] == 'int'
+                ? intval($key['value'])
+                : (string) $key['value']
+            ;
+        }
+
+        $enum = new EnumDescriptor($enum['name'], $values);
+
+        $this->schema->setOption('enums', array_merge(
+            $this->schema->getOption('enums', []),
+            [
+                $enum,
+            ]
+        ));
     }
 
     /**
-     * @param array            $data
+     * @param array $field
      */
-    protected function setFields(array $data)
+    protected function addField(array $field)
     {
-        $data = $this->fixArray($data);
-        foreach ($data as $item) {
-            // ignore if no type was assign
-            if (!isset($item['type'])) {
-                continue;
-            }
-
-            if (!isset($item['options'])) {
-                $item['options'] = [];
-            }
-
-            if (isset($item['any_of']['id'])) {
-                $anyOf = $this->fixArray($item['any_of']['id']);
-
-                /* @var $item['any_of'] SchemaDescriptor[] */
-                $item['any_of'] = [];
-
-                foreach ($anyOf as $curie) {
-                    // can't add yourself to anyof
-                    if ($curie == $this->schema->getId()->getCurie()) {
-                        continue;
-                    }
-
-                    $anyOfSchema = SchemaStore::getSchemaById($curie);
-                    if (is_array($anyOfSchema)) {
-                        $anyOfSchema = $this->createSchema($anyOfSchema);
-                    }
-
-                    $item['any_of'][] = $anyOfSchema;
-                }
-            }
-            if (isset($item['any_of']) && count($item['any_of']) === 0) {
-                unset($item['any_of']);
-            }
-
-            if (isset($item['enum'])) {
-                if ($item['enum']['provider'] == $this->schema->getId()->getCurieWithMajorRev()) {
-                    $providerSchema = $this->schema;
-                } else {
-                    $providerSchema = SchemaStore::getSchemaById($item['enum']['provider']);
-                    if (is_array($providerSchema)) {
-                        $providerSchema = $this->createSchema($providerSchema);
-                    }
-                }
-
-                /** @var $enums EnumDescriptor[] */
-                if ($enums = $providerSchema->getOption('enums')) {
-                    foreach ($enums as $enum) {
-                        if ($enum->getName() == $item['enum']['name']) {
-                            $item['options']['enum'] = $enum;
-
-                            break;
-                        }
-                    }
-                }
-
-                if (!isset($item['options']['enum'])) {
-                    throw new \RuntimeException(sprintf(
-                        'No Enum with provider ["%s"] and name ["%s"] exist.',
-                        $item['enum']['provider'],
-                        $item['enum']['name']
-                    ));
-                }
-
-                unset($item['enum']);
-            }
-
-            $this->schema->addField(new FieldDescriptor($item['name'], $item));
+        // ignore if no type was assign
+        if (!isset($field['type'])) {
+            return;
         }
+
+        if (!isset($field['options'])) {
+            $field['options'] = [];
+        }
+
+        if (isset($field['any_of']['id'])) {
+            $field['any_of'] = $this->getAnyOf(
+                $this->fixArray($field['any_of']['id'])
+            );
+        }
+        if (isset($field['any_of']) && count($field['any_of']) === 0) {
+            unset($field['any_of']);
+        }
+
+        if (isset($field['enum'])) {
+            /** @var $providerSchema SchemaDescriptor */
+            $providerSchema = $this->getEnumProvider($field['enum']['provider']);
+
+            /** @var $enums EnumDescriptor[] */
+            if ($enums = $providerSchema->getOption('enums')) {
+                foreach ($enums as $enum) {
+                    if ($enum->getName() == $field['enum']['name']) {
+                        $field['options']['enum'] = $enum;
+
+                        break;
+                    }
+                }
+            }
+
+            if (!isset($field['options']['enum'])) {
+                throw new \RuntimeException(sprintf(
+                    'No Enum with provider ["%s"] and name ["%s"] exist.',
+                    $field['enum']['provider'],
+                    $field['enum']['name']
+                ));
+            }
+
+            unset($field['enum']);
+        }
+
+        $this->schema->addField(new FieldDescriptor($field['name'], $field));
     }
 
     /**
-     * @param array|string     $data
+     * @param array $curies
+     *
+     * @return array
      */
-    protected function setMixins($data)
+    protected function getAnyOf($curies)
     {
-        $data = $this->fixArray($data);
-        foreach ($data as $curieWithMajorRev) {
-            // can't add yourself to mixins
-            if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
+        $schemas = [];
+
+        foreach ($curies as $curie) {
+            // can't add yourself to anyof
+            if ($curie == $this->schema->getId()->getCurie()) {
                 continue;
             }
 
-            $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev);
-            if (is_array($mixinSchema)) {
-                $mixinSchema = $this->createSchema($mixinSchema);
+            $schema = SchemaStore::getSchemaById($curie);
+            if (is_array($schema)) {
+                $schema = self::getInstance()->createSchema($schema);
             }
 
-            $this->schema->setOption('mixins', array_merge(
-                $this->schema->getOption('mixins', []),
-                [
-                    $mixinSchema,
-                ]
-            ));
+            $schemas[] = $schema;
         }
+
+        return $schemas;
+    }
+
+    /**
+     * @param string $curieWithMajorRev
+     *
+     * @return SchemaDescriptor
+     */
+    protected function getEnumProvider($curieWithMajorRev)
+    {
+        if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
+            return $this->schema;
+        }
+
+        $schema = SchemaStore::getSchemaById($curieWithMajorRev);
+        if (is_array($schema)) {
+            $schema = self::getInstance()->createSchema($schema);
+        }
+
+        return $schema;
+    }
+
+    /**
+     * @param string $curieWithMajorRev
+     */
+    protected function addMixin($curieWithMajorRev)
+    {
+        // can't add yourself to mixins
+        if ($curieWithMajorRev == $this->schema->getId()->getCurieWithMajorRev()) {
+            continue;
+        }
+
+        $mixinSchema = SchemaStore::getSchemaById($curieWithMajorRev);
+        if (is_array($mixinSchema)) {
+            $mixinSchema = self::getInstance()->createSchema($mixinSchema);
+        }
+
+        $this->schema->setOption('mixins', array_merge(
+            $this->schema->getOption('mixins', []),
+            [
+                $mixinSchema,
+            ]
+        ));
     }
 }
