@@ -1,15 +1,16 @@
 <?php
 
-namespace Gdbots\Pbjc\Compiler;
+namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\SchemaId;
-use Gdbots\Pbjc\SchemaStore;
-use Gdbots\Pbjc\SchemaTool;
+use Gdbots\Pbjc\Exception\InvalidLanguage;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 
-abstract class Compiler
+final class Compiler
 {
+    /** @constant string */
+    const LANGUAGES = ['php', 'json'];
+
     /** @var string */
     protected $language;
 
@@ -17,10 +18,20 @@ abstract class Compiler
     protected $output;
 
     /**
+     * @param string $language
      * @param string $output
      */
-    public function __construct($output = null)
+    public function __construct($language, $output = null)
     {
+        if (!in_array($language, self::LANGUAGES)) {
+            throw new InvalidLanguage(sprintf(
+                'Invalid language [%s]. Only allowed [%s].',
+                $language,
+                implode(', ', self::LANGUAGES)
+            ));
+        }
+
+        $this->language = $language;
         $this->output = $output;
 
         $this->loadSchemas();
@@ -41,7 +52,7 @@ abstract class Compiler
 
             foreach ($files as $key => $file) {
                 // invalid schema
-                if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../../schema.xsd')) {
+                if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
                     continue;
                 }
 
@@ -68,10 +79,10 @@ abstract class Compiler
             }
         }
 
-        $schemaTool = new SchemaTool();
+        $parser = new SchemaParser();
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
-                $schema = $schemaTool->createSchema($schema)->getSchema();
+                $schema = $parser->createSchema($schema)->getSchema();
             }
 
             // update
@@ -112,7 +123,8 @@ abstract class Compiler
      */
     public function generate()
     {
-        $generator = $this->createGenerator();
+        $generatorClass = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
+        $generator = new $generatorClass();
 
         if ($this->output) {
             $generator->setOutput($this->output);
@@ -135,11 +147,4 @@ abstract class Compiler
 
         return $generator;
     }
-
-    /**
-     * Returns a Generator instance.
-     *
-     * @return \Gdbots\Pbjc\Generator\Generator
-     */
-    abstract public function createGenerator();
 }

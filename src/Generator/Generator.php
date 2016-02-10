@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 use Gdbots\Pbjc\Twig\Extension\StringExtension;
-use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
+use Gdbots\Pbjc\SchemaDescriptor;
 
 abstract class Generator
 {

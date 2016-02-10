@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Descriptor;
+namespace Gdbots\Pbjc;
 
 use Gdbots\Common\ToArray;
 

@@ -2,8 +2,6 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
-
 class SchemaStore
 {
     /**

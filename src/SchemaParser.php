@@ -2,14 +2,10 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Descriptor\EnumDescriptor;
-use Gdbots\Pbjc\Descriptor\FieldDescriptor;
-use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
-
 /**
- * The SchemaTool is a tool to create/update schemas class descriptors.
+ * The SchemaParser is a tool to create/update schemas class descriptors.
  */
-class SchemaTool
+class SchemaParser
 {
     /**
      * Holds the current processed schema.
@@ -19,7 +15,7 @@ class SchemaTool
     protected $schema;
 
     /**
-     * Returns the singleton instance.
+     * Returns the new instance.
      *
      * @return this
      */

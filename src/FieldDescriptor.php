@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Descriptor;
+namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
@@ -169,9 +169,6 @@ final class FieldDescriptor extends Descriptor
         $this->applyNumericOptions();
     }
 
-    /**
-     * @return void
-     */
     private function applyDefaults()
     {
         $this->format = $this->format ?: Format::UNKNOWN();
@@ -194,9 +191,6 @@ final class FieldDescriptor extends Descriptor
         }
     }
 
-    /**
-     * @return void
-     */
     private function applyStringOptions()
     {
         // use *Length for string type
@@ -215,9 +209,6 @@ final class FieldDescriptor extends Descriptor
         }
     }
 
-    /**
-     * @return void
-     */
     private function applyNumericOptions()
     {
         if (null !== $this->min) {

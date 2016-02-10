@@ -1,8 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Descriptor;
-
-use Gdbots\Pbjc\SchemaId;
+namespace Gdbots\Pbjc;
 
 final class SchemaDescriptor extends Descriptor
 {

@@ -3,8 +3,8 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Pbjc\Descriptor\FieldDescriptor;
-use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
+use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\SchemaDescriptor;
 
 class PhpGenerator extends Generator
 {

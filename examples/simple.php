@@ -7,19 +7,18 @@ error_reporting(E_ALL);
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 use Gdbots\Pbjc\SchemaStore;
-use Gdbots\Pbjc\Compiler\PhpCompiler;
-use Gdbots\Pbjc\Compiler\JsonCompiler;
+use Gdbots\Pbjc\Compiler;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
-$compile = new PhpCompiler(__DIR__.'/src');
+$compile = new Compiler('php', __DIR__.'/src');
 $generator = $compile->generate(true);
 
 foreach ($generator->getFiles() as $file => $output) {
     echo highlight_string($output, true).'<hr />';
 }
 
-$compile = new JsonCompiler(__DIR__.'/schemas');
+$compile = new Compiler('json', __DIR__.'/schemas');
 $generator = $compile->generate(true);
 
 foreach ($generator->getFiles() as $file => $output) {
