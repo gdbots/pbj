@@ -381,14 +381,6 @@ final class FieldDescriptor extends Descriptor
     }
 
     /**
-     * @return bool
-     */
-    public function hasAnyOf()
-    {
-        return null !== $this->anyOf;
-    }
-
-    /**
      * @return array
      */
     public function getAnyOf()
@@ -402,16 +394,6 @@ final class FieldDescriptor extends Descriptor
     public function isOverridable()
     {
         return $this->overridable;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasOption($key)
-    {
-        return isset($this->options[$key]);
     }
 
     /**

@@ -24,18 +24,10 @@ final class SchemaDescriptor extends Descriptor
 
     /**
      * @param SchemaId|string $id
-     * @param array           $fields
-     * @param array           $options
      */
-    public function __construct($id, array $fields = [], array $options = [])
+    public function __construct($id)
     {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
-
-        $this->options = $options;
-
-        foreach ($fields as $field) {
-            $this->addField($field);
-        }
     }
 
     /**
@@ -63,21 +55,11 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
-     * @param string $fieldName
-     *
-     * @return bool
-     */
-    public function hasField($fieldName)
-    {
-        return isset($this->fields[$fieldName]);
-    }
-
-    /**
      * @param FieldDescriptor $field
      */
     public function addField(FieldDescriptor $field)
     {
-        if (!$this->hasField($field->getName())) {
+        if (!isset($this->fields[$field->getName()])) {
             $this->fields[$field->getName()] = $field;
         }
     }
@@ -102,16 +84,6 @@ final class SchemaDescriptor extends Descriptor
     public function getFields()
     {
         return $this->fields ?: $this->fields = [];
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasOption($key)
-    {
-        return isset($this->options[$key]);
     }
 
     /**

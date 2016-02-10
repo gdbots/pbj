@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc;
 final class EnumDescriptor extends Descriptor
 {
     /** @var name */
-    private $name = [];
+    private $name;
 
     /** @var array */
     private $values = [];
@@ -26,44 +26,6 @@ final class EnumDescriptor extends Descriptor
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasValue($key)
-    {
-        return isset($this->values[$key]);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return this
-     */
-    public function setValue($key, $value)
-    {
-        $this->values[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getValue($key, $default = null)
-    {
-        if (isset($this->values[$key])) {
-            return $this->values[$key];
-        }
-
-        return $default;
     }
 
     /**
