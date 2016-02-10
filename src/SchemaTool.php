@@ -40,8 +40,16 @@ class SchemaTool
         }
 
         // assign enums
-        if (isset($data['enums']['enum'])) {
-            $this->processXmlEnums($schema, $data['enums']['enum']);
+        if (isset($data['enums'])) {
+            if (isset($data['enums']['enum'])) {
+                $this->processXmlEnums($schema, $data['enums']['enum']);
+            }
+
+            // add enums language options
+            $languages = $this->processXmlLanguageOptions($data['enums']);
+            foreach ($languages as $language => $value) {
+                $schema->setOptionSubOption($language, 'enums', $value);
+            }
         }
 
         if (isset($data['fields']['field'])) {
@@ -175,12 +183,6 @@ class SchemaTool
                     $enum
                 ]
             ));
-        }
-
-        // add enums language options
-        $languages = $this->processXmlLanguageOptions($data);
-        foreach ($languages as $language => $value) {
-            $schema->setOptionSubOption($language, 'enums', $value);
         }
     }
 
