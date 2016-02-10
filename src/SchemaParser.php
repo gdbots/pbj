@@ -17,7 +17,7 @@ class SchemaParser
     public static function create(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
-        $schema = new SchemaDescriptor($schemaId->__toString());
+        $schema = new SchemaDescriptor($schemaId->toString());
 
         if (isset($data['mixin']) && $data['mixin']) {
             $schema->setIsMixin(true);

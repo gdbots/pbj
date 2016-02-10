@@ -87,12 +87,12 @@ final class Compiler
             if (count($diff = SchemaValidator::validateMapping($schema)) > 0) {
                 throw new \RuntimeException(sprintf(
                     'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
-                    $schema->getId()->__toString(),
+                    $schema->getId()->toString(),
                     json_encode($diff)
                 ));
             }
 
-            SchemaStore::addSchema($schema->__toString(), $schema, true);
+            SchemaStore::addSchema($schema->toString(), $schema, true);
         }
 
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {

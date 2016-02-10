@@ -136,6 +136,6 @@ final class SchemaVersion implements \JsonSerializable
      */
     public function compare(SchemaVersion $version)
     {
-        return version_compare($this->__toString(), $version->__toString());
+        return version_compare($this->toString(), $version->toString());
     }
 }

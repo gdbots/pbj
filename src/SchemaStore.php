@@ -95,7 +95,7 @@ class SchemaStore
 
             $tmpId = is_array($tmpSchema)
                 ? $tmpSchema['id']
-                : $tmpSchema->getId()->__toString()
+                : $tmpSchema->getId()->toString()
             ;
 
             $tmpSchemaId = SchemaId::fromString($tmpId);
@@ -113,7 +113,7 @@ class SchemaStore
 
             $tmpId = is_array($tmpSchema)
                 ? $tmpSchema['id']
-                : $tmpSchema->getId()->__toString()
+                : $tmpSchema->getId()->toString()
             ;
 
             $tmpSchemaId = SchemaId::fromString($tmpId);
@@ -201,7 +201,7 @@ class SchemaStore
      */
     public static function getPreviousSchema(SchemaId $schemaId)
     {
-        $id = $schemaId->__toString();
+        $id = $schemaId->toString();
 
         if (isset(self::$schemas[$id])) {
             $ids = array_keys(self::$schemas);

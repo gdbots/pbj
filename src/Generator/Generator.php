@@ -159,7 +159,7 @@ abstract class Generator
             $this->schema->getId()->getVendor(),
             $this->schema->getId()->getPackage(),
             $this->schema->getId()->getCategory(),
-            $this->schema->getId()->getVersion()->__toString(),
+            $this->schema->getId()->getVersion()->toString(),
             $this->schema->getId()->getVersion()->getMajor(),
         ], $filename);
 

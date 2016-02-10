@@ -41,7 +41,7 @@ final class SchemaDescriptor extends Descriptor
     /**
      * @return string
      */
-    public function __toString()
+    public function toString()
     {
         return $this->id->toString();
     }
@@ -49,9 +49,9 @@ final class SchemaDescriptor extends Descriptor
     /**
      * @return string
      */
-    public function toString()
+    public function __toString()
     {
-        return $this->__toString();
+        return $this->toString();
     }
 
     /**
