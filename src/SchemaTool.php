@@ -32,7 +32,7 @@ class SchemaTool
         }
 
         // default language options
-        $languages = $this->setLanguageOptions($data);
+        $languages = $this->getLanguageOptions($data);
         foreach ($languages as $language => $value) {
             $schema->setOption($language, $value);
         }
@@ -44,7 +44,7 @@ class SchemaTool
             }
 
             // add enums language options
-            $languages = $this->setLanguageOptions($data['enums']);
+            $languages = $this->getLanguageOptions($data['enums']);
             foreach ($languages as $language => $value) {
                 $schema->setOptionSubOption($language, 'enums', $value);
             }
@@ -143,7 +143,7 @@ class SchemaTool
      *
      * @return array
      */
-    protected function setLanguageOptions(array $data)
+    protected function getLanguageOptions(array $data)
     {
         $options = [];
 
