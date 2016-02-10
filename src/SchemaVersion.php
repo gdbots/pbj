@@ -30,6 +30,7 @@ final class SchemaVersion implements \JsonSerializable
 {
     /**
      * Regular expression pattern for matching a valid SchemaVersion string.
+     *
      * @constant string
      */
     const VALID_PATTERN = '/^([0-9]+)-([0-9]+)-([0-9]+)$/';

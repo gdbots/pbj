@@ -13,7 +13,7 @@ use Gdbots\Common\Enum;
 final class FieldRule extends Enum
 {
     const A_SINGLE_VALUE = 'a-simple-value';
-    const A_SET          = 'a-set';
-    const A_LIST         = 'a-list';
-    const A_MAP          = 'a-map';
+    const A_SET = 'a-set';
+    const A_LIST = 'a-list';
+    const A_MAP = 'a-map';
 }

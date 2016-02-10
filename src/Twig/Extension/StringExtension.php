@@ -7,7 +7,7 @@ use Gdbots\Common\Util\StringUtils;
 class StringExtension extends \Twig_Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFilters()
     {
@@ -27,7 +27,7 @@ class StringExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

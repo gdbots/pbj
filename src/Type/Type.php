@@ -15,7 +15,7 @@ interface Type
     public function getTypeName();
 
     /**
-     * Shortcut to returning the value of the TypeName
+     * Shortcut to returning the value of the TypeName.
      *
      * @return string
      */

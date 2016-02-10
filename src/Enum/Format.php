@@ -23,17 +23,17 @@ use Gdbots\Common\Enum;
  */
 final class Format extends Enum
 {
-    const UNKNOWN    = 'unknown';
-    const DATE       = 'date';
-    const DATE_TIME  = 'date-time';
+    const UNKNOWN = 'unknown';
+    const DATE = 'date';
+    const DATE_TIME = 'date-time';
     const DATED_SLUG = 'dated-slug';
-    const EMAIL      = 'email';
-    const HASHTAG    = 'hashtag';
-    const HOSTNAME   = 'hostname';
-    const IPV4       = 'ipv4';
-    const IPV6       = 'ipv6';
-    const SLUG       = 'slug';
-    const URI        = 'uri';
-    const URL        = 'url';
-    const UUID       = 'uuid';
+    const EMAIL = 'email';
+    const HASHTAG = 'hashtag';
+    const HOSTNAME = 'hostname';
+    const IPV4 = 'ipv4';
+    const IPV6 = 'ipv6';
+    const SLUG = 'slug';
+    const URI = 'uri';
+    const URL = 'url';
+    const UUID = 'uuid';
 }

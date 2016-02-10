@@ -29,14 +29,14 @@ class SchemaStore
     const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+)-([0-9]+)-([0-9]+)$/';
 
     /**
-     * e.g. "vendor:package:category:message"
+     * e.g. "vendor:package:category:message".
      *
      * @constant string
      */
     const VALID_CURIE_PATTERN = '/^([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$/';
 
     /**
-     * e.g. "vendor:package:category:message:v1"
+     * e.g. "vendor:package:category:message:v1".
      *
      * @constant string
      */
@@ -294,7 +294,7 @@ class SchemaStore
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -312,11 +312,11 @@ class SchemaStore
             $ids = array_keys(self::$schemas);
 
             if (0 < $key = array_search($id, $ids)) {
-                $key--;
+                --$key;
             }
 
             if ($ids[$key] === $id) {
-                return null;
+                return;
             }
 
             $prev = self::$schemas[$ids[$key]];
@@ -328,7 +328,7 @@ class SchemaStore
             }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -349,8 +349,8 @@ class SchemaStore
                 'version' => [
                     'major' => $matches[5],
                     'minor' => $matches[6],
-                    'patch' => $matches[7]
-                ]
+                    'patch' => $matches[7],
+                ],
             ];
         }
 
@@ -363,8 +363,8 @@ class SchemaStore
                 'version' => [
                     'major' => $matches[5],
                     'minor' => null,
-                    'patch' => null
-                ]
+                    'patch' => null,
+                ],
             ];
         }
 
@@ -377,12 +377,12 @@ class SchemaStore
                 'version' => [
                     'major' => null,
                     'minor' => null,
-                    'patch' => null
-                ]
+                    'patch' => null,
+                ],
             ];
         }
 
-        return null;
+        return;
     }
 
     /**

@@ -2,13 +2,10 @@
 
 namespace Gdbots\Pbjc\Descriptor;
 
-use Gdbots\Common\Util\ArrayUtils;
 use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Identifiers\Identifier;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
-use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\Type\Type;
 
 final class FieldDescriptor extends Descriptor
@@ -35,6 +32,7 @@ final class FieldDescriptor extends Descriptor
 
     /**
      * A regular expression to match against for string types.
+     *
      * @link http://spacetelescope.github.io/understanding-json-schema/reference/string.html#pattern
      *
      * @var string
@@ -329,7 +327,7 @@ final class FieldDescriptor extends Descriptor
     public function getFormat()
     {
         if ($this->format === Format::UNKNOWN()) {
-            return null;
+            return;
         }
 
         return $this->format;
@@ -376,6 +374,7 @@ final class FieldDescriptor extends Descriptor
             if ($this->useTypeDefault) {
                 return $this->isASingleValue() ? $this->type->getDefault() : [];
             }
+
             return $this->isASingleValue() ? null : [];
         }
 
@@ -433,6 +432,7 @@ final class FieldDescriptor extends Descriptor
     public function setOption($key, $value)
     {
         $this->options[$key] = $value;
+
         return $this;
     }
 
@@ -464,6 +464,7 @@ final class FieldDescriptor extends Descriptor
             $this->options[$key] = [];
         }
         $this->options[$key][$subkey] = $value;
+
         return $this;
     }
 
@@ -497,23 +498,23 @@ final class FieldDescriptor extends Descriptor
     public function toArray()
     {
         return [
-            'name'             => $this->name,
-            'type'             => $this->type->getTypeValue(),
-            'rule'             => $this->rule->getName(),
-            'required'         => $this->required,
-            'pattern'          => $this->pattern,
-            'format'           => $this->format->getValue(),
-            'min_length'       => $this->minLength,
-            'max_length'       => $this->maxLength,
-            'min'              => $this->min,
-            'max'              => $this->max,
-            'precision'        => $this->precision,
-            'scale'            => $this->scale,
-            'default'          => $this->getDefault(),
+            'name' => $this->name,
+            'type' => $this->type->getTypeValue(),
+            'rule' => $this->rule->getName(),
+            'required' => $this->required,
+            'pattern' => $this->pattern,
+            'format' => $this->format->getValue(),
+            'min_length' => $this->minLength,
+            'max_length' => $this->maxLength,
+            'min' => $this->min,
+            'max' => $this->max,
+            'precision' => $this->precision,
+            'scale' => $this->scale,
+            'default' => $this->getDefault(),
             'use_type_default' => $this->useTypeDefault,
-            'any_of'           => $this->anyOf,
-            'overridable'      => $this->overridable,
-            'options'          => $this->options
+            'any_of' => $this->anyOf,
+            'overridable' => $this->overridable,
+            'options' => $this->options,
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Twig\Extension;
 class ClassExtension extends \Twig_Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFunctions()
     {
@@ -25,7 +25,7 @@ class ClassExtension extends \Twig_Extension
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

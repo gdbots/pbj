@@ -108,8 +108,6 @@ abstract class Generator
 
     /**
      * Generates and writes files.
-     *
-     * @return void
      */
     public function generate()
     {
@@ -136,8 +134,6 @@ abstract class Generator
 
     /**
      * Generates enums files.
-     *
-     * @return void
      */
     public function generateEnums()
     {
@@ -192,7 +188,7 @@ abstract class Generator
     protected function getParameters()
     {
         return [
-            'schema' => $this->schema
+            'schema' => $this->schema,
         ];
     }
 
@@ -233,8 +229,6 @@ abstract class Generator
      * @param string $template
      * @param string $target
      * @param array  $parameters
-     *
-     * @return void
      */
     protected function renderFile($template, $target, $parameters)
     {

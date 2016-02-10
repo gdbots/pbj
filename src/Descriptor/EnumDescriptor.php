@@ -47,6 +47,7 @@ final class EnumDescriptor extends Descriptor
     public function setValue($key, $value)
     {
         $this->values[$key] = $value;
+
         return $this;
     }
 
@@ -79,8 +80,8 @@ final class EnumDescriptor extends Descriptor
     public function toArray()
     {
         return [
-            'name'   => $this->name,
-            'values' => $this->values
+            'name' => $this->name,
+            'values' => $this->values,
         ];
     }
 }

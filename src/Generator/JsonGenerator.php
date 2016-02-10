@@ -16,7 +16,7 @@ class JsonGenerator extends Generator
     protected function getTemplates()
     {
         return [
-            'Message.json.twig'  => '{version}'
+            'Message.json.twig' => '{version}',
         ];
     }
 
@@ -25,7 +25,7 @@ class JsonGenerator extends Generator
      */
     protected function getEnumTemplate()
     {
-        return null;
+        return;
     }
 
     /**
@@ -58,12 +58,12 @@ class JsonGenerator extends Generator
                     [
                         "\n",
                         '  ',
-                        ',}'
+                        ',}',
                     ],
                     [
                         '',
                         '',
-                        '}'
+                        '}',
                     ],
                     parent::render($template, $parameters)
                 )

@@ -2,7 +2,6 @@
 
 namespace Gdbots\Pbjc\Descriptor;
 
-use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\SchemaId;
 
 final class SchemaDescriptor extends Descriptor
@@ -96,7 +95,7 @@ final class SchemaDescriptor extends Descriptor
             return $this->fields[$name];
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -126,6 +125,7 @@ final class SchemaDescriptor extends Descriptor
     public function setOption($key, $value)
     {
         $this->options[$key] = $value;
+
         return $this;
     }
 
@@ -157,6 +157,7 @@ final class SchemaDescriptor extends Descriptor
             $this->options[$key] = [];
         }
         $this->options[$key][$subkey] = $value;
+
         return $this;
     }
 
@@ -192,6 +193,7 @@ final class SchemaDescriptor extends Descriptor
     public function setIsMixin($bool)
     {
         $this->isMixin = (bool) $bool;
+
         return $this;
     }
 
@@ -211,6 +213,7 @@ final class SchemaDescriptor extends Descriptor
     public function setIsLatestVersion($bool)
     {
         $this->isLatestVersion = (bool) $bool;
+
         return $this;
     }
 
@@ -230,6 +233,7 @@ final class SchemaDescriptor extends Descriptor
     public function setIsDependent($bool)
     {
         $this->isDependent = (bool) $bool;
+
         return $this;
     }
 
@@ -247,9 +251,9 @@ final class SchemaDescriptor extends Descriptor
     public function toArray()
     {
         return [
-            'id'      => $this->id,
-            'fields'  => $this->fields,
-            'options' => $this->options
+            'id' => $this->id,
+            'fields' => $this->fields,
+            'options' => $this->options,
         ];
     }
 }

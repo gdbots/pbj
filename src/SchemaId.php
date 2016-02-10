@@ -12,7 +12,6 @@ use Gdbots\Pbjc\Exception\InvalidSchemaId;
  *
  * SnowPlow Analytics (Iglu)
  * @link http://snowplowanalytics.com/blog/2014/07/01/iglu-schema-repository-released/
- *
  * @link http://en.wikipedia.org/wiki/CURIE
  *
  * And of course the various package managers like composer, npm, etc.
@@ -45,13 +44,13 @@ use Gdbots\Pbjc\Exception\InvalidSchemaId;
  * messages with payloads that validate using the json schema.  The target class is ideally
  * major revision specific.  As in GetVideoV1, GetVideoV2, etc.  Only "major" revisions
  * should require a unique class since all other schema changes should not break anything.
- *
  * @see SchemaVersion
  */
 final class SchemaId implements \JsonSerializable
 {
     /**
      * Regular expression pattern for matching a valid SchemaId string.
+     *
      * @constant string
      */
     const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$/';
@@ -127,6 +126,7 @@ final class SchemaId implements \JsonSerializable
         }
 
         self::$instances[$schemaId] = new self($matches[1], $matches[2], $matches[3], $matches[4], $matches[5]);
+
         return self::$instances[$schemaId];
     }
 

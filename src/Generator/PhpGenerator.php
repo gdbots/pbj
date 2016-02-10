@@ -65,7 +65,7 @@ class PhpGenerator extends Generator
                 ;
 
                 $field->setOptionSubOption('php', 'class_name', $className);
-                $field->setOptionSubOption('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\')+1), strtoupper($enumKey)));
+                $field->setOptionSubOption('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
             }
         }
 
@@ -80,13 +80,13 @@ class PhpGenerator extends Generator
         return $this->schema->isMixin()
             ? [
                 'MessageInterface.php.twig' => '{className}',
-                'Interface.php.twig'        => '{className}V{major}',
-                'Mixin.php.twig'            => '{className}V{major}Mixin',
-                'Trait.php.twig'            => '{className}V{major}Trait'
+                'Interface.php.twig' => '{className}V{major}',
+                'Mixin.php.twig' => '{className}V{major}Mixin',
+                'Trait.php.twig' => '{className}V{major}Trait',
             ]
             : [
                 'MessageInterface.php.twig' => '{className}',
-                'AbstractMessage.php.twig'  => '{className}V{major}'
+                'AbstractMessage.php.twig' => '{className}V{major}',
             ]
         ;
     }
@@ -105,9 +105,9 @@ class PhpGenerator extends Generator
     protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
-            '{className}'
+            '{className}',
         ], [
-            StringUtils::toCamelFromSlug($this->schema->getId()->getMessage())
+            StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
         ], $filename);
 
         $directory = str_replace('\\', '/', $this->schema->getOptionSubOption('php', 'namespace'));
@@ -123,7 +123,7 @@ class PhpGenerator extends Generator
         return array_merge(
             parent::getParameters(),
             [
-                'className' => StringUtils::toCamelFromSlug($this->schema->getId()->getMessage())
+                'className' => StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
             ]
         );
     }
@@ -169,7 +169,7 @@ class PhpGenerator extends Generator
                     'namespace' => $namespace,
                     'className' => $className,
                     'options' => $enum->getValues(),
-                    'is_int' => is_int(current($enum->getValues()))
+                    'is_int' => is_int(current($enum->getValues())),
                 ])
             );
         }

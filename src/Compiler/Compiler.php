@@ -52,7 +52,7 @@ abstract class Compiler
 
                 $xmlData['entity']['is_dependent'] = $isDependent;
 
-                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename())-1);
+                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
 
                 // invalid scherma id
                 if (!$this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {

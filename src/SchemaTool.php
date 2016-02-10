@@ -5,8 +5,6 @@ namespace Gdbots\Pbjc;
 use Gdbots\Pbjc\Descriptor\EnumDescriptor;
 use Gdbots\Pbjc\Descriptor\FieldDescriptor;
 use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
-use Gdbots\Pbjc\SchemaId;
-use Gdbots\Pbjc\SchemaStore;
 
 /**
  * The SchemaTool is a tool to create/update schemas class descriptors.
@@ -23,7 +21,7 @@ class SchemaTool
     public function createSchema(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
-        $schema   = new SchemaDescriptor($schemaId->__toString());
+        $schema = new SchemaDescriptor($schemaId->__toString());
 
         if (isset($data['mixin']) && $data['mixin']) {
             $schema->setIsMixin(true);
@@ -130,6 +128,7 @@ class SchemaTool
         if (!is_array($data) || ($key && isset($data[$key]))) {
             $data = [$data];
         }
+
         return $data;
     }
 
@@ -180,7 +179,7 @@ class SchemaTool
             $schema->setOption('enums', array_merge(
                 $schema->getOption('enums', []),
                 [
-                    $enum
+                    $enum,
                 ]
             ));
         }
@@ -206,7 +205,7 @@ class SchemaTool
             if (isset($item['any_of']['id'])) {
                 $anyOf = $this->convertXmlDataToArray($item['any_of']['id']);
 
-                /** @var $item['any_of'] SchemaDescriptor[] */
+                /* @var $item['any_of'] SchemaDescriptor[] */
                 $item['any_of'] = [];
 
                 foreach ($anyOf as $curie) {
@@ -284,7 +283,7 @@ class SchemaTool
             $schema->setOption('mixins', array_merge(
                 $schema->getOption('mixins', []),
                 [
-                    $mixinSchema
+                    $mixinSchema,
                 ]
             ));
         }
