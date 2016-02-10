@@ -4,42 +4,6 @@ namespace Gdbots\Pbjc;
 
 class SchemaStore
 {
-    /**
-     * Regular expression pattern for matching a valid SchemaId string.
-     *
-     * Schema Id Format:
-     *  pbj:vendor:package:category:message:version
-     *
-     * Formats:
-     *  VENDOR:   [a-z0-9-]+
-     *  PACKAGE:  [a-z0-9\.-]+
-     *  CATEGORY: ([a-z0-9-]+)? (clarifies the intent of the message, e.g. command, request, event, response, etc.)
-     *  MESSAGE:  [a-z0-9-]+
-     *  VERSION:  [0-9]+-[0-9]+-[0-9])
-     *
-     * Examples of fully qualified schema ids:
-     *  pbj:acme:videos:event:video-uploaded:1-0-0
-     *  pbj:acme:users:command:register-user:1-1-0
-     *  pbj:acme:api.videos:request:get-video:1-0-0
-     *
-     * @constant string
-     */
-    const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+)-([0-9]+)-([0-9]+)$/';
-
-    /**
-     * e.g. "vendor:package:category:message".
-     *
-     * @constant string
-     */
-    const VALID_CURIE_PATTERN = '/^([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$/';
-
-    /**
-     * e.g. "vendor:package:category:message:v1".
-     *
-     * @constant string
-     */
-    const VALID_MAJOR_VERSION_PATTERN = '/^([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):v([0-9]+)$/';
-
     /** @var array */
     protected static $dirs = [];
 
@@ -109,38 +73,18 @@ class SchemaStore
      * @param array|SchemaDescriptor $schema
      * @param bool                   $ignoreDuplication
      *
-     * @throw \RuntimeException on duplicate schema id's
+     * @throws InvalidSchemaId on invalid id
+     * @throw \RuntimeException on duplicate id
      */
     public static function addSchema($id, $schema, $ignoreDuplication = false)
     {
-        if (!$schemaElements = self::parseSchemaId($id)) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
-        }
-
         if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
         }
 
-        $curie = sprintf(
-            '%s:%s:%s:%s',
-            $schemaElements['vendor'],
-            $schemaElements['package'],
-            $schemaElements['category'],
-            $schemaElements['message']
-        );
-
-        $curieMajor = sprintf(
-            '%s:v%d',
-            $curie,
-            $schemaElements['version']['major']
-        );
-
-        $version = sprintf(
-            '%s-%s-%s',
-            $schemaElements['version']['major'],
-            $schemaElements['version']['minor'],
-            $schemaElements['version']['patch']
-        );
+        $schemaId = SchemaId::fromString($id);
+        $curie = $schemaId->getCurie();
+        $curieMajor = $schemaId->getCurieWithMajorRev();
 
         // by id
         self::$schemas[$id] = $schema;
@@ -154,18 +98,9 @@ class SchemaStore
                 : $tmpSchema->getId()->__toString()
             ;
 
-            if (!$schemaElements = self::parseSchemaId($tmpId)) {
-                throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $tmpId));
-            }
+            $tmpSchemaId = SchemaId::fromString($tmpId);
 
-            $tmpVersion = sprintf(
-                '%s-%s-%s',
-                $schemaElements['version']['major'],
-                $schemaElements['version']['minor'],
-                $schemaElements['version']['patch']
-            );
-
-            if (version_compare($version, $tmpVersion) === 1) {
+            if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
                 self::$schemasByCurie[$curie] = &self::$schemas[$id];
             }
         } else {
@@ -181,18 +116,9 @@ class SchemaStore
                 : $tmpSchema->getId()->__toString()
             ;
 
-            if (!$schemaElements = self::parseSchemaId($tmpId)) {
-                throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $tmpId));
-            }
+            $tmpSchemaId = SchemaId::fromString($tmpId);
 
-            $tmpVersion = sprintf(
-                '%s-%s-%s',
-                $schemaElements['version']['major'],
-                $schemaElements['version']['minor'],
-                $schemaElements['version']['patch']
-            );
-
-            if (version_compare($version, $tmpVersion) === 1) {
+            if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
                 self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$id];
             }
         } else {
@@ -247,41 +173,12 @@ class SchemaStore
      */
     public static function getSchemaById($id, $ignoreNotFound = false)
     {
-        if (!$schemaElements = self::parseSchemaId($id)) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+        if (isset(self::$schemasByCurie[$id])) {
+            return self::$schemasByCurie[$id];
         }
 
-        $curie = sprintf(
-            '%s:%s:%s:%s',
-            $schemaElements['vendor'],
-            $schemaElements['package'],
-            $schemaElements['category'],
-            $schemaElements['message']
-        );
-
-        $curieMajor = sprintf(
-            '%s:v%d',
-            $curie,
-            $schemaElements['version']['major']
-        );
-
-        $version = sprintf(
-            '%s-%s-%s',
-            $schemaElements['version']['major'],
-            $schemaElements['version']['minor'],
-            $schemaElements['version']['patch']
-        );
-
-        if ($version == '--') {
-            if (isset(self::$schemasByCurie[$curie])) {
-                return self::$schemasByCurie[$curie];
-            }
-        }
-
-        if (preg_match('/^([0-9]+)--/', $version)) {
-            if (isset(self::$schemasByCurieMajor[$curieMajor])) {
-                return self::$schemasByCurieMajor[$curieMajor];
-            }
+        if (isset(self::$schemasByCurieMajor[$id])) {
+            return self::$schemasByCurieMajor[$id];
         }
 
         if (isset(self::$schemas[$id])) {
@@ -334,71 +231,5 @@ class SchemaStore
         }
 
         return;
-    }
-
-    /**
-     * Parse the schema id.
-     *
-     * @param string $id
-     *
-     * @return array|null
-     */
-    protected static function parseSchemaId($id)
-    {
-        if (preg_match(self::VALID_PATTERN, $id, $matches)) {
-            return [
-                'vendor' => $matches[1],
-                'package' => $matches[2],
-                'category' => $matches[3],
-                'message' => $matches[4],
-                'version' => [
-                    'major' => $matches[5],
-                    'minor' => $matches[6],
-                    'patch' => $matches[7],
-                ],
-            ];
-        }
-
-        if (preg_match(self::VALID_MAJOR_VERSION_PATTERN, $id, $matches)) {
-            return [
-                'vendor' => $matches[1],
-                'package' => $matches[2],
-                'category' => $matches[3],
-                'message' => $matches[4],
-                'version' => [
-                    'major' => $matches[5],
-                    'minor' => null,
-                    'patch' => null,
-                ],
-            ];
-        }
-
-        if (preg_match(self::VALID_CURIE_PATTERN, $id, $matches)) {
-            return [
-                'vendor' => $matches[1],
-                'package' => $matches[2],
-                'category' => $matches[3],
-                'message' => $matches[4],
-                'version' => [
-                    'major' => null,
-                    'minor' => null,
-                    'patch' => null,
-                ],
-            ];
-        }
-
-        return;
-    }
-
-    /**
-     * Validate the schema id.
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    protected static function validateSchemaId($id)
-    {
-        return preg_match(self::VALID_PATTERN, $id) !== false;
     }
 }
