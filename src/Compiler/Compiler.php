@@ -383,28 +383,32 @@ abstract class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param bool $output
-     *
-     * @return array|null
+     * @return \Gdbots\Pbjc\Generator\Generator
      */
-    public function generate($output = false)
+    public function generate()
     {
         $generator = $this->createGenerator();
+
+        if ($this->output) {
+            $generator->setOutput($this->output);
+        } else {
+            $generator->disableOutput();
+        }
 
         foreach (SchemaStore::getSchemas() as &$schema) {
             if (!$schema->isDependent() && !$schema->getOptionSubOption($this->language, 'isCompiled')) {
                 $generator->setSchema($schema);
-                $generator->generate($this->output);
+                $generator->generate();
 
                 if ($schema->getOption('enums')) {
-                    $generator->generateEnums($this->output);
+                    $generator->generateEnums();
                 }
 
                 $schema->setOptionSubOption($this->language, 'isCompiled', true);
             }
         }
 
-        return $output ? $generator->getFiles() : null;
+        return $generator;
     }
 
     /**

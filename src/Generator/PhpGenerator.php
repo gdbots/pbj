@@ -42,7 +42,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTarget($output, $filename, $directory = null, $isLatest = false)
+    protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{className}'
@@ -52,7 +52,7 @@ class PhpGenerator extends Generator
 
         $directory = str_replace('\\', '/', $this->schema->getOptionSubOption('php', 'namespace'));
 
-        return parent::getTarget($output, $filename, $directory, $isLatest);
+        return parent::getTarget($filename, $directory, $isLatest);
     }
 
     /**
@@ -71,7 +71,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateEnums($output)
+    public function generateEnums()
     {
         $enums = $this->schema->getOption('enums', []);
 
@@ -95,7 +95,7 @@ class PhpGenerator extends Generator
 
             $filename =
                 sprintf('%s/%s/%s%s',
-                    $output,
+                    $this->output,
                     str_replace('\\', '/', $namespace),
                     str_replace('\\', '/', $className),
                     $this->extension

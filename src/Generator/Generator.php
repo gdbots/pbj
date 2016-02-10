@@ -23,6 +23,9 @@ abstract class Generator
     /** @var SchemaDescriptor */
     protected $schema;
 
+    /** @var string */
+    protected $output;
+
     /** @var bool */
     protected $outputDisabled = false;
 
@@ -35,6 +38,18 @@ abstract class Generator
     public function setSchema(SchemaDescriptor $schema)
     {
         $this->schema = $schema;
+    }
+
+    /**
+     * Sets the output folder.
+     *
+     * @return this
+     */
+    public function setOutput($output)
+    {
+        $this->output = $output;
+
+        return $this;
     }
 
     /**
@@ -94,26 +109,24 @@ abstract class Generator
     /**
      * Generates and writes files.
      *
-     * @param string $output
-     *
      * @return void
      */
-    public function generate($output)
+    public function generate()
     {
         foreach ($this->getTemplates() as $template => $filename) {
             $this->renderFile(
                 $template,
-                $this->getTarget($output, $filename),
+                $this->getTarget($filename),
                 $this->getParameters()
             );
         }
 
         if ($this->schema->isLatestVersion()) {
             foreach ($this->getTemplates() as $template => $filename) {
-                if ($this->getTarget($output, $filename, null) != $this->getTarget($output, $filename, null, true)) {
+                if ($this->getTarget($filename, null) != $this->getTarget($filename, null, true)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($output, $filename, null, true),
+                        $this->getTarget($filename, null, true),
                         $this->getParameters()
                     );
                 }
@@ -122,24 +135,23 @@ abstract class Generator
     }
 
     /**
-     * @param string $output
+     * Generates enums files.
      *
      * @return void
      */
-    public function generateEnums($output)
+    public function generateEnums()
     {
         // do nothing
     }
 
     /**
-     * @param string $output
      * @param string $filename
      * @param string $directory
      * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($output, $filename, $directory = null, $isLatest = false)
+    protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{vendor}',
@@ -167,7 +179,7 @@ abstract class Generator
         }
 
         return sprintf('%s/%s%s%s',
-            $output,
+            $this->output,
             $directory,
             $filename,
             $this->extension
