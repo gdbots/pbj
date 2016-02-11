@@ -18,7 +18,7 @@ foreach ($generator->getFiles() as $file => $output) {
     echo highlight_string($output, true).'<hr />';
 }
 
-$compile = new Compiler('json', __DIR__.'/schemas');
+$compile = new Compiler('json', __DIR__.'/json-schema');
 $generator = $compile->generate(true);
 
 foreach ($generator->getFiles() as $file => $output) {
