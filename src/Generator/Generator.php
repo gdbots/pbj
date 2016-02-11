@@ -33,6 +33,14 @@ abstract class Generator
     protected $files = [];
 
     /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
      * @param SchemaDescriptor $schema
      */
     public function setSchema(SchemaDescriptor $schema)

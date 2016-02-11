@@ -2,38 +2,17 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Exception\InvalidLanguage;
+use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
-    /** @constant string */
-    const LANGUAGES = ['php', 'json'];
-
-    /** @var string */
-    protected $language;
-
-    /** @var string */
-    protected $output;
-
     /**
-     * @param string $language
-     * @param string $output
+     * Construct.
      */
-    public function __construct($language, $output = null)
+    public function __construct()
     {
-        if (!in_array($language, self::LANGUAGES)) {
-            throw new InvalidLanguage(sprintf(
-                'Invalid language [%s]. Only allowed [%s].',
-                $language,
-                implode(', ', self::LANGUAGES)
-            ));
-        }
-
-        $this->language = $language;
-        $this->output = $output;
-
         $this->loadSchemas();
     }
 
@@ -125,21 +104,12 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @return \Gdbots\Pbjc\Generator\Generator
+     * @param Generator $generator
      */
-    public function generate()
+    public function run(Generator $generator)
     {
-        $generatorClass = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($this->language));
-        $generator = new $generatorClass();
-
-        if ($this->output) {
-            $generator->setOutput($this->output);
-        } else {
-            $generator->disableOutput();
-        }
-
         foreach (SchemaStore::getSchemas() as &$schema) {
-            if (!$schema->isDependent() && !$schema->getOptionSubOption($this->language, 'isCompiled')) {
+            if (!$schema->isDependent() && !$schema->getOptionSubOption($generator->getLanguage(), 'isCompiled')) {
                 $generator->setSchema($schema);
                 $generator->generate();
 
@@ -147,10 +117,8 @@ final class Compiler
                     $generator->generateEnums();
                 }
 
-                $schema->setOptionSubOption($this->language, 'isCompiled', true);
+                $schema->setOptionSubOption($generator->getLanguage(), 'isCompiled', true);
             }
         }
-
-        return $generator;
     }
 }
