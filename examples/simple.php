@@ -18,17 +18,19 @@ $generator->setOutput(__DIR__.'/src');
 //$generator->disableOutput();
 
 $compile = new Compiler();
+$compile->setNamespace('acme:blog');
 $compile->run($generator);
 
 foreach ($generator->getFiles() as $file => $output) {
     echo highlight_string($output, true).'<hr />';
 }
 
-$generator = new PhpGenerator();
+$generator = new JsonGenerator();
 $generator->setOutput(__DIR__.'/json-schema');
 //$generator->disableOutput();
 
 $compile = new Compiler();
+$compile->setNamespace('acme:blog');
 $compile->run($generator);
 
 foreach ($generator->getFiles() as $file => $output) {

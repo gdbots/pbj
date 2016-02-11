@@ -23,10 +23,6 @@ class SchemaParser
             $schema->setIsMixin(true);
         }
 
-        if (isset($data['is_dependent']) && $data['is_dependent']) {
-            $schema->setIsDependent(true);
-        }
-
         // default language options
         $options = self::getLanguageOptions($data);
         foreach ($options as $language => $option) {

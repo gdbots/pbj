@@ -20,27 +20,10 @@ class SchemaStore
      * Adds a directory where schemas exist.
      *
      * @param string $dir
-     * @param bool   $isDependent
      */
-    public static function addDir($dir, $isDependent = false)
+    public static function addDir($dir)
     {
-        self::$dirs[$dir] = $isDependent;
-    }
-
-    /**
-     * Checks whether the directory is marked as a dependent.
-     *
-     * @param string $dir
-     *
-     * @return bool
-     */
-    public static function isDirDependent($dir)
-    {
-        if (isset(self::$dirs[$dir])) {
-            return self::$dirs[$dir];
-        }
-
-        return false;
+        self::$dirs[] = $dir;
     }
 
     /**
@@ -50,8 +33,8 @@ class SchemaStore
      */
     public static function addDirs(array $dirs)
     {
-        foreach ($dirs as $dir => $isDependent) {
-            self::addDir($dir, $isDependent);
+        foreach ($dirs as $dir) {
+            self::addDir($dir);
         }
     }
 

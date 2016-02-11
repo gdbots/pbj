@@ -7,7 +7,8 @@
       "type": "string",
       "required": true,
       "additionalProperties": {
-        "customType": "identifier"
+        "customType": "identifier",
+        "overridable": true
       }
     },
     "title": {
@@ -92,7 +93,8 @@
         }
       ],
       "additionalProperties": {
-        "customType": "message"
+        "customType": "message-ref",
+        "aList": true
       }
     }
   },
@@ -130,11 +132,5 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": {
-    "mixin": [
-      {
-        "$ref": "#\/definitions\/comment"
-      }
-    ]
-  }
+  "additionalProperties": false
 }

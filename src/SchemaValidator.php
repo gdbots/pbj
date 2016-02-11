@@ -160,7 +160,7 @@ class SchemaValidator
             ];
 
             $arrayAttributes = [
-                'any_of'
+                'any_of',
             ];
 
             foreach ($currentAttributes as $attribute => $value) {

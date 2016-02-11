@@ -8,12 +8,35 @@ use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
+    /** @var string */
+    private $namespace;
+
     /**
      * Construct.
      */
     public function __construct()
     {
         $this->loadSchemas();
+    }
+
+    /**
+     * @param string $namespace
+     *
+     * @return this
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 
     /**
@@ -26,7 +49,7 @@ final class Compiler
     protected function loadSchemas()
     {
         // load all schema and store XML data
-        foreach (SchemaStore::getDirs() as $dir => $isDependent) {
+        foreach (SchemaStore::getDirs() as $dir) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $key => $file) {
@@ -39,8 +62,6 @@ final class Compiler
                 if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
                     continue;
                 }
-
-                $xmlData['entity']['is_dependent'] = $isDependent;
 
                 $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
 
@@ -109,16 +130,24 @@ final class Compiler
     public function run(Generator $generator)
     {
         foreach (SchemaStore::getSchemas() as &$schema) {
-            if (!$schema->isDependent() && !$schema->getOptionSubOption($generator->getLanguage(), 'isCompiled')) {
-                $generator->setSchema($schema);
-                $generator->generate();
-
-                if ($schema->getOption('enums')) {
-                    $generator->generateEnums();
-                }
-
-                $schema->setOptionSubOption($generator->getLanguage(), 'isCompiled', true);
+            if ($this->getNamespace() !== sprintf(
+                    '%s:%s',
+                    $schema->getId()->getVendor(),
+                    $schema->getId()->getPackage()
+                )
+                || $schema->getOptionSubOption($generator->getLanguage(), 'isCompiled')
+            ) {
+                continue;
             }
+
+            $generator->setSchema($schema);
+            $generator->generate();
+
+            if ($schema->getOption('enums')) {
+                $generator->generateEnums();
+            }
+
+            $schema->setOptionSubOption($generator->getLanguage(), 'isCompiled', true);
         }
     }
 }

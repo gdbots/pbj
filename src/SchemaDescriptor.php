@@ -19,9 +19,6 @@ final class SchemaDescriptor extends Descriptor
     /** @var bool */
     private $isLatestVersion = false;
 
-    /** @var bool */
-    private $isDependent = false;
-
     /**
      * @param SchemaId|string $id
      */
@@ -193,26 +190,6 @@ final class SchemaDescriptor extends Descriptor
     public function isLatestVersion()
     {
         return $this->isLatestVersion;
-    }
-
-    /**
-     * @param bool $bool
-     *
-     * @return this
-     */
-    public function setIsDependent($bool)
-    {
-        $this->isDependent = (bool) $bool;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDependent()
-    {
-        return $this->isDependent;
     }
 
     /**
