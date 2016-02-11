@@ -12,7 +12,7 @@ class SchemaValidator
      *
      * @param SchemaDescriptor $schema
      *
-     * @return array
+     * @throw \InvalidArgumentException
      */
     public static function validateMapping(SchemaDescriptor $schema)
     {
@@ -24,48 +24,182 @@ class SchemaValidator
             $prevSchema = self::create($prevSchema);
         }
 
-        // convert schema's to arra and compare values
-        $currentSchemaArray = json_decode(json_encode($schema), true);
-        $prevSchemaArray = json_decode(json_encode($prevSchema), true);
-
-        // check if something got removed or cahnged
-        $diff = self::arrayRecursiveDiff($prevSchemaArray, $currentSchemaArray);
-
-        // removed schema id - going to be diff ofcorse.. doh
-        if (isset($diff['id'])) {
-            unset($diff['id']);
+        if ($schema->isMixin() !== $prevSchema->isMixin()) {
+            throw new \InvalidArgumentException(
+                'Can\'t change schema mixin state.'
+            );
         }
 
-        return $diff;
+        self::validateEnums($schema, $prevSchema);
+        self::validateMixins($schema, $prevSchema);
+        self::validateFields($schema, $prevSchema);
+
+        // once schema defined as mixin it's always mixin
     }
 
     /**
-     * @param array $array1
-     * @param array $array2
+     * @param SchemaDescriptor $schema
+     * @param SchemaDescriptor $prevSchema
      *
-     * @return array
+     * @throw \InvalidArgumentException
      */
-    protected static function arrayRecursiveDiff(array $array1, array $array2)
+    protected static function validateEnums(SchemaDescriptor $schema, SchemaDescriptor $prevSchema)
     {
-        $diff = array();
+        $current = $schema->getOption('enums', []);
+        $previous = $prevSchema->getOption('enums', []);
 
-        foreach ($array1 as $key => $value) {
-            if (array_key_exists($key, $array2)) {
-                if (is_array($value)) {
-                    $recursiveDiff = self::arrayRecursiveDiff($value, $array2[$key]);
-                    if (count($recursiveDiff)) {
-                        $diff[$key] = $recursiveDiff;
-                    }
-                } else {
-                    if ($value != $array2[$key]) {
-                        $diff[$key] = $value;
-                    }
-                }
-            } else {
-                $diff[$key] = $value;
-            }
+        foreach ($current as $key => $enum) {
+            $current[$enum->getName()] = $enum->toArray();
+            unset($current[$key]);
         }
 
-        return $diff;
+        foreach ($previous as $key => $enum) {
+            $previous[$enum->getName()] = $enum->toArray();
+            unset($previous[$key]);
+        }
+
+        if (count($current) === 0 && count($previous) === 0) {
+            return;
+        }
+
+        $diff = array_diff(array_keys($previous), array_keys($current));
+        if (count($diff)) {
+            throw new \InvalidArgumentException(sprintf(
+                'One or more of the given enums [%s] was removed.',
+                json_encode($diff)
+            ));
+        }
+
+        foreach ($current as $name => $values) {
+            if (!isset($previous[$name])) {
+                continue;
+            }
+
+            if ($values['type'] !== $previous[$name]['type']) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The enum "%s" type must be "%s" type.',
+                    $name,
+                    $previous[$name]['type']
+                ));
+            }
+
+            $diff = array_diff($previous[$name]['values'], $values['values']);
+            if (count($diff)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'One or more of the given enum "%s" values [%s] was removed.',
+                    $name,
+                    json_encode($diff)
+                ));
+            }
+        }
+    }
+
+    /**
+     * @param SchemaDescriptor $schema
+     * @param SchemaDescriptor $prevSchema
+     *
+     * @throw \InvalidArgumentException
+     */
+    protected static function validateMixins(SchemaDescriptor $schema, SchemaDescriptor $prevSchema)
+    {
+        $current = $schema->getOption('mixins', []);
+        $previous = $prevSchema->getOption('mixins', []);
+
+        foreach ($current as $key => $mixin) {
+            $current[$key] = $mixin->getId()->toString();
+        }
+
+        foreach ($previous as $key => $mixin) {
+            $previous[$key] = $mixin->getId()->toString();
+        }
+
+        if (count($current) === 0 && count($previous) === 0) {
+            return;
+        }
+
+        $diff = array_diff(array_keys($previous), array_keys($current));
+        if (count($diff)) {
+            throw new \InvalidArgumentException(sprintf(
+                'One or more of the given mixins [%s] was removed.',
+                json_encode($diff)
+            ));
+        }
+    }
+
+    /**
+     * @param SchemaDescriptor $schema
+     * @param SchemaDescriptor $prevSchema
+     *
+     * @throw \InvalidArgumentException
+     */
+    protected static function validateFields(SchemaDescriptor $schema, SchemaDescriptor $prevSchema)
+    {
+        $current = $schema->getFields();
+        $previous = $prevSchema->getFields();
+
+        $diff = array_diff(array_keys($previous), array_keys($current));
+        if (count($diff)) {
+            throw new \InvalidArgumentException(sprintf(
+                'One or more of the given fields [%s] was removed.',
+                json_encode($diff)
+            ));
+        }
+
+        foreach ($current as $name => $field) {
+            if (!isset($previous[$name])) {
+                continue;
+            }
+
+            $currentAttributes = $field->toArray();
+            $previousAttributes = $previous[$name]->toArray();
+
+            $allowChanges = [
+                'pattern',
+                'default',
+                'use_type_default',
+                'overridable',
+                'options',
+            ];
+
+            $arrayAttributes = [
+                'any_of'
+            ];
+
+            foreach ($currentAttributes as $attribute => $value) {
+                if (in_array($attribute, $allowChanges) || !isset($previousAttributes[$attribute])) {
+                    continue;
+                }
+
+                $previousValue = $previousAttributes[$attribute];
+                switch ($attribute) {
+                    case 'any_of':
+                        if (!is_array($value)) {
+                            $value = [];
+                        }
+                        foreach ($value as $k => $v) {
+                            $value[$k] = $v->getId()->toString();
+                        }
+
+                        if (!is_array($previousValue)) {
+                            $previousValue = [];
+                        }
+                        foreach ($previousValue as $k => $v) {
+                            $previousValue[$k] = $v->getId()->toString();
+                        }
+
+                        break;
+                }
+
+                if ($value !== $previousValue) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'The field "%s" attribute "%s" value must %s %s.',
+                        $name,
+                        $attribute,
+                        in_array($attribute, $arrayAttributes) ? 'contains' : 'be',
+                        json_encode($previousValue)
+                    ));
+                }
+            }
+        }
     }
 }

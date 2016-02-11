@@ -3,7 +3,7 @@
 
   <entity id="pbj:acme:blog:entity:article:1-0-1" mixin="true">
     <fields>
-      <field name="_id" type="identifier" required="true">
+      <field name="_id" type="identifier" required="true" overridable="true">
         <php_options>
           <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
           <default>
@@ -35,16 +35,12 @@
       <field name="published_at" type="microtime" />
       <field name="expires_at" type="timestamp" use_type_default="false" />
 
-      <field name="comments" type="message">
+      <field name="comments" type="message-ref" rule="a-list">
         <any_of>
           <id>acme:blog:entity:comment</id>
         </any_of>
       </field>
     </fields>
-
-    <mixins>
-      <id>acme:blog:entity:comment:v1</id>
-    </mixins>
 
     <enums>
       <enum name="publish-status">

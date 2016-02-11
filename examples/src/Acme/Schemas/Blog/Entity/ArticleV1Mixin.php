@@ -33,6 +33,7 @@ final class ArticleV1Mixin extends AbstractMixin
                 return UuidIdentifier::generate();
               })
                 ->className('Gdbots\Identifiers\UuidIdentifier')
+                ->overridable(true)
                 ->build(),
             Fb::create('title', T\StringType::create())
                 ->build(),
@@ -58,7 +59,8 @@ final class ArticleV1Mixin extends AbstractMixin
                 ->build(),
             Fb::create('expires_at', T\TimestampType::create())
                 ->build(),
-            Fb::create('comments', T\MessageType::create())
+            Fb::create('comments', T\MessageRefType::create())
+                ->asAList()
                 ->className('Acme\Schemas\Blog\Entity')
                   ->build()
           ];
