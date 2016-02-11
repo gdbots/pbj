@@ -60,7 +60,7 @@ class SchemaParser
             $fields = self::fixArray($data['fields']['field']);
             foreach ($fields as $field) {
                 if ($field = self::getFieldDescriptor($schema, $field)) {
-                     $schema->addField($field);
+                    $schema->addField($field);
                 }
             }
         }
@@ -138,7 +138,7 @@ class SchemaParser
             ;
         }
 
-        return new EnumDescriptor($enum['name'], $values);
+        return new EnumDescriptor($enum['name'], $enum['type'], $values);
     }
 
     /**
@@ -189,6 +189,24 @@ class SchemaParser
                     $field['enum']['provider'],
                     $field['enum']['name']
                 ));
+            }
+
+            switch ($field['type']) {
+                case 'int-enum':
+                case 'string-enum':
+                    if (substr($field['type'], 0, -5) != $field['options']['enum']->getType()) {
+                        throw new \RuntimeException(sprintf(
+                            'Invalid Enum ["%s"] type. A ["%s-enum"] is required.',
+                            $field['enum']['name'],
+                            $field['options']['enum']->getType()
+                        ));
+                    }
+                    break;
+
+                default:
+                    throw new \RuntimeException(sprintf(
+                        'Invalid Enum type.'
+                    ));
             }
 
             unset($field['enum']);
