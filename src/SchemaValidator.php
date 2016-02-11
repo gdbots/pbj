@@ -33,8 +33,6 @@ class SchemaValidator
         self::validateEnums($schema, $prevSchema);
         self::validateMixins($schema, $prevSchema);
         self::validateFields($schema, $prevSchema);
-
-        // once schema defined as mixin it's always mixin
     }
 
     /**
