@@ -2,6 +2,9 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Validator\Validator;
+use Gdbots\Pbjc\Validator\Constraints as Assert;
+
 /**
  * Performs strict validation of the mapping schema.
  */
@@ -24,10 +27,13 @@ class SchemaValidator
             $prevSchema = self::create($prevSchema);
         }
 
-        if ($schema->isMixin() !== $prevSchema->isMixin()) {
-            throw new \InvalidArgumentException(
-                'Can\'t change schema mixin state.'
-            );
+        if ($violation = Validator::validate($schema->isMixin(), new Assert\EqualTo([
+            'value' => $prevSchema->isMixin(),
+        ]))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot change schema mixin state. %s',
+                $violation
+            ));
         }
 
         self::validateEnums($schema, $prevSchema);
