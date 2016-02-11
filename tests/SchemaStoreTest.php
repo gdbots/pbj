@@ -2,8 +2,8 @@
 
 namespace Gdbots\Tests\Pbjc;
 
-use Gdbots\Pbjc\Descriptor\FieldDescriptor;
-use Gdbots\Pbjc\Descriptor\SchemaDescriptor;
+use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
 class SchemaStoreTest extends \PHPUnit_Framework_TestCase
@@ -15,23 +15,20 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
     {
         $this->schema = new SchemaDescriptor(
             // id
-            'pbj:gdbots:pbj:mixin:command:1-0-1',
+            'pbj:acme:blog:entity:comment:1-0-0',
 
             // fields
             [
-                new FieldDescriptor('command_id', [
-                    'type' => 'time-uuid',
+                new FieldDescriptor('_id', [
+                    'type' => 'identifier',
                     'required' => true
                 ]),
-                new FieldDescriptor('microtime', [
-                    'type' => 'microtime',
+                new FieldDescriptor('comment', [
+                    'type' => 'text',
                     'required' => true
                 ]),
-                new FieldDescriptor('correlator', [
-                    'type' => 'message-ref'
-                ]),
-                new FieldDescriptor('retries', [
-                    'type' => 'tiny-int'
+                new FieldDescriptor('published_at', [
+                    'type' => 'microtime'
                 ])
             ],
 
@@ -41,7 +38,7 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
             // languages
             [
                 'php' => [
-                    'namespace' => 'Gdbots\Schemas\Pbj\Command'
+                    'namespace' => 'Acme\Schemas\Blog\Entity'
                 ]
             ]
         );
@@ -54,17 +51,16 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDir()
     {
-        SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbj');
-        SchemaStore::addDir(__DIR__.'/../vendor/gdbots/schemas/schemas/gdbots/pbjx');
+        SchemaStore::addDir(__DIR__.'/../examples/schemas');
 
-        $this->assertCount(2, SchemaStore::getDirs());
+        $this->assertCount(1, SchemaStore::getDirs());
     }
 
     public function testAddSchema()
     {
         SchemaStore::addSchema($this->schema->__toString(), $this->schema, true);
 
-        $this->assertEquals(SchemaStore::getSchemaById('pbj:gdbots:pbj:mixin:command:1-0-1'), $this->schema);
+        $this->assertEquals(SchemaStore::getSchemaById('pbj:acme:blog:entity:comment:1-0-0'), $this->schema);
     }
 
     /**
