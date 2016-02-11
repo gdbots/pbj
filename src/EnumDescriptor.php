@@ -4,10 +4,10 @@ namespace Gdbots\Pbjc;
 
 final class EnumDescriptor extends Descriptor
 {
-    /** @var name */
+    /** @var string */
     private $name;
 
-    /** @var name */
+    /** @var string */
     private $type;
 
     /** @var array */
