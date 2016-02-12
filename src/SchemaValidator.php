@@ -14,8 +14,6 @@ class SchemaValidator
      * Validates a single schema against prevoius version.
      *
      * @param SchemaDescriptor $schema
-     *
-     * @throw \InvalidArgumentException
      */
     public static function validateMapping(SchemaDescriptor $schema)
     {
@@ -27,64 +25,17 @@ class SchemaValidator
             $prevSchema = self::create($prevSchema);
         }
 
-        $validator = Validator::createValidator()
-            ->add(
-                $schema->isMixinSchema(),
-                new Assert\IsMixin([
-                    'value' => $prevSchema->isMixinSchema(),
-                ])
-            )
-            ->add(
-                array_keys($schema->getMixins()),
-                new Assert\ExtendChoice([
-                    'choices' => array_keys($prevSchema->getMixins()),
-                ])
-            )
-            ->add(
-                array_keys($schema->getEnums()),
-                new Assert\ExtendChoice([
-                    'choices' => array_keys($prevSchema->getEnums()),
-                ])
-            )
-            ->add(
-                array_keys($schema->getFields()),
-                new Assert\ExtendChoice([
-                    'choices' => array_keys($prevSchema->getFields()),
-                ])
-            )
+        Validator::createValidator()
+            ->add(new Assert\IsMixinSchemeTypeConstraint())
+            ->add(new Assert\RemoveSchemeMixinConstraint())
+            ->add(new Assert\RemoveSchemeEnumConstraint())
+            ->add(new Assert\RemoveSchemeFieldConstraint())
+            ->add(new Assert\EnumTypeConstraint())
+            ->add(new Assert\EnumOptionConstraint())
+
+            //todo: additional constraints
+
+            ->validate($prevSchema, $schema)
         ;
-
-        // add enums validator rules
-        foreach ($schema->getEnums() as $enum) {
-            if (!$compare = $prevSchema->getEnum($enum->getName())) {
-                continue;
-            }
-
-            $validator->add($enum, new Assert\Enum(['value' => $compare]));
-        }
-
-        // add fields validator rules
-        foreach ($schema->getFields() as $field) {
-            if (!$compare = $prevSchema->getField($field->getName())) {
-                continue;
-            }
-
-            $validator->add(
-                $field,
-                new Assert\Field([
-                    'value' => $compare,
-                    'ignore' => [
-                        'pattern',
-                        'default',
-                        'use_type_default',
-                        'overridable',
-                        'languages',
-                    ]
-                ])
-            );
-        }
-
-        // run..
-        $validator->validate();
     }
 }

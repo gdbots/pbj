@@ -2,8 +2,7 @@
 
 namespace Gdbots\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\Exception\RuntimeException;
-use Gdbots\Pbjc\Validator\Exception\ValidatorException;
+use Gdbots\Pbjc\SchemaDescriptor;
 
 /**
  * Validates values against constraints.
@@ -11,7 +10,7 @@ use Gdbots\Pbjc\Validator\Exception\ValidatorException;
 class Validator
 {
     /** @var array */
-    protected $collection = [];
+    protected $constraints = [];
 
     /**
      * Creates a new validator.
@@ -33,44 +32,27 @@ class Validator
     /**
      * Adds a constraint violation to this list.
      *
-     * @param mixed      $value      The value that should be validated
-     * @param Constraint $constraint The constraint for the validation
+     * @param ConstraintInterface $constraint The constraint for the validation
      *
      * @return this
      */
-    public function add($value, Constraint $constraint)
+    public function add(ConstraintInterface $constraint)
     {
-        $this->collection[] = [
-            'value' => $value,
-            'constraint' => $constraint
-        ];
+        $this->constraints[] = $constraint;
 
         return $this;
     }
 
     /**
-     * Validates a value against a constraint or a list of constraints.
+     * Validates a value against a list of constraints.
      *
-     * @thorw ValidatorException If validator doesn't exists
-     * @thorw RuntimeException If a violation has occurred
+     * @param SchemaDescriptor $a
+     * @param SchemaDescriptor $b
      */
-    public function validate()
+    public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
-        foreach ($this->collection as $item) {
-            $className = $item['constraint']->validatedBy();
-
-            if (!class_exists($className)) {
-                throw new ValidatorException(sprintf(
-                    'Missing validator class "%s".',
-                    $className
-                ));
-            }
-
-            $validator = new $className();
-
-            if ($violation = $validator->validate($item['value'], $item['constraint'])) {
-                throw new RuntimeException($violation);
-            }
+        foreach ($this->constraints as $constraint) {
+            $constraint->validate($a, $b);
         }
     }
 }
