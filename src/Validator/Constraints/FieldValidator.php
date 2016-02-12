@@ -37,7 +37,22 @@ class FieldValidator extends ConstraintValidator
                 continue;
             }
 
-            if ($value[$key] !== $comparedValue) {
+            $a = $value[$key];
+            $b = $comparedValue;
+
+            switch ($key) {
+                case 'enum':
+                    if ($a) $a = $a->getName();
+                    if ($b) $b = $b->getName();
+                    break;
+
+                case 'any_of':
+                    if ($a) $a = implode(', ', $a);
+                    if ($b) $b = implode(', ', $b);
+                    break;
+            }
+
+            if ($a !== $b) {
                 return str_replace(
                     [
                         '{{ name }}',
@@ -46,8 +61,8 @@ class FieldValidator extends ConstraintValidator
                     ],
                     [
                         $key,
-                        $value[$k],
-                        $comparedValue,
+                        $a,
+                        $b,
                     ],
                     $constraint->message
                 );

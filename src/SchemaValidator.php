@@ -78,8 +78,6 @@ class SchemaValidator
                         'default',
                         'use_type_default',
                         'overridable',
-                        'any_of',
-                        'enum',
                         'languages',
                     ]
                 ])
