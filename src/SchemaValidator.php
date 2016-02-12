@@ -36,19 +36,19 @@ class SchemaValidator
             )
             ->add(
                 array_keys($schema->getMixins()),
-                new Assert\Choice([
+                new Assert\ExtendChoice([
                     'choices' => array_keys($prevSchema->getMixins()),
                 ])
             )
             ->add(
                 array_keys($schema->getEnums()),
-                new Assert\Choice([
+                new Assert\ExtendChoice([
                     'choices' => array_keys($prevSchema->getEnums()),
                 ])
             )
             ->add(
                 array_keys($schema->getFields()),
-                new Assert\Choice([
+                new Assert\ExtendChoice([
                     'choices' => array_keys($prevSchema->getFields()),
                 ])
             )

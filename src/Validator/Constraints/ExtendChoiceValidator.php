@@ -10,15 +10,15 @@ use Gdbots\Pbjc\Validator\Exception\UnexpectedTypeException;
 /**
  * Validates that the value is one of the expected values.
  */
-class ChoiceValidator extends ConstraintValidator
+class ExtendChoiceValidator extends ConstraintValidator
 {
     /**
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$constraint instanceof Choice) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Choice');
+        if (!$constraint instanceof ExtendChoice) {
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ExtendChoice');
         }
 
         if (!is_array($constraint->choices)) {
