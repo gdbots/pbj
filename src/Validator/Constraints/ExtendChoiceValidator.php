@@ -22,7 +22,7 @@ class ExtendChoiceValidator extends ConstraintValidator
         }
 
         if (!is_array($constraint->choices)) {
-            throw new ConstraintDefinitionException('The "choices" must be specified on constraint Choice');
+            throw new ConstraintDefinitionException('The "choices" must be specified on constraint ExtendChoice');
         }
 
         if (!is_array($value)) {
