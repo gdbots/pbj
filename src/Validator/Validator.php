@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc\Validator;
 
+use Gdbots\Pbjc\Validator\Exception\RuntimeException;
 use Gdbots\Pbjc\Validator\Exception\ValidatorException;
 
 /**
@@ -9,6 +10,19 @@ use Gdbots\Pbjc\Validator\Exception\ValidatorException;
  */
 class Validator
 {
+    /** @var array */
+    protected $collection = [];
+
+    /**
+     * Creates a new validator.
+     *
+     * @return this.
+     */
+    public static function createValidator()
+    {
+        return new self();
+    }
+
     /**
      * This class cannot be instantiated.
      */
@@ -17,29 +31,46 @@ class Validator
     }
 
     /**
+     * Adds a constraint violation to this list.
+     *
+     * @param mixed      $value      The value that should be validated
+     * @param Constraint $constraint The constraint for the validation
+     *
+     * @return this
+     */
+    public function add($value, Constraint $constraint)
+    {
+        $this->collection[] = [
+            'value' => $value,
+            'constraint' => $constraint
+        ];
+
+        return $this;
+    }
+
+    /**
      * Validates a value against a constraint or a list of constraints.
      *
-     * @param mixed      $value       The value to validate
-     * @param Constraint $constraints The constraint to validate against
-     *
-     * @return string|null An error message of constraint violation.
-     *                     If returns null, validation succeeded
-     *
      * @thorw ValidatorException If validator doesn't exists
+     * @thorw RuntimeException If a violation has occurred
      */
-    public static function validate($value, Constraint $constraint)
+    public function validate()
     {
-        $className = $constraint->validatedBy();
+        foreach ($this->collection as $item) {
+            $className = $item['constraint']->validatedBy();
 
-        if (!class_exists($className)) {
-            throw new ValidatorException(sprintf(
-                'Missing validator class "%s".',
-                $className
-            ));
+            if (!class_exists($className)) {
+                throw new ValidatorException(sprintf(
+                    'Missing validator class "%s".',
+                    $className
+                ));
+            }
+
+            $validator = new $className();
+
+            if ($violation = $validator->validate($item['value'], $item['constraint'])) {
+                throw new RuntimeException($violation);
+            }
         }
-
-        $validator = new $className();
-
-        return $validator->validate($value, $constraint);
     }
 }

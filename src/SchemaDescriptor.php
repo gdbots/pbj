@@ -68,6 +68,20 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
+     * @param string $name
+     *
+     * @return FieldDescriptor|null
+     */
+    public function getField($name)
+    {
+        if (isset($this->fields[$name])) {
+            return $this->fields[$name];
+        }
+
+        return null;
+    }
+
+    /**
      * @return FieldDescriptor[]
      */
     public function getFields()
@@ -86,6 +100,20 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
+     * @param string $name
+     *
+     * @return EnumDescriptor|null
+     */
+    public function getEnum($name)
+    {
+        if (isset($this->enums[$name])) {
+            return $this->enums[$name];
+        }
+
+        return null;
+    }
+
+    /**
      * @return EnumDescriptor[]
      */
     public function getEnums()
@@ -98,9 +126,23 @@ final class SchemaDescriptor extends Descriptor
      */
     public function addMixin(SchemaDescriptor $mixin)
     {
-        if (!isset($this->mixins[$mixin->getName()])) {
-            $this->mixins[$mixin->getName()] = $mixin;
+        if (!isset($this->mixins[$mixin->getId()->getCurieWithMajorRev()])) {
+            $this->mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
         }
+    }
+
+    /**
+     * @param string $curieWithMajorRev
+     *
+     * @return SchemaDescriptor|null
+     */
+    public function getMixin($curieWithMajorRev)
+    {
+        if (isset($this->mixins[$curieWithMajorRev])) {
+            return $this->mixins[$curieWithMajorRev];
+        }
+
+        return null;
     }
 
     /**
