@@ -22,7 +22,7 @@ class SchemaValidator
         }
 
         if (is_array($prevSchema)) {
-            $prevSchema = self::create($prevSchema);
+            $prevSchema = SchemaParser::create($prevSchema);
         }
 
         Validator::createValidator()
