@@ -10,8 +10,14 @@ final class SchemaDescriptor extends Descriptor
     /** @var FieldDescriptor[] */
     private $fields = [];
 
+    /** @var EnumDescriptor[] */
+    private $enums = [];
+
+    /** @var SchemaDescriptor[] */
+    private $mixins = [];
+
     /** @var array */
-    private $options = [];
+    private $languages = [];
 
     /** @var bool */
     private $isMixin = false;
@@ -62,20 +68,6 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
-     * @param string $name
-     *
-     * @return FieldDescriptor|null
-     */
-    public function getField($name)
-    {
-        if (!isset($this->fields[$name])) {
-            return $this->fields[$name];
-        }
-
-        return;
-    }
-
-    /**
      * @return FieldDescriptor[]
      */
     public function getFields()
@@ -84,61 +76,98 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
-     * @param string $key
-     * @param mixed  $value
+     * @param EnumDescriptor $enum
+     */
+    public function addEnum(EnumDescriptor $enum)
+    {
+        if (!isset($this->enums[$enum->getName()])) {
+            $this->enums[$enum->getName()] = $enum;
+        }
+    }
+
+    /**
+     * @return EnumDescriptor[]
+     */
+    public function getEnums()
+    {
+        return $this->enums ?: $this->enums = [];
+    }
+
+    /**
+     * @param SchemaDescriptor $mixin
+     */
+    public function addMixin(SchemaDescriptor $mixin)
+    {
+        if (!isset($this->mixins[$mixin->getName()])) {
+            $this->mixins[$mixin->getName()] = $mixin;
+        }
+    }
+
+    /**
+     * @return SchemaDescriptor[]
+     */
+    public function getMixins()
+    {
+        return $this->mixins ?: $this->mixins = [];
+    }
+
+    /**
+     * @param string $language
+     * @param array  $options
      *
      * @return this
      */
-    public function setOption($key, $value)
+    public function setLanguage($language, array $options)
     {
-        $this->options[$key] = $value;
+        $this->languages[$language] = $options;
 
         return $this;
     }
 
     /**
-     * @param string $key
+     * @param string $language
      * @param mixed  $default
      *
      * @return mixed
      */
-    public function getOption($key, $default = null)
+    public function getLanguage($language, $default = [])
     {
-        if (isset($this->options[$key])) {
-            return $this->options[$key];
+        if (isset($this->languages[$language])) {
+            return $this->languages[$language];
         }
 
         return $default;
     }
 
     /**
+     * @param string $language
      * @param string $key
-     * @param string $subkey
      * @param mixed  $value
      *
      * @return this
      */
-    public function setOptionSubOption($key, $subkey, $value)
+    public function setLanguageKey($language, $key, $value = null)
     {
-        if (!isset($this->options[$key])) {
-            $this->options[$key] = [];
+        if (!isset($this->languages[$language])) {
+            $this->languages[$language] = [];
         }
-        $this->options[$key][$subkey] = $value;
+
+        $this->languages[$language][$key] = $value;
 
         return $this;
     }
 
     /**
+     * @param string $language
      * @param string $key
-     * @param string $subkey
      * @param mixed  $default
      *
      * @return mixed
      */
-    public function getOptionSubOption($key, $subkey, $default = null)
+    public function getLanguageKey($language, $key, $default = null)
     {
-        if (isset($this->options[$key][$subkey])) {
-            return $this->options[$key][$subkey];
+        if (isset($this->languages[$language][$key])) {
+            return $this->languages[$language][$key];
         }
 
         return $default;
@@ -147,9 +176,9 @@ final class SchemaDescriptor extends Descriptor
     /**
      * @return array
      */
-    public function getOptions()
+    public function getLanguages()
     {
-        return $this->options ?: $this->options = [];
+        return $this->languages ?: $this->languages = [];
     }
 
     /**
@@ -167,7 +196,7 @@ final class SchemaDescriptor extends Descriptor
     /**
      * @return bool
      */
-    public function isMixin()
+    public function isMixinSchema()
     {
         return $this->isMixin;
     }

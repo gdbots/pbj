@@ -35,7 +35,7 @@ class PhpGenerator extends Generator
      */
     protected function updateFieldOptions(FieldDescriptor $field)
     {
-        if ($enum = $field->getOption('enum')) {
+        if ($enum = $field->getEnum()) {
             // search for key by value
             $enumKey = null;
             foreach ($enum->getValues() as $key => $value) {
@@ -46,8 +46,8 @@ class PhpGenerator extends Generator
             }
 
             if ($enumKey) {
-                if (!$phpOptions = $this->schema->getOptionSubOption('php', 'enums')) {
-                    $phpOptions = $this->schema->getOption('php');
+                if (!$phpOptions = $this->schema->getLanguageKey('php', 'enums')) {
+                    $phpOptions = $this->schema->getLanguage('php');
                 }
 
                 $namespace = $phpOptions['namespace'];
@@ -64,8 +64,8 @@ class PhpGenerator extends Generator
                     )
                 ;
 
-                $field->setOptionSubOption('php', 'class_name', $className);
-                $field->setOptionSubOption('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
+                $field->setLanguageKey('php', 'class_name', $className);
+                $field->setLanguageKey('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
             }
         }
 
@@ -77,7 +77,7 @@ class PhpGenerator extends Generator
      */
     protected function getTemplates()
     {
-        return $this->schema->isMixin()
+        return $this->schema->isMixinSchema()
             ? [
                 'MessageInterface.php.twig' => '{className}',
                 'Interface.php.twig' => '{className}V{major}',
@@ -110,7 +110,7 @@ class PhpGenerator extends Generator
             StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
         ], $filename);
 
-        $directory = str_replace('\\', '/', $this->schema->getOptionSubOption('php', 'namespace'));
+        $directory = str_replace('\\', '/', $this->schema->getLanguageKey('php', 'namespace'));
 
         return parent::getTarget($filename, $directory, $isLatest);
     }
@@ -133,11 +133,11 @@ class PhpGenerator extends Generator
      */
     public function generateEnums()
     {
-        $enums = $this->schema->getOption('enums', []);
+        $enums = $this->schema->getEnums();
 
         foreach ($enums as $enum) {
-            if (!$phpOptions = $this->schema->getOptionSubOption('php', 'enums')) {
-                $phpOptions = $this->schema->getOption('php');
+            if (!$phpOptions = $this->schema->getLanguageKey('php', 'enums')) {
+                $phpOptions = $this->schema->getLanguage('php');
             }
 
             $namespace = $phpOptions['namespace'];

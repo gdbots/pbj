@@ -135,7 +135,7 @@ final class Compiler
                     $schema->getId()->getVendor(),
                     $schema->getId()->getPackage()
                 )
-                || $schema->getOptionSubOption($generator->getLanguage(), 'isCompiled')
+                || $schema->getLanguageKey($generator->getLanguage(), 'isCompiled')
             ) {
                 continue;
             }
@@ -143,11 +143,11 @@ final class Compiler
             $generator->setSchema($schema);
             $generator->generate();
 
-            if ($schema->getOption('enums')) {
+            if (count($schema->getEnums())) {
                 $generator->generateEnums();
             }
 
-            $schema->setOptionSubOption($generator->getLanguage(), 'isCompiled', true);
+            $schema->setLanguageKey($generator->getLanguage(), 'isCompiled', true);
         }
     }
 }

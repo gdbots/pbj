@@ -26,7 +26,7 @@ class SchemaParser
         // default language options
         $options = self::getLanguageOptions($data);
         foreach ($options as $language => $option) {
-            $schema->setOption($language, $option);
+            $schema->setLanguage($language, $option);
         }
 
         // assign enums
@@ -34,21 +34,16 @@ class SchemaParser
             if (isset($data['enums']['enum'])) {
                 $enums = self::fixArray($data['enums']['enum'], 'name');
                 foreach ($enums as $enum) {
-                    $enum = self::getEnumDescriptor($enum);
-
-                    $schema->setOption('enums', array_merge(
-                        $schema->getOption('enums', []),
-                        [
-                            $enum,
-                        ]
-                    ));
+                    if ($enum = self::getEnumDescriptor($enum)) {
+                        $schema->addEnum($enum);
+                    }
                 }
             }
 
             // add enums language options
             $options = self::getLanguageOptions($data['enums']);
             foreach ($options as $language => $option) {
-                $schema->setOptionSubOption($language, 'enums', $option);
+                $schema->setLanguageKey($language, 'enums', $option);
             }
         }
 
@@ -65,12 +60,7 @@ class SchemaParser
             $mixins = self::fixArray($data['mixins']['id']);
             foreach ($mixins as $curieWithMajorRev) {
                 if ($mixin = self::getMixin($schema, $curieWithMajorRev)) {
-                    $schema->setOption('mixins', array_merge(
-                        $schema->getOption('mixins', []),
-                        [
-                            $mixin,
-                        ]
-                    ));
+                    $schema->addMixin($mixin);
                 }
             }
         }
@@ -169,17 +159,17 @@ class SchemaParser
             $providerSchema = self::getEnumProvider($schema, $field['enum']['provider']);
 
             /** @var $enums EnumDescriptor[] */
-            if ($enums = $providerSchema->getOption('enums')) {
+            $matchEnum = null;
+            if ($enums = $providerSchema->getEnums()) {
                 foreach ($enums as $enum) {
                     if ($enum->getName() == $field['enum']['name']) {
-                        $field['options']['enum'] = $enum;
-
+                        $matchEnum = $enum;
                         break;
                     }
                 }
             }
 
-            if (!isset($field['options']['enum'])) {
+            if (!$matchEnum) {
                 throw new \RuntimeException(sprintf(
                     'No Enum with provider ["%s"] and name ["%s"] exist.',
                     $field['enum']['provider'],
@@ -190,11 +180,11 @@ class SchemaParser
             switch ($field['type']) {
                 case 'int-enum':
                 case 'string-enum':
-                    if (substr($field['type'], 0, -5) != $field['options']['enum']->getType()) {
+                    if (substr($field['type'], 0, -5) != $matchEnum->getType()) {
                         throw new \RuntimeException(sprintf(
                             'Invalid Enum ["%s"] type. A ["%s-enum"] is required.',
                             $field['enum']['name'],
-                            $field['options']['enum']->getType()
+                            $matchEnum->getType()
                         ));
                     }
                     break;
@@ -205,7 +195,7 @@ class SchemaParser
                     ));
             }
 
-            unset($field['enum']);
+            $field['enum'] = $matchEnum;
         }
 
         return new FieldDescriptor($field['name'], $field);

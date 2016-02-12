@@ -28,8 +28,8 @@
       {% set defs = defs|merge(field.anyOf) %}
     {% endif %}
   {% endfor %}
-  {% if schema.options.mixins is defined and schema.options.mixins|length %}
-    {% set defs = defs|merge(schema.options.mixins) %}
+  {% if schema.mixins|length %}
+    {% set defs = defs|merge(schema.mixins) %}
   {% endif %}
   {% if defs|length %}
     "definitions": {
@@ -43,10 +43,10 @@
     },
   {% endif %}
 
-  {% if schema.options.mixins is defined and schema.options.mixins|length %}
+  {% if schema.mixins|length %}
     "additionalProperties": {
       "mixin": [
-        {% for mixin in schema.options.mixins %}
+        {% for mixin in schema.mixins %}
           {"$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
       ]
@@ -99,8 +99,8 @@
         {% endfor %}
       ],
     {% endif %}
-    {% if field.options.enum is defined and field.options.enum|length %}
-      "enum": [{% for value in field.options.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+    {% if field.enum %}
+      "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
     {% endif %}
     "additionalProperties": {
       "customType": "{{ field.type.typeName }}",

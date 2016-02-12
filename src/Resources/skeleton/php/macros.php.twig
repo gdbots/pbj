@@ -39,8 +39,8 @@
   {%- if field.scale %}
               ->scale({{ field.scale }})
   {% endif %}
-  {%- if field.optionSubOption('php', 'default') %}
-              ->withDefault({{ field.optionSubOption('php', 'default') }})
+  {%- if field.languageKey('php', 'default') %}
+              ->withDefault({{ field.languageKey('php', 'default') }})
   {% elseif field.default %}
               ->withDefault({{ field.default|json_encode }})
   {% endif %}
@@ -49,12 +49,12 @@
   {% endif %}
   {%- if field.anyOf %}
     {%- if field.anyOf|length == 1 %}
-              ->className('{{ field.anyOf.0.options.php.namespace }}')
+              ->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
     {% else %}
-              ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.options.php.namespace }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
+              ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
     {% endif -%}
-  {% elseif field.optionSubOption('php', 'class_name') %}
-              ->className('{{ field.optionSubOption('php', 'class_name') }}')
+  {% elseif field.languageKey('php', 'class_name') %}
+              ->className('{{ field.languageKey('php', 'class_name') }}')
   {% endif %}
   {%- if field.overridable %}
               ->overridable(true)
