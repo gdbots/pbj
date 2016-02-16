@@ -3,24 +3,12 @@
   "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/article\/1-0-1.json",
   "type": "object",
   "properties": {
-    "_id": {
-      "type": "string",
-      "required": true,
-      "additionalProperties": {
-        "customType": "identifier",
-        "overridable": true
-      }
-    },
     "title": {
       "type": "string",
+      "maximum": 100,
+      "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
       "additionalProperties": {
         "customType": "string"
-      }
-    },
-    "excerpt": {
-      "type": "string",
-      "additionalProperties": {
-        "customType": "text"
       }
     },
     "excerpt_html": {
@@ -73,12 +61,6 @@
         "withDefault": "draft"
       }
     },
-    "published_at": {
-      "type": "number",
-      "additionalProperties": {
-        "customType": "microtime"
-      }
-    },
     "expires_at": {
       "type": "number",
       "additionalProperties": {
@@ -98,9 +80,6 @@
       }
     }
   },
-  "required": [
-    "_id"
-  ],
   "definitions": {
     "comment": {
       "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/comment\/1-0-0.json",
@@ -130,7 +109,48 @@
         "_id"
       ],
       "additionalProperties": false
+    },
+    "generic": {
+      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/generic\/1-0-0.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier"
+          }
+        },
+        "title": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "string"
+          }
+        },
+        "excerpt": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text"
+          }
+        },
+        "published_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": {
+    "mixin": [
+      {
+        "$ref": "#\/definitions\/generic"
+      }
+    ]
+  }
 }

@@ -1,0 +1,28 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:generic:1-0-0">
+    <fields>
+      <field name="_id" type="identifier" required="true">
+        <php_options>
+          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier::generate();
+              }
+            ]]>
+          </default>
+        </php_options>
+      </field>
+
+      <field name="title" type="string" />
+      <field name="excerpt" type="text" />
+      <field name="published_at" type="microtime" />
+    </fields>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

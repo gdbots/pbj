@@ -5,11 +5,6 @@ namespace {{ schema.languageKey('php', 'namespace') }};
 {% block use_statements %}
 use Gdbots\Pbj\MessageRef;
 use Gdbots\Pbj\Schema;
-{% for field in schema.fields %}
-{% if field.languageKey('php', 'class_name') %}
-use {{ field.languageKey('php', 'class_name') }};
-{% endif %}
-{% endfor %}
 {% endblock use_statements %}
 
 {% block class_definition %}

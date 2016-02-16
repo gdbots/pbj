@@ -8,7 +8,7 @@ use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
 use Gdbots\Pbj\Enum\Format;
-{% for field in schema.inheritedFields|merge(schema.fields) %}
+{% for field in schema.fields %}
 {% if field.languageKey('php', 'class_name') %}
 use {{ field.languageKey('php', 'class_name') }};
 {% endif %}
@@ -40,7 +40,7 @@ final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessag
     {
         return new Schema('{{ schema.id }}', __CLASS__, [
           {% import 'php/macros.php.twig' as macros %}
-          {%- for field in schema.inheritedFields|merge(schema.fields) %}
+          {%- for field in schema.fields %}
             {{- macros.draw_field(field) }}{%- if not loop.last %},{% endif %}
 
           {% endfor -%}

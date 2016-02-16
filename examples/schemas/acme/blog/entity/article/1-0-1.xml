@@ -1,23 +1,9 @@
 <schema-mapping xmlns="gdbots:pbjc:schema-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <entity id="pbj:acme:blog:entity:article:1-0-1" mixin="true">
+  <entity id="pbj:acme:blog:entity:article:1-0-1">
     <fields>
-      <field name="_id" type="identifier" required="true" overridable="true">
-        <php_options>
-          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
-          <default>
-            <![CDATA[
-              function() {
-                return UuidIdentifier::generate();
-              }
-            ]]>
-          </default>
-        </php_options>
-      </field>
-
-      <field name="title" type="string" />
-      <field name="excerpt" type="text" />
+      <field name="title" type="string" pattern="/^[A-Za-z0-9_\-]+$/" max="100" />
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="a-map" />
       <field name="private" type="boolean" />
@@ -32,7 +18,6 @@
         <enum provider="acme:blog:entity:article:v1" name="publish-status" />
       </field>
 
-      <field name="published_at" type="microtime" />
       <field name="expires_at" type="timestamp" use_type_default="false" />
 
       <field name="comments" type="message-ref" rule="a-list">
@@ -41,6 +26,10 @@
         </any_of>
       </field>
     </fields>
+
+    <mixins>
+      <id>acme:blog:entity:generic</id>
+    </mixins>
 
     <enums>
       <enum name="publish-status">

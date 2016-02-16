@@ -7,13 +7,13 @@
   "id": "http://yourdomain.com/schemas/{{ schema.id.vendor }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.version }}.json",
   "type": "object",
   "properties": {
-    {% for field in schema.inheritedFields|merge(schema.fields) %}
+    {% for field in schema.fields %}
       {{ _self.draw_field(field) }}{% if not loop.last %},{% endif %}
     {% endfor %}
   },
 
   {% set required = [] %}
-  {% for field in schema.inheritedFields|merge(schema.fields) %}
+  {% for field in schema.fields %}
     {% if field.required %}
       {% set required = required|merge([field.name]) %}
     {% endif %}
@@ -23,7 +23,7 @@
   {% endif %}
 
   {% set defs = [] %}
-  {% for field in schema.inheritedFields|merge(schema.fields) %}
+  {% for field in schema.fields %}
     {% if field.anyOf %}
       {% set defs = defs|merge(field.anyOf) %}
     {% endif %}

@@ -1,0 +1,36 @@
+{
+  "$schema": "http:\/\/json-schema.org\/schema#",
+  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/generic\/1-0-0.json",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "identifier"
+      }
+    },
+    "title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string"
+      }
+    },
+    "excerpt": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text"
+      }
+    },
+    "published_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "microtime"
+      }
+    }
+  },
+  "required": [
+    "_id"
+  ],
+  "additionalProperties": false
+}
