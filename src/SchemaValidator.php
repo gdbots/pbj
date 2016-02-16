@@ -27,9 +27,11 @@ class SchemaValidator
             new Assert\SchemeContainsField(),
             new Assert\EnumTypeEqualTo(),
             new Assert\EnumContainsOption(),
+            new Assert\FieldType(),
             new Assert\FieldRequired(),
             new Assert\FieldContainsAnyOfClasses(),
-            new Assert\FieldPatternString(),
+            new Assert\FieldPattern(),
+            new Assert\FieldLength(),
         ];
     }
 
