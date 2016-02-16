@@ -21,18 +21,14 @@ class SchemaValidator
     public function __construct()
     {
         $this->constraints = [
-            new Assert\IsMixinSchemeTypeConstraint(),
-            new Assert\RemoveSchemeMixinConstraint(),
-            new Assert\RemoveSchemeEnumConstraint(),
-            new Assert\RemoveSchemeFieldConstraint(),
-            new Assert\EnumTypeConstraint(),
-            new Assert\EnumOptionConstraint(),
-            new Assert\RequireAddtionalFieldConstraint(),
-            new Assert\FieldRestrictAttributeConstraint(),
-            new Assert\FieldPatternConstraint(),
-            new Assert\FieldDefaultConstraint(),
-            new Assert\FieldEnumConstraint(),
-            new Assert\FieldAnyOfConstraint(),
+            new Assert\IsMixinSchemeType(),
+            new Assert\SchemeContainsMixin(),
+            new Assert\SchemeContainsEnum(),
+            new Assert\SchemeContainsField(),
+            new Assert\EnumTypeEqualTo(),
+            new Assert\EnumContainsOption(),
+            new Assert\FieldRequired(),
+            new Assert\FieldContainsAnyOfClasses(),
         ];
     }
 

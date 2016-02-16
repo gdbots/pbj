@@ -99,8 +99,8 @@ final class SchemaDescriptor extends Descriptor
         foreach ($this->getMixins() as $mixin) {
             $fields = array_merge(
                 $fields,
-                $mixin->getFields(),
-                $mixin->getInheritedFields()
+                $mixin->getInheritedFields(),
+                $mixin->getFields()
             );
         }
 

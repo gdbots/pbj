@@ -6,7 +6,7 @@ use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class EnumOptionConstraint implements ConstraintInterface
+class EnumContainsOption implements ConstraintInterface
 {
     /**
      * {@inheritdoc}
