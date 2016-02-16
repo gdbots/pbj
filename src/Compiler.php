@@ -84,7 +84,7 @@ final class Compiler
                 $schema = SchemaParser::create($schema);
             }
 
-            if (count($diff = SchemaValidator::validateMapping($schema)) > 0) {
+            if (count($diff = SchemaValidator::getInstance()->validate($schema)) > 0) {
                 throw new \RuntimeException(sprintf(
                     'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
                     $schema->getId()->toString(),

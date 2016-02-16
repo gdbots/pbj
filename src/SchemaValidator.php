@@ -2,7 +2,6 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Validator\Validator;
 use Gdbots\Pbjc\Validator\Constraints as Assert;
 
 /**
@@ -10,12 +9,55 @@ use Gdbots\Pbjc\Validator\Constraints as Assert;
  */
 class SchemaValidator
 {
+    /** @var SchemaValidator */
+    private static $instance;
+
+    /** @var array */
+    private $constraints = [];
+
+    /**
+     * Constructs a new validator.
+     */
+    public function __construct()
+    {
+        $this->constraints = [
+            new Assert\IsMixinSchemeTypeConstraint(),
+            new Assert\RemoveSchemeMixinConstraint(),
+            new Assert\RemoveSchemeEnumConstraint(),
+            new Assert\RemoveSchemeFieldConstraint(), //todo: check inherit field from attached mixins
+            new Assert\EnumTypeConstraint(),
+            new Assert\EnumOptionConstraint(),
+
+            //todo: additional constraints
+            //new Assert\RequireAddtionalFieldConstraint(),
+            //new Assert\FieldRestrictAttributeConstraint(),
+            //new Assert\FieldPatternConstraint(),
+            //new Assert\FieldDefaultConstraint(),
+            //new Assert\FieldEnumConstraint(),
+            //new Assert\FieldAnyOfConstraint(),
+
+            // maybe add one for each field type?
+        ];
+    }
+
+    /**
+     * @return this
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
     /**
      * Validates a single schema against prevoius version.
      *
      * @param SchemaDescriptor $schema
      */
-    public static function validateMapping(SchemaDescriptor $schema)
+    public function validate(SchemaDescriptor $schema)
     {
         if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
             return [];
@@ -25,25 +67,8 @@ class SchemaValidator
             $prevSchema = SchemaParser::create($prevSchema);
         }
 
-        Validator::createValidator()
-            ->add(new Assert\IsMixinSchemeTypeConstraint())
-            ->add(new Assert\RemoveSchemeMixinConstraint())
-            ->add(new Assert\RemoveSchemeEnumConstraint())
-            ->add(new Assert\RemoveSchemeFieldConstraint()) //todo: check inherit field from attached mixins
-            ->add(new Assert\EnumTypeConstraint())
-            ->add(new Assert\EnumOptionConstraint())
-
-            //todo: additional constraints
-            //->add(new Assert\RequireAddtionalFieldConstraint())
-            //->add(new Assert\FieldRestrictAttributeConstraint())
-            //->add(new Assert\FieldPatternConstraint())
-            //->add(new Assert\FieldDefaultConstraint())
-            //->add(new Assert\FieldEnumConstraint())
-            //->add(new Assert\FieldAnyOfConstraint())
-
-            // maybe add one for each field type?
-
-            ->validate($prevSchema, $schema)
-        ;
+        foreach ($this->constraints as $constraint) {
+            $constraint->validate($prevSchema, $schema);
+        }
     }
 }
