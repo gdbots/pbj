@@ -90,6 +90,24 @@ final class SchemaDescriptor extends Descriptor
     }
 
     /**
+     * @return FieldDescriptor[]
+     */
+    public function getInheritedFields()
+    {
+        $fields = [];
+
+        foreach ($this->getMixins() as $mixin) {
+            $fields = array_merge(
+                $fields,
+                $mixin->getFields(),
+                $mixin->getInheritedFields()
+            );
+        }
+
+        return $fields;
+    }
+
+    /**
      * @param EnumDescriptor $enum
      */
     public function addEnum(EnumDescriptor $enum)

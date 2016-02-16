@@ -35,7 +35,7 @@ final class {{ className }}V{{ schema.id.version.major }}Mixin extends AbstractM
     {
         return [
           {% import 'php/macros.php.twig' as macros %}
-          {%- for field in schema.fields %}
+          {%- for field in schema.inheritedFields|merge(schema.fields) %}
             {{- macros.draw_field(field) }}{%- if not loop.last %},{% endif %}
 
           {% endfor -%}

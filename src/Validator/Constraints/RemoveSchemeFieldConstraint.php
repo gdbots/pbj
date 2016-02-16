@@ -14,8 +14,8 @@ class RemoveSchemeFieldConstraint implements ConstraintInterface
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
         $diff = array_diff(
-            array_keys($a->getFields()),
-            array_keys($b->getFields())
+            array_keys(array_merge($a->getFields(), $a->getInheritedFields())),
+            array_keys(array_merge($b->getFields(), $b->getInheritedFields()))
         );
         if (count($diff)) {
             throw new ValidatorException(sprintf(
@@ -24,7 +24,5 @@ class RemoveSchemeFieldConstraint implements ConstraintInterface
                 implode('", "', $diff)
             ));
         }
-
-        //todo: check inherit field from attached mixins
     }
 }
