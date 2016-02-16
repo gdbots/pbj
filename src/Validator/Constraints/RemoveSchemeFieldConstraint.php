@@ -24,5 +24,7 @@ class RemoveSchemeFieldConstraint implements ConstraintInterface
                 implode('", "', $diff)
             ));
         }
+
+        //todo: check inherit field from attached mixins
     }
 }

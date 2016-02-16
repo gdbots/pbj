@@ -24,19 +24,15 @@ class SchemaValidator
             new Assert\IsMixinSchemeTypeConstraint(),
             new Assert\RemoveSchemeMixinConstraint(),
             new Assert\RemoveSchemeEnumConstraint(),
-            new Assert\RemoveSchemeFieldConstraint(), //todo: check inherit field from attached mixins
+            new Assert\RemoveSchemeFieldConstraint(),
             new Assert\EnumTypeConstraint(),
             new Assert\EnumOptionConstraint(),
-
-            //todo: additional constraints
-            //new Assert\RequireAddtionalFieldConstraint(),
-            //new Assert\FieldRestrictAttributeConstraint(),
-            //new Assert\FieldPatternConstraint(),
-            //new Assert\FieldDefaultConstraint(),
-            //new Assert\FieldEnumConstraint(),
-            //new Assert\FieldAnyOfConstraint(),
-
-            // maybe add one for each field type?
+            new Assert\RequireAddtionalFieldConstraint(),
+            new Assert\FieldRestrictAttributeConstraint(),
+            new Assert\FieldPatternConstraint(),
+            new Assert\FieldDefaultConstraint(),
+            new Assert\FieldEnumConstraint(),
+            new Assert\FieldAnyOfConstraint(),
         ];
     }
 
