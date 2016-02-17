@@ -13,35 +13,21 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->schema = new SchemaDescriptor(
-            // id
-            'pbj:acme:blog:entity:comment:1-0-0',
+        $this->schema = new SchemaDescriptor('pbj:acme:blog:entity:comment:1-0-0');
 
-            // fields
-            [
-                new FieldDescriptor('_id', [
-                    'type' => 'identifier',
-                    'required' => true
-                ]),
-                new FieldDescriptor('comment', [
-                    'type' => 'text',
-                    'required' => true
-                ]),
-                new FieldDescriptor('published_at', [
-                    'type' => 'microtime'
-                ])
-            ],
+        $this->schema->addField(new FieldDescriptor('_id', [
+            'type' => 'identifier',
+            'required' => true
+        ]));
 
-            // mixins
-            [],
+        $this->schema->addField(new FieldDescriptor('comment', [
+            'type' => 'text',
+            'required' => true
+        ]));
 
-            // languages
-            [
-                'php' => [
-                    'namespace' => 'Acme\Schemas\Blog\Entity'
-                ]
-            ]
-        );
+        $this->schema->addField(new FieldDescriptor('published_at', [
+            'type' => 'microtime'
+        ]));
     }
 
     public function tearDown()
