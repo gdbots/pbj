@@ -5,16 +5,16 @@ namespace Gdbots\Pbjc\Assert;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class SchemeIsNotMixin implements Assert
+class SchemaIsMixin implements Assert
 {
     /**
      * {@inheritdoc}
      */
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
-        if (!$a->isMixinSchema() && $b->isMixinSchema()) {
+        if ($a->isMixinSchema() && !$b->isMixinSchema()) {
             throw new ValidatorException(sprintf(
-                'The schema "%s" must not be a mixin.',
+                'The schema "%s" must be a mixin.',
                 $b
             ));
         }

@@ -21,11 +21,11 @@ class SchemaValidator
     public function __construct()
     {
         $this->constraints = [
-            new Assert\SchemeIsMixin(),
-            new Assert\SchemeIsNotMixin(),
-            new Assert\SchemeMustContainsMixin(),
-            new Assert\SchemeMustContainsEnum(),
-            new Assert\SchemeMustContainsField(),
+            new Assert\SchemaIsMixin(),
+            new Assert\SchemaIsNotMixin(),
+            new Assert\SchemaMustContainsMixin(),
+            new Assert\SchemaMustContainsEnum(),
+            new Assert\SchemaMustContainsField(),
 
             new Assert\EnumTypeEqualTo(),
             new Assert\EnumMustContainsOption(),

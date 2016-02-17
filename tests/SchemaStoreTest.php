@@ -2,7 +2,6 @@
 
 namespace Gdbots\Tests\Pbjc;
 
-use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
@@ -13,21 +12,7 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->schema = new SchemaDescriptor('pbj:acme:blog:entity:comment:1-0-0');
-
-        $this->schema->addField(new FieldDescriptor('_id', [
-            'type' => 'identifier',
-            'required' => true
-        ]));
-
-        $this->schema->addField(new FieldDescriptor('comment', [
-            'type' => 'text',
-            'required' => true
-        ]));
-
-        $this->schema->addField(new FieldDescriptor('published_at', [
-            'type' => 'microtime'
-        ]));
+        $this->schema = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
     }
 
     public function tearDown()
@@ -46,7 +31,7 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
     {
         SchemaStore::addSchema($this->schema->__toString(), $this->schema, true);
 
-        $this->assertEquals(SchemaStore::getSchemaById('pbj:acme:blog:entity:comment:1-0-0'), $this->schema);
+        $this->assertEquals(SchemaStore::getSchemaById('pbj:vendor:package:category:message:1-0-0'), $this->schema);
     }
 
     /**

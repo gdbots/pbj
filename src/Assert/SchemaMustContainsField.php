@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Assert;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class SchemeMustContainsMixin implements Assert
+class SchemaMustContainsField implements Assert
 {
     /**
      * {@inheritdoc}
@@ -13,12 +13,12 @@ class SchemeMustContainsMixin implements Assert
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
         $diff = array_diff(
-            array_keys($a->getMixins()),
-            array_keys($b->getMixins())
+            array_keys(array_merge($a->getInheritedFields(), $a->getFields())),
+            array_keys(array_merge($b->getInheritedFields(), $b->getFields()))
         );
         if (count($diff)) {
             throw new ValidatorException(sprintf(
-                'The schema "%s" must include the following mixin(s): "%s".',
+                'The schema "%s" must include the following field(s): "%s".',
                 $b,
                 implode('", "', $diff)
             ));
