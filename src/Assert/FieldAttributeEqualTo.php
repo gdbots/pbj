@@ -5,6 +5,7 @@ namespace Gdbots\Pbjc\Assert;
 use Gdbots\Common\Enum;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\ValidatorException;
+use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class FieldAttributeEqualTo implements Assert
@@ -43,8 +44,13 @@ class FieldAttributeEqualTo implements Assert
 
             if ($field->$method() != $fb[$name]->$method()) {
                 $value = $field->$method();
+
                 if ($value instanceof Enum) {
                     $value = $value->__toString();
+                }
+
+                if ($value instanceof Type) {
+                    $value = $value->getTypeName()->__toString();
                 }
 
                 throw new ValidatorException(sprintf(
