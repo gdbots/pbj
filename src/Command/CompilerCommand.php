@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Provides the console command to generate compiled files.
  */
-class GenerateCommand extends Command
+class CompilerCommand extends Command
 {
     /**
      * {@inheritdoc}
@@ -22,7 +22,7 @@ class GenerateCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('pbjc:generate')
+            ->setName('pbjc:compiler')
             ->addArgument(
                 'language',
                 InputArgument::REQUIRED,

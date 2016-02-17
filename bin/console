@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Gdbots\Pbjc\Command\GenerateCommand;
+use Gdbots\Pbjc\Command\CompilerCommand;
 use Symfony\Component\Console\Application;
 
 // if you don't want to setup permissions the proper way, just uncomment the following PHP line
@@ -16,5 +16,5 @@ set_time_limit(0);
 $loader = require __DIR__.'/../vendor/autoload.php';
 
 $app = new Application();
-$app->add(new GenerateCommand());
+$app->add(new CompilerCommand());
 $app->run();
