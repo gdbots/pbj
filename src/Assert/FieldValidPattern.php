@@ -20,9 +20,13 @@ class FieldValidPattern implements Assert
                 continue;
             }
 
-            if ($field->getPattern() != $fb[$name]->getPattern()
-                && preg_match($fb[$name]->getPattern(), null) === false
-            ) {
+            try {
+                if ($field->getPattern() != $fb[$name]->getPattern()
+                    && preg_match($fb[$name]->getPattern(), null) !== false
+                ) {
+                    // do nothing
+                }
+            } catch (\Exception $e) {
                 throw new ValidatorException(sprintf(
                     'The schema "%s" field "%s" pattern "%s" is invalid.',
                     $b,

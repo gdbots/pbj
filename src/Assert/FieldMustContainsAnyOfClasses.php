@@ -29,7 +29,7 @@ class FieldMustContainsAnyOfClasses implements Assert
 
             $aob = [];
             foreach ($fb[$name]->getAnyOf() as $schema) {
-                if (!in_array($schema->getId()->getCurie(), $aoa)) {
+                if (!in_array($schema->getId()->getCurie(), $aob)) {
                     $aob[] = $schema->getId()->getCurie();
                 }
             }
