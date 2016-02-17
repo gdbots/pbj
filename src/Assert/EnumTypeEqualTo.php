@@ -1,12 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class EnumContainsOption implements ConstraintInterface
+class EnumTypeEqualTo implements Assert
 {
     /**
      * {@inheritdoc}
@@ -15,16 +14,12 @@ class EnumContainsOption implements ConstraintInterface
     {
         foreach ($a->getEnums() as $enum) {
             if ($compare = $b->getEnum($enum->getName())) {
-                $diff = array_diff(
-                    array_keys($enum->getValues()),
-                    array_keys($compare->getValues())
-                );
-                if (count($diff)) {
+                if ($enum->getType() !== $compare->getType()) {
                     throw new ValidatorException(sprintf(
-                        'The schema "%s" enum "%s" must include the following option(s): "%s".',
+                        'The schema "%s" enum "%s" should be of type "%s".',
                         $b,
                         $enum->getName(),
-                        implode('", "', $diff)
+                        $enum->getType()
                     ));
                 }
             }

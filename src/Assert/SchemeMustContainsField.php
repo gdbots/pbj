@@ -1,12 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class SchemeContainsField implements ConstraintInterface
+class SchemeMustContainsField implements Assert
 {
     /**
      * {@inheritdoc}

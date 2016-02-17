@@ -1,12 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldPattern implements ConstraintInterface
+class FieldGreaterOrEqualThan implements Assert
 {
     /**
      * {@inheritdoc}
@@ -17,18 +16,19 @@ class FieldPattern implements ConstraintInterface
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])) {
+            if (!isset($fb[$name])
+                || $field->getType() instanceof StringType
+                || $fb[$name]->getType() instanceof StringType
+            ) {
                 continue;
             }
 
-            if ($field->getPattern() != $fb[$name]->getPattern()
-                && preg_match($fb[$name]->getPattern(), null) === false
-            ) {
+            if ($field->getMax() > $fb[$name]->getMax()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" pattern "%s" is invalid.',
+                    'The schema "%s" field "%s" max value must be greater than or equal to "%d".',
                     $b,
                     $name,
-                    $fb[$name]->getPattern()
+                    $field->getMax()
                 ));
             }
         }

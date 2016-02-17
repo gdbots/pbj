@@ -1,13 +1,13 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\SchemaDescriptor;
 
 /**
- * Interface that must be implemented by validator constraints.
+ * Interface that must be implemented by validator asserts.
  */
-interface ConstraintInterface
+interface Assert
 {
     /**
      * @param SchemaDescriptor $a

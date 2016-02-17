@@ -1,12 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldRequired implements ConstraintInterface
+class FieldSameEnum implements Assert
 {
     /**
      * {@inheritdoc}
@@ -21,19 +20,14 @@ class FieldRequired implements ConstraintInterface
                 continue;
             }
 
-            if ($field->isRequired() && !$fb[$name]->isRequired()) {
+            if ($field->getEnum() != $fb[$name]->getEnum()
+             && $field->getEnum()->getName() != $fb[$name]->getEnum()->getName()
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" must be required.',
+                    'The schema "%s" field "%s" enum must be "%s".',
                     $b,
-                    $name
-                ));
-            }
-
-            if (!$field->isRequired() && $fb[$name]->isRequired()) {
-                throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" must not be required.',
-                    $b,
-                    $name
+                    $name,
+                    $field->getEnum()->getName()
                 ));
             }
         }

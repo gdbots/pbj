@@ -1,12 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class SchemeContainsEnum implements ConstraintInterface
+class SchemeMustContainsMixin implements Assert
 {
     /**
      * {@inheritdoc}
@@ -14,12 +13,12 @@ class SchemeContainsEnum implements ConstraintInterface
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
         $diff = array_diff(
-            array_keys($a->getEnums()),
-            array_keys($b->getEnums())
+            array_keys($a->getMixins()),
+            array_keys($b->getMixins())
         );
         if (count($diff)) {
             throw new ValidatorException(sprintf(
-                'The schema "%s" must include the following enum(s): "%s".',
+                'The schema "%s" must include the following mixin(s): "%s".',
                 $b,
                 implode('", "', $diff)
             ));

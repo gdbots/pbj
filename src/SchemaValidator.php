@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Validator\Constraints as Assert;
+use Gdbots\Pbjc\Assert;
 
 /**
  * Performs strict validation of the mapping schema.
@@ -21,23 +21,30 @@ class SchemaValidator
     public function __construct()
     {
         $this->constraints = [
-            new Assert\IsMixinSchemeType(),
-            new Assert\SchemeContainsMixin(),
-            new Assert\SchemeContainsEnum(),
-            new Assert\SchemeContainsField(),
+            new Assert\SchemeIsMixin(),
+            new Assert\SchemeIsNotMixin(),
+            new Assert\SchemeMustContainsMixin(),
+            new Assert\SchemeMustContainsEnum(),
+            new Assert\SchemeMustContainsField(),
+
             new Assert\EnumTypeEqualTo(),
-            new Assert\EnumContainsOption(),
+            new Assert\EnumMustContainsOption(),
+
             new Assert\FieldAttributeEqualTo('type'),
-            new Assert\FieldRequired(),
-            new Assert\FieldContainsAnyOfClasses(),
-            new Assert\FieldPattern(),
-            new Assert\FieldLength(),
             new Assert\FieldAttributeEqualTo('rule'),
             new Assert\FieldAttributeEqualTo('format'),
             new Assert\FieldAttributeEqualTo('precision'),
             new Assert\FieldAttributeEqualTo('scale'),
             new Assert\FieldAttributeEqualTo('use_type_default'),
             new Assert\FieldAttributeEqualTo('overridable'),
+            new Assert\FieldIsRequired(),
+            new Assert\FieldValidPattern(),
+            new Assert\FieldGreaterOrEqualThan(),
+            new Assert\FieldLessOrEqualThan(),
+            new Assert\FieldMinLength(),
+            new Assert\FieldMaxLength(),
+            new Assert\FieldSameEnum(),
+            new Assert\FieldMustContainsAnyOfClasses(),
         ];
     }
 

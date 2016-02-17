@@ -1,14 +1,13 @@
 <?php
 
-namespace Gdbots\Pbjc\Validator\Constraints;
+namespace Gdbots\Pbjc\Assert;
 
 use Gdbots\Common\Enum;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldAttributeEqualTo implements ConstraintInterface
+class FieldAttributeEqualTo implements Assert
 {
     /** @var string */
     private $attribute;
