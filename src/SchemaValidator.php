@@ -38,6 +38,7 @@ class SchemaValidator
             new Assert\FieldAttributeEqualTo('use_type_default'),
             new Assert\FieldAttributeEqualTo('overridable'),
             new Assert\FieldIsRequired(),
+            new Assert\FieldIsNotRequired(),
             new Assert\FieldValidPattern(),
             new Assert\FieldGreaterOrEqualThan(),
             new Assert\FieldLessOrEqualThan(),
