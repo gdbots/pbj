@@ -184,6 +184,21 @@ The `any_of` attribute define the message id that will be used to pull the messa
 
 # Basic Usage
 
+Before compiling you have to add the directory or directories where your
+XML file exists:
+
+```php
+<?php
+
+use Gdbots\Pbjc\SchemaStore;
+
+SchemaStore::addDir('/your/schemas/path1');
+SchemaStore::addDir('/your/schemas/path2');
+//...
+```
+
+Once all directories are added, you can then start compiling:
+
 ```php
 <?php
 
@@ -197,17 +212,4 @@ $compile = new Compiler();
 $compile->run($generator);
 ```
 
-In order to compile you have to add the directory or directories where your
-XML file exists:
-
-```php
-<?php
-
-use Gdbots\Pbjc\SchemaStore;
-
-SchemaStore::addDir('/your/schemas/path1');
-SchemaStore::addDir('/your/schemas/path2');
-//...
-```
-
-> **Note:** use `SchemaStore::addDir('/your/schemas/path2', true);` to set dependent directory.
+> **Note:** use `$compile->setNamespace('vendor:package');` to restrict the namespace files to generate.
