@@ -27,11 +27,17 @@ class SchemaValidator
             new Assert\SchemeContainsField(),
             new Assert\EnumTypeEqualTo(),
             new Assert\EnumContainsOption(),
-            new Assert\FieldTypeEqualTo(),
+            new Assert\FieldAttributeEqualTo('type'),
             new Assert\FieldRequired(),
             new Assert\FieldContainsAnyOfClasses(),
             new Assert\FieldPattern(),
             new Assert\FieldLength(),
+            new Assert\FieldAttributeEqualTo('rule'),
+            new Assert\FieldAttributeEqualTo('format'),
+            new Assert\FieldAttributeEqualTo('precision'),
+            new Assert\FieldAttributeEqualTo('scale'),
+            new Assert\FieldAttributeEqualTo('use_type_default'),
+            new Assert\FieldAttributeEqualTo('overridable'),
         ];
     }
 
