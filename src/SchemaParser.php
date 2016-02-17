@@ -106,7 +106,7 @@ class SchemaParser
     /**
      * @param array $enum
      *
-     * @return EnumDescriptor
+     * @return EnumDescriptor|null
      */
     protected static function getEnumDescriptor(array $enum)
     {
@@ -122,6 +122,10 @@ class SchemaParser
                 ? intval($key['value'])
                 : (string) $key['value']
             ;
+        }
+
+        if (count($values) === 0) {
+            return;
         }
 
         return new EnumDescriptor($enum['name'], $enum['type'], $values);
