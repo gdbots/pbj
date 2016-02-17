@@ -16,10 +16,7 @@ class FieldMinLength implements Assert
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])
-                || !$field->getType() instanceof StringType
-                || !$fb[$name]->getType() instanceof StringType
-            ) {
+            if (!isset($fb[$name])) {
                 continue;
             }
 
