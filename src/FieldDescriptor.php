@@ -106,6 +106,9 @@ final class FieldDescriptor extends Descriptor
             // existing properties
             if (property_exists(get_called_class(), $classProperty)) {
                 switch ($key) {
+                    case 'name':
+                        continue 2;
+
                     case 'type':
                         $class = sprintf(
                             '\\Gdbots\\Pbjc\\Type\\%sType',
@@ -153,6 +156,8 @@ final class FieldDescriptor extends Descriptor
                 $this->setLanguage($language, $value);
             }
         }
+
+        $this->name = $name;
 
         $this->applyDefaults();
         $this->applyFieldRule();
