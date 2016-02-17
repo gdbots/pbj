@@ -6,7 +6,7 @@ use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\Validator\ConstraintInterface;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldType implements ConstraintInterface
+class FieldTypeEqualTo implements ConstraintInterface
 {
     /**
      * {@inheritdoc}
@@ -23,7 +23,7 @@ class FieldType implements ConstraintInterface
 
             if ($field->getType() != $fb[$name]->getType()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" type must be "%s".',
+                    'The schema "%s" field "%s" should be of type "%s".',
                     $b,
                     $name,
                     $field->getType()->getTypeName()

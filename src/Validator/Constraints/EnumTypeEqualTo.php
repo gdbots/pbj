@@ -17,7 +17,7 @@ class EnumTypeEqualTo implements ConstraintInterface
             if ($compare = $b->getEnum($enum->getName())) {
                 if ($enum->getType() !== $compare->getType()) {
                     throw new ValidatorException(sprintf(
-                        'The schema "%s" enum "%s" must be set with type="%s".',
+                        'The schema "%s" enum "%s" should be of type "%s".',
                         $b,
                         $enum->getName(),
                         $enum->getType()
