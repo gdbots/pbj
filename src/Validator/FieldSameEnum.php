@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldMaxLength implements Assert
+class FieldSameEnum implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,12 +20,14 @@ class FieldMaxLength implements Assert
                 continue;
             }
 
-            if ($field->getMaxLength() > $fb[$name]->getMaxLength()) {
+            if ($field->getEnum() != $fb[$name]->getEnum()
+             && $field->getEnum()->getName() != $fb[$name]->getEnum()->getName()
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" max length must be greater than or equal to "%d".',
+                    'The schema "%s" field "%s" enum must be "%s".',
                     $b,
                     $name,
-                    $field->getMaxLength()
+                    $field->getEnum()->getName()
                 ));
             }
         }

@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Assert;
+use Gdbots\Pbjc\Validator as Assert;
 
 /**
  * Performs strict validation of the mapping schema.

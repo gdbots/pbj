@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\FieldLessOrEqualThan;
+use Gdbots\Pbjc\Validator\FieldLessOrEqualThan;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 

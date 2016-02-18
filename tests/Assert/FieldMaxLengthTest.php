@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\FieldMaxLength;
+use Gdbots\Pbjc\Validator\FieldMaxLength;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 

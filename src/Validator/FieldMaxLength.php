@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldValidPattern implements Assert
+class FieldMaxLength implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,18 +20,12 @@ class FieldValidPattern implements Assert
                 continue;
             }
 
-            try {
-                if ($field->getPattern() != $fb[$name]->getPattern()
-                    && preg_match($fb[$name]->getPattern(), null) !== false
-                ) {
-                    // do nothing
-                }
-            } catch (\Exception $e) {
+            if ($field->getMaxLength() > $fb[$name]->getMaxLength()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" pattern "%s" is invalid.',
+                    'The schema "%s" field "%s" max length must be greater than or equal to "%d".',
                     $b,
                     $name,
-                    $fb[$name]->getPattern()
+                    $field->getMaxLength()
                 ));
             }
         }

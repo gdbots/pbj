@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\SchemaIsMixin;
+use Gdbots\Pbjc\Validator\SchemaIsMixin;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class SchemaIsMixinTest extends \PHPUnit_Framework_TestCase

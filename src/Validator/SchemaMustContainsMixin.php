@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Common\Enum;
 use Gdbots\Common\Util\StringUtils;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldMinLength implements Assert
+class FieldLessOrEqualThan implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,12 +20,12 @@ class FieldMinLength implements Assert
                 continue;
             }
 
-            if ($field->getMinLength() < $fb[$name]->getMinLength()) {
+            if ($field->getMin() < $fb[$name]->getMin()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" min length must be less than or equal to "%d".',
+                    'The schema "%s" field "%s" min value must be less than or equal to "%d".',
                     $b,
                     $name,
-                    $field->getMinLength()
+                    $field->getMin()
                 ));
             }
         }

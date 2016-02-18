@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldSameEnum implements Assert
+class FieldValidPattern implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,14 +20,18 @@ class FieldSameEnum implements Assert
                 continue;
             }
 
-            if ($field->getEnum() != $fb[$name]->getEnum()
-             && $field->getEnum()->getName() != $fb[$name]->getEnum()->getName()
-            ) {
+            try {
+                if ($field->getPattern() != $fb[$name]->getPattern()
+                    && preg_match($fb[$name]->getPattern(), null) !== false
+                ) {
+                    // do nothing
+                }
+            } catch (\Exception $e) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" enum must be "%s".',
+                    'The schema "%s" field "%s" pattern "%s" is invalid.',
                     $b,
                     $name,
-                    $field->getEnum()->getName()
+                    $fb[$name]->getPattern()
                 ));
             }
         }

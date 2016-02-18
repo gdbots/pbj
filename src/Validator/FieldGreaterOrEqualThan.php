@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldIsRequired implements Assert
+class FieldGreaterOrEqualThan implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,11 +20,12 @@ class FieldIsRequired implements Assert
                 continue;
             }
 
-            if ($field->isRequired() && !$fb[$name]->isRequired()) {
+            if ($field->getMax() > $fb[$name]->getMax()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" must be required.',
+                    'The schema "%s" field "%s" max value must be greater than or equal to "%d".',
                     $b,
-                    $name
+                    $name,
+                    $field->getMax()
                 ));
             }
         }

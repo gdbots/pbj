@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\EnumTypeEqualTo;
+use Gdbots\Pbjc\Validator\EnumTypeEqualTo;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 

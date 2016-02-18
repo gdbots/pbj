@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\SchemaMustContainsMixin;
+use Gdbots\Pbjc\Validator\SchemaMustContainsMixin;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class SchemaMustContainsMixinTest extends \PHPUnit_Framework_TestCase

@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\FieldMustContainsAnyOfClasses;
+use Gdbots\Pbjc\Validator\FieldMustContainsAnyOfClasses;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 

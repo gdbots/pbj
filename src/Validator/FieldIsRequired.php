@@ -1,11 +1,11 @@
 <?php
 
-namespace Gdbots\Pbjc\Assert;
+namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldIsNotRequired implements Assert
+class FieldIsRequired implements Assert
 {
     /**
      * {@inheritdoc}
@@ -20,9 +20,9 @@ class FieldIsNotRequired implements Assert
                 continue;
             }
 
-            if (!$field->isRequired() && $fb[$name]->isRequired()) {
+            if ($field->isRequired() && !$fb[$name]->isRequired()) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" must not be required.',
+                    'The schema "%s" field "%s" must be required.',
                     $b,
                     $name
                 ));

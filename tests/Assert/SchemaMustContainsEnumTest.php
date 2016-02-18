@@ -2,7 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Asset;
 
-use Gdbots\Pbjc\Assert\SchemaMustContainsEnum;
+use Gdbots\Pbjc\Validator\SchemaMustContainsEnum;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
