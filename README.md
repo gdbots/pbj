@@ -202,14 +202,8 @@ Once all directories are added, you can then start compiling:
 ```php
 <?php
 
-use Gdbots\Pbjc\Compiler;
-use Gdbots\Pbjc\Generator\PhpGenerator;
-
-$generator = new PhpGenerator();
-$generator->setOutput('/put/your/output/folder');
-
 $compile = new Compiler();
-$compile->run($generator);
+$generator = $compile->run('php', 'vendor:package', '/put/your/output/folder');
 ```
 
-> **Note:** use `$compile->setNamespace('vendor:package');` to restrict the namespace files to generate.
+> **Note:** if no output folder was provided no files will be generated.
