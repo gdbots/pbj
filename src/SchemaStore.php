@@ -52,25 +52,24 @@ class SchemaStore
      * Adds a schema. An exception will be thorwn when attempting to load
      * the same id multi times.
      *
-     * @param string                 $id
+     * @param SchemaId               $schemaId
      * @param array|SchemaDescriptor $schema
      * @param bool                   $ignoreDuplication
      *
      * @throws InvalidSchemaId on invalid id
      * @throw \RuntimeException on duplicate id
      */
-    public static function addSchema($id, $schema, $ignoreDuplication = false)
+    public static function addSchema(SchemaId $schemaId, $schema, $ignoreDuplication = false)
     {
-        if (isset(self::$schemas[$id]) && !$ignoreDuplication) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $id));
+        if (isset(self::$schemas[$schemaId->toString()]) && !$ignoreDuplication) {
+            throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $schemaId->toString()));
         }
 
-        $schemaId = SchemaId::fromString($id);
         $curie = $schemaId->getCurie();
         $curieMajor = $schemaId->getCurieWithMajorRev();
 
         // by id
-        self::$schemas[$id] = $schema;
+        self::$schemas[$schemaId->toString()] = $schema;
 
         // by curie
         if (isset(self::$schemasByCurie[$curie])) {
@@ -84,10 +83,10 @@ class SchemaStore
             $tmpSchemaId = SchemaId::fromString($tmpId);
 
             if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
-                self::$schemasByCurie[$curie] = &self::$schemas[$id];
+                self::$schemasByCurie[$curie] = &self::$schemas[$schemaId->toString()];
             }
         } else {
-            self::$schemasByCurie[$curie] = &self::$schemas[$id];
+            self::$schemasByCurie[$curie] = &self::$schemas[$schemaId->toString()];
         }
 
         // by curie major
@@ -102,10 +101,10 @@ class SchemaStore
             $tmpSchemaId = SchemaId::fromString($tmpId);
 
             if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
-                self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$id];
+                self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$schemaId->toString()];
             }
         } else {
-            self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$id];
+            self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$schemaId->toString()];
         }
 
         ksort(self::$schemas);
@@ -149,27 +148,31 @@ class SchemaStore
      * into multiple languages. the pbj-php is specifically for php
      * (assuming it's already been compiled).
      *
-     * @param string $id
-     * @param bool   $ignoreNotFound
+     * @param SchemaId|string $schemaId
+     * @param bool            $ignoreNotFound
      *
      * @return array|SchemaDescriptor|null
      */
-    public static function getSchemaById($id, $ignoreNotFound = false)
+    public static function getSchemaById($schemaId, $ignoreNotFound = false)
     {
-        if (isset(self::$schemasByCurie[$id])) {
-            return self::$schemasByCurie[$id];
+        if ($schemaId instanceof SchemaId) {
+            $schemaId = $schemaId->toString();
         }
 
-        if (isset(self::$schemasByCurieMajor[$id])) {
-            return self::$schemasByCurieMajor[$id];
+        if (isset(self::$schemasByCurie[$schemaId])) {
+            return self::$schemasByCurie[$schemaId];
         }
 
-        if (isset(self::$schemas[$id])) {
-            return self::$schemas[$id];
+        if (isset(self::$schemasByCurieMajor[$schemaId])) {
+            return self::$schemasByCurieMajor[$schemaId];
+        }
+
+        if (isset(self::$schemas[$schemaId])) {
+            return self::$schemas[$schemaId];
         }
 
         if (!$ignoreNotFound) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $id));
+            throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $schemaId));
         }
 
         return;

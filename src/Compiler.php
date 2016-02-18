@@ -62,7 +62,7 @@ final class Compiler
                 }
 
                 // ignore duplicates
-                if (SchemaStore::getSchemaById($xmlData['entity']['id'], true)) {
+                if (SchemaStore::getSchemaById($schemaId, true)) {
                     throw new \RuntimeException(sprintf(
                         'Duplicate schema "%s" in file "%s".',
                         $xmlData['entity']['id'],
@@ -70,7 +70,7 @@ final class Compiler
                     ));
                 }
 
-                SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
+                SchemaStore::addSchema($schemaId, $xmlData['entity'], true);
             }
         }
 
@@ -83,7 +83,7 @@ final class Compiler
 
             $validator->validate($schema);
 
-            SchemaStore::addSchema($schema->toString(), $schema, true);
+            SchemaStore::addSchema($schema->getId(), $schema, true);
         }
 
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {
