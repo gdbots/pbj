@@ -52,13 +52,13 @@ class SchemaStore
      * Adds a schema. An exception will be thorwn when attempting to load
      * the same id multi times.
      *
-     * @param SchemaId               $schemaId
-     * @param array|SchemaDescriptor $schema
-     * @param bool                   $ignoreDuplication
+     * @param SchemaId         $schemaId
+     * @param SchemaDescriptor $schema
+     * @param bool             $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate id
      */
-    public static function addSchema(SchemaId $schemaId, $schema, $ignoreDuplication = false)
+    public static function addSchema(SchemaId $schemaId, SchemaDescriptor $schema, $ignoreDuplication = false)
     {
         if (isset(self::$schemas[$schemaId->toString()]) && !$ignoreDuplication) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $schemaId->toString()));
@@ -74,14 +74,7 @@ class SchemaStore
         if (isset(self::$schemasByCurie[$curie])) {
             $tmpSchema = self::$schemasByCurie[$curie];
 
-            $tmpId = is_array($tmpSchema)
-                ? $tmpSchema['id']
-                : $tmpSchema->getId()->toString()
-            ;
-
-            $tmpSchemaId = SchemaId::fromString($tmpId);
-
-            if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
+            if ($schemaId->getVersion()->compare($tmpSchema->getId()->getVersion()) === 1) {
                 self::$schemasByCurie[$curie] = &self::$schemas[$schemaId->toString()];
             }
         } else {
@@ -92,14 +85,7 @@ class SchemaStore
         if (isset(self::$schemasByCurieMajor[$curieMajor])) {
             $tmpSchema = self::$schemasByCurieMajor[$curieMajor];
 
-            $tmpId = is_array($tmpSchema)
-                ? $tmpSchema['id']
-                : $tmpSchema->getId()->toString()
-            ;
-
-            $tmpSchemaId = SchemaId::fromString($tmpId);
-
-            if ($schemaId->getVersion()->compare($tmpSchemaId->getVersion()) === 1) {
+            if ($schemaId->getVersion()->compare($tmpSchema->getId()->getVersion()) === 1) {
                 self::$schemasByCurieMajor[$curieMajor] = &self::$schemas[$schemaId->toString()];
             }
         } else {
@@ -182,7 +168,7 @@ class SchemaStore
      *
      * @param SchemaId $schemaId
      *
-     * @return array|SchemaDescriptor|null
+     * @return SchemaDescriptor|null
      */
     public static function getPreviousSchema(SchemaId $schemaId)
     {
@@ -197,7 +183,6 @@ class SchemaStore
 
             if ($ids[$key] !== $id
               && ($prev = self::$schemas[$ids[$key]])
-              && $prev instanceof SchemaDescriptor
               && $prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
               && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
             ) {

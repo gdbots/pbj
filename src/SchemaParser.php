@@ -2,6 +2,8 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Exception\MissingSchemaException;
+
 /**
  * The SchemaParser is a tool to create/update schemas class descriptors.
  */
@@ -221,9 +223,8 @@ class SchemaParser
                 continue;
             }
 
-            $schema = SchemaStore::getSchemaById($curie);
-            if (is_array($schema)) {
-                $schema = $this->create($schema);
+            if (!$schema = SchemaStore::getSchemaById($curie, true)) {
+                throw new MissingSchemaException($curie);
             }
 
             $schemas[] = $schema;
@@ -244,9 +245,8 @@ class SchemaParser
             return $schema;
         }
 
-        $schema = SchemaStore::getSchemaById($curieWithMajorRev);
-        if (is_array($schema)) {
-            $schema = $this->create($schema);
+        if (!$schema = SchemaStore::getSchemaById($curieWithMajorRev, true)) {
+            throw new MissingSchemaException($curieWithMajorRev);
         }
 
         return $schema;
@@ -265,9 +265,8 @@ class SchemaParser
             return;
         }
 
-        $schema = SchemaStore::getSchemaById($curieWithMajorRev);
-        if (is_array($schema)) {
-            $schema = $this->create($schema);
+        if (!$schema = SchemaStore::getSchemaById($curieWithMajorRev, true)) {
+            throw new MissingSchemaException($curieWithMajorRev);
         }
 
         return $schema;

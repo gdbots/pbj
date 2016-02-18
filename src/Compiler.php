@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Exception\MissingSchemaException;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 
@@ -20,10 +21,12 @@ final class Compiler
      *
      * @return this
      *
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     private function loadSchemas()
     {
+        $schemas = [];
+
         // load all schema and store XML data
         foreach (SchemaStore::getDirs() as $dir) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
@@ -61,8 +64,8 @@ final class Compiler
                     ));
                 }
 
-                // ignore duplicates
-                if (SchemaStore::getSchemaById($schemaId, true)) {
+                // duplicate schema
+                if (array_key_exists($schemaId->toString(), $schemas)) {
                     throw new \RuntimeException(sprintf(
                         'Duplicate schema "%s" in file "%s".',
                         $schemaId->toString(),
@@ -70,21 +73,45 @@ final class Compiler
                     ));
                 }
 
-                SchemaStore::addSchema($schemaId, $xmlData['entity'], true);
+                $schemas[$schemaId->toString()] = $xmlData['entity'];
             }
         }
 
         $parser = new SchemaParser();
         $validator = new SchemaValidator();
 
-        foreach (SchemaStore::getSchemas() as $schema) {
+        $currentSchemaId = null;
+
+        while (count($schemas) > 0) {
+            if (!$currentSchemaId) {
+                $currentSchemaId = key($schemas);
+            }
+
+            $schema = $schemas[$currentSchemaId];
+
             if (is_array($schema)) {
-                $schema = $parser->create($schema);
+                try {
+                    $schema = $parser->create($schema);
+                } catch (MissingSchemaException $e) {
+                    $keys = preg_grep(sprintf('/^pbj:%s*/', str_replace(':v', ':', $e->getMessage())), array_keys($schemas));
+
+                    if (count($keys) === 0) {
+                        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
+                    }
+
+                    $currentSchemaId = end($keys);
+
+                    continue;
+                }
             }
 
             $validator->validate($schema);
 
-            SchemaStore::addSchema($schema->getId(), $schema, true);
+            SchemaStore::addSchema($schema->getId(), $schema);
+
+            unset($schemas[$currentSchemaId]);
+
+            $currentSchemaId = null;
         }
 
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {
@@ -100,6 +127,8 @@ final class Compiler
      * @param string|null $output
      *
      * @return \Gdbots\Pbjc\Generator\Generator
+     *
+     * @throw \InvalidArgumentException
      */
     public function run($language, $namespace, $output = null)
     {
