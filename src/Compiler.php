@@ -65,7 +65,7 @@ final class Compiler
                 if (SchemaStore::getSchemaById($schemaId, true)) {
                     throw new \RuntimeException(sprintf(
                         'Duplicate schema "%s" in file "%s".',
-                        $xmlData['entity']['id'],
+                        $schemaId->toString(),
                         $file
                     ));
                 }
