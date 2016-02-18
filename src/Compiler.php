@@ -126,11 +126,7 @@ final class Compiler
         }
 
         foreach (SchemaStore::getSchemas() as &$schema) {
-            if ($namespace !== sprintf(
-                    '%s:%s',
-                    $schema->getId()->getVendor(),
-                    $schema->getId()->getPackage()
-                )
+            if ($namespace !== $schema->getId()->getNamespace()
                 || $schema->getLanguageKey($generator->getLanguage(), 'isCompiled')
             ) {
                 continue;

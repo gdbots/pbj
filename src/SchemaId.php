@@ -197,6 +197,18 @@ final class SchemaId implements \JsonSerializable
     /**
      * @return string
      */
+    public function getNamespace()
+    {
+        return sprintf(
+            '%s:%s',
+            $this->vendor,
+            $this->package
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function getCurie()
     {
         return sprintf(
