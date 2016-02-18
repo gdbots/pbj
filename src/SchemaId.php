@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Exception\InvalidSchemaId;
+use Gdbots\Pbjc\Exception\InvalidSchemaIdException;
 
 /**
  * Schemas have fully qualified names, similar to a "urn".  This is combination of ideas from:
@@ -105,7 +105,7 @@ final class SchemaId
      *
      * @return SchemaId
      *
-     * @throws InvalidSchemaId
+     * @throws InvalidSchemaIdException
      */
     public static function fromString($schemaId)
     {
@@ -114,13 +114,13 @@ final class SchemaId
         }
 
         if (strlen($schemaId) > 150) {
-            throw new InvalidSchemaId(
+            throw new InvalidSchemaIdException(
                 sprintf('Schema id [%s] cannot be greater than 150 chars.', $schemaId)
             );
         }
 
         if (!preg_match(self::VALID_PATTERN, $schemaId, $matches)) {
-            throw new InvalidSchemaId(
+            throw new InvalidSchemaIdException(
                 sprintf('Schema id [%s] is invalid. It must match the pattern [%s].', $schemaId, self::VALID_PATTERN)
             );
         }
