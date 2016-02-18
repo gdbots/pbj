@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-final class SchemaDescriptor extends Descriptor
+final class SchemaDescriptor
 {
     /** @var SchemaId */
     private $id;
@@ -279,17 +279,5 @@ final class SchemaDescriptor extends Descriptor
     public function isLatestVersion()
     {
         return $this->isLatestVersion;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return [
-            'id' => $this->id,
-            'fields' => $this->fields,
-            'options' => $this->options,
-        ];
     }
 }

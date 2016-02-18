@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-final class EnumDescriptor extends Descriptor
+final class EnumDescriptor
 {
     /** @var string */
     private $name;
@@ -47,17 +47,5 @@ final class EnumDescriptor extends Descriptor
     public function getValues()
     {
         return $this->values ?: $this->values = [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'type' => $this->type,
-            'values' => $this->values,
-        ];
     }
 }

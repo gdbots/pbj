@@ -8,7 +8,7 @@ use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\Type;
 
-final class FieldDescriptor extends Descriptor
+final class FieldDescriptor
 {
     /**
      * Regular expression pattern for matching a valid field name.  The pattern allows
@@ -468,32 +468,5 @@ final class FieldDescriptor extends Descriptor
     public function getLanguages()
     {
         return $this->languages ?: $this->languages = [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toArray()
-    {
-        return [
-            'name' => $this->name,
-            'type' => $this->type->getTypeValue(),
-            'rule' => $this->rule->getName(),
-            'required' => $this->required,
-            'pattern' => $this->pattern,
-            'format' => $this->format->getValue(),
-            'min_length' => $this->minLength,
-            'max_length' => $this->maxLength,
-            'min' => $this->min,
-            'max' => $this->max,
-            'precision' => $this->precision,
-            'scale' => $this->scale,
-            'default' => $this->getDefault(),
-            'use_type_default' => $this->useTypeDefault,
-            'any_of' => $this->anyOf,
-            'overridable' => $this->overridable,
-            'enum' => $this->enum,
-            'languages' => $this->languages,
-        ];
     }
 }

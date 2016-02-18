@@ -46,7 +46,7 @@ use Gdbots\Pbjc\Exception\InvalidSchemaId;
  * should require a unique class since all other schema changes should not break anything.
  * @see SchemaVersion
  */
-final class SchemaId implements \JsonSerializable
+final class SchemaId
 {
     /**
      * Regular expression pattern for matching a valid SchemaId string.
@@ -136,14 +136,6 @@ final class SchemaId implements \JsonSerializable
     public function toString()
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function jsonSerialize()
-    {
-        return $this->toString();
     }
 
     /**

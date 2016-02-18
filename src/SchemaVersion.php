@@ -26,7 +26,7 @@ use Gdbots\Pbjc\Exception\InvalidSchemaVersion;
  * @link http://semver.org/
  * @link http://snowplowanalytics.com/blog/2014/05/13/introducing-schemaver-for-semantic-versioning-of-schemas/
  */
-final class SchemaVersion implements \JsonSerializable
+final class SchemaVersion
 {
     /**
      * Regular expression pattern for matching a valid SchemaVersion string.
@@ -84,14 +84,6 @@ final class SchemaVersion implements \JsonSerializable
     public function toString()
     {
         return $this->version;
-    }
-
-    /**
-     * @return string
-     */
-    public function jsonSerialize()
-    {
-        return $this->toString();
     }
 
     /**
