@@ -23,6 +23,7 @@ class SchemaValidator
             new Assert\SchemaMustContainsMixin(),
             new Assert\SchemaMustContainsEnum(),
             new Assert\SchemaMustContainsField(),
+            new Assert\SchemaMixinsMustContainsMixin(),
 
             new Assert\EnumTypeEqualTo(),
             new Assert\EnumMustContainsOption(),
