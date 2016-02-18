@@ -74,11 +74,12 @@ final class Compiler
             }
         }
 
+        $parser = new SchemaParser();
         $validator = new SchemaValidator();
 
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
-                $schema = SchemaParser::create($schema);
+                $schema = $parser->create($schema);
             }
 
             $validator->validate($schema);

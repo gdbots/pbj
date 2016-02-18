@@ -14,7 +14,7 @@ class SchemaParser
      *
      * @return SchemaDescriptor
      */
-    public static function create(array $data)
+    public function create(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
         $schema = new SchemaDescriptor($schemaId->toString());
@@ -24,7 +24,7 @@ class SchemaParser
         }
 
         // default language options
-        $options = self::getLanguageOptions($data);
+        $options = $this->getLanguageOptions($data);
         foreach ($options as $language => $option) {
             $schema->setLanguage($language, $option);
         }
@@ -32,34 +32,34 @@ class SchemaParser
         // assign enums
         if (isset($data['enums'])) {
             if (isset($data['enums']['enum'])) {
-                $enums = self::fixArray($data['enums']['enum'], 'name');
+                $enums = $this->fixArray($data['enums']['enum'], 'name');
                 foreach ($enums as $enum) {
-                    if ($enum = self::getEnumDescriptor($enum)) {
+                    if ($enum = $this->getEnumDescriptor($enum)) {
                         $schema->addEnum($enum);
                     }
                 }
             }
 
             // add enums language options
-            $options = self::getLanguageOptions($data['enums']);
+            $options = $this->getLanguageOptions($data['enums']);
             foreach ($options as $language => $option) {
                 $schema->setLanguageKey($language, 'enums', $option);
             }
         }
 
         if (isset($data['fields']['field'])) {
-            $fields = self::fixArray($data['fields']['field']);
+            $fields = $this->fixArray($data['fields']['field']);
             foreach ($fields as $field) {
-                if ($field = self::getFieldDescriptor($schema, $field)) {
+                if ($field = $this->getFieldDescriptor($schema, $field)) {
                     $schema->addField($field);
                 }
             }
         }
 
         if (isset($data['mixins']['id'])) {
-            $mixins = self::fixArray($data['mixins']['id']);
+            $mixins = $this->fixArray($data['mixins']['id']);
             foreach ($mixins as $curieWithMajorRev) {
-                if ($mixin = self::getMixin($schema, $curieWithMajorRev)) {
+                if ($mixin = $this->getMixin($schema, $curieWithMajorRev)) {
                     $schema->addMixin($mixin);
                 }
             }
@@ -74,7 +74,7 @@ class SchemaParser
      *
      * @return array
      */
-    protected static function fixArray($data, $key = null)
+    private function fixArray($data, $key = null)
     {
         if (!is_array($data) || ($key && isset($data[$key]))) {
             $data = [$data];
@@ -88,7 +88,7 @@ class SchemaParser
      *
      * @return array
      */
-    protected static function getLanguageOptions(array $data)
+    private function getLanguageOptions(array $data)
     {
         $options = [];
 
@@ -108,7 +108,7 @@ class SchemaParser
      *
      * @return EnumDescriptor|null
      */
-    protected static function getEnumDescriptor(array $enum)
+    private function getEnumDescriptor(array $enum)
     {
         // force default type to be "string"
         if (!isset($enum['type'])) {
@@ -116,7 +116,7 @@ class SchemaParser
         }
 
         $values = [];
-        $keys = self::fixArray($enum['option'], 'key');
+        $keys = $this->fixArray($enum['option'], 'key');
         foreach ($keys as $key) {
             $values[$key['key']] = $enum['type'] == 'int'
                 ? intval($key['value'])
@@ -137,7 +137,7 @@ class SchemaParser
      *
      * @return FieldDescriptor|null
      */
-    protected static function getFieldDescriptor(SchemaDescriptor $schema, array $field)
+    private function getFieldDescriptor(SchemaDescriptor $schema, array $field)
     {
         // ignore if no type was assign
         if (!isset($field['type'])) {
@@ -149,9 +149,9 @@ class SchemaParser
         }
 
         if (isset($field['any_of']['id'])) {
-            $field['any_of'] = self::getAnyOf(
+            $field['any_of'] = $this->getAnyOf(
                 $schema,
-                self::fixArray($field['any_of']['id'])
+                $this->fixArray($field['any_of']['id'])
             );
         }
         if (isset($field['any_of']) && count($field['any_of']) === 0) {
@@ -160,7 +160,7 @@ class SchemaParser
 
         if (isset($field['enum'])) {
             /** @var $providerSchema SchemaDescriptor */
-            $providerSchema = self::getEnumProvider($schema, $field['enum']['provider']);
+            $providerSchema = $this->getEnumProvider($schema, $field['enum']['provider']);
 
             /** @var $enums EnumDescriptor[] */
             $matchEnum = null;
@@ -211,7 +211,7 @@ class SchemaParser
      *
      * @return array
      */
-    protected static function getAnyOf($schema, $curies)
+    private function getAnyOf($schema, $curies)
     {
         $schemas = [];
 
@@ -223,7 +223,7 @@ class SchemaParser
 
             $schema = SchemaStore::getSchemaById($curie);
             if (is_array($schema)) {
-                $schema = self::create($schema);
+                $schema = $this->create($schema);
             }
 
             $schemas[] = $schema;
@@ -238,7 +238,7 @@ class SchemaParser
      *
      * @return SchemaDescriptor
      */
-    protected static function getEnumProvider(SchemaDescriptor $schema, $curieWithMajorRev)
+    private function getEnumProvider(SchemaDescriptor $schema, $curieWithMajorRev)
     {
         if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
             return $schema;
@@ -246,7 +246,7 @@ class SchemaParser
 
         $schema = SchemaStore::getSchemaById($curieWithMajorRev);
         if (is_array($schema)) {
-            $schema = self::create($schema);
+            $schema = $this->create($schema);
         }
 
         return $schema;
@@ -258,7 +258,7 @@ class SchemaParser
      *
      * @return SchemaDescriptor|null
      */
-    protected static function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
+    private function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
     {
         // can't add yourself to mixins
         if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
@@ -267,7 +267,7 @@ class SchemaParser
 
         $schema = SchemaStore::getSchemaById($curieWithMajorRev);
         if (is_array($schema)) {
-            $schema = self::create($schema);
+            $schema = $this->create($schema);
         }
 
         return $schema;
