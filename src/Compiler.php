@@ -136,10 +136,6 @@ final class Compiler
             $generator->setSchema($schema);
             $generator->generate();
 
-            if (count($schema->getEnums())) {
-                $generator->generateEnums();
-            }
-
             $schema->setLanguageKey($generator->getLanguage(), 'isCompiled', true);
         }
 

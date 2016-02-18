@@ -138,6 +138,10 @@ abstract class Generator
                 }
             }
         }
+
+        if (count($this->schema->getEnums())) {
+            $this->generateEnums();
+        }
     }
 
     /**
