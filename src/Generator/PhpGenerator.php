@@ -17,13 +17,13 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function setSchema(SchemaDescriptor $schema)
+    public function generate(SchemaDescriptor $schema)
     {
         foreach ($schema->getFields() as $field) {
             $this->updateFieldOptions($schema, $field);
         }
 
-        return parent::setSchema($schema);
+        return parent::generate($schema);
     }
 
     /**

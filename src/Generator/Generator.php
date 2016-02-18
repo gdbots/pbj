@@ -45,18 +45,6 @@ abstract class Generator
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return this
-     */
-    public function setSchema(SchemaDescriptor $schema)
-    {
-        $this->schema = $schema;
-
-        return $this;
-    }
-
-    /**
      * Returns list of files (with output target).
      *
      * @return array
@@ -68,9 +56,13 @@ abstract class Generator
 
     /**
      * Generates and writes files.
+     *
+     * @param SchemaDescriptor $schema
      */
-    public function generate()
+    public function generate(SchemaDescriptor $schema)
     {
+        $this->schema = $schema;
+
         foreach ($this->getTemplates() as $template => $filename) {
             $this->renderFile(
                 $template,
@@ -94,6 +86,8 @@ abstract class Generator
         if (count($this->schema->getEnums())) {
             $this->generateEnums();
         }
+
+        $this->schema = null;
     }
 
     /**
