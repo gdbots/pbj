@@ -6,14 +6,15 @@
     "excerpt_html": {
       "type": "string",
       "additionalProperties": {
-        "customType": "text"
+        "customType": "text",
+        "rule": "simple"
       }
     },
     "thumbnails": {
       "type": "string",
       "additionalProperties": {
         "customType": "string",
-        "aMap": true,
+        "rule": "map",
         "format": "url"
       }
     },
@@ -26,6 +27,7 @@
       ],
       "additionalProperties": {
         "customType": "string-enum",
+        "rule": "simple",
         "withDefault": "draft"
       }
     }
@@ -39,25 +41,29 @@
           "type": "string",
           "required": true,
           "additionalProperties": {
-            "customType": "identifier"
+            "customType": "identifier",
+            "rule": "simple"
           }
         },
         "title": {
           "type": "string",
           "additionalProperties": {
-            "customType": "string"
+            "customType": "string",
+            "rule": "simple"
           }
         },
         "excerpt": {
           "type": "string",
           "additionalProperties": {
-            "customType": "text"
+            "customType": "text",
+            "rule": "simple"
           }
         },
         "published_at": {
           "type": "number",
           "additionalProperties": {
-            "customType": "microtime"
+            "customType": "microtime",
+            "rule": "simple"
           }
         }
       },

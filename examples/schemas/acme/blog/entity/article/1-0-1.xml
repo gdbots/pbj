@@ -5,7 +5,7 @@
     <fields>
       <field name="title" type="string" pattern="/^[A-Za-z0-9_\-]+$/" max="100" />
       <field name="excerpt_html" type="text" />
-      <field name="thumbnails" type="string" format="url" rule="a-map" />
+      <field name="thumbnails" type="string" format="url" rule="map" />
       <field name="private" type="boolean" />
 
       <field name="content_type" type="string-enum">
@@ -20,7 +20,7 @@
 
       <field name="expires_at" type="timestamp" use_type_default="false" />
 
-      <field name="comments" type="message-ref" rule="a-list">
+      <field name="comments" type="message-ref" rule="list">
         <any_of>
           <id>acme:blog:entity:comment</id>
         </any_of>

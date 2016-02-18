@@ -104,17 +104,8 @@
     {% endif %}
     "additionalProperties": {
       "customType": "{{ field.type.typeName }}",
-      {% if field.isASingleValue %}
-        "aSingleValue": true,
-      {% endif %}
-      {% if field.isASet %}
-        "aSet": true,
-      {% endif %}
-      {% if field.isAList %}
-        "aList": true,
-      {% endif %}
-      {% if field.isAMap %}
-        "aMap": true,
+      {% if field.rule %}
+        "rule": "{{ field.rule }}",
       {% endif %}
       {% if field.format %}
         "format": "{{ field.format }}",

@@ -8,27 +8,30 @@
       "maximum": 100,
       "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
       "additionalProperties": {
-        "customType": "string"
+        "customType": "string",
+        "rule": "simple"
       }
     },
     "excerpt_html": {
       "type": "string",
       "additionalProperties": {
-        "customType": "text"
+        "customType": "text",
+        "rule": "simple"
       }
     },
     "thumbnails": {
       "type": "string",
       "additionalProperties": {
         "customType": "string",
-        "aMap": true,
+        "rule": "map",
         "format": "url"
       }
     },
     "private": {
       "type": "boolean",
       "additionalProperties": {
-        "customType": "boolean"
+        "customType": "boolean",
+        "rule": "simple"
       }
     },
     "content_type": {
@@ -44,6 +47,7 @@
       ],
       "additionalProperties": {
         "customType": "string-enum",
+        "rule": "simple",
         "withDefault": "unknown"
       }
     },
@@ -58,13 +62,15 @@
       ],
       "additionalProperties": {
         "customType": "string-enum",
+        "rule": "simple",
         "withDefault": "draft"
       }
     },
     "expires_at": {
       "type": "number",
       "additionalProperties": {
-        "customType": "timestamp"
+        "customType": "timestamp",
+        "rule": "simple"
       }
     },
     "comments": {
@@ -76,7 +82,7 @@
       ],
       "additionalProperties": {
         "customType": "message-ref",
-        "aList": true
+        "rule": "list"
       }
     }
   },
@@ -89,19 +95,22 @@
           "type": "string",
           "required": true,
           "additionalProperties": {
-            "customType": "identifier"
+            "customType": "identifier",
+            "rule": "simple"
           }
         },
         "comment": {
           "type": "string",
           "additionalProperties": {
-            "customType": "text"
+            "customType": "text",
+            "rule": "simple"
           }
         },
         "published_at": {
           "type": "number",
           "additionalProperties": {
-            "customType": "microtime"
+            "customType": "microtime",
+            "rule": "simple"
           }
         }
       },
@@ -118,25 +127,29 @@
           "type": "string",
           "required": true,
           "additionalProperties": {
-            "customType": "identifier"
+            "customType": "identifier",
+            "rule": "simple"
           }
         },
         "title": {
           "type": "string",
           "additionalProperties": {
-            "customType": "string"
+            "customType": "string",
+            "rule": "simple"
           }
         },
         "excerpt": {
           "type": "string",
           "additionalProperties": {
-            "customType": "text"
+            "customType": "text",
+            "rule": "simple"
           }
         },
         "published_at": {
           "type": "number",
           "additionalProperties": {
-            "customType": "microtime"
+            "customType": "microtime",
+            "rule": "simple"
           }
         }
       },

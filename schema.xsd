@@ -211,10 +211,10 @@
       ]]></xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
-      <xs:enumeration value="a-single-value" />
-      <xs:enumeration value="a-set" />
-      <xs:enumeration value="a-list" />
-      <xs:enumeration value="a-map" />
+      <xs:enumeration value="single" />
+      <xs:enumeration value="set" />
+      <xs:enumeration value="list" />
+      <xs:enumeration value="map" />
     </xs:restriction>
   </xs:simpleType>
 
