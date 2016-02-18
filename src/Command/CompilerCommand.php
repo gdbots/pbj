@@ -3,8 +3,6 @@
 namespace Gdbots\Pbjc\Command;
 
 use Gdbots\Pbjc\Compiler;
-use Gdbots\Pbjc\Generator\PhpGenerator;
-use Gdbots\Pbjc\Generator\JsonGenerator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,15 +56,16 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+
         try {
             $compile = new Compiler();
+
             $generator = $compile->run(
                 $input->getArgument('language'),
                 $input->getArgument('namespace'),
                 $input->getArgument('directory')
             );
-
-            $io = new SymfonyStyle($input, $output);
 
             if (count($generator->getFiles()) === 0) {
                 throw new \Exception('No files were generated.');
