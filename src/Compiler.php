@@ -31,24 +31,43 @@ final class Compiler
             foreach ($files as $key => $file) {
                 // invalid schema
                 if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
-                    continue;
+                    throw new \RuntimeException(sprintf(
+                        'Invalid schema xml file "%s".',
+                        $file
+                    ));
                 }
 
                 // bad \DOMDocument
                 if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-                    continue;
+                    throw new \RuntimeException('Invalid schema DOM object.');
                 }
 
-                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+                $schemaId = SchemaId::fromString($xmlData['entity']['id']);
 
-                // invalid scherma id
-                if (!$this->validateXmlSchemaId($xmlData['entity']['id'], $filePath)) {
-                    continue;
+                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+                $schemaPath = sprintf(
+                    '%s/%s/%s',
+                    $schemaId->getVendor(),
+                    $schemaId->getPackage(),
+                    $schemaId->getCategory()
+                );
+
+                // invalid schema id
+                if (strrpos($filePath, $schemaPath) === false) {
+                    throw new \RuntimeException(sprintf(
+                        'Invalid schema xml file "%s" location. Expected location "%s".',
+                        $filePath,
+                        $schemaPath
+                    ));
                 }
 
                 // ignore duplicates
                 if (SchemaStore::getSchemaById($xmlData['entity']['id'], true)) {
-                    continue;
+                    throw new \RuntimeException(sprintf(
+                        'Duplicate schema "%s" in file "%s".',
+                        $xmlData['entity']['id'],
+                        $file
+                    ));
                 }
 
                 SchemaStore::addSchema($xmlData['entity']['id'], $xmlData['entity'], true);
@@ -70,28 +89,6 @@ final class Compiler
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {
             $schema->setIsLatestVersion(true);
         }
-    }
-
-    /**
-     * Validate the the dir sctructure match the schema id.
-     *
-     * @param array $schemaId
-     * @param array $dir
-     *
-     * @return bool
-     */
-    protected function validateXmlSchemaId($schemaId, $dir)
-    {
-        $schemaId = SchemaId::fromString($schemaId);
-
-        $schemaPath = sprintf(
-            '%s/%s/%s',
-            $schemaId->getVendor(),
-            $schemaId->getPackage(),
-            $schemaId->getCategory()
-        );
-
-        return (bool) strrpos($dir, $schemaPath);
     }
 
     /**
