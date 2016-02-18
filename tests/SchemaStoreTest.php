@@ -29,7 +29,7 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
     public function testAddSchema()
     {
-        SchemaStore::addSchema($this->schema->__toString(), $this->schema, true);
+        SchemaStore::addSchema($this->schema->getId(), $this->schema, true);
 
         $this->assertEquals(SchemaStore::getSchemaById('pbj:vendor:package:category:message:1-0-0'), $this->schema);
     }
@@ -42,6 +42,6 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddDuplicateSchema()
     {
-        SchemaStore::addSchema($this->schema->__toString(), $this->schema);
+        SchemaStore::addSchema($this->schema->getId(), $this->schema);
     }
 }

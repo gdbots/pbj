@@ -53,13 +53,13 @@ class FieldAttributeEqualToTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'rule' => 'a-set'
+            'rule' => 'set'
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'rule' => 'a-list'
+            'rule' => 'list'
         ]));
 
         $asset = new FieldAttributeEqualTo('rule');
