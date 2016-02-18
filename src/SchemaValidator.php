@@ -9,9 +9,6 @@ use Gdbots\Pbjc\Validator as Assert;
  */
 class SchemaValidator
 {
-    /** @var SchemaValidator */
-    private static $instance;
-
     /** @var array */
     private $constraints = [];
 
@@ -47,18 +44,6 @@ class SchemaValidator
             new Assert\FieldSameEnum(),
             new Assert\FieldMustContainsAnyOfClasses(),
         ];
-    }
-
-    /**
-     * @return this
-     */
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
     }
 
     /**

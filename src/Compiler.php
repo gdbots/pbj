@@ -79,18 +79,14 @@ final class Compiler
             }
         }
 
+        $validator = new SchemaValidator();
+
         foreach (SchemaStore::getSchemas() as $schema) {
             if (is_array($schema)) {
                 $schema = SchemaParser::create($schema);
             }
 
-            if (count($diff = SchemaValidator::getInstance()->validate($schema)) > 0) {
-                throw new \RuntimeException(sprintf(
-                    'Schema ["%s"] is invalid. Schema has changed dramatically from previous version: [%s]',
-                    $schema->getId()->toString(),
-                    json_encode($diff)
-                ));
-            }
+            $validator->validate($schema);
 
             SchemaStore::addSchema($schema->toString(), $schema, true);
         }
