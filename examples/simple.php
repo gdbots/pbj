@@ -13,25 +13,17 @@ use Gdbots\Pbjc\Generator\JsonGenerator;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
-$generator = new PhpGenerator();
-$generator->setOutput(__DIR__.'/src');
-//$generator->disableOutput();
-
 $compile = new Compiler();
-$compile->setNamespace('acme:blog');
-$compile->run($generator);
+
+// generate PHP files
+$generator = $compile->run('php', 'acme:blog', __DIR__.'/src');
 
 foreach ($generator->getFiles() as $file => $output) {
     echo highlight_string($output, true).'<hr />';
 }
 
-$generator = new JsonGenerator();
-$generator->setOutput(__DIR__.'/json-schema');
-//$generator->disableOutput();
-
-$compile = new Compiler();
-$compile->setNamespace('acme:blog');
-$compile->run($generator);
+// generate JSON files
+$generator = $compile->run('json', 'acme:blog', __DIR__.'/json-schema');
 
 foreach ($generator->getFiles() as $file => $output) {
     $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));

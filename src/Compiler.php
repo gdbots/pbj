@@ -2,41 +2,17 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
-    /** @var string */
-    private $namespace;
-
     /**
      * Construct.
      */
     public function __construct()
     {
         $this->loadSchemas();
-    }
-
-    /**
-     * @param string $namespace
-     *
-     * @return this
-     */
-    public function setNamespace($namespace)
-    {
-        $this->namespace = $namespace;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespace()
-    {
-        return $this->namespace;
     }
 
     /**
@@ -121,12 +97,28 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param Generator $generator
+     * @param string      $language
+     * @param string      $namespace
+     * @param string|null $output
+     *
+     * @return \Gdbots\Pbjc\Generator\Generator
      */
-    public function run(Generator $generator)
+    public function run($language, $namespace, $output = null)
     {
+        if (!in_array($language, ['php', 'json'])) {
+            throw new \InvalidArgumentException(sprintf(
+                'The language "%s" is not supported. Only support "php" or "json".',
+                $language
+            ));
+        }
+
+        $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
+        $generator = new $class();
+
+        $generator->setOutput($output);
+
         foreach (SchemaStore::getSchemas() as &$schema) {
-            if ($this->getNamespace() !== sprintf(
+            if ($namespace !== sprintf(
                     '%s:%s',
                     $schema->getId()->getVendor(),
                     $schema->getId()->getPackage()
@@ -145,5 +137,7 @@ final class Compiler
 
             $schema->setLanguageKey($generator->getLanguage(), 'isCompiled', true);
         }
+
+        return $generator;
     }
 }
