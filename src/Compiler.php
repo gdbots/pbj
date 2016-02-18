@@ -112,10 +112,21 @@ final class Compiler
             ));
         }
 
+        if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The namespace "%s" must follow "vendor:package" format.',
+                $namespace
+            ));
+        }
+
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
         $generator = new $class();
 
         $generator->setOutput($output);
+
+        if (!$output) {
+            $generator->disableOutput();
+        }
 
         foreach (SchemaStore::getSchemas() as &$schema) {
             if ($namespace !== sprintf(

@@ -60,39 +60,13 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $language = $input->getArgument('language');
-        $namespace = $input->getArgument('namespace');
-        $directory = $input->getArgument('directory');
-
-        switch ($language) {
-            case 'php':
-                $generator = new PhpGenerator();
-                break;
-
-            case 'json':
-                $generator = new JsonGenerator();
-                break;
-
-            default:
-                throw new \InvalidArgumentException(sprintf(
-                    'The language "%s" is not supported. Only support "php" or "json".',
-                    $language
-                ));
-        }
-
-        if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The namespace "%s" must follow "vendor:package" format.',
-                $namespace
-            ));
-        }
-
-        $generator->setOutput($directory);
-
         try {
             $compile = new Compiler();
-            $compile->setNamespace($namespace);
-            $compile->run($generator);
+            $generator = $compile->run(
+                $input->getArgument('language'),
+                $input->getArgument('namespace'),
+                $input->getArgument('directory')
+            );
 
             $io = new SymfonyStyle($input, $output);
 
