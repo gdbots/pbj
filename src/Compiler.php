@@ -118,9 +118,7 @@ final class Compiler
         }
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
-        $generator = new $class();
-
-        $generator->setOutput($output);
+        $generator = new $class($output);
 
         if (!$output) {
             $generator->disableOutput();
@@ -128,15 +126,17 @@ final class Compiler
 
         foreach (SchemaStore::getSchemas() as &$schema) {
             if ($namespace !== $schema->getId()->getNamespace()
-                || $schema->getLanguageKey($generator->getLanguage(), 'isCompiled')
+                || $schema->getLanguageKey($language, 'isCompiled')
             ) {
                 continue;
             }
 
-            $generator->setSchema($schema);
-            $generator->generate();
+            $generator
+                ->setSchema($schema)
+                ->generate()
+            ;
 
-            $schema->setLanguageKey($generator->getLanguage(), 'isCompiled', true);
+            $schema->setLanguageKey($language, 'isCompiled', true);
         }
 
         return $generator;

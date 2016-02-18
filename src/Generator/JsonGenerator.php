@@ -23,14 +23,6 @@ class JsonGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getEnumTemplate()
-    {
-        return;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         if ($isLatest) {

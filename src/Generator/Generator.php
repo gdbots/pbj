@@ -33,65 +33,27 @@ abstract class Generator
     protected $files = [];
 
     /**
-     * @return string
+     * @param string $output
      */
-    public function getLanguage()
+    public function __construct($output = null)
     {
-        return $this->language;
+        $this->output = $output;
+
+        if (!$this->output) {
+            $this->outputDisabled = true;
+        }
     }
 
     /**
      * @param SchemaDescriptor $schema
+     *
+     * @return this
      */
     public function setSchema(SchemaDescriptor $schema)
     {
         $this->schema = $schema;
-    }
-
-    /**
-     * Sets the output folder.
-     *
-     * @return this
-     */
-    public function setOutput($output)
-    {
-        $this->output = $output;
 
         return $this;
-    }
-
-    /**
-     * Disables rendering output.
-     *
-     * @return this
-     */
-    public function disableOutput()
-    {
-        $this->outputDisabled = true;
-
-        return $this;
-    }
-
-    /**
-     * Enables rendering output.
-     *
-     * @return this
-     */
-    public function enableOutput()
-    {
-        $this->outputDisabled = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns true in case the output is disabled, false otherwise.
-     *
-     * @return bool
-     */
-    public function isOutputDisabled()
-    {
-        return $this->outputDisabled;
     }
 
     /**
@@ -103,16 +65,6 @@ abstract class Generator
     {
         return $this->files;
     }
-
-    /**
-     * @return array
-     */
-    abstract protected function getTemplates();
-
-    /**
-     * @return string
-     */
-    abstract protected function getEnumTemplate();
 
     /**
      * Generates and writes files.
@@ -145,11 +97,23 @@ abstract class Generator
     }
 
     /**
+     * @return array
+     */
+    abstract protected function getTemplates();
+
+    /**
+     * @return string
+     */
+    protected function getEnumTemplate()
+    {
+        return null;
+    }
+
+    /**
      * Generates enums files.
      */
-    public function generateEnums()
+    protected function generateEnums()
     {
-        // do nothing
     }
 
     /**

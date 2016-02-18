@@ -19,21 +19,22 @@ class PhpGenerator extends Generator
      */
     public function setSchema(SchemaDescriptor $schema)
     {
-        parent::setSchema($schema);
-
-        foreach ($this->schema->getFields() as $field) {
-            $field = $this->updateFieldOptions($field);
+        foreach ($schema->getFields() as $field) {
+            $field = $this->updateFieldOptions($schema, $field);
         }
+
+        return parent::setSchema($schema);
     }
 
     /**
      * Adds and updates field php options.
      *
-     * @param FieldDescriptor $field
+     * @param SchemaDescriptor $schema
+     * @param FieldDescriptor  $field
      *
      * @return FieldDescriptor
      */
-    protected function updateFieldOptions(FieldDescriptor $field)
+    protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
             // search for key by value
@@ -46,8 +47,8 @@ class PhpGenerator extends Generator
             }
 
             if ($enumKey) {
-                if (!$phpOptions = $this->schema->getLanguageKey('php', 'enums')) {
-                    $phpOptions = $this->schema->getLanguage('php');
+                if (!$phpOptions = $schema->getLanguageKey('php', 'enums')) {
+                    $phpOptions = $schema->getLanguage('php');
                 }
 
                 $namespace = $phpOptions['namespace'];
@@ -58,9 +59,9 @@ class PhpGenerator extends Generator
                 $className =
                     sprintf('%s\\%s%sV%d',
                         $namespace,
-                        StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
+                        StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                         StringUtils::toCamelFromSlug($enum->getName()),
-                        $this->schema->getId()->getVersion()->getMajor()
+                        $schema->getId()->getVersion()->getMajor()
                     )
                 ;
 
@@ -131,7 +132,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateEnums()
+    protected function generateEnums()
     {
         $enums = $this->schema->getEnums();
 
