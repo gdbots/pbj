@@ -56,7 +56,6 @@ class SchemaStore
      * @param array|SchemaDescriptor $schema
      * @param bool                   $ignoreDuplication
      *
-     * @throws InvalidSchemaId on invalid id
      * @throw \RuntimeException on duplicate id
      */
     public static function addSchema(SchemaId $schemaId, $schema, $ignoreDuplication = false)
@@ -196,21 +195,11 @@ class SchemaStore
                 --$key;
             }
 
-            if ($ids[$key] === $id) {
-                return;
-            }
-
-            if (!$prev = self::$schemas[$ids[$key]]) {
-                return;
-            }
-
-            // ignore lowest version
-            if (is_array($prev)) {
-                return;
-            }
-
-            if ($prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
-                && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
+            if ($ids[$key] !== $id
+              && ($prev = self::$schemas[$ids[$key]])
+              && $prev instanceof SchemaDescriptor
+              && $prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
+              && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
             ) {
                 return $prev;
             }

@@ -162,7 +162,7 @@ class SchemaParser
             /** @var $providerSchema SchemaDescriptor */
             $providerSchema = $this->getEnumProvider($schema, $field['enum']['provider']);
 
-            /** @var $enums EnumDescriptor[] */
+            /* @var $enums EnumDescriptor[] */
             $matchEnum = null;
             if ($enums = $providerSchema->getEnums()) {
                 foreach ($enums as $enum) {

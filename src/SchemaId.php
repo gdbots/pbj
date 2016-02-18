@@ -40,7 +40,7 @@ use Gdbots\Pbjc\Exception\InvalidSchemaId;
  * The fully qualified schema identifier corresponds to a json schema implementing
  * the Gdbots PBJ Json Schema.
  *
- * The schema id must be resolveable to a php class that should be able to read and write
+ * The schema id must be resolvable to a php class that should be able to read and write
  * messages with payloads that validate using the json schema.  The target class is ideally
  * major revision specific.  As in GetVideoV1, GetVideoV2, etc.  Only "major" revisions
  * should require a unique class since all other schema changes should not break anything.
@@ -55,7 +55,7 @@ final class SchemaId
      */
     const VALID_PATTERN = '/^pbj:([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$/';
 
-    /** @var arry */
+    /** @var array */
     private static $instances = [];
 
     /** @var string */

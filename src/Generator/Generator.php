@@ -81,10 +81,10 @@ abstract class Generator
 
         if ($this->schema->isLatestVersion()) {
             foreach ($this->getTemplates() as $template => $filename) {
-                if ($this->getTarget($filename, null) != $this->getTarget($filename, null, true)) {
+                if ($this->getTarget($filename) != $this->getTarget($filename)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($filename, null, true),
+                        $this->getTarget($filename),
                         $this->getParameters()
                     );
                 }
@@ -106,7 +106,7 @@ abstract class Generator
      */
     protected function getEnumTemplate()
     {
-        return null;
+        return;
     }
 
     /**
@@ -119,11 +119,10 @@ abstract class Generator
     /**
      * @param string $filename
      * @param string $directory
-     * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($filename, $directory = null, $isLatest = false)
+    protected function getTarget($filename, $directory = null)
     {
         $filename = str_replace([
             '{vendor}',

@@ -78,7 +78,7 @@ final class SchemaDescriptor
             return $this->fields[$name];
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -128,7 +128,7 @@ final class SchemaDescriptor
             return $this->enums[$name];
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -160,7 +160,7 @@ final class SchemaDescriptor
             return $this->mixins[$curieWithMajorRev];
         }
 
-        return null;
+        return;
     }
 
     /**

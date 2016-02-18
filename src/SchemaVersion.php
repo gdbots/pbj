@@ -119,7 +119,7 @@ final class SchemaVersion
     }
 
     /**
-     * Returns -1 if the curerent version is lower than the second, 0 if they are equal,
+     * Returns -1 if the current version is lower than the second, 0 if they are equal,
      * and 1 if the second is lower.
      *
      * @param SchemaVersion $version

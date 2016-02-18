@@ -20,7 +20,7 @@ class PhpGenerator extends Generator
     public function setSchema(SchemaDescriptor $schema)
     {
         foreach ($schema->getFields() as $field) {
-            $field = $this->updateFieldOptions($schema, $field);
+            $this->updateFieldOptions($schema, $field);
         }
 
         return parent::setSchema($schema);
@@ -69,8 +69,6 @@ class PhpGenerator extends Generator
                 $field->setLanguageKey('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
             }
         }
-
-        return $field;
     }
 
     /**
@@ -103,7 +101,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTarget($filename, $directory = null, $isLatest = false)
+    protected function getTarget($filename, $directory = null)
     {
         $filename = str_replace([
             '{className}',
@@ -113,7 +111,7 @@ class PhpGenerator extends Generator
 
         $directory = str_replace('\\', '/', $this->schema->getLanguageKey('php', 'namespace'));
 
-        return parent::getTarget($filename, $directory, $isLatest);
+        return parent::getTarget($filename, $directory);
     }
 
     /**

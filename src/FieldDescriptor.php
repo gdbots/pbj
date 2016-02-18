@@ -149,7 +149,7 @@ final class FieldDescriptor
                 $this->$classProperty = $value;
             }
 
-            // lanauge options
+            // language options
             elseif (substr($key, -8) == '_options') {
                 $language = substr($key, 0, -8); // remove "_options"
 
@@ -309,7 +309,7 @@ final class FieldDescriptor
     }
 
     /**
-     * @return Format
+     * @return Format|null
      */
     public function getFormat()
     {

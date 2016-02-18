@@ -47,18 +47,23 @@ class SchemaValidator
     }
 
     /**
-     * Validates a single schema against prevoius version.
+     * Validates a single schema against previous version.
      *
      * @param SchemaDescriptor $schema
+     *
+     * @throw \RuntimeException
      */
     public function validate(SchemaDescriptor $schema)
     {
         if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
-            return [];
+            return;
         }
 
-        if (is_array($prevSchema)) {
-            $prevSchema = SchemaParser::create($prevSchema);
+        if (!$prevSchema instanceof SchemaDescriptor) {
+            throw new \RuntimeException(sprintf(
+                'Un-parsed schema "%s".',
+                $prevSchema['id']
+            ));
         }
 
         foreach ($this->constraints as $constraint) {
