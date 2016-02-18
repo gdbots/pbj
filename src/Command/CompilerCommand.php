@@ -40,13 +40,11 @@ class CompilerCommand extends Command
             )
             ->setDescription('Generate compiled files')
             ->setHelp(<<<'EOF'
-The <info>%command.name%</info> command compiles and generates files for a select language:
-
-  <info>php %command.full_name%</info>
+The <info>%command.name%</info> command compiles and generates files for a select language.
 
 To generate files you would need to specify the language, namespace and output directory:
 
-  <info>php %command.full_name% php acme:blog src</info>
+  <info>pbjc php acme:blog src</info>
 
 Note that currently we only support <comment>php</comment> or <comment>json</comment> languages.
 
