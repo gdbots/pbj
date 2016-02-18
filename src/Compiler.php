@@ -22,7 +22,7 @@ final class Compiler
      *
      * @throws \InvalidArgumentException
      */
-    protected function loadSchemas()
+    private function loadSchemas()
     {
         // load all schema and store XML data
         foreach (SchemaStore::getDirs() as $dir) {
