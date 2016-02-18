@@ -1,0 +1,11 @@
+pbjc:
+  # default namespace
+  namespace: <vendor>:<package>
+
+  # default output directory
+  output: <dir>
+
+  # assign an output directory per language
+  language:
+    php: <dir>
+    json: <dir>
