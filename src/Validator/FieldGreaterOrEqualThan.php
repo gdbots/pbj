@@ -16,16 +16,19 @@ class FieldGreaterOrEqualThan implements Assert
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])) {
+            if (!isset($fb[$name]) || !$fb[$name]->getMax()) {
                 continue;
             }
 
-            if ($field->getMax() > $fb[$name]->getMax()) {
+            if (($field->getMax() && $field->getMax() > $fb[$name]->getMax())
+              || (!$field->getMax() && $field->getType()->getMax() > $fb[$name]->getMax())
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" max value must be greater than or equal to "%d".',
+                    'The schema "%s" field "%s" max value "%d" must be greater than or equal to "%d".',
                     $b,
                     $name,
-                    $field->getMax()
+                    $fb[$name]->getMax(),
+                    $field->getMax() ?: $field->getType()->getMax()
                 ));
             }
         }

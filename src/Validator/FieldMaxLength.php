@@ -16,16 +16,19 @@ class FieldMaxLength implements Assert
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])) {
+            if (!isset($fb[$name]) || !$fb[$name]->getMaxLength()) {
                 continue;
             }
 
-            if ($field->getMaxLength() > $fb[$name]->getMaxLength()) {
+            if (($field->getMaxLength() && $field->getMaxLength() > $fb[$name]->getMaxLength())
+              || (!$field->getMaxLength() && $field->getType()->getMax() > $fb[$name]->getMaxLength())
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" max length must be greater than or equal to "%d".',
+                    'The schema "%s" field "%s" max length "%d" must be greater than or equal to "%d".',
                     $b,
                     $name,
-                    $field->getMaxLength()
+                    $fb[$name]->getMaxLength(),
+                    $field->getMaxLength() ?: $field->getType()->getMax()
                 ));
             }
         }

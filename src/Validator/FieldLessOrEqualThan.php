@@ -16,16 +16,19 @@ class FieldLessOrEqualThan implements Assert
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])) {
+            if (!isset($fb[$name]) || !$fb[$name]->getMin()) {
                 continue;
             }
 
-            if ($field->getMin() < $fb[$name]->getMin()) {
+            if (($field->getMin() && $field->getMin() < $fb[$name]->getMin())
+              || (!$field->getMin() && $field->getType()->getMin() < $fb[$name]->getMin())
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" min value must be less than or equal to "%d".',
+                    'The schema "%s" field "%s" min value "%d" must be less than or equal to "%d".',
                     $b,
                     $name,
-                    $field->getMin()
+                    $fb[$name]->getMin(),
+                    $field->getMin() ?: $field->getType()->getMin()
                 ));
             }
         }

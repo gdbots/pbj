@@ -16,16 +16,19 @@ class FieldMinLength implements Assert
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         foreach ($fa as $name => $field) {
-            if (!isset($fb[$name])) {
+            if (!isset($fb[$name]) || !$fb[$name]->getMinLength()) {
                 continue;
             }
 
-            if ($field->getMinLength() < $fb[$name]->getMinLength()) {
+            if (($field->getMinLength() && $field->getMinLength() < $fb[$name]->getMinLength())
+              || (!$field->getMinLength() && $field->getType()->getMin() < $fb[$name]->getMinLength())
+            ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" min length must be less than or equal to "%d".',
+                    'The schema "%s" field "%s" min length "%d" must be less than or equal to "%d".',
                     $b,
                     $name,
-                    $field->getMinLength()
+                    $fb[$name]->getMinLength(),
+                    $field->getMinLength() ?: $field->getType()->getMin()
                 ));
             }
         }
