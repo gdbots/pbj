@@ -46,7 +46,6 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
-
     public function testValidateGreaterThan()
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');

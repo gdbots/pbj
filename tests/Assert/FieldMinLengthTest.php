@@ -46,7 +46,6 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
-
     public function testValidateLessThan()
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
