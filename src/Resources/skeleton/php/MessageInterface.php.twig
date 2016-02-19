@@ -3,11 +3,16 @@
 namespace {{ schema.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
+{% if schema.extends %}
+use {{ schema.extends.languageKey('php', 'namespace') }}\{{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }};
+{% else %}
 use Gdbots\Pbj\Message;
+{% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }} extends Message
+interface {{ className }} extends {% if schema.extends %}{{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }}{% else %}Message{% endif %}
+
 {% endblock class_definition %}
 {
 {% block class_body %}

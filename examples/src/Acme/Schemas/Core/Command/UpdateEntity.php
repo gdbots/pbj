@@ -2,8 +2,8 @@
 
 namespace Acme\Schemas\Core\Command;
 
-use Gdbots\Pbj\Message;
+use Gdbots\Schemas\Pbj\Command\CommandV1;
 
-interface UpdateEntity extends Message
+interface UpdateEntity extends CommandV1
 {
 }
