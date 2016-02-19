@@ -72,6 +72,8 @@ final class Compiler
             }
         }
 
+        ksort($schemas);
+
         $parser = new SchemaParser();
         $validator = new SchemaValidator();
 
@@ -100,9 +102,9 @@ final class Compiler
                 }
             }
 
-            $validator->validate($schema);
-
             SchemaStore::addSchema($schema->getId(), $schema);
+
+            $validator->validate($schema);
 
             unset($schemas[$currentSchemaId]);
 
