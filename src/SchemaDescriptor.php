@@ -7,6 +7,9 @@ final class SchemaDescriptor
     /** @var SchemaId */
     private $id;
 
+    /** @var SchemaDescriptor */
+    private $extends;
+
     /** @var FieldDescriptor[] */
     private $fields = [];
 
@@ -55,6 +58,26 @@ final class SchemaDescriptor
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return SchemaDescriptor
+     */
+    public function getExtends()
+    {
+        return $this->extends;
+    }
+
+    /**
+     * @param SchemaDescriptor $extends
+     *
+     * @return this
+     */
+    public function setExtends(SchemaDescriptor $extends)
+    {
+        $this->extends = $extends;
+
+        return $this;
     }
 
     /**

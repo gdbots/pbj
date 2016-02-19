@@ -15,11 +15,29 @@ class SchemaParser
      * @param array $data
      *
      * @return SchemaDescriptor
+     *
+     * @throw \InvalidArgumentException
+     * @throw MissingSchemaException
      */
     public function create(array $data)
     {
         $schemaId = SchemaId::fromString($data['id']);
         $schema = new SchemaDescriptor($schemaId->toString());
+
+        // can't extends yourself
+        if (isset($data['extends'])) {
+            if ($data['extends'] == $schema->getId()->getCurieWithMajorRev()) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Cannot extends yourself "%s".',
+                    $schema->getId()->toString()
+                ));
+            }
+            if (!$extendsSchema = SchemaStore::getSchemaById($data['extends'], true)) {
+                throw new MissingSchemaException($data['extends']);
+            }
+
+            $schema->setExtends($extendsSchema);
+        }
 
         if (isset($data['mixin']) && $data['mixin']) {
             $schema->setIsMixin(true);
