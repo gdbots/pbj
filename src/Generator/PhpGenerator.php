@@ -17,23 +17,6 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generate(SchemaDescriptor $schema)
-    {
-        foreach ($schema->getFields() as $field) {
-            $this->updateFieldOptions($schema, $field);
-        }
-
-        return parent::generate($schema);
-    }
-
-    /**
-     * Adds and updates field php options.
-     *
-     * @param SchemaDescriptor $schema
-     * @param FieldDescriptor  $field
-     *
-     * @return FieldDescriptor
-     */
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {

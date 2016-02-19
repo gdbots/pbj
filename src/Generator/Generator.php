@@ -5,6 +5,7 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\ClassExtension;
 use Gdbots\Pbjc\Twig\Extension\StringExtension;
+use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 abstract class Generator
@@ -61,6 +62,10 @@ abstract class Generator
      */
     public function generate(SchemaDescriptor $schema)
     {
+        foreach ($schema->getFields() as $field) {
+            $this->updateFieldOptions($schema, $field);
+        }
+
         $this->schema = $schema;
 
         foreach ($this->getTemplates() as $template => $filename) {
@@ -88,6 +93,18 @@ abstract class Generator
         }
 
         $this->schema = null;
+    }
+
+    /**
+     * Adds and updates field php options.
+     *
+     * @param SchemaDescriptor $schema
+     * @param FieldDescriptor  $field
+     *
+     * @return FieldDescriptor
+     */
+    protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
+    {
     }
 
     /**
