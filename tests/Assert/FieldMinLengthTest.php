@@ -31,13 +31,13 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 100
+            'min' => 100
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 100
+            'min' => 100
         ]));
 
         $asset = new FieldMinLength();
@@ -51,13 +51,13 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 100
+            'min' => 100
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 10
+            'min' => 10
         ]));
 
         $asset = new FieldMinLength();
@@ -74,13 +74,13 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 100
+            'min' => 100
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'min_length' => 1000
+            'min' => 1000
         ]));
 
         $asset = new FieldMinLength();
