@@ -78,6 +78,7 @@ final class Compiler
         $validator = new SchemaValidator();
 
         $currentSchemaId = null;
+        $exceptionSchemaId = [];
 
         while (count($schemas) > 0) {
             if (!$currentSchemaId) {
@@ -98,6 +99,12 @@ final class Compiler
 
                     $currentSchemaId = end($keys);
 
+                    if (in_array($currentSchemaId, $exceptionSchemaId)) {
+                        throw new \RuntimeException(sprintf('Recursively requesting schema with id "%s".', $currentSchemaId));
+                    }
+
+                    $exceptionSchemaId[] = $currentSchemaId;
+
                     continue;
                 }
             }
@@ -107,6 +114,10 @@ final class Compiler
             $validator->validate($schema);
 
             unset($schemas[$currentSchemaId]);
+
+            if (isset($exceptionSchemaId[$currentSchemaId])) {
+                unset($exceptionSchemaId[$currentSchemaId]);
+            }
 
             $currentSchemaId = null;
         }
