@@ -31,6 +31,7 @@
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:attribute name="id" type="pbjc:schema-identifier-regex" use="required" />
+    <xs:attribute name="extends" type="pbjc:schema-curie-major-regex" use="optional" />
     <xs:attribute name="mixin" type="xs:boolean" default="false" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>

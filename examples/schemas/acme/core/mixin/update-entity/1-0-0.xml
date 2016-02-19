@@ -1,9 +1,7 @@
 <schema-mapping xmlns="gdbots:pbjc:schema-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <!-- todo: create "extends" feature for mixin -->
-  <!-- extends="gdbots:pbj:mixin:command:v1"-->
-  <entity id="pbj:acme:core:mixin:update-entity:1-0-0" mixin="true">
+  <entity id="pbj:acme:core:mixin:update-entity:1-0-0" mixin="true" extends="gdbots:pbj:mixin:command:v1">
     <fields>
       <field name="entity" type="message" required="true">
         <any_of>
