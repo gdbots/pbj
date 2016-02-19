@@ -3,15 +3,9 @@
 namespace {{ schema.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
-use Gdbots\Pbj\MessageRef;
-use Gdbots\Pbj\Schema;
 {% endblock use_statements %}
 
 {% block class_definition %}
-/**
- * @method static Schema schema
- * @method mixed get($fieldName, $default = null)
- */
 trait {{ className }}V{{ schema.id.version.major }}Trait
 {% endblock class_definition %}
 {
