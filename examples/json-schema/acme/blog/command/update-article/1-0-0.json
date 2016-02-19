@@ -1,6 +1,6 @@
 {
-  "$schema": "http:\/\/json-schema.org\/schema#",
-  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/command\/update-article\/1-0-0.json",
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/blog/command/update-article/1-0-0.json",
   "type": "object",
   "properties": {
     "entity": {
@@ -8,7 +8,7 @@
       "required": true,
       "anyOf": [
         {
-          "$ref": "#\/definitions\/entity"
+          "$ref": "#/definitions/entity"
         }
       ],
       "additionalProperties": {
@@ -29,7 +29,7 @@
   ],
   "definitions": {
     "entity": {
-      "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-0.json",
       "type": "object",
       "properties": {
         "_id": {
@@ -70,7 +70,7 @@
       "additionalProperties": false
     },
     "command": {
-      "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/command\/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/command/1-0-0.json",
       "type": "object",
       "properties": {
         "command_id": {
@@ -109,7 +109,7 @@
       "additionalProperties": false
     },
     "updateentity": {
-      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/core\/mixin\/update-entity\/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/update-entity/1-0-0.json",
       "type": "object",
       "properties": {
         "entity": {
@@ -117,7 +117,7 @@
           "required": true,
           "anyOf": [
             {
-              "$ref": "#\/definitions\/entity"
+              "$ref": "#/definitions/entity"
             }
           ],
           "additionalProperties": {
@@ -138,7 +138,7 @@
       ],
       "definitions": {
         "entity": {
-          "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
+          "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-0.json",
           "type": "object",
           "properties": {
             "_id": {
@@ -185,10 +185,10 @@
   "additionalProperties": {
     "mixin": [
       {
-        "$ref": "#\/definitions\/command"
+        "$ref": "#/definitions/command"
       },
       {
-        "$ref": "#\/definitions\/updateentity"
+        "$ref": "#/definitions/updateentity"
       }
     ]
   }

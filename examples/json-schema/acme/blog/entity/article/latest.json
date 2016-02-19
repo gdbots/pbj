@@ -1,6 +1,6 @@
 {
-  "$schema": "http:\/\/json-schema.org\/schema#",
-  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/article\/1-0-1.json",
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/blog/entity/article/1-0-1.json",
   "type": "object",
   "properties": {
     "title": {
@@ -88,7 +88,7 @@
   },
   "definitions": {
     "entity": {
-      "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-0.json",
       "type": "object",
       "properties": {
         "_id": {
@@ -129,7 +129,7 @@
       "additionalProperties": false
     },
     "hascomments": {
-      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/mixin\/has-comments\/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/acme/acme/blog/mixin/has-comments/1-0-0.json",
       "type": "object",
       "properties": {},
       "additionalProperties": false
@@ -138,10 +138,10 @@
   "additionalProperties": {
     "mixin": [
       {
-        "$ref": "#\/definitions\/entity"
+        "$ref": "#/definitions/entity"
       },
       {
-        "$ref": "#\/definitions\/hascomments"
+        "$ref": "#/definitions/hascomments"
       }
     ]
   }

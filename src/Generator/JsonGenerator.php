@@ -44,23 +44,31 @@ class JsonGenerator extends Generator
      */
     protected function render($template, $parameters)
     {
-        return str_replace('    ', '  ', json_encode(
-            json_decode(
-                str_replace(
-                    [
-                        "\n",
-                        '  ',
-                        ',}',
-                    ],
-                    [
-                        '',
-                        '',
-                        '}',
-                    ],
-                    parent::render($template, $parameters)
-                )
-            ),
-            JSON_PRETTY_PRINT
-        ));
+        return str_replace(
+            [
+                '    ',
+                '\/'
+            ], [
+                '  ',
+                '/'
+            ], json_encode(
+                json_decode(
+                    str_replace(
+                        [
+                            "\n",
+                            '  ',
+                            ',}',
+                        ],
+                        [
+                            '',
+                            '',
+                            '}',
+                        ],
+                        parent::render($template, $parameters)
+                    )
+                ),
+                JSON_PRETTY_PRINT
+            )
+        );
     }
 }

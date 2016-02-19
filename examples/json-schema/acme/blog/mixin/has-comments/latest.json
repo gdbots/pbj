@@ -1,6 +1,6 @@
 {
-  "$schema": "http:\/\/json-schema.org\/schema#",
-  "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/mixin\/has-comments\/1-0-0.json",
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/blog/mixin/has-comments/1-0-0.json",
   "type": "object",
   "properties": {},
   "additionalProperties": false
