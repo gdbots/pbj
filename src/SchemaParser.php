@@ -141,9 +141,9 @@ class SchemaParser
      */
     private function getFieldDescriptor(SchemaDescriptor $schema, array $field)
     {
-        // ignore if no type was assign
+        // force default type to be "string"
         if (!isset($field['type'])) {
-            return;
+            $field['type'] = 'string';
         }
 
         if (!isset($field['options'])) {
@@ -212,6 +212,9 @@ class SchemaParser
      * @param array            $curies
      *
      * @return array
+     *
+     * @throw \InvalidArgumentException
+     * @throw MissingSchemaException
      */
     private function getAnyOf($schema, $curies)
     {
@@ -220,7 +223,10 @@ class SchemaParser
         foreach ($curies as $curie) {
             // can't add yourself to anyof
             if ($curie == $schema->getId()->getCurie()) {
-                continue;
+                throw new \InvalidArgumentException(sprintf(
+                    'Cannot add yourself "%s" as to anyof.',
+                    $schema->getId()->toString()
+                ));
             }
 
             if (!$schema = SchemaStore::getSchemaById($curie, true)) {
@@ -238,6 +244,8 @@ class SchemaParser
      * @param string           $curieWithMajorRev
      *
      * @return SchemaDescriptor
+     *
+     * @throw MissingSchemaException
      */
     private function getEnumProvider(SchemaDescriptor $schema, $curieWithMajorRev)
     {
@@ -257,12 +265,18 @@ class SchemaParser
      * @param string           $curieWithMajorRev
      *
      * @return SchemaDescriptor|null
+     *
+     * @throw \InvalidArgumentException
+     * @throw MissingSchemaException
      */
     private function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
     {
         // can't add yourself to mixins
         if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
-            return;
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot add yourself "%s" as to mixins.',
+                $schema->getId()->toString()
+            ));
         }
 
         if (!$schema = SchemaStore::getSchemaById($curieWithMajorRev, true)) {
