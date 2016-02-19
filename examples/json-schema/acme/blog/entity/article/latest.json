@@ -80,11 +80,6 @@
     },
     "comments": {
       "type": "object",
-      "anyOf": [
-        {
-          "$ref": "#\/definitions\/comment"
-        }
-      ],
       "additionalProperties": {
         "customType": "message-ref",
         "rule": "list"
@@ -92,87 +87,6 @@
     }
   },
   "definitions": {
-    "comment": {
-      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/comment\/1-0-0.json",
-      "type": "object",
-      "properties": {
-        "_id": {
-          "type": "string",
-          "required": true,
-          "additionalProperties": {
-            "customType": "identifier",
-            "rule": "simple"
-          }
-        },
-        "comment": {
-          "type": "string",
-          "additionalProperties": {
-            "customType": "text",
-            "rule": "simple"
-          }
-        },
-        "published_at": {
-          "type": "number",
-          "additionalProperties": {
-            "customType": "microtime",
-            "rule": "simple"
-          }
-        }
-      },
-      "required": [
-        "_id"
-      ],
-      "definitions": {
-        "entity": {
-          "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
-          "type": "object",
-          "properties": {
-            "_id": {
-              "type": "string",
-              "required": true,
-              "additionalProperties": {
-                "customType": "identifier",
-                "rule": "simple",
-                "overridable": true
-              }
-            },
-            "etag": {
-              "type": "string",
-              "pattern": "^[A-Za-z0-9_\\-]+$",
-              "additionalProperties": {
-                "customType": "string",
-                "rule": "simple"
-              }
-            },
-            "created_at": {
-              "type": "number",
-              "additionalProperties": {
-                "customType": "microtime",
-                "rule": "simple"
-              }
-            },
-            "updated_at": {
-              "type": "number",
-              "additionalProperties": {
-                "customType": "microtime",
-                "rule": "simple"
-              }
-            }
-          },
-          "required": [
-            "_id"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "additionalProperties": {
-        "mixin": [
-          {
-            "$ref": "#\/definitions\/entity"
-          }
-        ]
-      }
-    },
     "entity": {
       "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
       "type": "object",
