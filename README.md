@@ -115,7 +115,7 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 ```xml
 <field name="failed_request" type="message">
   <any_of>
-    <id>gdbots:pbj:mixin:request</id>
+    <curie>gdbots:pbj:mixin:request</curie_major>
   </any_of>
 </field>
 ```
@@ -149,7 +149,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
         <enum provider="{pbj:vendor:package:category:vmajor}" name="{string}" />
 
         <any_of>
-          <id>{pbj:vendor:package:category}</id>
+          <curie>{pbj:vendor:package:category}</curie>
           <!-- ... -->
         </any_of>
 
@@ -161,7 +161,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
     </fields>
 
     <mixins>
-      <id>{pbj:vendor:package:category:vmajor}</id>
+      <curie_major>{pbj:vendor:package:category:vmajor}</curie_major>
       <!-- ... -->
     </mixins>
 

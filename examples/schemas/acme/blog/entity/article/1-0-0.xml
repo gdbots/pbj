@@ -14,8 +14,8 @@
     </fields>
 
     <mixins>
-      <id>gdbots:pbj:mixin:entity:v1</id>
-      <id>acme:blog:mixin:has-comments:v1</id>
+      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
+      <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
     </mixins>
 
     <enums>

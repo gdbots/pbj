@@ -21,7 +21,7 @@
     </fields>
 
     <mixins>
-      <id>gdbots:pbj:mixin:entity:v1</id>
+      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
     </mixins>
 
     <php_options>

@@ -58,8 +58,8 @@ class SchemaParser
             }
         }
 
-        if (isset($data['mixins']['id'])) {
-            $mixins = $this->fixArray($data['mixins']['id']);
+        if (isset($data['mixins']['curie_major'])) {
+            $mixins = $this->fixArray($data['mixins']['curie_major']);
             foreach ($mixins as $curieWithMajorRev) {
                 if ($mixin = $this->getMixin($schema, $curieWithMajorRev)) {
                     $schema->addMixin($mixin);
@@ -150,10 +150,10 @@ class SchemaParser
             $field['options'] = [];
         }
 
-        if (isset($field['any_of']['id'])) {
+        if (isset($field['any_of']['curie'])) {
             $field['any_of'] = $this->getAnyOf(
                 $schema,
-                $this->fixArray($field['any_of']['id'])
+                $this->fixArray($field['any_of']['curie'])
             );
         }
         if (isset($field['any_of']) && count($field['any_of']) === 0) {

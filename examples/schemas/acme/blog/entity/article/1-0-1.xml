@@ -24,14 +24,14 @@
       <field name="comments" type="message-ref" rule="list">
         <!-- todo: any of not used on message ref -->
         <any_of>
-          <id>acme:blog:entity:comment</id>
+          <curie>acme:blog:entity:comment</curie>
         </any_of>
       </field>
     </fields>
 
     <mixins>
-      <id>gdbots:pbj:mixin:entity:v1</id>
-      <id>acme:blog:mixin:has-comments:v1</id>
+      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
+      <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
     </mixins>
 
     <enums>

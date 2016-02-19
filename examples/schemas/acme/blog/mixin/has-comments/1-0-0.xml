@@ -2,9 +2,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <entity id="pbj:acme:blog:mixin:has-comments:1-0-0" mixin="true">
-    <fields>
-    </fields>
-
     <php_options>
       <namespace>Acme\Schemas\Blog</namespace>
     </php_options>

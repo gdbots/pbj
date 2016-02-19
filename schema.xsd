@@ -15,7 +15,7 @@
   <xs:element name="schema-mapping">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="entity" type="pbjc:entity" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="entity" type="pbjc:entity" minOccurs="1" maxOccurs="1" />
         <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/>
       </xs:sequence>
       <xs:anyAttribute namespace="##other"/>
@@ -68,7 +68,7 @@
 
   <xs:complexType name="schema-curie-major-ids">
     <xs:sequence>
-      <xs:element name="id" type="pbjc:schema-curie-major-regex" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="curie_major" type="pbjc:schema-curie-major-regex" minOccurs="0" maxOccurs="unbounded" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />
@@ -76,7 +76,7 @@
 
   <xs:complexType name="schema-curie-ids">
     <xs:sequence>
-      <xs:element name="id" type="pbjc:schema-curie-regex" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="curie" type="pbjc:schema-curie-regex" minOccurs="0" maxOccurs="unbounded" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />

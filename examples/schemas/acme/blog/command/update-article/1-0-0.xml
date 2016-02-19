@@ -5,17 +5,15 @@
     <fields>
       <field name="entity" type="message" required="true">
         <any_of>
-          <id>gdbots:pbj:mixin:entity</id>
+          <curie>gdbots:pbj:mixin:entity</curie>
         </any_of>
       </field>
       <field name="user_id" type="identifier"/>
     </fields>
 
     <mixins>
-      <!-- todo: ensure constraint here is curie+major -->
-      <!-- todo: make names more precise, instead of id, maybe curie and/or curie_major -->
-      <id>gdbots:pbj:mixin:command:v1</id>
-      <id>acme:core:mixin:update-entity:v1</id>
+      <curie_major>gdbots:pbj:mixin:command:v1</curie_major>
+      <curie_major>acme:core:mixin:update-entity:v1</curie_major>
     </mixins>
 
     <php_options>
