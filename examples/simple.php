@@ -15,18 +15,21 @@ SchemaStore::addDir(__DIR__.'/schemas');
 
 $compile = new Compiler();
 
-// generate PHP files
-$generator = $compile->run('php', 'acme:blog', __DIR__.'/src');
+foreach (['acme:blog', 'acme:core'] as $namespace) {
 
-foreach ($generator->getFiles() as $file => $output) {
-    echo highlight_string($output, true).'<hr />';
-}
+    // generate PHP files
+    $generator = $compile->run('php', $namespace, __DIR__.'/src');
 
-// generate JSON files
-$generator = $compile->run('json', 'acme:blog', __DIR__.'/json-schema');
+    foreach ($generator->getFiles() as $file => $output) {
+        echo highlight_string($output, true).'<hr />';
+    }
 
-foreach ($generator->getFiles() as $file => $output) {
-    $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
+    // generate JSON files
+    $generator = $compile->run('json', $namespace, __DIR__.'/json-schema');
 
-    echo highlight_string($output, true).'<hr />';
+    foreach ($generator->getFiles() as $file => $output) {
+        $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
+
+        echo highlight_string($output, true).'<hr />';
+    }
 }
