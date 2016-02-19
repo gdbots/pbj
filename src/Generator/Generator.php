@@ -73,10 +73,10 @@ abstract class Generator
 
         if ($this->schema->isLatestVersion()) {
             foreach ($this->getTemplates() as $template => $filename) {
-                if ($this->getTarget($filename) != $this->getTarget($filename)) {
+                if ($this->getTarget($filename) != $this->getTarget($filename, null, true)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($filename),
+                        $this->getTarget($filename, null, true),
                         $this->getParameters()
                     );
                 }
@@ -113,10 +113,11 @@ abstract class Generator
     /**
      * @param string $filename
      * @param string $directory
+     * @param bool   $isLatest
      *
      * @return string
      */
-    protected function getTarget($filename, $directory = null)
+    protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{vendor}',

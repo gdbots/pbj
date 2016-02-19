@@ -101,7 +101,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTarget($filename, $directory = null)
+    protected function getTarget($filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{className}',
@@ -111,7 +111,7 @@ class PhpGenerator extends Generator
 
         $directory = str_replace('\\', '/', $this->schema->getLanguageKey('php', 'namespace'));
 
-        return parent::getTarget($filename, $directory);
+        return parent::getTarget($filename, $directory, $isLatest);
     }
 
     /**

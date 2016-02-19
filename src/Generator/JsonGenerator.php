@@ -23,9 +23,9 @@ class JsonGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTarget($filename, $directory = null)
+    protected function getTarget($filename, $directory = null, $isLatest = false)
     {
-        if ($this->schema->isLatestVersion()) {
+        if ($isLatest) {
             $filename = str_replace('{version}', 'latest', $filename);
         }
 
@@ -36,7 +36,7 @@ class JsonGenerator extends Generator
             $this->schema->getId()->getMessage()
         );
 
-        return parent::getTarget($filename, $directory);
+        return parent::getTarget($filename, $directory, $isLatest);
     }
 
     /**
