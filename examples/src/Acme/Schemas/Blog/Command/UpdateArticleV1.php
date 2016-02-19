@@ -6,7 +6,6 @@ use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Pbj\Enum\Format;
 use Gdbots\Schemas\Pbj\Command\CommandV1;
 use Gdbots\Schemas\Pbj\Command\CommandV1Mixin;
 use Gdbots\Schemas\Pbj\Command\CommandV1Trait;

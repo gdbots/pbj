@@ -7,12 +7,18 @@ use Gdbots\Pbj\AbstractMixin;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\SchemaId;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Pbj\Enum\Format;
+{% set format_class = false %}
 {% for field in schema.fields %}
+{% if field.format %}
+{% set format_class = true %}
+{% endif %}
 {% if field.languageKey('php', 'class_name') %}
 use {{ field.languageKey('php', 'class_name') }};
 {% endif %}
 {% endfor %}
+{% if format_class %}
+use Gdbots\Pbj\Enum\Format;
+{% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}

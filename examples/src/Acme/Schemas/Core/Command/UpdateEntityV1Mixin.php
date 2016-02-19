@@ -6,7 +6,6 @@ use Gdbots\Pbj\AbstractMixin;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\SchemaId;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Pbj\Enum\Format;
 
 final class UpdateEntityV1Mixin extends AbstractMixin
 {

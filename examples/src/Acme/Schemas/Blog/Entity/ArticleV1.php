@@ -6,7 +6,6 @@ use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Pbj\Enum\Format;
 use Acme\Schemas\Blog\Enum\ArticlePublishStatusV1;
 use Acme\Schemas\Blog\Enum\ArticleContentTypeV1;
 use Gdbots\Schemas\Pbj\Entity\EntityV1;
@@ -15,6 +14,7 @@ use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;
 use Acme\Schemas\Blog\HasCommentsV1;
 use Acme\Schemas\Blog\HasCommentsV1Mixin;
 use Acme\Schemas\Blog\HasCommentsV1Trait;
+use Gdbots\Pbj\Enum\Format;
 
 final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasCommentsV1  
 {
