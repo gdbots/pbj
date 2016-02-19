@@ -1,5 +1,7 @@
 pbjc:
-  namespace: acme:blog
+  namespace:
+    - acme:core
+    - acme:blog
   output: ./src
   language:
     json: ./json-schema

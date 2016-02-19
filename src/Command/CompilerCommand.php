@@ -93,17 +93,23 @@ EOF
             }
         }
 
+        if (!is_array($namespace)) {
+            $namespace = [$namespace];
+        }
+
         try {
             $compile = new Compiler();
 
-            $generator = $compile->run($language, $namespace, $output);
+            foreach ($namespace as $ns) {
+                $generator = $compile->run($language, $ns, $output);
 
-            if (count($generator->getFiles()) === 0) {
-                throw new \Exception('No files were generated.');
+                if (count($generator->getFiles()) === 0) {
+                    throw new \Exception('No files were generated.');
+                }
+
+                $io->title(sprintf('Generated files for "%s":', $ns));
+                $io->listing(array_keys($generator->getFiles()));
             }
-
-            $io->title('Generated files:');
-            $io->listing(array_keys($generator->getFiles()));
             $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
         } catch (\Exception $e) {
             $io->error($e->getMessage());
