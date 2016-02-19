@@ -1,4 +1,3 @@
-## todo: clarify options.  make namespace support array and possibly wildcard.
 pbjc:
   # default namespace
   # can also be an array of namespaces
