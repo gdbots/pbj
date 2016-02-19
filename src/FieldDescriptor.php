@@ -6,7 +6,7 @@ use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
-use Gdbots\Pbjc\Type\Type;
+use Gdbots\Pbjc\Type\StringType;
 
 final class FieldDescriptor
 {
@@ -21,7 +21,7 @@ final class FieldDescriptor
     /** @var string */
     private $name;
 
-    /** @var Type */
+    /** @var \Gdbots\Pbjc\Type\Type */
     private $type;
 
     /** @var FieldRule */
@@ -228,7 +228,7 @@ final class FieldDescriptor
     }
 
     /**
-     * @return Type
+     * @return \Gdbots\Pbjc\Type\Type
      */
     public function getType()
     {
@@ -285,22 +285,6 @@ final class FieldDescriptor
     }
 
     /**
-     * @return int
-     */
-    public function getMinLength()
-    {
-        return $this->minLength;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxLength()
-    {
-        return $this->maxLength;
-    }
-
-    /**
      * @return string
      */
     public function getPattern()
@@ -318,6 +302,22 @@ final class FieldDescriptor
         }
 
         return $this->format;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMinLength()
+    {
+        return $this->minLength;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxLength()
+    {
+        return $this->maxLength;
     }
 
     /**

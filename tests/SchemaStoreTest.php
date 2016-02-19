@@ -7,7 +7,7 @@ use Gdbots\Pbjc\SchemaStore;
 
 class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 {
-    /** Schema */
+    /** SchemaDescriptor */
     protected $schema;
 
     public function setUp()
