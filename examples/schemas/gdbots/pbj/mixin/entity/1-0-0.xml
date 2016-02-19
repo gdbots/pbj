@@ -16,8 +16,7 @@
         </php_options>
       </field>
 
-      <!-- todo: remove delimiters /PATTERN/, the slashes.  ref jsonschema -->
-      <field name="etag" type="string" pattern="/^[A-Za-z0-9_\-]+$/"/>
+      <field name="etag" type="string" pattern="^[A-Za-z0-9_\-]+$"/>
       <field name="created_at" type="microtime" />
       <field name="updated_at" type="microtime" />
     </fields>

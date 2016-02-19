@@ -21,8 +21,9 @@ class FieldValidPattern implements Assert
             }
 
             try {
+
                 if ($field->getPattern() != $fb[$name]->getPattern()
-                    && preg_match($fb[$name]->getPattern(), null) !== false
+                    && preg_match(sprintf('/%s/', $fb[$name]->getPattern()), null) !== false
                 ) {
                     // do nothing
                 }

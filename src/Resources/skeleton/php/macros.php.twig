@@ -22,7 +22,7 @@
               ->maxLength({{ field.maxLength }})
   {% endif %}
   {%- if field.pattern %}
-              ->pattern('{{ field.pattern }}')
+              ->pattern('/{{ field.pattern }}/')
   {% endif %}
   {%- if field.format %}
               ->format(Format::{{ field.format|upper }}())

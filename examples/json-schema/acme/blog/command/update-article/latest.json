@@ -43,7 +43,7 @@
         },
         "etag": {
           "type": "string",
-          "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
+          "pattern": "^[A-Za-z0-9_\\-]+$",
           "additionalProperties": {
             "customType": "string",
             "rule": "simple"
@@ -152,7 +152,7 @@
             },
             "etag": {
               "type": "string",
-              "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
+              "pattern": "^[A-Za-z0-9_\\-]+$",
               "additionalProperties": {
                 "customType": "string",
                 "rule": "simple"
