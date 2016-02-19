@@ -22,7 +22,6 @@
       <field name="expires_at" type="timestamp" use_type_default="false" />
 
       <field name="comments" type="message-ref" rule="list">
-        <!-- todo: any of not used on message ref -->
         <any_of>
           <curie>acme:blog:entity:comment</curie>
         </any_of>
