@@ -257,22 +257,22 @@ class SchemaParser
      */
     private function getAnyOf($schema, $curies)
     {
+        // can't add yourself to anyof
+        if (in_array($schema->getId()->getCurie(), $curies)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot add yourself "%s" as to anyof.',
+                $schema->getId()->toString()
+            ));
+        }
+
         $schemas = [];
 
         foreach ($curies as $curie) {
-            // can't add yourself to anyof
-            if ($curie == $schema->getId()->getCurie()) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Cannot add yourself "%s" as to anyof.',
-                    $schema->getId()->toString()
-                ));
-            }
-
-            if (!$schema = SchemaStore::getSchemaById($curie, true)) {
+            if (!$s = SchemaStore::getSchemaById($curie, true)) {
                 throw new MissingSchemaException($curie);
             }
 
-            $schemas[] = $schema;
+            $schemas[] = $s;
         }
 
         return $schemas;
