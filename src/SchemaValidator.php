@@ -18,6 +18,7 @@ class SchemaValidator
     public function __construct()
     {
         $this->constraints = [
+            new Assert\SchemaValidExtends(),
             new Assert\SchemaIsMixin(),
             new Assert\SchemaIsNotMixin(),
             new Assert\SchemaMustContainsMixin(),
