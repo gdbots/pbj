@@ -21,8 +21,7 @@ class SchemaParser
      */
     public function create(array $data)
     {
-        $schemaId = SchemaId::fromString($data['id']);
-        $schema = new SchemaDescriptor($schemaId->toString());
+        $schema = new SchemaDescriptor($data['id']);
 
         // can't extends yourself
         if (isset($data['extends'])) {
@@ -34,6 +33,20 @@ class SchemaParser
             }
             if (!$extendsSchema = SchemaStore::getSchemaById($data['extends'], true)) {
                 throw new MissingSchemaException($data['extends']);
+            }
+
+            // recursivly check that chain not pointing back to schema
+            $check = $extendsSchema->getExtends();
+            while ($check) {
+                if ($check->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev()) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'Invalid extends chain. Schema "%s" pointing back to you "%s".',
+                        $check->getId()->toString(),
+                        $schema->getId()->toString()
+                    ));
+                }
+
+                $check = $check->getExtends();
             }
 
             $schema->setExtends($extendsSchema);
