@@ -48,15 +48,9 @@ final class Compiler
                 $schemaId = SchemaId::fromString($xmlData['entity']['id']);
 
                 $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-                $schemaPath = sprintf(
-                    '%s/%s/%s',
-                    $schemaId->getVendor(),
-                    $schemaId->getPackage(),
-                    $schemaId->getCategory()
-                );
+                $schemaPath = str_replace(':', '/', $schemaId->getCurie());
 
                 // invalid schema id
-                /*
                 if (strrpos($filePath, $schemaPath) === false) {
                     throw new \RuntimeException(sprintf(
                         'Invalid schema xml file "%s" location. Expected location "%s".',
@@ -64,7 +58,6 @@ final class Compiler
                         $schemaPath
                     ));
                 }
-                */
 
                 // duplicate schema
                 if (array_key_exists($schemaId->toString(), $schemas)) {
