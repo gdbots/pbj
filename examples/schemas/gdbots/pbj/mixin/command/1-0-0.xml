@@ -1,0 +1,16 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:gdbots:pbj:mixin:command:1-0-0" mixin="true">
+    <fields>
+      <field name="command_id" type="time-uuid" required="true"/>
+      <field name="microtime" type="microtime"/>
+      <field name="correlator" type="message-ref" />
+      <field name="retries" type="tiny-int" />
+    </fields>
+
+    <php_options>
+      <namespace>Gdbots\Schemas\Pbj\Command</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

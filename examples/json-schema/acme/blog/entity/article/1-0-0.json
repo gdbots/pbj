@@ -3,6 +3,20 @@
   "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/article\/1-0-0.json",
   "type": "object",
   "properties": {
+    "title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string",
+        "rule": "simple"
+      }
+    },
+    "excerpt": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text",
+        "rule": "simple"
+      }
+    },
     "excerpt_html": {
       "type": "string",
       "additionalProperties": {
@@ -33,8 +47,8 @@
     }
   },
   "definitions": {
-    "generic": {
-      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/entity\/generic\/1-0-0.json",
+    "entity": {
+      "id": "http:\/\/yourdomain.com\/schemas\/gdbots\/gdbots\/pbj\/mixin\/entity\/1-0-0.json",
       "type": "object",
       "properties": {
         "_id": {
@@ -42,24 +56,26 @@
           "required": true,
           "additionalProperties": {
             "customType": "identifier",
-            "rule": "simple"
+            "rule": "simple",
+            "overridable": true
           }
         },
-        "title": {
+        "etag": {
           "type": "string",
+          "pattern": "\/^[A-Za-z0-9_\\-]+$\/",
           "additionalProperties": {
             "customType": "string",
             "rule": "simple"
           }
         },
-        "excerpt": {
-          "type": "string",
+        "created_at": {
+          "type": "number",
           "additionalProperties": {
-            "customType": "text",
+            "customType": "microtime",
             "rule": "simple"
           }
         },
-        "published_at": {
+        "updated_at": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
@@ -71,12 +87,21 @@
         "_id"
       ],
       "additionalProperties": false
+    },
+    "hascomments": {
+      "id": "http:\/\/yourdomain.com\/schemas\/acme\/acme\/blog\/mixin\/has-comments\/1-0-0.json",
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
     }
   },
   "additionalProperties": {
     "mixin": [
       {
-        "$ref": "#\/definitions\/generic"
+        "$ref": "#\/definitions\/entity"
+      },
+      {
+        "$ref": "#\/definitions\/hascomments"
       }
     ]
   }

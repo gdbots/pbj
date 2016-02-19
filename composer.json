@@ -13,7 +13,9 @@
   },
   "require-dev": {
     "composer/composer": "1.0.*@dev",
-    "phpunit/phpunit": "~4.3"
+    "phpunit/phpunit": "~4.3",
+    "gdbots/pbj": "dev-aws3 as dev-master",
+    "gdbots/schemas-php": "dev-master"
   },
   "autoload": {
     "psr-4": {

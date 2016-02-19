@@ -1,9 +1,9 @@
 <schema-mapping xmlns="gdbots:pbjc:schema-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <entity id="pbj:acme:blog:entity:generic:1-0-0" mixin="true">
+  <entity id="pbj:gdbots:pbj:mixin:entity:1-0-0" mixin="true">
     <fields>
-      <field name="_id" type="identifier" required="true">
+      <field name="_id" type="identifier" required="true" overridable="true">
         <php_options>
           <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
           <default>
@@ -16,13 +16,14 @@
         </php_options>
       </field>
 
-      <field name="title" type="string" />
-      <field name="excerpt" type="text" />
-      <field name="published_at" type="microtime" />
+      <!-- todo: remove delimiters /PATTERN/, the slashes.  ref jsonschema -->
+      <field name="etag" type="string" pattern="/^[A-Za-z0-9_\-]+$/"/>
+      <field name="created_at" type="microtime" />
+      <field name="updated_at" type="microtime" />
     </fields>
 
     <php_options>
-      <namespace>Acme\Schemas\Blog\Entity</namespace>
+      <namespace>Gdbots\Schemas\Pbj\Entity</namespace>
     </php_options>
   </entity>
 </schema-mapping>

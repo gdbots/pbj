@@ -1,3 +1,4 @@
+## todo: clarify options.  make namespace support array and possibly wildcard.
 pbjc:
   # default namespace
   namespace: <vendor>:<package>

@@ -1,0 +1,21 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <!-- todo: create "extends" feature for mixin -->
+  <!-- extends="gdbots:pbj:mixin:command:v1"-->
+  <entity id="pbj:acme:core:mixin:update-entity:1-0-0" mixin="true">
+    <fields>
+      <field name="entity" type="message" required="true">
+        <any_of>
+          <!-- todo: ensure constraint here is curie only -->
+          <id>gdbots:pbj:mixin:entity</id>
+        </any_of>
+      </field>
+      <field name="user_id" type="identifier"/>
+    </fields>
+
+    <php_options>
+      <namespace>Acme\Schemas\Core\Command</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

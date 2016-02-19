@@ -3,24 +3,26 @@
 
   <entity id="pbj:acme:blog:entity:article:1-0-1">
     <fields>
-      <field name="title" type="string" pattern="/^[A-Za-z0-9_\-]+$/" max="100" />
+      <field name="title" type="string" />
+      <field name="excerpt" type="text" />
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="map" />
       <field name="private" type="boolean" />
-
-      <field name="content_type" type="string-enum">
-        <default>unknown</default>
-        <enum provider="acme:blog:entity:article:v1" name="content-type" />
-      </field>
 
       <field name="publish_status" type="string-enum">
         <default>draft</default>
         <enum provider="acme:blog:entity:article:v1" name="publish-status" />
       </field>
 
+      <field name="content_type" type="string-enum">
+        <default>unknown</default>
+        <enum provider="acme:blog:entity:article:v1" name="content-type" />
+      </field>
+
       <field name="expires_at" type="timestamp" use_type_default="false" />
 
       <field name="comments" type="message-ref" rule="list">
+        <!-- todo: any of not used on message ref -->
         <any_of>
           <id>acme:blog:entity:comment</id>
         </any_of>
@@ -28,7 +30,8 @@
     </fields>
 
     <mixins>
-      <id>acme:blog:entity:generic</id>
+      <id>gdbots:pbj:mixin:entity:v1</id>
+      <id>acme:blog:mixin:has-comments:v1</id>
     </mixins>
 
     <enums>
