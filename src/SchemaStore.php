@@ -192,4 +192,24 @@ class SchemaStore
 
         return;
     }
+
+    /**
+     * Returns the previous major version of schema by id.
+     *
+     * @param SchemaId $schemaId
+     *
+     * @return bool
+     */
+    public static function hasOtherSchemaMajorRev(SchemaId $schemaId)
+    {
+        $curieMajor = $schemaId->getCurieWithMajorRev();
+
+        if (isset(self::$schemasByCurieMajor[$curieMajor])) {
+            $found = array_keys(self::$schemasByCurieMajor);
+
+            return count($found) > 1;
+        }
+
+        return false;
+    }
 }

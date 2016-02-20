@@ -5,6 +5,7 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\SchemaStore;
 
 class PhpGenerator extends Generator
 {
@@ -106,6 +107,7 @@ class PhpGenerator extends Generator
             parent::getParameters(),
             [
                 'className' => StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
+                'hasOtherMajorRev' => SchemaStore::hasOtherSchemaMajorRev($this->schema->getId())
             ]
         );
     }

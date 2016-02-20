@@ -3,10 +3,14 @@
 namespace {{ schema.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
+{% if hasOtherMajorRev and schema.extends %}
+use {{ schema.extends.languageKey('php', 'namespace') }}\{{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }};
+{% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }}V{{ schema.id.version.major }} extends {{ className }}
+interface {{ className }}V{{ schema.id.version.major }} extends {{ className }}{% if hasOtherMajorRev and schema.extends %}, {{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }}{% endif %}
+
 {% endblock class_definition %}
 {
 {% block class_body %}
