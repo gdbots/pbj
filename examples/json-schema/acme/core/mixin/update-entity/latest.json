@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema#",
-  "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/update-entity/1-0-0.json",
+  "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/update-entity/2-0-0.json",
   "type": "object",
   "properties": {
     "entity": {
