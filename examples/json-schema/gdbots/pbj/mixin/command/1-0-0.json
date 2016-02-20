@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/command/1-0-0.json",
+  "type": "object",
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "required": true,
+      "additionalProperties": {
+        "customType": "time-uuid",
+        "rule": "simple"
+      }
+    },
+    "microtime": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "microtime",
+        "rule": "simple"
+      }
+    },
+    "correlator": {
+      "type": "object",
+      "additionalProperties": {
+        "customType": "message-ref",
+        "rule": "simple"
+      }
+    },
+    "retries": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "tiny-int",
+        "rule": "simple"
+      }
+    }
+  },
+  "required": [
+    "command_id"
+  ],
+  "additionalProperties": false
+}

@@ -15,7 +15,7 @@ SchemaStore::addDir(__DIR__.'/schemas');
 
 $compile = new Compiler();
 
-foreach (['acme:blog', 'acme:core'] as $namespace) {
+foreach (['acme:blog', 'acme:core', 'gdbots:pbj'] as $namespace) {
 
     // generate PHP files
     $generator = $compile->run('php', $namespace, __DIR__.'/src');

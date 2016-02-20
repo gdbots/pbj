@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/update-entity/2-0-0.json",
+  "type": "object",
+  "properties": {
+    "entity": {
+      "type": "object",
+      "required": true,
+      "anyOf": [
+        {
+          "$ref": "#/definitions/entity"
+        }
+      ],
+      "additionalProperties": {
+        "customType": "message",
+        "rule": "simple"
+      }
+    },
+    "user_id": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "identifier",
+        "rule": "simple"
+      }
+    }
+  },
+  "required": [
+    "entity"
+  ],
+  "definitions": {
+    "entity": {
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-0.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier",
+            "rule": "simple",
+            "overridable": true
+          }
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_\\-]+$",
+          "additionalProperties": {
+            "customType": "string",
+            "rule": "simple"
+          }
+        },
+        "created_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "simple"
+          }
+        },
+        "updated_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "simple"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
