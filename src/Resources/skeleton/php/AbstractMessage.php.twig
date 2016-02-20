@@ -17,9 +17,9 @@ use {{ field.languageKey('php', 'class_name') }};
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
-use {{ mixin.languageKey('php', 'namespace') }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }};
-use {{ mixin.languageKey('php', 'namespace') }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin;
-use {{ mixin.languageKey('php', 'namespace') }}\{{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
+use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }};
+use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }}Mixin;
+use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }}Trait;
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;
@@ -27,7 +27,7 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ className }}V{{ schema.id.version.major }} extends AbstractMessage implements {{ className }}{% for mixin in schema.mixins %}, {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}{% endfor %}
+final class {{ getClassName(schema, true) }} extends AbstractMessage implements {{ getClassName(schema) }}{% for mixin in schema.mixins %}, {{ getClassName(mixin, true) }}{% endfor %}
 {% if schema.mixins|length %}
   {# note: linebreak for cleaner print #}
 

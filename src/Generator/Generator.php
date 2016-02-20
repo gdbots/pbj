@@ -3,7 +3,7 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Pbjc\Twig\Extension\ClassExtension;
+use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
 use Gdbots\Pbjc\Twig\Extension\StringExtension;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
@@ -206,7 +206,7 @@ abstract class Generator
             'autoescape' => false,
         ));
 
-        $twig->addExtension(new ClassExtension());
+        $twig->addExtension(new SchemaExtension());
         $twig->addExtension(new StringExtension());
 
         return $twig;

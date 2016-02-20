@@ -6,7 +6,7 @@ namespace {{ schema.languageKey('php', 'namespace') }};
 {% endblock use_statements %}
 
 {% block class_definition %}
-trait {{ className }}V{{ schema.id.version.major }}Trait
+trait {{ getClassName(schema, true) }}Trait
 {% endblock class_definition %}
 {
 {% block class_body %}

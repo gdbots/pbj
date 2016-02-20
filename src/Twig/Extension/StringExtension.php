@@ -9,11 +9,31 @@ class StringExtension extends \Twig_Extension
     /**
      * {@inheritdoc}
      */
+    public function getFunctions()
+    {
+        return array(
+            new \Twig_SimpleFunction('getClass', array($this, 'getClass')),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFilters()
     {
         return array(
             new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
         );
+    }
+
+    /**
+     * @param mixed $object
+     *
+     * @return string
+     */
+    public function getClass($object)
+    {
+        return (new \ReflectionClass($object))->getShortName();
     }
 
     /**

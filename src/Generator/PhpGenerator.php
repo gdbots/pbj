@@ -5,7 +5,6 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\SchemaStore;
 
 class PhpGenerator extends Generator
 {
@@ -101,20 +100,6 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getParameters()
-    {
-        return array_merge(
-            parent::getParameters(),
-            [
-                'className' => StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
-                'hasOtherMajorRev' => SchemaStore::hasOtherSchemaMajorRev($this->schema->getId())
-            ]
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function generateEnums()
     {
         $enums = $this->schema->getEnums();
@@ -151,9 +136,9 @@ class PhpGenerator extends Generator
                 $filename,
                 array_merge($this->getParameters(), [
                     'namespace' => $namespace,
-                    'className' => $className,
+                    'enumClassName' => $className,
                     'options' => $enum->getValues(),
-                    'is_int' => is_int(current($enum->getValues())),
+                    'isInt' => is_int(current($enum->getValues())),
                 ])
             );
         }

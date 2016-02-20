@@ -4,14 +4,14 @@ namespace {{ schema.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
 {% if schema.extends %}
-use {{ schema.extends.languageKey('php', 'namespace') }}\{{ schema.extends.id.message|toCamelFromSlug }}{% if not hasOtherMajorRev %}V{{ schema.extends.id.version.major }}{% endif %};
+use {{ schema.extends.languageKey('php', 'namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends) }}{% endif %};
 {% else %}
 use Gdbots\Pbj\Message;
 {% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }} extends {% if schema.extends %}{{ schema.extends.id.message|toCamelFromSlug }}{% if not hasOtherMajorRev %}V{{ schema.extends.id.version.major }}{% endif %}{% else %}Message{% endif %}
+interface {{ getClassName(schema) }} extends {% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends) }}{% endif %}{% else %}Message{% endif %}
 
 {% endblock class_definition %}
 {

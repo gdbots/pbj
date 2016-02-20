@@ -1,5 +1,5 @@
 {%- macro draw_field(field) %}
-  Fb::create('{{ field.name }}', T\{{ class(field.type) }}::create())
+  Fb::create('{{ field.name }}', T\{{ getClass(field.type) }}::create())
   {% if field.isASingleValue %}
               ->asASingleValue()
   {% endif %}
