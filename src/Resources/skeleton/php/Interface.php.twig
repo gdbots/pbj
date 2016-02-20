@@ -9,7 +9,7 @@ use {{ schema.extends.languageKey('php', 'namespace') }}\{{ schema.extends.id.me
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }}V{{ schema.id.version.major }} extends {{ className }}{% if hasOtherMajorRev and schema.extends %}, {{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }}{% endif %}
+interface {{ className }}V{{ schema.id.version.major }} extends {% if hasOtherMajorRev and schema.extends %}{{ schema.extends.id.message|toCamelFromSlug }}V{{ schema.extends.id.version.major }}{% else %}{{ className }}{% endif %}
 
 {% endblock class_definition %}
 {
