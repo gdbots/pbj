@@ -5,6 +5,7 @@ namespace Gdbots\Pbjc;
 use Gdbots\Pbjc\Exception\MissingSchemaException;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 final class Compiler
 {
@@ -53,12 +54,12 @@ final class Compiler
     /**
      * Reads and validate XML file, and add all $enums.
      *
-     * @param string $file
-     * @param array  $enums
+     * @param SplFileInfo $file
+     * @param array       $enums
      *
      * @throw \RuntimeException
      */
-    private function addEnumXml($file, &$enums)
+    private function addEnumXml(SplFileInfo $file, &$enums)
     {
         // invalid schema
         if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../enums.xsd')) {
@@ -116,12 +117,12 @@ final class Compiler
     /**
      * Reads and validate XML file, and add schema to $schemas.
      *
-     * @param string $file
-     * @param array  $schemas
+     * @param SplFileInfo $file
+     * @param array       $schemas
      *
      * @throw \RuntimeException
      */
-    private function addSchemaXml($file, &$schemas)
+    private function addSchemaXml(SplFileInfo $file, &$schemas)
     {
         // invalid schema
         if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
