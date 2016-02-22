@@ -2,6 +2,8 @@
 
 namespace Gdbots\Pbjc\Generator;
 
+use Gdbots\Pbjc\SchemaDescriptor;
+
 class JsonGenerator extends Generator
 {
     /** @var string */
