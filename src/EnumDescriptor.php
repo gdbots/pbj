@@ -66,4 +66,14 @@ final class EnumDescriptor
     {
         return $this->values ?: $this->values = [];
     }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasValue($key)
+    {
+        return isset($this->values[$key]);
+    }
 }

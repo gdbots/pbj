@@ -21,31 +21,25 @@ class PhpGenerator extends Generator
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
-            // search for key by value
-            $enumKey = null;
-            foreach ($enum->getValues() as $key => $value) {
-                if (strtolower($value) == strtolower($field->getDefault())) {
-                    $enumKey = $key;
-                    break;
-                }
+            $namespace = $enum->getLanguageKey('php', 'namespace');
+            if (substr($namespace, 0, 1) == '\\') {
+                $namespace = substr($namespace, 1);
             }
 
-            if ($enumKey) {
-                $namespace = $enum->getLanguageKey('php', 'namespace');
-                if (substr($namespace, 0, 1) == '\\') {
-                    $namespace = substr($namespace, 1);
-                }
+            $className =
+                sprintf('%s\\%s',
+                    $namespace,
+                    StringUtils::toCamelFromSlug($enum->getId()->getName())
+                )
+            ;
 
-                $className =
-                    sprintf('%s\\%s',
-                        $namespace,
-                        StringUtils::toCamelFromSlug($enum->getId()->getName())
-                    )
-                ;
+            $enumKey = $enum->hasValue(strtoupper($field->getDefault()))
+                ? $field->getDefault()
+                : 'unknown'
+            ;
 
-                $field->setLanguageKey('php', 'class_name', $className);
-                $field->setLanguageKey('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
-            }
+            $field->setLanguageKey('php', 'class_name', $className);
+            $field->setLanguageKey('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
         }
     }
 
