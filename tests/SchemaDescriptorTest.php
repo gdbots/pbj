@@ -2,7 +2,6 @@
 
 namespace Gdbots\Tests\Pbjc;
 
-use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
@@ -21,7 +20,6 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
         $this->schema->addField(new FieldDescriptor('last_name', [
             'type' => 'string',
         ]));
-        $this->schema->addEnum(new EnumDescriptor('number', 'int', [1, 2, 3, 4]));
 
         $mixin = new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0');
         $mixin->addField(new FieldDescriptor('created_at', [
@@ -58,16 +56,6 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
     public function testGetInheritedFields()
     {
         $this->assertEquals(['created_at'], array_keys($this->schema->getInheritedFields()));
-    }
-
-    public function testGetEnum()
-    {
-        $this->assertEquals('number', $this->schema->getEnum('number')->getName());
-    }
-
-    public function testGetEnums()
-    {
-        $this->assertCount(1, $this->schema->getEnums());
     }
 
     public function testGetMixin()

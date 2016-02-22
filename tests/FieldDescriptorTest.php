@@ -24,7 +24,7 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
             'any_of' => [
                 new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0'),
             ],
-            'enum' => new EnumDescriptor('number', 'int', [1, 2, 3, 4]),
+            'enum' => new EnumDescriptor('vendor:package:number', 'int', [1, 2, 3, 4]),
             'php_options' => [
                 'namespace' => 'Acme\Blog\Entity',
             ],
@@ -143,7 +143,7 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
     public function testGetEnum()
     {
         $this->assertInstanceOf('Gdbots\Pbjc\EnumDescriptor', $this->field->getEnum());
-        $this->assertEquals('number', $this->field->getEnum()->getName());
+        $this->assertEquals('vendor:package:number', $this->field->getEnum()->toString());
     }
 
     public function testSetLanguage()

@@ -21,13 +21,13 @@ class FieldSameEnum implements Assert
             }
 
             if ($field->getEnum() != $fb[$name]->getEnum()
-             && $field->getEnum()->getName() != $fb[$name]->getEnum()->getName()
+             && $field->getEnum()->toString() != $fb[$name]->getEnum()->toString()
             ) {
                 throw new ValidatorException(sprintf(
                     'The schema "%s" field "%s" enum must be "%s".',
                     $b,
                     $name,
-                    $field->getEnum()->getName()
+                    $field->getEnum()->toString()
                 ));
             }
         }

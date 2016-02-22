@@ -11,7 +11,7 @@ class EnumDescriptorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->enum = new EnumDescriptor('number', 'int', [1, 2, 3, 4]);
+        $this->enum = new EnumDescriptor('vendor:package:number', 'int', [1, 2, 3, 4]);
     }
 
     public function tearDown()
@@ -19,9 +19,9 @@ class EnumDescriptorTest extends \PHPUnit_Framework_TestCase
         $this->enum = null;
     }
 
-    public function testGetName()
+    public function testGetId()
     {
-        $this->assertEquals('number', $this->enum->getName());
+        $this->assertEquals('vendor:package:number', $this->enum->getId()->toString());
     }
 
     public function testGetType()
