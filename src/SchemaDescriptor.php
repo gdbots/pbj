@@ -4,6 +4,8 @@ namespace Gdbots\Pbjc;
 
 final class SchemaDescriptor
 {
+    use LanguageDescriptorTrait;
+
     /** @var SchemaId */
     private $id;
 
@@ -13,14 +15,8 @@ final class SchemaDescriptor
     /** @var FieldDescriptor[] */
     private $fields = [];
 
-    /** @var EnumDescriptor[] */
-    private $enums = [];
-
     /** @var SchemaDescriptor[] */
     private $mixins = [];
-
-    /** @var array */
-    private $languages = [];
 
     /** @var bool */
     private $isMixin = false;
@@ -131,38 +127,6 @@ final class SchemaDescriptor
     }
 
     /**
-     * @param EnumDescriptor $enum
-     */
-    public function addEnum(EnumDescriptor $enum)
-    {
-        if (!isset($this->enums[$enum->getName()])) {
-            $this->enums[$enum->getName()] = $enum;
-        }
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return EnumDescriptor|null
-     */
-    public function getEnum($name)
-    {
-        if (isset($this->enums[$name])) {
-            return $this->enums[$name];
-        }
-
-        return;
-    }
-
-    /**
-     * @return EnumDescriptor[]
-     */
-    public function getEnums()
-    {
-        return $this->enums ?: $this->enums = [];
-    }
-
-    /**
      * @param SchemaDescriptor $mixin
      */
     public function addMixin(SchemaDescriptor $mixin)
@@ -192,76 +156,6 @@ final class SchemaDescriptor
     public function getMixins()
     {
         return $this->mixins ?: $this->mixins = [];
-    }
-
-    /**
-     * @param string $language
-     * @param array  $options
-     *
-     * @return this
-     */
-    public function setLanguage($language, array $options)
-    {
-        $this->languages[$language] = $options;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguage($language, $default = [])
-    {
-        if (isset($this->languages[$language])) {
-            return $this->languages[$language];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param string $language
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return this
-     */
-    public function setLanguageKey($language, $key, $value = null)
-    {
-        if (!isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language][$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguageKey($language, $key, $default = null)
-    {
-        if (isset($this->languages[$language][$key])) {
-            return $this->languages[$language][$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLanguages()
-    {
-        return $this->languages ?: $this->languages = [];
     }
 
     /**

@@ -6,8 +6,8 @@ use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
-use Acme\Schemas\Blog\Enum\ArticlePublishStatusV1;
-use Acme\Schemas\Blog\Enum\ArticleContentTypeV1;
+use Acme\Schemas\Blog\Enum\PublishStatus;
+use Acme\Schemas\Blog\Enum\ContentType;
 use Gdbots\Schemas\Pbj\Entity\EntityV1;
 use Gdbots\Schemas\Pbj\Entity\EntityV1Mixin;
 use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;
@@ -40,12 +40,12 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
             Fb::create('private', T\BooleanType::create())
                 ->build(),
             Fb::create('publish_status', T\StringEnumType::create())
-                ->withDefault(ArticlePublishStatusV1::DRAFT())
-                ->className('Acme\Schemas\Blog\Enum\ArticlePublishStatusV1')
+                ->withDefault(PublishStatus::DRAFT())
+                ->className('Acme\Schemas\Blog\Enum\PublishStatus')
                 ->build(),
             Fb::create('content_type', T\StringEnumType::create())
-                ->withDefault(ArticleContentTypeV1::UNKNOWN())
-                ->className('Acme\Schemas\Blog\Enum\ArticleContentTypeV1')
+                ->withDefault(ContentType::UNKNOWN())
+                ->className('Acme\Schemas\Blog\Enum\ContentType')
                 ->build(),
             Fb::create('expires_at', T\TimestampType::create())
                 ->build(),

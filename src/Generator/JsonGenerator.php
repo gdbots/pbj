@@ -13,7 +13,7 @@ class JsonGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTemplates()
+    protected function getSchemaTemplates()
     {
         return [
             'Message.json.twig' => '{version}',

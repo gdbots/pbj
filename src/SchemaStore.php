@@ -16,6 +16,9 @@ class SchemaStore
     /** @var array */
     protected static $schemasByCurieMajor = [];
 
+    /** @var array */
+    protected static $enums = [];
+
     /**
      * Adds a directory where schemas exist.
      *
@@ -211,5 +214,61 @@ class SchemaStore
         }
 
         return false;
+    }
+
+    /**
+     * Adds an enum. An exception will be thorwn when attempting to load
+     * the same id multi times.
+     *
+     * @param EnumId         $enumId
+     * @param EnumDescriptor $enum
+     * @param bool           $ignoreDuplication
+     *
+     * @throw \RuntimeException on duplicate id
+     */
+    public static function addEnum(EnumId $enumId, EnumDescriptor $enum, $ignoreDuplication = false)
+    {
+        if (isset(self::$enums[$enumId->toString()]) && !$ignoreDuplication) {
+            throw new \RuntimeException(sprintf('Enum with id "%s" is already exists.', $enumId->toString()));
+        }
+
+        self::$enums[$enumId->toString()] = $enum;
+
+        ksort(self::$enums);
+    }
+
+    /**
+     * Returns an enum by its id.
+     *
+     * @param EnumId|string $enumId
+     * @param bool          $ignoreNotFound
+     *
+     * @return array|EnumDescriptor|null
+     */
+    public static function getEnumById($enumId, $ignoreNotFound = false)
+    {
+        if ($enumId instanceof EnumId) {
+            $enumId = $enumId->toString();
+        }
+
+        if (isset(self::$enums[$enumId])) {
+            return self::$enums[$enumId];
+        }
+
+        if (!$ignoreNotFound) {
+            throw new \RuntimeException(sprintf('Enum with id "%s" is invalid.', $enumId));
+        }
+
+        return;
+    }
+
+    /**
+     * Returns an array of enums.
+     *
+     * @return array
+     */
+    public static function getEnums()
+    {
+        return self::$enums;
     }
 }

@@ -22,12 +22,8 @@ class SchemaValidator
             new Assert\SchemaIsMixin(),
             new Assert\SchemaIsNotMixin(),
             new Assert\SchemaMustContainsMixin(),
-            new Assert\SchemaMustContainsEnum(),
             new Assert\SchemaMustContainsField(),
             new Assert\SchemaMixinsMustContainsMixin(),
-
-            new Assert\EnumTypeEqualTo(),
-            new Assert\EnumMustContainsOption(),
 
             new Assert\FieldAttributeEqualTo('type'),
             new Assert\FieldAttributeEqualTo('rule'),

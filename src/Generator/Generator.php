@@ -5,6 +5,7 @@ namespace Gdbots\Pbjc\Generator;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
 use Gdbots\Pbjc\Twig\Extension\StringExtension;
+use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
@@ -56,11 +57,11 @@ abstract class Generator
     }
 
     /**
-     * Generates and writes files.
+     * Generates and writes schema related files.
      *
      * @param SchemaDescriptor $schema
      */
-    public function generate(SchemaDescriptor $schema)
+    public function generateSchema(SchemaDescriptor $schema)
     {
         foreach ($schema->getFields() as $field) {
             $this->updateFieldOptions($schema, $field);
@@ -68,7 +69,7 @@ abstract class Generator
 
         $this->schema = $schema;
 
-        foreach ($this->getTemplates() as $template => $filename) {
+        foreach ($this->getSchemaTemplates() as $template => $filename) {
             $this->renderFile(
                 $template,
                 $this->getTarget($filename),
@@ -77,7 +78,7 @@ abstract class Generator
         }
 
         if ($this->schema->isLatestVersion()) {
-            foreach ($this->getTemplates() as $template => $filename) {
+            foreach ($this->getSchemaTemplates() as $template => $filename) {
                 if ($this->getTarget($filename) != $this->getTarget($filename, null, true)) {
                     $this->renderFile(
                         $template,
@@ -86,10 +87,6 @@ abstract class Generator
                     );
                 }
             }
-        }
-
-        if (count($this->schema->getEnums())) {
-            $this->generateEnums();
         }
 
         $this->schema = null;
@@ -110,7 +107,16 @@ abstract class Generator
     /**
      * @return array
      */
-    abstract protected function getTemplates();
+    abstract protected function getSchemaTemplates();
+
+    /**
+     * Generates and writes enum files.
+     *
+     * @param EnumDescriptor $enum
+     */
+    public function generateEnum(EnumDescriptor $enum)
+    {
+    }
 
     /**
      * @return string
@@ -118,13 +124,6 @@ abstract class Generator
     protected function getEnumTemplate()
     {
         return;
-    }
-
-    /**
-     * Generates enums files.
-     */
-    protected function generateEnums()
-    {
     }
 
     /**

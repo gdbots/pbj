@@ -13,18 +13,22 @@ final class Compiler
      */
     public function __construct()
     {
-        $this->loadSchemas();
+        list($enums, $schemas) = $this->loadXmlFiles();
+
+        $this->loadParseEnums($enums);
+        $this->loadParseSchemas($schemas);
     }
 
     /**
-     * Reads all schemas from all stored directories.
+     * Reads all xml files from all stored directories.
      *
-     * @return this
+     * @return array [enums, schemas]
      *
      * @throws \RuntimeException
      */
-    private function loadSchemas()
+    private function loadXmlFiles()
     {
+        $enums = [];
         $schemas = [];
 
         // load all schema and store XML data
@@ -32,48 +36,163 @@ final class Compiler
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $key => $file) {
-                // invalid schema
-                if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
-                    throw new \RuntimeException(sprintf(
-                        'Invalid schema xml file "%s".',
-                        $file
-                    ));
+                if ($file->getFilename() == 'enums.xml') {
+                    $this->addEnumXml($file, $enums);
+                } else {
+                    $this->addSchemaXml($file, $schemas);
                 }
-
-                // bad \DOMDocument
-                if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-                    throw new \RuntimeException('Invalid schema DOM object.');
-                }
-
-                $schemaId = SchemaId::fromString($xmlData['entity']['id']);
-
-                $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-                $schemaPath = str_replace(':', '/', $schemaId->getCurie());
-
-                // invalid schema id
-                if (strrpos($filePath, $schemaPath) === false) {
-                    throw new \RuntimeException(sprintf(
-                        'Invalid schema xml file "%s" location. Expected location "%s".',
-                        $filePath,
-                        $schemaPath
-                    ));
-                }
-
-                // duplicate schema
-                if (array_key_exists($schemaId->toString(), $schemas)) {
-                    throw new \RuntimeException(sprintf(
-                        'Duplicate schema "%s" in file "%s".',
-                        $schemaId->toString(),
-                        $file
-                    ));
-                }
-
-                $schemas[$schemaId->toString()] = $xmlData['entity'];
             }
         }
 
         ksort($schemas);
+        ksort($enums);
 
+        return [$enums, $schemas];
+    }
+
+    /**
+     * Reads and validate XML file, and add all $enums.
+     *
+     * @param string $file
+     * @param array  $enums
+     *
+     * @throw \RuntimeException
+     */
+    private function addEnumXml($file, &$enums)
+    {
+        // invalid schema
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../enums.xsd')) {
+            throw new \RuntimeException(sprintf(
+                'Invalid enums xml file "%s".',
+                $file
+            ));
+        }
+
+        // bad \DOMDocument
+        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+            throw new \RuntimeException('Invalid enum DOM object.');
+        }
+
+        $namespace = $xmlData['enums']['namespace'];
+
+        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+        $enumsPath = str_replace(':', '/', $namespace);
+
+        // invalid enum file location
+        if (strrpos($filePath, $enumsPath) === false) {
+            throw new \RuntimeException(sprintf(
+                'Invalid enums xml file "%s" location. Expected location "%s".',
+                $filePath,
+                $enumsPath
+            ));
+        }
+
+        // get language options
+        $languages = [];
+        foreach ($xmlData['enums'] as $key => $value) {
+            if (substr($key, -8) == '_options') {
+                $languages[$key] = $value;
+            }
+        }
+
+        if (isset($xmlData['enums']['enum'])) {
+            foreach ($xmlData['enums']['enum'] as $enum) {
+                $enumId = EnumId::fromString(sprintf('%s:%s', $namespace, $enum['name']));
+
+                // duplicate schema
+                if (array_key_exists($enumId->toString(), $enums)) {
+                    throw new \RuntimeException(sprintf(
+                        'Duplicate enum "%s" in file "%s".',
+                        $enumId->toString(),
+                        $file
+                    ));
+                }
+
+                $enums[$enumId->toString()] = array_merge($enum, $languages, ['namespace' => $namespace]);
+            }
+        }
+    }
+
+    /**
+     * Reads and validate XML file, and add schema to $schemas.
+     *
+     * @param string $file
+     * @param array  $schemas
+     *
+     * @throw \RuntimeException
+     */
+    private function addSchemaXml($file, &$schemas)
+    {
+        // invalid schema
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml file "%s".',
+                $file
+            ));
+        }
+
+        // bad \DOMDocument
+        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+            throw new \RuntimeException('Invalid schema DOM object.');
+        }
+
+        $schemaId = SchemaId::fromString($xmlData['entity']['id']);
+
+        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+        $schemaPath = str_replace(':', '/', $schemaId->getCurie());
+
+        // invalid schema file location
+        if (strrpos($filePath, $schemaPath) === false) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml file "%s" location. Expected location "%s".',
+                $filePath,
+                $schemaPath
+            ));
+        }
+
+        // duplicate schema
+        if (array_key_exists($schemaId->toString(), $schemas)) {
+            throw new \RuntimeException(sprintf(
+                'Duplicate schema "%s" in file "%s".',
+                $schemaId->toString(),
+                $file
+            ));
+        }
+
+        $schemas[$schemaId->toString()] = $xmlData['entity'];
+    }
+
+    /**
+     * Parse enums and add to SchemaStore enums.
+     *
+     * @param array $enums
+     *
+     * @throw \RuntimeException
+     */
+    private function loadParseEnums($enums)
+    {
+        $parser = new EnumParser();
+
+        foreach ($enums as $enum) {
+            if (is_array($enum)) {
+                if (!$enum = $parser->create($enum)) {
+                    continue;
+                }
+            }
+
+            SchemaStore::addEnum($enum->getId(), $enum);
+        }
+    }
+
+    /**
+     * Parse schemas and add to SchemaStore schemas.
+     *
+     * @param array $schemas
+     *
+     * @throw \RuntimeException
+     */
+    private function loadParseSchemas($schemas)
+    {
         $parser = new SchemaParser();
         $validator = new SchemaValidator();
 
@@ -157,16 +276,24 @@ final class Compiler
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
         $generator = new $class($output);
 
-        foreach (SchemaStore::getSchemas() as &$schema) {
-            if ($namespace !== $schema->getId()->getNamespace()
-                || $schema->getLanguageKey($language, 'isCompiled')
-            ) {
+        $descriptors = array_merge([
+            SchemaStore::getEnums(),
+            SchemaStore::getSchemas()
+        ]);
+
+        foreach (SchemaStore::getEnums() as $enum) {
+            if ($namespace !== $enum->getId()->getNamespace()) {
                 continue;
             }
 
-            $generator->generate($schema);
+            $generator->generateEnum($enum);
+        }
+        foreach (SchemaStore::getSchemas() as $schema) {
+            if ($namespace !== $schema->getId()->getNamespace()) {
+                continue;
+            }
 
-            $schema->setLanguageKey($language, 'isCompiled', true);
+            $generator->generateSchema($schema);
         }
 
         return $generator;

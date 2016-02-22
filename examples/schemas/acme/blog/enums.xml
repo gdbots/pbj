@@ -1,0 +1,27 @@
+<enums-mapping xmlns="gdbots:pbjc:enums-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <enums namespace="acme:blog">
+    <enum name="publish-status">
+      <option key="PUBLISHED" value="published" />
+      <option key="DRAFT" value="draft" />
+      <option key="PENDING" value="pending" />
+      <option key="EXPIRED" value="expired" />
+      <option key="DELETED" value="deleted" />
+    </enum>
+
+    <enum name="content-type">
+      <option key="UNKNOWN" value="unknown" />
+      <option key="ARTICLE" value="article" />
+      <option key="LINK" value="link" />
+      <option key="PHOTO" value="photo" />
+      <option key="QUOTE" value="quote" />
+      <option key="TEXT" value="text" />
+      <option key="VIDEO" value="video" />
+    </enum>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Enum</namespace>
+    </php_options>
+  </enums>
+</enums-mapping>

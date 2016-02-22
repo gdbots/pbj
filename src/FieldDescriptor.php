@@ -10,6 +10,8 @@ use Gdbots\Pbjc\Type\StringType;
 
 final class FieldDescriptor
 {
+    use LanguageDescriptorTrait;
+
     /**
      * Regular expression pattern for matching a valid field name.  The pattern allows
      * for camelCase fields name but snake_case is recommend.
@@ -78,9 +80,6 @@ final class FieldDescriptor
 
     /** @var EnumDescriptor */
     private $enum;
-
-    /** @var array */
-    private $languages = [];
 
     /**
      * @param string $name
@@ -398,75 +397,5 @@ final class FieldDescriptor
     public function getEnum()
     {
         return $this->enum;
-    }
-
-    /**
-     * @param string $language
-     * @param array  $options
-     *
-     * @return this
-     */
-    public function setLanguage($language, array $options)
-    {
-        $this->languages[$language] = $options;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguage($language, $default = [])
-    {
-        if (isset($this->languages[$language])) {
-            return $this->languages[$language];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param string $language
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return this
-     */
-    public function setLanguageKey($language, $key, $value = null)
-    {
-        if (!isset($this->languages[$language])) {
-            $this->languages[$language] = [];
-        }
-
-        $this->languages[$language][$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $language
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    public function getLanguageKey($language, $key, $default = null)
-    {
-        if (isset($this->languages[$language][$key])) {
-            return $this->languages[$language][$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLanguages()
-    {
-        return $this->languages ?: $this->languages = [];
     }
 }

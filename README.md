@@ -88,16 +88,26 @@ When you're defining a schema, you might want one of its fields to only have one
 <fields>
   <field name="failure_reason" type="string-enum">
     <default>invalid</default>
-    <enum provider="gdbots:pbjx:request:request-failed-response:v1" name="reason" />
+    <enum id="acme:blog:publish-status" />
   </field>
 </fields>
+```
 
-<enums>
-  <enum name="reason">
-    <option key="INVALID" value="invalid" />
-    <option key="FAILED" value="failed" />
+The define the enum in `enums.xml`:
+
+```
+<enums namespace="acme:blog">
+  <enum name="publish-status">
+    <option key="PUBLISHED" value="published" />
+    <option key="DRAFT" value="draft" />
+    <option key="PENDING" value="pending" />
+    <option key="EXPIRED" value="expired" />
     <option key="DELETED" value="deleted" />
   </enum>
+
+  <php_options>
+    <namespace>Acme\Schemas\Blog\Enum</namespace>
+  </php_options>
 <enums>
 ```
 
@@ -146,7 +156,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
       >
         <default>{string}</default>
 
-        <enum provider="{pbj:vendor:package:category:vmajor}" name="{string}" />
+        <enum id="{vendor:package:enum}" />
 
         <any_of>
           <curie>{pbj:vendor:package:category}</curie>
@@ -165,20 +175,26 @@ The `any_of` attribute define the message id that will be used to pull the messa
       <!-- ... -->
     </mixins>
 
-    <enums>
-      <enum>
-        <option key="{string}" value="{string}" />
-        <!-- ... -->
-      </enum>
-      <php_options>
-        <namespace>{string}</namespace>
-      </php_options>
-    <enums>
-
     <php_options>
       <namespace>{string}</namespace>
     </php_options>
   </entity>
+</schema-mapping>
+```
+
+```xml
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <enums namespace="{vendor:package}">
+    <enum>
+      <option key="{string}" value="{string}" />
+      <!-- ... -->
+    </enum>
+    <php_options>
+      <namespace>{string}</namespace>
+    </php_options>
+  <enums>
 </schema-mapping>
 ```
 

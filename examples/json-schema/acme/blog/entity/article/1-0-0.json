@@ -37,6 +37,8 @@
       "enum": [
         "published",
         "draft",
+        "pending",
+        "expired",
         "deleted"
       ],
       "additionalProperties": {

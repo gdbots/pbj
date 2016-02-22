@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
@@ -30,21 +31,15 @@ class PhpGenerator extends Generator
             }
 
             if ($enumKey) {
-                if (!$phpOptions = $schema->getLanguageKey('php', 'enums')) {
-                    $phpOptions = $schema->getLanguage('php');
-                }
-
-                $namespace = $phpOptions['namespace'];
+                $namespace = $enum->getLanguageKey('php', 'namespace');
                 if (substr($namespace, 0, 1) == '\\') {
                     $namespace = substr($namespace, 1);
                 }
 
                 $className =
-                    sprintf('%s\\%s%sV%d',
+                    sprintf('%s\\%s',
                         $namespace,
-                        StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
-                        StringUtils::toCamelFromSlug($enum->getName()),
-                        $schema->getId()->getVersion()->getMajor()
+                        StringUtils::toCamelFromSlug($enum->getId()->getName())
                     )
                 ;
 
@@ -57,7 +52,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getTemplates()
+    protected function getSchemaTemplates()
     {
         return $this->schema->isMixinSchema()
             ? [
@@ -100,47 +95,33 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function generateEnums()
+    public function generateEnum(EnumDescriptor $enum)
     {
-        $enums = $this->schema->getEnums();
-
-        foreach ($enums as $enum) {
-            if (!$phpOptions = $this->schema->getLanguageKey('php', 'enums')) {
-                $phpOptions = $this->schema->getLanguage('php');
-            }
-
-            $namespace = $phpOptions['namespace'];
-            if (substr($namespace, 0, 1) == '\\') {
-                $namespace = substr($namespace, 1);
-            }
-
-            $className =
-                sprintf('%s%sV%d',
-                    StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
-                    StringUtils::toCamelFromSlug($enum->getName()),
-                    $this->schema->getId()->getVersion()->getMajor()
-                )
-            ;
-
-            $filename =
-                sprintf('%s/%s/%s%s',
-                    $this->output,
-                    str_replace('\\', '/', $namespace),
-                    str_replace('\\', '/', $className),
-                    $this->extension
-                )
-            ;
-
-            $this->renderFile(
-                $this->getEnumTemplate(),
-                $filename,
-                array_merge($this->getParameters(), [
-                    'namespace' => $namespace,
-                    'enumClassName' => $className,
-                    'options' => $enum->getValues(),
-                    'isInt' => is_int(current($enum->getValues())),
-                ])
-            );
+        $namespace = $enum->getLanguageKey('php', 'namespace');
+        if (substr($namespace, 0, 1) == '\\') {
+            $namespace = substr($namespace, 1);
         }
+
+        $className = StringUtils::toCamelFromSlug($enum->getId()->getName());
+
+        $filename =
+            sprintf('%s/%s/%s%s',
+                $this->output,
+                str_replace('\\', '/', $namespace),
+                str_replace('\\', '/', $className),
+                $this->extension
+            )
+        ;
+
+        $this->renderFile(
+            $this->getEnumTemplate(),
+            $filename,
+            array_merge($this->getParameters(), [
+                'namespace' => $namespace,
+                'enumClassName' => $className,
+                'options' => $enum->getValues(),
+                'isInt' => is_int(current($enum->getValues())),
+            ])
+        );
     }
 }

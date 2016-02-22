@@ -63,24 +63,6 @@ class SchemaParser
             $schema->setLanguage($language, $option);
         }
 
-        // assign enums
-        if (isset($data['enums'])) {
-            if (isset($data['enums']['enum'])) {
-                $enums = $this->fixArray($data['enums']['enum'], 'name');
-                foreach ($enums as $enum) {
-                    if ($enum = $this->getEnumDescriptor($enum)) {
-                        $schema->addEnum($enum);
-                    }
-                }
-            }
-
-            // add enums language options
-            $options = $this->getLanguageOptions($data['enums']);
-            foreach ($options as $language => $option) {
-                $schema->setLanguageKey($language, 'enums', $option);
-            }
-        }
-
         if (isset($data['fields']['field'])) {
             $fields = $this->fixArray($data['fields']['field']);
             foreach ($fields as $field) {
@@ -138,34 +120,6 @@ class SchemaParser
     }
 
     /**
-     * @param array $enum
-     *
-     * @return EnumDescriptor|null
-     */
-    private function getEnumDescriptor(array $enum)
-    {
-        // force default type to be "string"
-        if (!isset($enum['type'])) {
-            $enum['type'] = 'string';
-        }
-
-        $values = [];
-        $keys = $this->fixArray($enum['option'], 'key');
-        foreach ($keys as $key) {
-            $values[$key['key']] = $enum['type'] == 'int'
-                ? intval($key['value'])
-                : (string) $key['value']
-            ;
-        }
-
-        if (count($values) === 0) {
-            return;
-        }
-
-        return new EnumDescriptor($enum['name'], $enum['type'], $values);
-    }
-
-    /**
      * @param SchemaDescriptor $schema
      * @param array            $field
      *
@@ -200,36 +154,22 @@ class SchemaParser
         }
 
         if (isset($field['enum'])) {
-            /** @var $providerSchema SchemaDescriptor */
-            $providerSchema = $this->getEnumProvider($schema, $field['enum']['provider']);
-
-            /* @var $enums EnumDescriptor[] */
-            $matchEnum = null;
-            if ($enums = $providerSchema->getEnums()) {
-                foreach ($enums as $enum) {
-                    if ($enum->getName() == $field['enum']['name']) {
-                        $matchEnum = $enum;
-                        break;
-                    }
-                }
-            }
-
-            if (!$matchEnum) {
+            /** @var $enum EnumDescriptor */
+            if (!$enum = $this->getEnumById($field['enum']['id'])) {
                 throw new \RuntimeException(sprintf(
-                    'No Enum with provider ["%s"] and name ["%s"] exist.',
-                    $field['enum']['provider'],
-                    $field['enum']['name']
+                    'No Enum with id ["%s"] exist.',
+                    $field['enum']['id']
                 ));
             }
 
             switch ($field['type']) {
                 case 'int-enum':
                 case 'string-enum':
-                    if (substr($field['type'], 0, -5) != $matchEnum->getType()) {
+                    if (substr($field['type'], 0, -5) != $enum->getType()) {
                         throw new \RuntimeException(sprintf(
                             'Invalid Enum ["%s"] type. A ["%s-enum"] is required.',
                             $field['enum']['name'],
-                            $matchEnum->getType()
+                            $enum->getType()
                         ));
                     }
                     break;
@@ -240,7 +180,7 @@ class SchemaParser
                     ));
             }
 
-            $field['enum'] = $matchEnum;
+            $field['enum'] = $enum;
         }
 
         return new FieldDescriptor($field['name'], $field);
@@ -279,24 +219,22 @@ class SchemaParser
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     * @param string           $curieWithMajorRev
+     * @param string $id
      *
-     * @return SchemaDescriptor
+     * @return EnumDescriptor
      *
-     * @throw MissingSchemaException
+     * @throw \InvalidArgumentException
      */
-    private function getEnumProvider(SchemaDescriptor $schema, $curieWithMajorRev)
+    private function getEnumById($id)
     {
-        if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
-            return $schema;
+        if (!$enum = SchemaStore::getEnumById($id, true)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot find an enum with id "%s"',
+                $id
+            ));
         }
 
-        if (!$schema = SchemaStore::getSchemaById($curieWithMajorRev, true)) {
-            throw new MissingSchemaException($curieWithMajorRev);
-        }
-
-        return $schema;
+        return $enum;
     }
 
     /**

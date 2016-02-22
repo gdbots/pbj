@@ -26,7 +26,6 @@
     <xs:sequence>
       <xs:element name="fields" type="pbjc:fields" minOccurs="0" maxOccurs="1" />
       <xs:element name="mixins" type="pbjc:schema-curie-major-ids" minOccurs="0" maxOccurs="1" />
-      <xs:element name="enums" type="pbjc:schema-enums" minOccurs="0" maxOccurs="1" />
       <xs:element name="php_options" type="pbjc:schema-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
@@ -83,46 +82,6 @@
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:complexType name="schema-enums">
-    <xs:sequence>
-      <xs:element name="enum" type="pbjc:schema-enum-item" minOccurs="1" maxOccurs="unbounded" />
-      <xs:element name="php_options" type="pbjc:schema-enum-php-options" minOccurs="0" maxOccurs="1" />
-      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
-    </xs:sequence>
-    <xs:anyAttribute namespace="##other" />
-  </xs:complexType>
-
-  <xs:complexType name="schema-enum-item">
-    <xs:sequence>
-      <xs:element name="option" type="pbjc:schema-enum-option" minOccurs="1" maxOccurs="unbounded" />
-      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
-    </xs:sequence>
-    <xs:attribute name="name" type="xs:string" use="required" />
-    <xs:attribute name="type" type="pbjc:schema-enum-type" default="string" />
-    <xs:anyAttribute namespace="##other" />
-  </xs:complexType>
-
-  <xs:simpleType name="schema-enum-type">
-    <xs:restriction base="xs:token">
-      <xs:enumeration value="string" />
-      <xs:enumeration value="int" />
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:complexType name="schema-enum-option">
-    <xs:attribute name="key" type="xs:string" use="required" />
-    <xs:attribute name="value" type="xs:string" use="required" />
-    <xs:anyAttribute namespace="##other" />
-  </xs:complexType>
-
-  <xs:complexType name="schema-enum-php-options">
-    <xs:sequence>
-      <xs:element name="namespace" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
-    </xs:sequence>
-    <xs:anyAttribute namespace="##other" />
-  </xs:complexType>
-
   <xs:complexType name="schema-php-options">
     <xs:sequence>
       <xs:element name="namespace" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -132,10 +91,15 @@
   </xs:complexType>
 
   <xs:complexType name="field-enum">
-    <xs:attribute name="provider" type="pbjc:schema-curie-major-regex" use="required" />
-    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="id" type="pbjc:enum-id-regex" use="required" />
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
+
+  <xs:simpleType name="enum-id-regex">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([a-z0-9-]+):([a-z0-9\.-]+):([a-z0-9-]+)" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="field-php-options">
     <xs:sequence>

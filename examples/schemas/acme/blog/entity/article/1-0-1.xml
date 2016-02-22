@@ -11,12 +11,12 @@
 
       <field name="publish_status" type="string-enum">
         <default>draft</default>
-        <enum provider="acme:blog:entity:article:v1" name="publish-status" />
+        <enum id="acme:blog:publish-status" />
       </field>
 
       <field name="content_type" type="string-enum">
         <default>unknown</default>
-        <enum provider="acme:blog:entity:article:v1" name="content-type" />
+        <enum id="acme:blog:content-type" />
       </field>
 
       <field name="expires_at" type="timestamp" use_type_default="false" />
@@ -32,30 +32,6 @@
       <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
       <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
     </mixins>
-
-    <enums>
-      <enum name="publish-status">
-        <option key="PUBLISHED" value="published" />
-        <option key="DRAFT" value="draft" />
-        <option key="PENDING" value="pending" />
-        <option key="EXPIRED" value="expired" />
-        <option key="DELETED" value="deleted" />
-      </enum>
-
-      <enum name="content-type">
-        <option key="UNKNOWN" value="unknown" />
-        <option key="ARTICLE" value="article" />
-        <option key="LINK" value="link" />
-        <option key="PHOTO" value="photo" />
-        <option key="QUOTE" value="quote" />
-        <option key="TEXT" value="text" />
-        <option key="VIDEO" value="video" />
-      </enum>
-
-      <php_options>
-        <namespace>Acme\Schemas\Blog\Enum</namespace>
-      </php_options>
-    </enums>
 
     <php_options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>

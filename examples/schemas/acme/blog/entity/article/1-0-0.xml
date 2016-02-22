@@ -9,7 +9,7 @@
       <field name="thumbnails" type="string" format="url" rule="map" />
       <field name="publish_status" type="string-enum">
         <default>draft</default>
-        <enum provider="acme:blog:entity:article:v1" name="publish-status" />
+        <enum id="acme:blog:publish-status" />
       </field>
     </fields>
 
@@ -17,18 +17,6 @@
       <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
       <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
     </mixins>
-
-    <enums>
-      <enum name="publish-status">
-        <option key="PUBLISHED" value="published" />
-        <option key="DRAFT" value="draft" />
-        <option key="DELETED" value="deleted" />
-      </enum>
-
-      <php_options>
-        <namespace>Acme\Schemas\Blog\Enum</namespace>
-      </php_options>
-    </enums>
 
     <php_options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>

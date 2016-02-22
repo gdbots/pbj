@@ -4,8 +4,10 @@ namespace Gdbots\Pbjc;
 
 final class EnumDescriptor
 {
-    /** @var string */
-    private $name;
+    use LanguageDescriptorTrait;
+
+    /** @var EnumId */
+    private $id;
 
     /** @var string */
     private $type;
@@ -14,13 +16,13 @@ final class EnumDescriptor
     private $values = [];
 
     /**
-     * @param string $name
+     * @param EnumId|string $id
      * @param string $type
      * @param array  $values
      */
-    public function __construct($name, $type, array $values)
+    public function __construct($id, $type, array $values)
     {
-        $this->name = $name;
+        $this->id = $id instanceof EnumId ? $id : EnumId::fromString($id);
         $this->type = $type;
         $this->values = $values;
     }
@@ -28,9 +30,25 @@ final class EnumDescriptor
     /**
      * @return string
      */
-    public function getName()
+    public function toString()
     {
-        return $this->name;
+        return $this->id->toString();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
+    }
+
+    /**
+     * @return SchemaId
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
