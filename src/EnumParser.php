@@ -13,6 +13,8 @@ class EnumParser
      * @param array $data
      *
      * @return EnumDescriptor
+     *
+     * @throw \InvalidArgumentException
      */
     public function create(array $data)
     {
@@ -27,7 +29,7 @@ class EnumParser
         $values = [];
         $keys = $this->fixArray($data['option'], 'key');
         foreach ($keys as $key) {
-            $values[$key['key']] = $data['type'] == 'int'
+            $values[strtoupper($key['key'])] = $data['type'] == 'int'
                 ? intval($key['value'])
                 : (string) $key['value']
             ;
@@ -35,6 +37,13 @@ class EnumParser
 
         if (count($values) === 0) {
             return;
+        }
+
+        if (array_search('unknown', array_map('strtolower', array_keys($values))) === false) {
+            throw new \InvalidArgumentException(sprintf(
+                'Enum "%s" require an "UNKNOWN" key that will be used as default value.',
+                $enumId->toString()
+            ));
         }
 
         $enum = new EnumDescriptor($enumId, $data['type'], $values);

@@ -3,6 +3,7 @@
 
   <enums namespace="acme:blog">
     <enum name="publish-status">
+      <option key="UNKNOWN" value="unknown" />
       <option key="PUBLISHED" value="published" />
       <option key="DRAFT" value="draft" />
       <option key="PENDING" value="pending" />

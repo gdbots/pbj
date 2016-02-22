@@ -5,6 +5,7 @@ namespace Acme\Schemas\Blog\Enum;
 use Gdbots\Common\Enum;
 
 /**
+  * @method static PublishStatus UNKNOWN()
   * @method static PublishStatus PUBLISHED()
   * @method static PublishStatus DRAFT()
   * @method static PublishStatus PENDING()
@@ -13,7 +14,8 @@ use Gdbots\Common\Enum;
   */
 final class PublishStatus extends Enum
 {
-    const PUBLISHED = 'published';
+    const UNKNOWN = 'unknown';
+      const PUBLISHED = 'published';
       const DRAFT = 'draft';
       const PENDING = 'pending';
       const EXPIRED = 'expired';
