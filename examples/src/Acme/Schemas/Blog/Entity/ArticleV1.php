@@ -52,6 +52,9 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
             Fb::create('comments', T\MessageRefType::create())
                 ->asAList()
                 ->build()
-          ], [EntityV1Mixin::create(), HasCommentsV1Mixin::create()]);
+          ], [
+                      EntityV1Mixin::create(), 
+                      HasCommentsV1Mixin::create()
+          ]);
     }
 }
