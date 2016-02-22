@@ -22,9 +22,6 @@ abstract class Generator
     /** @var string */
     protected $extension;
 
-    /** @var SchemaDescriptor */
-    protected $schema;
-
     /** @var string */
     protected $output;
 
@@ -67,29 +64,25 @@ abstract class Generator
             $this->updateFieldOptions($schema, $field);
         }
 
-        $this->schema = $schema;
-
-        foreach ($this->getSchemaTemplates() as $template => $filename) {
+        foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
             $this->renderFile(
                 $template,
-                $this->getTarget($filename),
-                $this->getParameters()
+                $this->getSchemaTarget($schema, $filename),
+                $this->getSchemaParameters($schema)
             );
         }
 
-        if ($this->schema->isLatestVersion()) {
-            foreach ($this->getSchemaTemplates() as $template => $filename) {
-                if ($this->getTarget($filename) != $this->getTarget($filename, null, true)) {
+        if ($schema->isLatestVersion()) {
+            foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
+                if ($this->getSchemaTarget($schema, $filename) != $this->getSchemaTarget($schema, $filename, null, true)) {
                     $this->renderFile(
                         $template,
-                        $this->getTarget($filename, null, true),
-                        $this->getParameters()
+                        $this->getSchemaTarget($schema, $filename, null, true),
+                        $this->getSchemaParameters($schema)
                     );
                 }
             }
         }
-
-        $this->schema = null;
     }
 
     /**
@@ -105,35 +98,14 @@ abstract class Generator
     }
 
     /**
-     * @return array
-     */
-    abstract protected function getSchemaTemplates();
-
-    /**
-     * Generates and writes enum files.
-     *
-     * @param EnumDescriptor $enum
-     */
-    public function generateEnum(EnumDescriptor $enum)
-    {
-    }
-
-    /**
-     * @return string
-     */
-    protected function getEnumTemplate()
-    {
-        return;
-    }
-
-    /**
-     * @param string $filename
-     * @param string $directory
-     * @param bool   $isLatest
+     * @param SchemaDescriptor $schema
+     * @param string           $filename
+     * @param string           $directory
+     * @param bool             $isLatest
      *
      * @return string
      */
-    protected function getTarget($filename, $directory = null, $isLatest = false)
+    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
         $filename = str_replace([
             '{vendor}',
@@ -142,18 +114,18 @@ abstract class Generator
             '{version}',
             '{major}',
         ], [
-            $this->schema->getId()->getVendor(),
-            $this->schema->getId()->getPackage(),
-            $this->schema->getId()->getCategory(),
-            $this->schema->getId()->getVersion()->toString(),
-            $this->schema->getId()->getVersion()->getMajor(),
+            $schema->getId()->getVendor(),
+            $schema->getId()->getPackage(),
+            $schema->getId()->getCategory(),
+            $schema->getId()->getVersion()->toString(),
+            $schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
         if ($directory === null) {
             $directory = sprintf('%s/%s/%s',
-                StringUtils::toCamelFromSlug($this->schema->getId()->getVendor()),
-                StringUtils::toCamelFromSlug($this->schema->getId()->getPackage()),
-                StringUtils::toCamelFromSlug($this->schema->getId()->getCategory())
+                StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
+                StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
+                StringUtils::toCamelFromSlug($schema->getId()->getCategory())
             );
         }
         if ($directory) {
@@ -169,12 +141,55 @@ abstract class Generator
     }
 
     /**
+     * @param SchemaDescriptor $schema
+     *
      * @return array
      */
-    protected function getParameters()
+    protected function getSchemaTemplates(SchemaDescriptor $schema)
+    {
+        return [];
+    }
+
+    /**
+     * @param SchemaDescriptor $schema
+     *
+     * @return array
+     */
+    protected function getSchemaParameters(SchemaDescriptor $schema)
     {
         return [
-            'schema' => $this->schema,
+            'schema' => $schema,
+        ];
+    }
+
+    /**
+     * Generates and writes enum files.
+     *
+     * @param EnumDescriptor $enum
+     */
+    public function generateEnum(EnumDescriptor $enum)
+    {
+    }
+
+    /**
+     * @param EnumDescriptor $enum
+     *
+     * @return string
+     */
+    protected function getEnumTemplate(EnumDescriptor $enum)
+    {
+        return;
+    }
+
+    /**
+     * @param EnumDescriptor $enum
+     *
+     * @return array
+     */
+    protected function getEnumParameters(EnumDescriptor $enum)
+    {
+        return [
+            'enum' => $enum,
         ];
     }
 

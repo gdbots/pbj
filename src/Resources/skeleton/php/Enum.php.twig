@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }};
+namespace {{ enum.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
 use Gdbots\Common\Enum;
@@ -8,15 +8,15 @@ use Gdbots\Common\Enum;
 
 {% block class_definition %}
 /**
-  {% for key, value in options %}
-* @method static {{ enumClassName }} {{ key}}()
+  {% for key, value in enum.values %}
+* @method static {{ className }} {{ key}}()
   {% endfor %}
 */
-final class {{ enumClassName }} extends Enum
+final class {{ className }} extends Enum
 {% endblock class_definition %}
 {
 {% block class_body %}
-  {%- for key, value in options %}
+  {%- for key, value in enum.values %}
     const {{ key}} = {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %};
   {% endfor -%}
 {% endblock class_body %}

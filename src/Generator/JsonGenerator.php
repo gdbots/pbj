@@ -13,30 +13,30 @@ class JsonGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getSchemaTemplates()
-    {
-        return [
-            'Message.json.twig' => '{version}',
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getTarget($filename, $directory = null, $isLatest = false)
+    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
         if ($isLatest) {
             $filename = str_replace('{version}', 'latest', $filename);
         }
 
         $directory = sprintf('%s/%s/%s/%s',
-            $this->schema->getId()->getVendor(),
-            $this->schema->getId()->getPackage(),
-            $this->schema->getId()->getCategory(),
-            $this->schema->getId()->getMessage()
+            $schema->getId()->getVendor(),
+            $schema->getId()->getPackage(),
+            $schema->getId()->getCategory(),
+            $schema->getId()->getMessage()
         );
 
-        return parent::getTarget($filename, $directory, $isLatest);
+        return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSchemaTemplates(SchemaDescriptor $schema)
+    {
+        return [
+            'Message.json.twig' => '{version}',
+        ];
     }
 
     /**

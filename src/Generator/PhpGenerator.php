@@ -52,9 +52,25 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getSchemaTemplates()
+    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
-        return $this->schema->isMixinSchema()
+        $filename = str_replace([
+            '{className}',
+        ], [
+            StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
+        ], $filename);
+
+        $directory = str_replace('\\', '/', $schema->getLanguageKey('php', 'namespace'));
+
+        return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSchemaTemplates(SchemaDescriptor $schema)
+    {
+        return $schema->isMixinSchema()
             ? [
                 'MessageInterface.php.twig' => '{className}',
                 'Interface.php.twig' => '{className}V{major}',
@@ -66,30 +82,6 @@ class PhpGenerator extends Generator
                 'AbstractMessage.php.twig' => '{className}V{major}',
             ]
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEnumTemplate()
-    {
-        return 'Enum.php.twig';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getTarget($filename, $directory = null, $isLatest = false)
-    {
-        $filename = str_replace([
-            '{className}',
-        ], [
-            StringUtils::toCamelFromSlug($this->schema->getId()->getMessage()),
-        ], $filename);
-
-        $directory = str_replace('\\', '/', $this->schema->getLanguageKey('php', 'namespace'));
-
-        return parent::getTarget($filename, $directory, $isLatest);
     }
 
     /**
@@ -114,14 +106,28 @@ class PhpGenerator extends Generator
         ;
 
         $this->renderFile(
-            $this->getEnumTemplate(),
+            $this->getEnumTemplate($enum),
             $filename,
-            array_merge($this->getParameters(), [
-                'namespace' => $namespace,
-                'enumClassName' => $className,
-                'options' => $enum->getValues(),
-                'isInt' => is_int(current($enum->getValues())),
-            ])
+            $this->getEnumParameters($enum)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEnumTemplate(EnumDescriptor $enum)
+    {
+        return 'Enum.php.twig';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEnumParameters(EnumDescriptor $enum)
+    {
+        return array_merge(parent::getEnumParameters($enum), [
+            'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
+            'isInt' => is_int(current($enum->getValues()))
+        ]);
     }
 }
