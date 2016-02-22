@@ -9,7 +9,7 @@ use {{ schema.extends.languageKey('php', 'namespace') }}\{{ getClassName(schema.
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ getClassName(schema, true) }} extends {% if hasOtherMajorRev(schema) and schema.extends %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema) }}{% endif %}
+interface {{ getClassName(schema, true) }} extends {% if hasOtherMajorRev(schema) and schema.extends %}{{ getClassName(schema.extends, true) }} implements {{ getClassName(schema) }}{% else %}{{ getClassName(schema) }}{% endif %}
 
 {% endblock class_definition %}
 {
