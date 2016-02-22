@@ -42,6 +42,7 @@
     "publish_status": {
       "type": "string",
       "enum": [
+        "unknown",
         "published",
         "draft",
         "pending",
