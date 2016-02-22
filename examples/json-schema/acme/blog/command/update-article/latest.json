@@ -70,7 +70,7 @@
       "additionalProperties": false
     },
     "command": {
-      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/command/1-0-0.json",
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/command/2-0-0.json",
       "type": "object",
       "properties": {
         "command_id": {

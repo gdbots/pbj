@@ -53,19 +53,20 @@ class SchemaValidator
      */
     public function validate(SchemaDescriptor $schema)
     {
-        if (!$prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
-            return;
+        if ($prevSchema = SchemaStore::getPreviousSchema($schema->getId())) {
+            if (!$prevSchema instanceof SchemaDescriptor) {
+                throw new \RuntimeException(sprintf(
+                    'Un-parsed schema "%s".',
+                    $prevSchema['id']
+                ));
+            }
+
+            foreach ($this->constraints as $constraint) {
+                $constraint->validate($prevSchema, $schema);
+            }
         }
 
-        if (!$prevSchema instanceof SchemaDescriptor) {
-            throw new \RuntimeException(sprintf(
-                'Un-parsed schema "%s".',
-                $prevSchema['id']
-            ));
-        }
-
-        foreach ($this->constraints as $constraint) {
-            $constraint->validate($prevSchema, $schema);
-        }
+        $constraint = new Assert\SchemaDependencyVersion();
+        $constraint->validate($schema, $schema);
     }
 }

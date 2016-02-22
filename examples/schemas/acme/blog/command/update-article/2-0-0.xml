@@ -12,7 +12,7 @@
     </fields>
 
     <mixins>
-      <curie_major>gdbots:pbj:mixin:command:v1</curie_major>
+      <curie_major>gdbots:pbj:mixin:command:v2</curie_major>
       <curie_major>acme:core:mixin:update-entity:v2</curie_major>
     </mixins>
 
