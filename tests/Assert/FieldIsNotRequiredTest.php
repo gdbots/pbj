@@ -12,12 +12,12 @@ class FieldIsNotRequiredTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $asset = new FieldIsNotRequired();
@@ -33,13 +33,13 @@ class FieldIsNotRequiredTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'required' => true
+            'required' => true,
         ]));
 
         $asset = new FieldIsNotRequired();

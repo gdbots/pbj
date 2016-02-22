@@ -14,16 +14,16 @@ class FieldMustContainsAnyOfClassesTest extends \PHPUnit_Framework_TestCase
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
             'any_of' => [
-                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0')
-            ]
+                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
+            ],
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
             'any_of' => [
-                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0')
-            ]
+                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
+            ],
         ]));
 
         $asset = new FieldMustContainsAnyOfClasses();
@@ -41,16 +41,16 @@ class FieldMustContainsAnyOfClassesTest extends \PHPUnit_Framework_TestCase
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
             'any_of' => [
-                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0')
-            ]
+                new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
+            ],
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
             'any_of' => [
-                new SchemaDescriptor('pbj:vendor3:package3:category3:message3:1-0-0')
-            ]
+                new SchemaDescriptor('pbj:vendor3:package3:category3:message3:1-0-0'),
+            ],
         ]));
 
         $asset = new FieldMustContainsAnyOfClasses();

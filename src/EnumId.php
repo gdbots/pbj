@@ -6,16 +6,16 @@ use Gdbots\Pbjc\Exception\InvalidEnumIdException;
 
 /**
  * Enum Id Format:
- *  vendor:package:enum-name
+ *  vendor:package:name
  *
  * Formats:
- *  VENDOR:   [a-z0-9-]+
- *  PACKAGE:  [a-z0-9\.-]+
- *  NAME:  [a-z0-9-]+
+ *  VENDOR:  [a-z0-9-]+
+ *  PACKAGE: [a-z0-9\.-]+
+ *  NAME:    [a-z0-9-]+
  *
  * Examples of fully qualified schema ids:
  *  acme:videos:format
- *  acme:users:permission
+ *  acme:users:group
  */
 final class EnumId
 {

@@ -16,16 +16,16 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
         $this->schema = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $this->schema->setExtends(new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'));
         $this->schema->addField(new FieldDescriptor('first_name', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
         $this->schema->addField(new FieldDescriptor('last_name', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
         $this->schema->addEnum(new EnumDescriptor('number', 'int', [1, 2, 3, 4]));
 
         $mixin = new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0');
         $mixin->addField(new FieldDescriptor('created_at', [
-            'type' => 'microtime'
+            'type' => 'microtime',
         ]));
         $this->schema->addMixin($mixin);
     }

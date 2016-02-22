@@ -12,12 +12,12 @@ class FieldAttributeEqualToTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $asset = new FieldAttributeEqualTo('type');
@@ -33,12 +33,12 @@ class FieldAttributeEqualToTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
-            'type' => 'int'
+            'type' => 'int',
         ]));
 
         $asset = new FieldAttributeEqualTo('type');
@@ -53,13 +53,13 @@ class FieldAttributeEqualToTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'rule' => 'set'
+            'rule' => 'set',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'rule' => 'list'
+            'rule' => 'list',
         ]));
 
         $asset = new FieldAttributeEqualTo('rule');

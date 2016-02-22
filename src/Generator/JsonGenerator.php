@@ -47,10 +47,10 @@ class JsonGenerator extends Generator
         return str_replace(
             [
                 '    ',
-                '\/'
+                '\/',
             ], [
                 '  ',
-                '/'
+                '/',
             ], json_encode(
                 json_decode(
                     str_replace(

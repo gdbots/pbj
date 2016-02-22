@@ -12,12 +12,12 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'int'
+            'type' => 'int',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
-            'type' => 'int'
+            'type' => 'int',
         ]));
 
         $asset = new FieldGreaterOrEqualThan();
@@ -31,13 +31,13 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $asset = new FieldGreaterOrEqualThan();
@@ -51,13 +51,13 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 1000
+            'max' => 1000,
         ]));
 
         $asset = new FieldGreaterOrEqualThan();
@@ -74,13 +74,13 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'int',
-            'max' => 10
+            'max' => 10,
         ]));
 
         $asset = new FieldGreaterOrEqualThan();

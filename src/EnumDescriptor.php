@@ -17,8 +17,8 @@ final class EnumDescriptor
 
     /**
      * @param EnumId|string $id
-     * @param string $type
-     * @param array  $values
+     * @param string        $type
+     * @param array         $values
      */
     public function __construct($id, $type, array $values)
     {

@@ -127,7 +127,7 @@ class PhpGenerator extends Generator
     {
         return array_merge(parent::getEnumParameters($enum), [
             'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
-            'isInt' => is_int(current($enum->getValues()))
+            'isInt' => is_int(current($enum->getValues())),
         ]);
     }
 }

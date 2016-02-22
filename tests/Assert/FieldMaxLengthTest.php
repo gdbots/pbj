@@ -12,12 +12,12 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
     {
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
-            'type' => 'string'
+            'type' => 'string',
         ]));
 
         $asset = new FieldMaxLength();
@@ -31,13 +31,13 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $asset = new FieldMaxLength();
@@ -51,13 +51,13 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 1000
+            'max' => 1000,
         ]));
 
         $asset = new FieldMaxLength();
@@ -74,13 +74,13 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 100
+            'max' => 100,
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'max' => 10
+            'max' => 10,
         ]));
 
         $asset = new FieldMaxLength();

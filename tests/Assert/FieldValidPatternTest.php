@@ -13,13 +13,13 @@ class FieldValidPatternTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'pattern' => '/^[A-Za-z0-9_\-]+$/'
+            'pattern' => '/^[A-Za-z0-9_\-]+$/',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'pattern' => '/^[A-Za-z0-9_\-]+$/'
+            'pattern' => '/^[A-Za-z0-9_\-]+$/',
         ]));
 
         $asset = new FieldValidPattern();
@@ -36,13 +36,13 @@ class FieldValidPatternTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
         $a->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'pattern' => '/^[A-Za-z0-9_\-]+$/'
+            'pattern' => '/^[A-Za-z0-9_\-]+$/',
         ]));
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->addField(new FieldDescriptor('f1', [
             'type' => 'string',
-            'pattern' => 'invalid regex/'
+            'pattern' => 'invalid regex/',
         ]));
 
         $asset = new FieldValidPattern();

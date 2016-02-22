@@ -32,7 +32,6 @@ class SchemaIsMixinTest extends \PHPUnit_Framework_TestCase
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
         $b->setIsMixin(false);
 
-
         $asset = new SchemaIsMixin();
         $asset->validate($a, $b);
     }

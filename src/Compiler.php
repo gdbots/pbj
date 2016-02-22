@@ -279,7 +279,7 @@ final class Compiler
 
         $descriptors = array_merge([
             SchemaStore::getEnums(),
-            SchemaStore::getSchemas()
+            SchemaStore::getSchemas(),
         ]);
 
         foreach (SchemaStore::getEnums() as $enum) {

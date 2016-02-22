@@ -22,12 +22,12 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
             'pattern' => '^[A-Za-z0-9_\-]+$',
             'default' => 'jonny',
             'any_of' => [
-                new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0')
+                new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0'),
             ],
             'enum' => new EnumDescriptor('number', 'int', [1, 2, 3, 4]),
             'php_options' => [
-                'namespace' => 'Acme\Blog\Entity'
-            ]
+                'namespace' => 'Acme\Blog\Entity',
+            ],
         ]);
     }
 
