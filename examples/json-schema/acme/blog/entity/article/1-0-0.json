@@ -35,12 +35,12 @@
     "publish_status": {
       "type": "string",
       "enum": [
-        "unknown",
-        "published",
+        "deleted",
         "draft",
-        "pending",
         "expired",
-        "deleted"
+        "pending",
+        "published",
+        "unknown"
       ],
       "additionalProperties": {
         "customType": "string-enum",
