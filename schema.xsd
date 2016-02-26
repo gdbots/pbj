@@ -52,15 +52,15 @@
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required" />
-    <xs:attribute name="type" type="pbjc:enum-type-name" use="required" />
+    <xs:attribute name="type" type="pbjc:field-type" use="required" />
     <xs:attribute name="required" type="xs:boolean" default="false" />
     <xs:attribute name="min" type="xs:integer" use="optional" />
     <xs:attribute name="max" type="xs:integer" use="optional" />
     <xs:attribute name="precision" type="xs:integer" use="optional" />
     <xs:attribute name="scale" type="xs:integer" use="optional" />
-    <xs:attribute name="rule" type="pbjc:enum-field-rule" use="optional" />
+    <xs:attribute name="rule" type="pbjc:field-rule" use="optional" />
     <xs:attribute name="pattern" type="xs:string" use="optional" />
-    <xs:attribute name="format" type="pbjc:enum-format" use="optional" />
+    <xs:attribute name="format" type="pbjc:field-format" use="optional" />
     <xs:attribute name="use_type_default" type="xs:boolean" default="false" />
     <xs:attribute name="overridable" type="xs:boolean" default="false" />
     <xs:anyAttribute namespace="##other" />
@@ -128,10 +128,10 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="enum-type-name">
+  <xs:simpleType name="field-type">
     <xs:annotation>
       <xs:documentation><![CDATA[
-        @See \Gdbots\Common\Enum\TypeNAme.
+        @See \Gdbots\Common\Enum\TypeName.
       ]]></xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
@@ -169,7 +169,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="enum-field-rule">
+  <xs:simpleType name="field-rule">
     <xs:annotation>
       <xs:documentation><![CDATA[
         @See \Gdbots\Common\Enum\FieldRule.
@@ -183,7 +183,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="enum-format">
+  <xs:simpleType name="field-format">
     <xs:annotation>
       <xs:documentation><![CDATA[
         @See \Gdbots\Common\Enum\Format.
