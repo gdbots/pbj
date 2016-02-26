@@ -2,19 +2,19 @@
 
 namespace Acme\Schemas\Blog\Entity;
 
-use Gdbots\Pbj\AbstractMessage;
-use Gdbots\Pbj\FieldBuilder as Fb;
-use Gdbots\Pbj\Schema;
-use Gdbots\Pbj\Type as T;
-use Acme\Schemas\Blog\Enum\PublishStatus;
 use Acme\Schemas\Blog\Enum\ContentType;
-use Gdbots\Schemas\Pbj\Entity\EntityV1;
-use Gdbots\Schemas\Pbj\Entity\EntityV1Mixin;
-use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;
+use Acme\Schemas\Blog\Enum\PublishStatus;
 use Acme\Schemas\Blog\HasCommentsV1;
 use Acme\Schemas\Blog\HasCommentsV1Mixin;
 use Acme\Schemas\Blog\HasCommentsV1Trait;
+use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\Enum\Format;
+use Gdbots\Pbj\FieldBuilder as Fb;
+use Gdbots\Pbj\Schema;
+use Gdbots\Pbj\Type as T;
+use Gdbots\Schemas\Pbj\Entity\EntityV1;
+use Gdbots\Schemas\Pbj\Entity\EntityV1Mixin;
+use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;
 
 final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasCommentsV1  
 {

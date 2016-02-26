@@ -2,8 +2,8 @@
 
 namespace Gdbots\Schemas\Pbj\Entity;
 
-use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\MessageRef;
+use Gdbots\Pbj\Schema;
 
 /**
  * @method static Schema schema

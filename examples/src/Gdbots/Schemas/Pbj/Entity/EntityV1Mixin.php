@@ -2,11 +2,11 @@
 
 namespace Gdbots\Schemas\Pbj\Entity;
 
+use Gdbots\Identifiers\UuidIdentifier;
 use Gdbots\Pbj\AbstractMixin;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\SchemaId;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Identifiers\UuidIdentifier;
 
 final class EntityV1Mixin extends AbstractMixin
 {

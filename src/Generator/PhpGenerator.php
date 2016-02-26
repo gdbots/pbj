@@ -132,23 +132,44 @@ class PhpGenerator extends Generator
     {
         $code = parent::render($template, $parameters);
 
-        if (preg_match_all('/use\\s(.*);/', $code, $matches) !== false) {
+        // use statements: removed duplicate
+        if (preg_match_all('/\nuse\s(.*);/', $code, $matches) !== false) {
             $unique = array_unique($matches[1]);
 
             foreach ($matches[1] as $match) {
                 if (in_array($match, $unique)) {
                     unset($unique[array_search($match, $unique)]);
                 } else {
-                    $code = preg_replace(sprintf("/use\\s%s;\n/", str_replace('\\', '\\\\', $match)), '', $code, 1);
+                    $code = preg_replace(sprintf("/\nuse\\s%s;/", str_replace('\\', '\\\\', $match)), '', $code, 1);
                 }
             }
         }
 
+        // use statements: sorting
+        if (preg_match_all('/\nuse\s(.*);/', $code, $matches) !== false) {
+            $unique = array_unique($matches[1]);
+
+            asort($unique);
+            $unique = array_values($unique);
+
+            foreach ($matches[1] as $key => $match) {
+                $from = sprintf("\nuse %s;", $match);
+                $to = sprintf("\nuse %s[use_tmp];", $unique[$key]);
+
+                $code = str_replace($from, $to, $code);
+            }
+
+            $code = preg_replace("/\[use_tmp\];/", ';', $code);
+        }
+
+        // generate replacements
         $code = str_replace(
             [
+                ';;',
                 "\n\n\n",
                 "{\n    \n}",
             ], [
+                ';',
                 "\n\n",
                 "{\n}",
             ],

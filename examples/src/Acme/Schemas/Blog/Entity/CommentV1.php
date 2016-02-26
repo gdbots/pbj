@@ -2,11 +2,11 @@
 
 namespace Acme\Schemas\Blog\Entity;
 
+use Gdbots\Identifiers\UuidIdentifier;
 use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
-use Gdbots\Identifiers\UuidIdentifier;
 use Gdbots\Schemas\Pbj\Entity\EntityV1;
 use Gdbots\Schemas\Pbj\Entity\EntityV1Mixin;
 use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;

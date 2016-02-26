@@ -2,6 +2,9 @@
 
 namespace Acme\Schemas\Blog\Command;
 
+use Acme\Schemas\Core\Command\UpdateEntityV2;
+use Acme\Schemas\Core\Command\UpdateEntityV2Mixin;
+use Acme\Schemas\Core\Command\UpdateEntityV2Trait;
 use Gdbots\Pbj\AbstractMessage;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
@@ -9,9 +12,6 @@ use Gdbots\Pbj\Type as T;
 use Gdbots\Schemas\Pbj\Command\CommandV2;
 use Gdbots\Schemas\Pbj\Command\CommandV2Mixin;
 use Gdbots\Schemas\Pbj\Command\CommandV2Trait;
-use Acme\Schemas\Core\Command\UpdateEntityV2;
-use Acme\Schemas\Core\Command\UpdateEntityV2Mixin;
-use Acme\Schemas\Core\Command\UpdateEntityV2Trait;
 
 final class UpdateArticleV2 extends AbstractMessage implements UpdateArticle, CommandV2, UpdateEntityV2  
 {
