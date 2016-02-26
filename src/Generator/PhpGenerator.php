@@ -73,7 +73,7 @@ class PhpGenerator extends Generator
             ]
             : [
                 'MessageInterface.php.twig' => '{className}',
-                'AbstractMessage.php.twig' => '{className}V{major}',
+                'Message.php.twig' => '{className}V{major}',
             ]
         ;
     }
