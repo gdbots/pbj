@@ -1,64 +1,65 @@
-{% macro draw_field(field, isLastItem) %}
+{% macro draw_field(field, spaces, isLastItem) %}
+{% set spaces = '%' ~ spaces ~ 's' %}
   Fb::create('{{ field.name }}', T\{{ getClass(field.type) }}::create())
 {% if field.isASingleValue %}
-                ->asASingleValue()
+    {{ spaces|format('') }}->asASingleValue()
 {% endif %}
 {% if field.isASet %}
-                ->asASet()
+    {{ spaces|format('') }}->asASet()
 {% endif %}
 {% if field.isAList %}
-                ->asAList()
+    {{ spaces|format('') }}->asAList()
 {% endif %}
 {% if field.isAMap %}
-                ->asAMap()
+    {{ spaces|format('') }}->asAMap()
 {% endif %}
 {% if field.required %}
-                ->required()
+    {{ spaces|format('') }}->required()
 {% endif %}
 {% if field.minLength %}
-                ->minLength({{ field.minLength }})
+    {{ spaces|format('') }}->minLength({{ field.minLength }})
 {% endif %}
 {% if field.maxLength %}
-                ->maxLength({{ field.maxLength }})
+    {{ spaces|format('') }}->maxLength({{ field.maxLength }})
 {% endif %}
 {% if field.pattern %}
-                ->pattern('/{{ field.pattern }}/')
+    {{ spaces|format('') }}->pattern('/{{ field.pattern }}/')
 {% endif %}
 {% if field.format %}
-                ->format(Format::{{ field.format|upper }}())
+    {{ spaces|format('') }}->format(Format::{{ field.format|upper }}())
 {% endif %}
 {% if field.min %}
-                ->min({{ field.min }})
+    {{ spaces|format('') }}->min({{ field.min }})
 {% endif %}
 {% if field.max %}
-                ->max({{ field.max }})
+    {{ spaces|format('') }}->max({{ field.max }})
 {% endif %}
 {% if field.precision %}
-                ->precision({{ field.precision }})
+    {{ spaces|format('') }}->precision({{ field.precision }})
 {% endif %}
 {% if field.scale %}
-                ->scale({{ field.scale }})
+    {{ spaces|format('') }}->scale({{ field.scale }})
 {% endif %}
 {% if field.languageKey('php', 'default') %}
-                ->withDefault({{ field.languageKey('php', 'default') }})
+    {{ spaces|format('') }}->withDefault({{ field.languageKey('php', 'default') }})
 {% elseif field.default %}
-                ->withDefault({{ field.default|json_encode }})
+    {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
 {% if field.useTypeDefault %}
-                ->useTypeDefault(true)
+    {{ spaces|format('') }}->useTypeDefault(true)
 {% endif %}
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
-                ->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
+    {{ spaces|format('') }}->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
 {% else %}
-                ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
 {% endif %}
 {% elseif field.languageKey('php', 'class_name') %}
-                ->className('{{ field.languageKey('php', 'class_name') }}')
+    {{ spaces|format('') }}->className('{{ field.languageKey('php', 'class_name') }}')
 {% endif %}
 {% if field.overridable %}
-                ->overridable(true)
+    {{ spaces|format('') }}->overridable(true)
 {% endif %}
-                ->build(){% if not isLastItem %},{% endif %}
+    {{ spaces|format('') }}->build(){% if not isLastItem %},{% endif %}
 
 {% endmacro %}

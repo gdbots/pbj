@@ -8,9 +8,9 @@
           <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
           <default>
             <![CDATA[
-                function() {
-                  return UuidIdentifier::generate();
-                }
+                    function() {
+                        return UuidIdentifier::generate();
+                    }
             ]]>
           </default>
         </php_options>

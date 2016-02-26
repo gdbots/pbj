@@ -27,8 +27,8 @@ final class EntityV1Mixin extends AbstractMixin
             Fb::create('_id', T\IdentifierType::create())
                 ->required()
                 ->withDefault(function() {
-                  return UuidIdentifier::generate();
-                })
+                      return UuidIdentifier::generate();
+                  })
                 ->className('Gdbots\Identifiers\UuidIdentifier')
                 ->overridable(true)
                 ->build(),
