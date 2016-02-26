@@ -25,8 +25,6 @@ final class EnumDescriptor
         $this->id = $id instanceof EnumId ? $id : EnumId::fromString($id);
         $this->type = $type;
         $this->values = $values;
-
-        ksort($this->values);
     }
 
     /**
