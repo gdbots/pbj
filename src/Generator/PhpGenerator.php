@@ -124,4 +124,21 @@ class PhpGenerator extends Generator
             'isInt' => is_int(current($enum->getValues())),
         ]);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function render($template, $parameters)
+    {
+        return str_replace(
+            [
+                "\n\n\n",
+                "{\n    \n}",
+            ], [
+                "\n\n",
+                "{\n}",
+            ],
+            parent::render($template, $parameters)
+        );
+    }
 }

@@ -70,6 +70,23 @@ trait LanguageDescriptorTrait
     }
 
     /**
+     * @param string $language
+     * @param string $key
+     * @param string $subkey
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getLanguageSubKey($language, $key, $subkey, $default = null)
+    {
+        if (isset($this->languages[$language][$key][$subkey])) {
+            return $this->languages[$language][$key][$subkey];
+        }
+
+        return $default;
+    }
+
+    /**
      * @return array
      */
     public function getLanguages()

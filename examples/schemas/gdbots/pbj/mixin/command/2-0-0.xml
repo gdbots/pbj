@@ -11,6 +11,36 @@
 
     <php_options>
       <namespace>Gdbots\Schemas\Pbj\Command</namespace>
+      <trait_class>
+        <use_statements>
+            <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </use_statements>
+        <class_body>
+            <![CDATA[
+    /**
+     * @param string $tag
+     * @return MessageRef
+     */
+    public function generateMessageRef($tag = null)
+    {
+        return new MessageRef(static::schema()->getCurie(), $this->get('command_id'), $tag);
+    }
+
+    /**
+     * @return array
+     */
+    public function getUriTemplateVars()
+    {
+        return [
+            'command_id' => (string)$this->get('command_id'),
+            'microtime' => (string)$this->get('microtime'),
+        ];
+    }
+            ]]>
+        </class_body>
+      </trait_class>
     </php_options>
   </entity>
 </schema-mapping>

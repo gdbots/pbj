@@ -8,9 +8,9 @@
           <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
           <default>
             <![CDATA[
-              function() {
-                return UuidIdentifier::generate();
-              }
+                function() {
+                  return UuidIdentifier::generate();
+                }
             ]]>
           </default>
         </php_options>
@@ -23,6 +23,25 @@
 
     <php_options>
       <namespace>Gdbots\Schemas\Pbj\Entity</namespace>
+      <trait_class>
+        <use_statements>
+            <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </use_statements>
+        <class_body>
+            <![CDATA[
+    /**
+     * @param string $tag
+     * @return MessageRef
+     */
+    public function generateMessageRef($tag = null)
+    {
+        return new MessageRef(static::schema()->getCurie(), $this->get('_id'), $tag);
+    }
+            ]]>
+        </class_body>
+      </trait_class>
     </php_options>
   </entity>
 </schema-mapping>

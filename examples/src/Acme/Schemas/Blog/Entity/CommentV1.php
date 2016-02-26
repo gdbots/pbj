@@ -24,8 +24,8 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
             Fb::create('_id', T\IdentifierType::create())
                 ->required()
                 ->withDefault(function() {
-                return UuidIdentifier::generate();
-              })
+                  return UuidIdentifier::generate();
+                })
                 ->className('Gdbots\Identifiers\UuidIdentifier')
                 ->build(),
             Fb::create('comment', T\TextType::create())
