@@ -16,8 +16,8 @@ use Acme\Schemas\Core\Command\UpdateEntityV2Trait;
 final class UpdateArticleV2 extends AbstractMessage implements UpdateArticle, CommandV2, UpdateEntityV2  
 {
     use CommandV2Trait;
-        use UpdateEntityV2Trait;
-    
+    use UpdateEntityV2Trait;
+
     /**
      * @return Schema
      */
@@ -27,12 +27,12 @@ final class UpdateArticleV2 extends AbstractMessage implements UpdateArticle, Co
             Fb::create('entity', T\MessageType::create())
                 ->required()
                 ->className('Gdbots\Schemas\Pbj\Entity')
-                  ->build(),
+                ->build(),
             Fb::create('user_id', T\IdentifierType::create())
                 ->build()
-          ], [
-                      CommandV2Mixin::create(), 
-                      UpdateEntityV2Mixin::create()
-          ]);
+        ], [
+          CommandV2Mixin::create(), 
+          UpdateEntityV2Mixin::create()
+        ]);
     }
 }

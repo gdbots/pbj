@@ -26,9 +26,9 @@ final class UpdateEntityV2Mixin extends AbstractMixin
             Fb::create('entity', T\MessageType::create())
                 ->required()
                 ->className('Gdbots\Schemas\Pbj\Entity')
-                  ->build(),
+                ->build(),
             Fb::create('user_id', T\IdentifierType::create())
                 ->build()
-          ];
+        ];
     }
 }

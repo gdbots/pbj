@@ -19,8 +19,8 @@ use Gdbots\Pbj\Enum\Format;
 final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasCommentsV1  
 {
     use EntityV1Trait;
-        use HasCommentsV1Trait;
-    
+    use HasCommentsV1Trait;
+
     /**
      * @return Schema
      */
@@ -52,9 +52,9 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
             Fb::create('comments', T\MessageRefType::create())
                 ->asAList()
                 ->build()
-          ], [
-                      EntityV1Mixin::create(), 
-                      HasCommentsV1Mixin::create()
-          ]);
+        ], [
+          EntityV1Mixin::create(), 
+          HasCommentsV1Mixin::create()
+        ]);
     }
 }

@@ -35,9 +35,9 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
 {% endblock class_definition %}
 {
 {% block class_body %}
-    {%- for mixin in schema.mixins %}
+{% for mixin in schema.mixins %}
     use {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
-    {% endfor %}
+{% endfor %}
 
     /**
      * @return Schema
@@ -45,16 +45,15 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
     protected static function defineSchema()
     {
         return new Schema('{{ schema.id }}', __CLASS__, [
-          {% import 'php/macros.php.twig' as macros %}
-          {%- for field in schema.fields %}
-            {{- macros.draw_field(field) }}{%- if not loop.last %},{% endif %}
-
-          {% endfor -%}
+{% import 'php/macros.php.twig' as macros %}
+{% for field in schema.fields %}
+          {{ macros.draw_field(field, loop.last) }}
+{%- endfor %}
         ], [
-          {% for mixin in schema.mixins %}
-            {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
+{% for mixin in schema.mixins %}
+          {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
 
-          {% endfor -%}
+{% endfor %}
         ]);
     }
 {% endblock class_body %}

@@ -1,63 +1,64 @@
-{%- macro draw_field(field) %}
+{% macro draw_field(field, isLastItem) %}
   Fb::create('{{ field.name }}', T\{{ getClass(field.type) }}::create())
-  {% if field.isASingleValue %}
-              ->asASingleValue()
-  {% endif %}
-  {%- if field.isASet %}
-              ->asASet()
-  {% endif %}
-  {%- if field.isAList %}
-              ->asAList()
-  {% endif %}
-  {%- if field.isAMap %}
-              ->asAMap()
-  {% endif %}
-  {%- if field.required %}
-              ->required()
-  {% endif %}
-  {%- if field.minLength %}
-              ->minLength({{ field.minLength }})
-  {% endif %}
-  {%- if field.maxLength %}
-              ->maxLength({{ field.maxLength }})
-  {% endif %}
-  {%- if field.pattern %}
-              ->pattern('/{{ field.pattern }}/')
-  {% endif %}
-  {%- if field.format %}
-              ->format(Format::{{ field.format|upper }}())
-  {% endif %}
-  {%- if field.min %}
-              ->min({{ field.min }})
-  {% endif %}
-  {%- if field.max %}
-              ->max({{ field.max }})
-  {% endif %}
-  {%- if field.precision %}
-              ->precision({{ field.precision }})
-  {% endif %}
-  {%- if field.scale %}
-              ->scale({{ field.scale }})
-  {% endif %}
-  {%- if field.languageKey('php', 'default') %}
-              ->withDefault({{ field.languageKey('php', 'default') }})
-  {% elseif field.default %}
-              ->withDefault({{ field.default|json_encode }})
-  {% endif %}
-  {%- if field.useTypeDefault %}
-              ->useTypeDefault(true)
-  {% endif %}
-  {%- if field.anyOf %}
-    {%- if field.anyOf|length == 1 %}
-              ->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
-    {% else %}
-              ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{%- if not loop.last %}, {% endif %}{% endfor %}])
-    {% endif -%}
-  {% elseif field.languageKey('php', 'class_name') %}
-              ->className('{{ field.languageKey('php', 'class_name') }}')
-  {% endif %}
-  {%- if field.overridable %}
-              ->overridable(true)
-  {% endif %}
-              ->build()
-{%- endmacro %}
+{% if field.isASingleValue %}
+                ->asASingleValue()
+{% endif %}
+{% if field.isASet %}
+                ->asASet()
+{% endif %}
+{% if field.isAList %}
+                ->asAList()
+{% endif %}
+{% if field.isAMap %}
+                ->asAMap()
+{% endif %}
+{% if field.required %}
+                ->required()
+{% endif %}
+{% if field.minLength %}
+                ->minLength({{ field.minLength }})
+{% endif %}
+{% if field.maxLength %}
+                ->maxLength({{ field.maxLength }})
+{% endif %}
+{% if field.pattern %}
+                ->pattern('/{{ field.pattern }}/')
+{% endif %}
+{% if field.format %}
+                ->format(Format::{{ field.format|upper }}())
+{% endif %}
+{% if field.min %}
+                ->min({{ field.min }})
+{% endif %}
+{% if field.max %}
+                ->max({{ field.max }})
+{% endif %}
+{% if field.precision %}
+                ->precision({{ field.precision }})
+{% endif %}
+{% if field.scale %}
+                ->scale({{ field.scale }})
+{% endif %}
+{% if field.languageKey('php', 'default') %}
+                ->withDefault({{ field.languageKey('php', 'default') }})
+{% elseif field.default %}
+                ->withDefault({{ field.default|json_encode }})
+{% endif %}
+{% if field.useTypeDefault %}
+                ->useTypeDefault(true)
+{% endif %}
+{% if field.anyOf %}
+{% if field.anyOf|length == 1 %}
+                ->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
+{% else %}
+                ->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+{% endif %}
+{% elseif field.languageKey('php', 'class_name') %}
+                ->className('{{ field.languageKey('php', 'class_name') }}')
+{% endif %}
+{% if field.overridable %}
+                ->overridable(true)
+{% endif %}
+                ->build(){% if not isLastItem %},{% endif %}
+
+{% endmacro %}

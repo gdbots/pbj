@@ -32,6 +32,6 @@ final class CommandV2Mixin extends AbstractMixin
                 ->build(),
             Fb::create('retries', T\TinyIntType::create())
                 ->build()
-          ];
+        ];
     }
 }

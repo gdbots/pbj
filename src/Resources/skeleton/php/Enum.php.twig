@@ -8,16 +8,16 @@ use Gdbots\Common\Enum;
 
 {% block class_definition %}
 /**
-  {% for key, value in enum.values %}
-* @method static {{ className }} {{ key}}()
-  {% endfor %}
-*/
+{% for key, value in enum.values %}
+ * @method static {{ className }} {{ key}}()
+{% endfor %}
+ */
 final class {{ className }} extends Enum
 {% endblock class_definition %}
 {
 {% block class_body %}
-  {%- for key, value in enum.values %}
+{% for key, value in enum.values %}
     const {{ key}} = {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %};
-  {% endfor -%}
+{% endfor %}
 {% endblock class_body %}
 }

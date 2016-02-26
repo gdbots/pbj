@@ -39,6 +39,6 @@ final class EntityV1Mixin extends AbstractMixin
                 ->build(),
             Fb::create('updated_at', T\MicrotimeType::create())
                 ->build()
-          ];
+        ];
     }
 }

@@ -14,7 +14,7 @@ use Gdbots\Schemas\Pbj\Entity\EntityV1Trait;
 final class CommentV1 extends AbstractMessage implements Comment, EntityV1  
 {
     use EntityV1Trait;
-    
+
     /**
      * @return Schema
      */
@@ -32,8 +32,8 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
                 ->build(),
             Fb::create('published_at', T\MicrotimeType::create())
                 ->build()
-          ], [
-                      EntityV1Mixin::create()
-          ]);
+        ], [
+          EntityV1Mixin::create()
+        ]);
     }
 }

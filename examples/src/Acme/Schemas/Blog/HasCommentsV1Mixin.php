@@ -23,6 +23,6 @@ final class HasCommentsV1Mixin extends AbstractMixin
     public function getFields()
     {
         return [
-          ];
+        ];
     }
 }
