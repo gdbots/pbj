@@ -22,6 +22,7 @@ class StringExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
+            new \Twig_SimpleFilter('reduceSpaces', array($this, 'reduceSpaces')),
             new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
         );
     }
@@ -34,6 +35,16 @@ class StringExtension extends \Twig_Extension
     public function getClass($object)
     {
         return (new \ReflectionClass($object))->getShortName();
+    }
+
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    public function reduceSpaces($str)
+    {
+        return preg_replace('/\s+/', ' ', $str);
     }
 
     /**

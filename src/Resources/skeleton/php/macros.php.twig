@@ -41,7 +41,7 @@
     {{ spaces|format('') }}->scale({{ field.scale }})
 {% endif %}
 {% if field.languageKey('php', 'default') %}
-    {{ spaces|format('') }}->withDefault({{ field.languageKey('php', 'default') }})
+    {{ spaces|format('') }}->withDefault({{ field.languageKey('php', 'default')|replace({"\n": ''})|reduceSpaces }})
 {% elseif field.default %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
