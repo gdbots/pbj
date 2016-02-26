@@ -177,6 +177,10 @@ The `any_of` attribute define the message id that will be used to pull the messa
 
     <php_options>
       <namespace>{string}</namespace>
+      <trait_class>
+        <use_statements>{string}</use_statements>
+        <class_body>{string}</class_body>
+      </trait_class>
     </php_options>
   </entity>
 </schema-mapping>
