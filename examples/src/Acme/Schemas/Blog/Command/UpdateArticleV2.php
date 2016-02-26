@@ -31,8 +31,8 @@ final class UpdateArticleV2 extends AbstractMessage implements UpdateArticle, Co
             Fb::create('user_id', T\IdentifierType::create())
                 ->build()
         ], [
-          CommandV2Mixin::create(), 
-          UpdateEntityV2Mixin::create()
+            CommandV2Mixin::create(), 
+            UpdateEntityV2Mixin::create()
         ]);
     }
 }

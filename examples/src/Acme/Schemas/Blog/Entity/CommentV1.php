@@ -33,7 +33,7 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
             Fb::create('published_at', T\MicrotimeType::create())
                 ->build()
         ], [
-          EntityV1Mixin::create()
+            EntityV1Mixin::create()
         ]);
     }
 }

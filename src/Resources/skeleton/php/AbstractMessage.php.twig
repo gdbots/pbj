@@ -49,12 +49,16 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
 {% for field in schema.fields %}
           {{ macros.draw_field(field, loop.last) }}
 {%- endfor %}
+{% if schema.mixins|length %}
         ], [
 {% for mixin in schema.mixins %}
-          {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
+            {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
 
 {% endfor %}
         ]);
+{% else %}
+        ], []);
+{% endif %}
     }
 {% endblock class_body %}
 }
