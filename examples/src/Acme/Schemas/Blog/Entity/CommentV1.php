@@ -21,7 +21,7 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
     protected static function defineSchema()
     {
         return new Schema('pbj:acme:blog:entity:comment:1-0-0', __CLASS__,
-          [
+            [
                 Fb::create('_id', T\IdentifierType::create())
                     ->required()
                     ->withDefault(function() { return UuidIdentifier::generate(); })
@@ -31,9 +31,10 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
                     ->build(),
                 Fb::create('published_at', T\MicrotimeType::create())
                     ->build()
-          ], [
-              EntityV1Mixin::create()
-          ]
+            ],
+            [
+                EntityV1Mixin::create()
+            ]
         );
     }
 

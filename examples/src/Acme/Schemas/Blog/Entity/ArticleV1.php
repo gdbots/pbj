@@ -27,7 +27,7 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
     protected static function defineSchema()
     {
         return new Schema('pbj:acme:blog:entity:article:1-0-1', __CLASS__,
-          [
+            [
                 Fb::create('title', T\StringType::create())
                     ->build(),
                 Fb::create('excerpt', T\TextType::create())
@@ -53,10 +53,11 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
                 Fb::create('comments', T\MessageRefType::create())
                     ->asAList()
                     ->build()
-          ], [
-              EntityV1Mixin::create(), 
-              HasCommentsV1Mixin::create()
-          ]
+            ],
+            [
+                EntityV1Mixin::create(), 
+                HasCommentsV1Mixin::create()
+            ]
         );
     }
 

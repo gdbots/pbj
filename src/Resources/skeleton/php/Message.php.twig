@@ -46,21 +46,18 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
     protected static function defineSchema()
     {
         return new Schema('{{ schema.id }}', __CLASS__,
-          [
+            [
 {% import 'php/macros.php.twig' as macros %}
 {% for field in schema.fields %}
               {{ macros.draw_field(field, 16, loop.last) }}
 {%- endfor %}
-{% if schema.mixins|length %}
-          ], [
+            ],
+            [
 {% for mixin in schema.mixins %}
-              {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
+                {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
 
 {% endfor %}
-          ]
-{% else %}
-          ], []
-{% endif %}
+            ]
         );
     }
 

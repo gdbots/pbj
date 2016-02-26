@@ -24,17 +24,18 @@ final class UpdateArticleV1 extends AbstractMessage implements UpdateArticle, Co
     protected static function defineSchema()
     {
         return new Schema('pbj:acme:blog:command:update-article:1-0-0', __CLASS__,
-          [
+            [
                 Fb::create('entity', T\MessageType::create())
                     ->required()
                     ->className('Gdbots\Schemas\Pbj\Entity')
                     ->build(),
                 Fb::create('user_id', T\IdentifierType::create())
                     ->build()
-          ], [
-              CommandV1Mixin::create(), 
-              UpdateEntityV1Mixin::create()
-          ]
+            ],
+            [
+                CommandV1Mixin::create(), 
+                UpdateEntityV1Mixin::create()
+            ]
         );
     }
 
