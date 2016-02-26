@@ -4,7 +4,7 @@ namespace {{ schema.languageKey('php', 'namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\Schema;
-{{ schema.languageSubKey('php', 'trait_class', 'use_statements') }}
+{{ schema.languageSubKey('php', 'insertion', 'use_statements') }}
 {% endblock use_statements %}
 
 {% block class_definition %}
@@ -16,6 +16,6 @@ trait {{ getClassName(schema, true) }}Trait
 {% endblock class_definition %}
 {
 {% block class_body %}
-    {{ schema.languageSubKey('php', 'trait_class', 'class_body') }}
+    {{ schema.languageSubKey('php', 'insertion', 'class_body') }}
 {% endblock class_body %}
 }

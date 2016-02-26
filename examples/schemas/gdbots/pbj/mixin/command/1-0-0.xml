@@ -11,7 +11,7 @@
 
     <php_options>
       <namespace>Gdbots\Schemas\Pbj\Command</namespace>
-      <trait_class>
+      <insertion>
         <use_statements>
             <![CDATA[
 use Gdbots\Pbj\MessageRef;
@@ -40,7 +40,7 @@ use Gdbots\Pbj\MessageRef;
     }
             ]]>
         </class_body>
-      </trait_class>
+      </insertion>
     </php_options>
   </entity>
 </schema-mapping>
