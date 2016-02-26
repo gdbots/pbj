@@ -130,7 +130,21 @@ class PhpGenerator extends Generator
      */
     protected function render($template, $parameters)
     {
-        return str_replace(
+        $code = parent::render($template, $parameters);
+
+        if (preg_match_all('/use\\s(.*);/', $code, $matches) !== false) {
+            $unique = array_unique($matches[1]);
+
+            foreach ($matches[1] as $match) {
+                if (in_array($match, $unique)) {
+                    unset($unique[array_search($match, $unique)]);
+                } else {
+                    $code = preg_replace(sprintf("/use\\s%s;\n/", str_replace('\\', '\\\\', $match)), '', $code, 1);
+                }
+            }
+        }
+
+        $code = str_replace(
             [
                 "\n\n\n",
                 "{\n    \n}",
@@ -138,7 +152,9 @@ class PhpGenerator extends Generator
                 "\n\n",
                 "{\n}",
             ],
-            parent::render($template, $parameters)
+            $code
         );
+
+        return $code;
     }
 }
