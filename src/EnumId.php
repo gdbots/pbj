@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Exception\InvalidEnumIdException;
+use Gdbots\Pbjc\Exception\InvalidEnumId;
 
 /**
  * Enum Id Format:
@@ -64,7 +64,7 @@ final class EnumId
      *
      * @return EnumId
      *
-     * @throws InvalidEnumIdException
+     * @throws InvalidEnumId
      */
     public static function fromString($enumId)
     {
@@ -73,13 +73,13 @@ final class EnumId
         }
 
         if (strlen($enumId) > 150) {
-            throw new InvalidEnumIdException(
+            throw new InvalidEnumId(
                 sprintf('Enum id [%s] cannot be greater than 150 chars.', $enumId)
             );
         }
 
         if (!preg_match(self::VALID_PATTERN, $enumId, $matches)) {
-            throw new InvalidEnumIdException(
+            throw new InvalidEnumId(
                 sprintf('Enum id [%s] is invalid. It must match the pattern [%s].', $enumId, self::VALID_PATTERN)
             );
         }

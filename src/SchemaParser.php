@@ -3,7 +3,7 @@
 namespace Gdbots\Pbjc;
 
 use Gdbots\Pbjc\Enum\TypeName;
-use Gdbots\Pbjc\Exception\MissingSchemaException;
+use Gdbots\Pbjc\Exception\MissingSchema;
 
 /**
  * The SchemaParser is a tool to create/update schemas class descriptors.
@@ -18,7 +18,7 @@ class SchemaParser
      * @return SchemaDescriptor
      *
      * @throw \InvalidArgumentException
-     * @throw MissingSchemaException
+     * @throw MissingSchema
      */
     public function create(array $data)
     {
@@ -33,7 +33,7 @@ class SchemaParser
                 ));
             }
             if (!$extendsSchema = SchemaStore::getSchemaById($data['extends'], true)) {
-                throw new MissingSchemaException($data['extends']);
+                throw new MissingSchema($data['extends']);
             }
 
             // recursivly check that chain not pointing back to schema
@@ -193,7 +193,7 @@ class SchemaParser
      * @return array
      *
      * @throw \InvalidArgumentException
-     * @throw MissingSchemaException
+     * @throw MissingSchema
      */
     private function getAnyOf($schema, $curies)
     {
@@ -209,7 +209,7 @@ class SchemaParser
 
         foreach ($curies as $curie) {
             if (!$s = SchemaStore::getSchemaById($curie, true)) {
-                throw new MissingSchemaException($curie);
+                throw new MissingSchema($curie);
             }
 
             $schemas[] = $s;
@@ -244,7 +244,7 @@ class SchemaParser
      * @return SchemaDescriptor|null
      *
      * @throw \InvalidArgumentException
-     * @throw MissingSchemaException
+     * @throw MissingSchema
      */
     private function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
     {
@@ -257,7 +257,7 @@ class SchemaParser
         }
 
         if (!$schema = SchemaStore::getSchemaById($curieWithMajorRev, true)) {
-            throw new MissingSchemaException($curieWithMajorRev);
+            throw new MissingSchema($curieWithMajorRev);
         }
 
         return $schema;

@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Exception\MissingSchemaException;
+use Gdbots\Pbjc\Exception\MissingSchema;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -210,7 +210,7 @@ final class Compiler
             if (is_array($schema)) {
                 try {
                     $schema = $parser->create($schema);
-                } catch (MissingSchemaException $e) {
+                } catch (MissingSchema $e) {
                     $keys = preg_grep(sprintf('/^pbj:%s*/', str_replace(':v', ':', $e->getMessage())), array_keys($schemas));
 
                     if (count($keys) === 0) {

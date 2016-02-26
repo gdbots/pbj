@@ -2,6 +2,6 @@
 
 namespace Gdbots\Pbjc\Exception;
 
-class ValidatorException extends \RuntimeException implements GdbotsPbjcException
+class ValidatorException extends \RuntimeException
 {
 }
