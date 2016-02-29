@@ -277,11 +277,6 @@ final class Compiler
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
         $generator = new $class($output);
 
-        $descriptors = array_merge([
-            SchemaStore::getEnums(),
-            SchemaStore::getSchemas(),
-        ]);
-
         foreach (SchemaStore::getEnums() as $enum) {
             if ($namespace !== $enum->getId()->getNamespace()) {
                 continue;
