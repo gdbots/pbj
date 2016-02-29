@@ -172,25 +172,13 @@ abstract class Generator
     }
 
     /**
-     * @param EnumDescriptor $enum
+     * Generates and writes message resolver files.
      *
-     * @return string
+     * @param array  $schemas
+     * @param string $namespace
      */
-    protected function getEnumTemplate(EnumDescriptor $enum)
+    public function generateMessageResolver(array $schemas, $namespace = null)
     {
-        return;
-    }
-
-    /**
-     * @param EnumDescriptor $enum
-     *
-     * @return array
-     */
-    protected function getEnumParameters(EnumDescriptor $enum)
-    {
-        return [
-            'enum' => $enum,
-        ];
     }
 
     /**

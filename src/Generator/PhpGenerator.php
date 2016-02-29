@@ -100,29 +100,48 @@ class PhpGenerator extends Generator
         ;
 
         $this->renderFile(
-            $this->getEnumTemplate($enum),
+            'Enum.php.twig',
             $filename,
-            $this->getEnumParameters($enum)
+            [
+                'enum' => $enum,
+                'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
+                'isInt' => is_int(current($enum->getValues())),
+            ]
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getEnumTemplate(EnumDescriptor $enum)
+    public function generateMessageResolver(array $schemas, $namespace = null)
     {
-        return 'Enum.php.twig';
-    }
+        // store in root - current working directory
+        $filename = sprintf('%s/pbj-schemas.php', getcwd());
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEnumParameters(EnumDescriptor $enum)
-    {
-        return array_merge(parent::getEnumParameters($enum), [
-            'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
-            'isInt' => is_int(current($enum->getValues())),
-        ]);
+        if (file_exists($filename)) {
+            $content = file_get_contents($filename);
+
+            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+):[a-z0-9-]+?:[a-z0-9-]+\'/', $content, $matches) !== false) {
+                $unique = array_unique($matches[1]);
+
+                if (!in_array($namespace, $unique)) {
+                    $namespace = array_merge($unique, [$namespace]);
+                }
+            }
+        }
+
+        if (is_string($namespace)) {
+            $namespace = [$namespace];
+        }
+
+        $this->renderFile(
+            'pbj-schemas.php.twig',
+            $filename,
+            [
+                'schemas' => $schemas,
+                'namespaces' => $namespace
+            ]
+        );
     }
 
     /**

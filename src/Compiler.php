@@ -284,6 +284,7 @@ final class Compiler
 
             $generator->generateEnum($enum);
         }
+
         foreach (SchemaStore::getSchemas() as $schema) {
             if ($namespace !== $schema->getId()->getNamespace()) {
                 continue;
@@ -291,6 +292,8 @@ final class Compiler
 
             $generator->generateSchema($schema);
         }
+
+        $generator->generateMessageResolver(SchemaStore::getSchemasByCurie(), $namespace);
 
         return $generator;
     }
