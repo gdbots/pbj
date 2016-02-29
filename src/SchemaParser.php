@@ -136,6 +136,15 @@ class SchemaParser
             $field['options'] = [];
         }
 
+        if (isset($field['any_of']) &&
+            in_array($field['type'], [
+                TypeName::GEO_POINT(),
+                TypeName::IDENTIFIER(),
+                TypeName::MESSAGE_REF(),
+            ])
+        ) {
+            unset($field['any_of']);
+        }
         if (isset($field['any_of']['curie'])) {
             $field['any_of'] = $this->getAnyOf(
                 $schema,
@@ -143,13 +152,6 @@ class SchemaParser
             );
         }
         if (isset($field['any_of']) && count($field['any_of']) === 0) {
-            unset($field['any_of']);
-        }
-        if (in_array($field['type'], [
-            TypeName::GEO_POINT(),
-            TypeName::IDENTIFIER(),
-            TypeName::MESSAGE_REF(),
-        ])) {
             unset($field['any_of']);
         }
 
