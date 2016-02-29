@@ -113,33 +113,39 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateMessageResolver(array $schemas, $namespace = null)
+    public function generateMessageResolver(array $schemas)
     {
         // store in root - current working directory
         $filename = sprintf('%s/pbj-schemas.php', getcwd());
 
+        $messages = [];
+
         if (file_exists($filename)) {
             $content = file_get_contents($filename);
 
-            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+):[a-z0-9-]+?:[a-z0-9-]+\'/', $content, $matches) !== false) {
-                $unique = array_unique($matches[1]);
-
-                if (!in_array($namespace, $unique)) {
-                    $namespace = array_merge($unique, [$namespace]);
+            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+:[a-z0-9-]+?:[a-z0-9-]+)\' => \'(.+)\'/', $content, $matches) !== false) {
+                foreach ($matches[1] as $key => $curie) {
+                    $messages[$curie] = $matches[2][$key];
                 }
             }
         }
 
-        if (is_string($namespace)) {
-            $namespace = [$namespace];
+        foreach ($schemas as $schema) {
+            if (!$schema->isMixinSchema() && !array_key_exists($schema->getId()->getCurie(), $messages)) {
+                $messages[$schema->getId()->getCurie()] = sprintf(
+                    '%s\%sV%d',
+                    $schema->getLanguageKey('php', 'namespace'),
+                    StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
+                    $schema->getId()->getVersion()->getMajor()
+                );
+            }
         }
 
         $this->renderFile(
             'pbj-schemas.php.twig',
             $filename,
             [
-                'schemas' => $schemas,
-                'namespaces' => $namespace
+                'messages' => $messages,
             ]
         );
     }

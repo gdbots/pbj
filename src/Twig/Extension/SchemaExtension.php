@@ -29,7 +29,7 @@ class SchemaExtension extends \Twig_Extension
     {
         if ($majorRev) {
             return sprintf(
-                '%sV%s',
+                '%sV%d',
                 StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                 $schema->getId()->getVersion()->getMajor()
             );

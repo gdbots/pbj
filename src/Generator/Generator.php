@@ -174,10 +174,9 @@ abstract class Generator
     /**
      * Generates and writes message resolver files.
      *
-     * @param array  $schemas
-     * @param string $namespace
+     * @param array $schemas
      */
-    public function generateMessageResolver(array $schemas, $namespace = null)
+    public function generateMessageResolver(array $schemas)
     {
     }
 

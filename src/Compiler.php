@@ -293,7 +293,7 @@ final class Compiler
             $generator->generateSchema($schema);
         }
 
-        $generator->generateMessageResolver(SchemaStore::getSchemasByCurie(), $namespace);
+        $generator->generateMessageResolver(SchemaStore::getSchemasByNamespace($namespace));
 
         return $generator;
     }

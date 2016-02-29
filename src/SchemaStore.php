@@ -121,6 +121,26 @@ class SchemaStore
     }
 
     /**
+     * Returns an array of schemas by namespace.
+     *
+     * @param string $namespace
+     *
+     * @return array
+     */
+    public static function getSchemasByNamespace($namespace)
+    {
+        $schemas = [];
+
+        foreach (self::$schemasByCurie as $schema) {
+            if ($namespace === $schema->getId()->getNamespace()) {
+                $schemas[] = $schema;
+            }
+        }
+
+        return $schemas;
+    }
+
+    /**
      * Returns an array of schemas by curie major.
      *
      * @return array
