@@ -53,9 +53,12 @@ The <info>%command.name%</info> command compiles and generates files for a selec
 
 To generate files you would need to specify the language, namespace and output directory:
 
-  <info>pbjc --language=php --output=src</info>
+  <info>pbjc --language=php --output=src --namespace=vendor:package</info>
 
 Note that currently we only support <comment>php</comment> or <comment>json</comment> languages.
+
+By default no option is required when running from the same folder contains the
+<comment>pbjc.yml</comment> configuration file.
 
 EOF
             )
