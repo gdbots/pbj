@@ -187,7 +187,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
 ```
 
 ```xml
-<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+<enums-mapping xmlns="gdbots:pbjc:enums-mapping"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <enums namespace="{vendor:package}">
@@ -199,7 +199,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
       <namespace>{string}</namespace>
     </php_options>
   <enums>
-</schema-mapping>
+</enums-mapping>
 ```
 
 # Basic Usage
