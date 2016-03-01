@@ -1,12 +1,11 @@
-pbjc:
-  # default namespace
-  # can also be an array of namespaces
-  namespace: <vendor>:<package>
+namespaces:
+  - <vendor1>:<package1>
+  - <vendor2>:<package2>
 
-  # default output directory
-  output: <dir>
+languages:
+  php:
+    output: <div>
+    manifest: <dir>/<filename>
 
-  # assign an output directory per language
-  language:
-    php: <dir>
-    json: <dir>
+  json-schema:
+    output: <dir>

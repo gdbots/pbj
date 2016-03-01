@@ -1,8 +1,12 @@
-pbjc:
-  namespace:
-    - acme:core
-    - acme:blog
-    - gdbots:pbj
-  output: ./src
-  language:
-    json: ./json-schema
+namespaces:
+  - acme:core
+  - acme:blog
+  - gdbots:pbj
+
+languages:
+  php:
+    output: ./src
+    manifest: ./pbj-schemas.php
+
+  json-schema:
+    output: ./json-schema
