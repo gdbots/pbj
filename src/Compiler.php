@@ -293,7 +293,7 @@ final class Compiler
             $generator->generateSchema($schema);
         }
 
-        $generator->generateMessageResolver(SchemaStore::getSchemasByNamespace($namespace));
+        $generator->generateAdditionalFiles(SchemaStore::getSchemasByNamespace($namespace));
 
         return $generator;
     }

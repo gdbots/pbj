@@ -172,11 +172,11 @@ abstract class Generator
     }
 
     /**
-     * Generates and writes message resolver files.
+     * Generates and writes additional files.
      *
      * @param array $schemas
      */
-    public function generateMessageResolver(array $schemas)
+    public function generateAdditionalFiles(array $schemas)
     {
     }
 
