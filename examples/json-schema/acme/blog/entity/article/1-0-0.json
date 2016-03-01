@@ -7,21 +7,21 @@
       "type": "string",
       "additionalProperties": {
         "customType": "string",
-        "rule": "simple"
+        "rule": "single"
       }
     },
     "excerpt": {
       "type": "string",
       "additionalProperties": {
         "customType": "text",
-        "rule": "simple"
+        "rule": "single"
       }
     },
     "excerpt_html": {
       "type": "string",
       "additionalProperties": {
         "customType": "text",
-        "rule": "simple"
+        "rule": "single"
       }
     },
     "thumbnails": {
@@ -44,7 +44,7 @@
       ],
       "additionalProperties": {
         "customType": "string-enum",
-        "rule": "simple",
+        "rule": "single",
         "withDefault": "draft"
       }
     }
@@ -59,7 +59,7 @@
           "required": true,
           "additionalProperties": {
             "customType": "identifier",
-            "rule": "simple",
+            "rule": "single",
             "overridable": true
           }
         },
@@ -68,21 +68,21 @@
           "pattern": "^[A-Za-z0-9_\\-]+$",
           "additionalProperties": {
             "customType": "string",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "created_at": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "updated_at": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
-            "rule": "simple"
+            "rule": "single"
           }
         }
       },

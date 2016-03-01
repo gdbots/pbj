@@ -12,7 +12,7 @@ use Gdbots\Common\Enum;
  */
 final class FieldRule extends Enum
 {
-    const A_SINGLE_VALUE = 'simple';
+    const A_SINGLE_VALUE = 'single';
     const A_SET = 'set';
     const A_LIST = 'list';
     const A_MAP = 'map';

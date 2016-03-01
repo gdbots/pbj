@@ -13,14 +13,14 @@
       ],
       "additionalProperties": {
         "customType": "message",
-        "rule": "simple"
+        "rule": "single"
       }
     },
     "user_id": {
       "type": "string",
       "additionalProperties": {
         "customType": "identifier",
-        "rule": "simple"
+        "rule": "single"
       }
     }
   },
@@ -37,7 +37,7 @@
           "required": true,
           "additionalProperties": {
             "customType": "identifier",
-            "rule": "simple",
+            "rule": "single",
             "overridable": true
           }
         },
@@ -46,21 +46,21 @@
           "pattern": "^[A-Za-z0-9_\\-]+$",
           "additionalProperties": {
             "customType": "string",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "created_at": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "updated_at": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
-            "rule": "simple"
+            "rule": "single"
           }
         }
       },
@@ -78,28 +78,28 @@
           "required": true,
           "additionalProperties": {
             "customType": "time-uuid",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "microtime": {
           "type": "number",
           "additionalProperties": {
             "customType": "microtime",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "correlator": {
           "type": "object",
           "additionalProperties": {
             "customType": "message-ref",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "retries": {
           "type": "number",
           "additionalProperties": {
             "customType": "tiny-int",
-            "rule": "simple"
+            "rule": "single"
           }
         }
       },
@@ -122,14 +122,14 @@
           ],
           "additionalProperties": {
             "customType": "message",
-            "rule": "simple"
+            "rule": "single"
           }
         },
         "user_id": {
           "type": "string",
           "additionalProperties": {
             "customType": "identifier",
-            "rule": "simple"
+            "rule": "single"
           }
         }
       },
@@ -146,7 +146,7 @@
               "required": true,
               "additionalProperties": {
                 "customType": "identifier",
-                "rule": "simple",
+                "rule": "single",
                 "overridable": true
               }
             },
@@ -155,21 +155,21 @@
               "pattern": "^[A-Za-z0-9_\\-]+$",
               "additionalProperties": {
                 "customType": "string",
-                "rule": "simple"
+                "rule": "single"
               }
             },
             "created_at": {
               "type": "number",
               "additionalProperties": {
                 "customType": "microtime",
-                "rule": "simple"
+                "rule": "single"
               }
             },
             "updated_at": {
               "type": "number",
               "additionalProperties": {
                 "customType": "microtime",
-                "rule": "simple"
+                "rule": "single"
               }
             }
           },
