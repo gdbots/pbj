@@ -34,6 +34,10 @@ class ScriptHandler
             $dirs[] = $package->getName().'/schemas/';
         }
 
+        if (empty($dirs)) {
+            return;
+        }
+
         $event->getIO()->write('<info>Writing "pbj-schema-store" locations to "pbj-schema-stores.php"</info>');
         $stores = '';
 
