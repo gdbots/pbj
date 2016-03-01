@@ -6,6 +6,8 @@
  */
 \Gdbots\Pbj\MessageResolver::registerMap([
     'acme:blog:command:update-article' => 'Acme\Schemas\Blog\Command\UpdateArticleV2',
+    'acme:blog:command:update-article:v1' => 'Acme\Schemas\Blog\Command\UpdateArticleV1',
+    'acme:blog:command:update-article:v2' => 'Acme\Schemas\Blog\Command\UpdateArticleV2',
     'acme:blog:entity:article' => 'Acme\Schemas\Blog\Entity\ArticleV1',
     'acme:blog:entity:comment' => 'Acme\Schemas\Blog\Entity\CommentV1',
 ]);

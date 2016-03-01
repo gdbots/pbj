@@ -217,7 +217,7 @@ class SchemaStore
     }
 
     /**
-     * Returns the previous major version of schema by id.
+     * Checks if schema has additional major version.
      *
      * @param SchemaId $schemaId
      *
@@ -225,12 +225,44 @@ class SchemaStore
      */
     public static function hasOtherSchemaMajorRev(SchemaId $schemaId)
     {
-        $curieMajor = $schemaId->getCurieWithMajorRev();
+        if (isset(self::$schemasByCurieMajor[$schemaId->getCurieWithMajorRev()])) {
+            if (preg_match_all(
+                    sprintf('/(%s:v[0-9]+)/', $schemaId->getCurie()),
+                    implode(' ', array_keys(self::$schemasByCurieMajor)),
+                    $matches
+                ) !== false
+            ) {
+                return count($matches[1]) > 1;
+            }
+        }
 
-        if (isset(self::$schemasByCurieMajor[$curieMajor])) {
-            $found = array_keys(self::$schemasByCurieMajor);
+        return false;
+    }
 
-            return count($found) > 1;
+    /**
+     * Returns list of all schemas with major version.
+     *
+     * @param SchemaId $schemaId
+     *
+     * @return array
+     */
+    public static function getOtherSchemaMajorRev(SchemaId $schemaId)
+    {
+        if (isset(self::$schemasByCurieMajor[$schemaId->getCurieWithMajorRev()])) {
+            if (preg_match_all(
+                    sprintf('/(%s:v[0-9]+)/', $schemaId->getCurie()),
+                    implode(' ', array_keys(self::$schemasByCurieMajor)),
+                    $matches
+                ) !== false
+            ) {
+                $schemas = [];
+
+                foreach ($matches[1] as $curieMajor) {
+                    $schemas[] = self::$schemasByCurieMajor[$curieMajor];
+                }
+
+                return $schemas;
+            }
         }
 
         return false;

@@ -6,6 +6,7 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\SchemaStore;
 
 class PhpGenerator extends Generator
 {
@@ -123,21 +124,38 @@ class PhpGenerator extends Generator
         if (file_exists($filename)) {
             $content = file_get_contents($filename);
 
-            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+:[a-z0-9-]+?:[a-z0-9-]+)\' => \'(.+)\'/', $content, $matches) !== false) {
-                foreach ($matches[1] as $key => $curie) {
-                    $messages[$curie] = $matches[2][$key];
+            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+:[a-z0-9-]+?:[a-z0-9-]+(:v[0-9]+)?)\' => \'(.*)\'/', $content, $matches) !== false) {
+                foreach ($matches[1] as $key => $value) {
+                    $messages[$value] = $matches[3][$key];
                 }
             }
         }
 
         foreach ($schemas as $schema) {
-            if (!$schema->isMixinSchema() && !array_key_exists($schema->getId()->getCurie(), $messages)) {
+            if ($schema->isMixinSchema()) {
+                continue;
+            }
+
+            if (!array_key_exists($schema->getId()->getCurie(), $messages)) {
                 $messages[$schema->getId()->getCurie()] = sprintf(
                     '%s\%sV%d',
                     $schema->getLanguageKey('php', 'namespace'),
                     StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                     $schema->getId()->getVersion()->getMajor()
                 );
+            }
+
+            if (SchemaStore::hasOtherSchemaMajorRev($schema->getId())) {
+                foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
+                    if (!array_key_exists($s->getId()->getCurieWithMajorRev(), $messages)) {
+                        $messages[$s->getId()->getCurieWithMajorRev()] = sprintf(
+                            '%s\%sV%d',
+                            $s->getLanguageKey('php', 'namespace'),
+                            StringUtils::toCamelFromSlug($s->getId()->getMessage()),
+                            $s->getId()->getVersion()->getMajor()
+                        );
+                    }
+                }
             }
         }
 
