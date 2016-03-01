@@ -84,14 +84,20 @@ class SchemaParser
      */
     private function parse(array $data)
     {
-        $schema = new SchemaDescriptor($data['id']);
+        $schemaId = SchemaId::fromString($data['id']);
+
+        $extends = null;
+        $fields = [];
+        $mixins = [];
+        $languages = [];
+        $isMixin = false;
 
         // can't extends yourself
         if (isset($data['extends'])) {
-            if ($data['extends'] == $schema->getId()->getCurieWithMajorRev()) {
+            if ($data['extends'] == $schemaId->getCurieWithMajorRev()) {
                 throw new \InvalidArgumentException(sprintf(
                     'Cannot extends yourself "%s".',
-                    $schema->getId()->toString()
+                    $schemaId->toString()
                 ));
             }
             if (!$extendsSchema = SchemaStore::getSchemaById($data['extends'], true)) {
@@ -101,49 +107,49 @@ class SchemaParser
             // recursivly check that chain not pointing back to schema
             $check = $extendsSchema->getExtends();
             while ($check) {
-                if ($check->getId()->getCurieWithMajorRev() == $schema->getId()->getCurieWithMajorRev()) {
+                if ($check->getId()->getCurieWithMajorRev() == $schemaId->getCurieWithMajorRev()) {
                     throw new \InvalidArgumentException(sprintf(
                         'Invalid extends chain. Schema "%s" pointing back to you "%s".',
                         $check->getId()->toString(),
-                        $schema->getId()->toString()
+                        $schemaId->toString()
                     ));
                 }
 
                 $check = $check->getExtends();
             }
 
-            $schema->setExtends($extendsSchema);
+            $extends = $extendsSchema;
         }
 
         if (isset($data['mixin']) && $data['mixin']) {
-            $schema->setIsMixin(true);
+            $isMixin = true;
         }
 
         // default language options
         $options = $this->getLanguageOptions($data);
         foreach ($options as $language => $option) {
-            $schema->setLanguage($language, $option);
+            $languages[$language] = $option;
         }
 
         if (isset($data['fields']['field'])) {
-            $fields = $this->fixArray($data['fields']['field']);
-            foreach ($fields as $field) {
-                if ($field = $this->getFieldDescriptor($schema, $field)) {
-                    $schema->addField($field);
+            $fieldsData = $this->fixArray($data['fields']['field']);
+            foreach ($fieldsData as $field) {
+                if ($field = $this->getFieldDescriptor($schemaId, $field)) {
+                    $fields[$field->getName()] = $field;
                 }
             }
         }
 
         if (isset($data['mixins']['curie_major'])) {
-            $mixins = $this->fixArray($data['mixins']['curie_major']);
-            foreach ($mixins as $curieWithMajorRev) {
-                if ($mixin = $this->getMixin($schema, $curieWithMajorRev)) {
-                    $schema->addMixin($mixin);
+            $mixinsData = $this->fixArray($data['mixins']['curie_major']);
+            foreach ($mixinsData as $curieWithMajorRev) {
+                if ($mixin = $this->getMixin($schemaId, $curieWithMajorRev)) {
+                    $mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
                 }
             }
         }
 
-        return $schema;
+        return new SchemaDescriptor($schemaId, $extends, $fields, $mixins, $languages, $isMixin);
     }
 
     /**
@@ -182,12 +188,12 @@ class SchemaParser
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     * @param array            $field
+     * @param SchemaId $schemaId
+     * @param array    $field
      *
      * @return FieldDescriptor|null
      */
-    private function getFieldDescriptor(SchemaDescriptor $schema, array $field)
+    private function getFieldDescriptor(SchemaId $schemaId, array $field)
     {
         // force default type to be "string"
         if (!isset($field['type'])) {
@@ -209,7 +215,7 @@ class SchemaParser
         }
         if (isset($field['any_of']['curie'])) {
             $field['any_of'] = $this->getAnyOf(
-                $schema,
+                $schemaId,
                 $this->fixArray($field['any_of']['curie'])
             );
         }
@@ -251,32 +257,32 @@ class SchemaParser
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     * @param array            $curies
+     * @param SchemaId $schemaId
+     * @param array    $curies
      *
      * @return array
      *
      * @throw \InvalidArgumentException
      * @throw MissingSchema
      */
-    private function getAnyOf($schema, $curies)
+    private function getAnyOf($schemaId, $curies)
     {
         // can't add yourself to anyof
-        if (in_array($schema->getId()->getCurie(), $curies)) {
+        if (in_array($schemaId->getCurie(), $curies)) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot add yourself "%s" as to anyof.',
-                $schema->getId()->toString()
+                $schemaId->toString()
             ));
         }
 
         $schemas = [];
 
         foreach ($curies as $curie) {
-            if (!$s = SchemaStore::getSchemaById($curie, true)) {
+            if (!$schema = SchemaStore::getSchemaById($curie, true)) {
                 throw new MissingSchema($curie);
             }
 
-            $schemas[] = $s;
+            $schemas[] = $schema;
         }
 
         return $schemas;
@@ -302,21 +308,21 @@ class SchemaParser
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     * @param string           $curieWithMajorRev
+     * @param SchemaId $schemaId
+     * @param string   $curieWithMajorRev
      *
      * @return SchemaDescriptor|null
      *
      * @throw \InvalidArgumentException
      * @throw MissingSchema
      */
-    private function getMixin(SchemaDescriptor $schema, $curieWithMajorRev)
+    private function getMixin(SchemaId $schemaId, $curieWithMajorRev)
     {
         // can't add yourself to mixins
-        if ($curieWithMajorRev == $schema->getId()->getCurieWithMajorRev()) {
+        if ($curieWithMajorRev == $schemaId->getCurieWithMajorRev()) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot add yourself "%s" as to mixins.',
-                $schema->getId()->toString()
+                $schemaId->toString()
             ));
         }
 

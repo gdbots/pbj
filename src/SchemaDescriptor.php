@@ -25,11 +25,30 @@ final class SchemaDescriptor
     private $isLatestVersion = false;
 
     /**
-     * @param SchemaId|string $id
+     * @param SchemaId              $id
+     * @param SchemaDescriptor|null $extends
+     * @param FieldDescriptor[]     $fields
+     * @param SchemaDescriptor[]    $mixins
+     * @param array                 $languages
+     * @param bool                  $isMixin
+     * @param bool                  $isLatestVersion
      */
-    public function __construct($id)
-    {
-        $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
+    public function __construct(
+        SchemaId $id,
+        SchemaDescriptor $extends = null,
+        array $fields = [],
+        array $mixins = [],
+        array $languages = [],
+        $isMixin = false,
+        $isLatestVersion = false
+    ) {
+        $this->id = $id;
+        $this->extends = $extends;
+        $this->fields = $fields;
+        $this->mixins = $mixins;
+        $this->languages = $languages;
+        $this->isMixin = $isMixin;
+        $this->isLatestVersion = $isLatestVersion;
     }
 
     /**
@@ -62,28 +81,6 @@ final class SchemaDescriptor
     public function getExtends()
     {
         return $this->extends;
-    }
-
-    /**
-     * @param SchemaDescriptor $extends
-     *
-     * @return this
-     */
-    public function setExtends(SchemaDescriptor $extends)
-    {
-        $this->extends = $extends;
-
-        return $this;
-    }
-
-    /**
-     * @param FieldDescriptor $field
-     */
-    public function addField(FieldDescriptor $field)
-    {
-        if (!isset($this->fields[$field->getName()])) {
-            $this->fields[$field->getName()] = $field;
-        }
     }
 
     /**
@@ -127,16 +124,6 @@ final class SchemaDescriptor
     }
 
     /**
-     * @param SchemaDescriptor $mixin
-     */
-    public function addMixin(SchemaDescriptor $mixin)
-    {
-        if (!isset($this->mixins[$mixin->getId()->getCurieWithMajorRev()])) {
-            $this->mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
-        }
-    }
-
-    /**
      * @param string $curieWithMajorRev
      *
      * @return SchemaDescriptor|null
@@ -156,18 +143,6 @@ final class SchemaDescriptor
     public function getMixins()
     {
         return $this->mixins ?: $this->mixins = [];
-    }
-
-    /**
-     * @param bool $bool
-     *
-     * @return this
-     */
-    public function setIsMixin($bool)
-    {
-        $this->isMixin = (bool) $bool;
-
-        return $this;
     }
 
     /**
