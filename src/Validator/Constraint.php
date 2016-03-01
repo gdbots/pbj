@@ -5,9 +5,9 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 /**
- * Interface that must be implemented by validator asserts.
+ * Interface that must be implemented by validator constraints.
  */
-interface Assert
+interface Constraint
 {
     /**
      * @param SchemaDescriptor $a

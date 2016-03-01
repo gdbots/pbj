@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldMinLength implements Assert
+class FieldMinLength implements Constraint
 {
     /**
      * {@inheritdoc}

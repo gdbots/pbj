@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldMaxLength implements Assert
+class FieldMaxLength implements Constraint
 {
     /**
      * {@inheritdoc}

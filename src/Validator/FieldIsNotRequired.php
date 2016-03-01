@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldIsNotRequired implements Assert
+class FieldIsNotRequired implements Constraint
 {
     /**
      * {@inheritdoc}

@@ -8,7 +8,7 @@ use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldAttributeEqualTo implements Assert
+class FieldAttributeEqualTo implements Constraint
 {
     /** @var string */
     private $attribute;

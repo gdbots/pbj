@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class FieldMustContainsAnyOfClasses implements Assert
+class FieldMustContainsAnyOfClasses implements Constraint
 {
     /**
      * {@inheritdoc}

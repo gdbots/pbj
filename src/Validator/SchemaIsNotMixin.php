@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class SchemaIsNotMixin implements Assert
+class SchemaIsNotMixin implements Constraint
 {
     /**
      * {@inheritdoc}
