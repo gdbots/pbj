@@ -15,21 +15,26 @@ SchemaStore::addDir(__DIR__.'/schemas');
 
 $compile = new Compiler();
 
-foreach (['acme:blog', 'acme:core', 'gdbots:pbj'] as $namespace) {
+$namespaces = ['acme:blog', 'acme:core', 'gdbots:pbj'];
 
-    // generate PHP files
-    $generator = $compile->run('php', $namespace, __DIR__.'/src');
+// generate PHP files
+$generator = $compile->run('php', [
+    'namespaces' => $namespaces,
+    'output' => __DIR__.'/src'
+]);
 
-    foreach ($generator->getFiles() as $file => $output) {
-        echo highlight_string($output, true).'<hr />';
-    }
+foreach ($generator->getFiles() as $file => $output) {
+    echo highlight_string($output, true).'<hr />';
+}
 
-    // generate JSON Schema files
-    $generator = $compile->run('json-schema', $namespace, __DIR__.'/json-schema');
+// generate JSON Schema files
+$generator = $compile->run('json-schema', [
+    'namespaces' => $namespaces,
+    'output' => __DIR__.'/json-schema'
+]);
 
-    foreach ($generator->getFiles() as $file => $output) {
-        $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
+foreach ($generator->getFiles() as $file => $output) {
+    $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
 
-        echo highlight_string($output, true).'<hr />';
-    }
+    echo highlight_string($output, true).'<hr />';
 }
