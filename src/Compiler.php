@@ -4,6 +4,7 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
+use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
@@ -101,20 +102,20 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param string $language
-     * @param array  $options
+     * @param string       $language
+     * @param ParameterBag $options
      *
      * @return \Gdbots\Pbjc\Generator\Generator
      *
      * @throw \InvalidArgumentException
      */
-    public function run($language, array $options)
+    public function run($language, ParameterBag $options)
     {
-        if (!isset($options['namespaces'])) {
+        if (!$options->has('namespaces')) {
             throw new \InvalidArgumentException('Missing "namespaces" options.');
         }
 
-        $namespaces = $options['namespaces'];
+        $namespaces = $options->get('namespaces');
         if (!is_array($namespaces)) {
             $namespaces = [$namespaces];
         }
@@ -127,12 +128,12 @@ final class Compiler
             }
         }
 
-        if (!isset($options['output'])) {
+        if (!$options->has('output')) {
             throw new \InvalidArgumentException('Missing "output" directory options.');
         }
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
-        $generator = new $class($options['output']);
+        $generator = new $class($options->get('output'));
 
         foreach (SchemaStore::getEnums() as $enum) {
             if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
@@ -150,8 +151,8 @@ final class Compiler
             $generator->generateSchema($schema);
         }
 
-        if (isset($options['manifest'])) {
-            $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options['manifest']);
+        if (!$options->has('manifest')) {
+            $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options->get('manifest'));
         }
 
         return $generator;

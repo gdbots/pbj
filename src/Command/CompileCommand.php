@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Command;
 
 use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,7 +63,7 @@ EOF
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
 
         $namespaces = null;
-        $options = null;
+        $options = new ParameterBag();
 
         if (!empty($namespaces)) {
             $namespaces = explode(',', $namespaces);
@@ -77,7 +78,7 @@ EOF
             }
 
             if (isset($config['languages'][$language])) {
-                $options = $config['languages'][$language];
+                $options->add($config['languages'][$language]);
             }
         }
 
@@ -85,7 +86,7 @@ EOF
             $namespaces = [$namespaces];
         }
 
-        $options['namespaces'] = $namespaces;
+        $options->set('namespaces', $namespaces);
 
         try {
             $compile = new Compiler();
