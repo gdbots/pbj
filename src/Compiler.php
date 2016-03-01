@@ -77,8 +77,8 @@ final class Compiler
 
         $namespace = $xmlData['enums']['namespace'];
 
-        $filePath = $file->getPathName();
-        $enumsPath = str_replace(':', '/', $namespace).'/'.$file->getFilename();
+        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+        $enumsPath = str_replace(':', '/', $namespace);
 
         // invalid enum file location
         if (strrpos($filePath, $enumsPath) === false) {
@@ -140,8 +140,8 @@ final class Compiler
 
         $schemaId = SchemaId::fromString($xmlData['entity']['id']);
 
-        $filePath = $file->getPathName();
-        $schemaPath = str_replace(':', '/', $schemaId->getCurie()).'/'.$file->getFilename();
+        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
+        $schemaPath = str_replace(':', '/', $schemaId->getCurie());
 
         // invalid schema file location
         if (strrpos($filePath, $schemaPath) === false) {
@@ -152,8 +152,16 @@ final class Compiler
             ));
         }
 
-        // todo: validate schema id against name (latest?)
-        // todo: override or create xml from latest
+        // validate version to file
+        if ($file->getFilename() != 'latest.xml'
+            && $file->getFilename() != sprintf('%s.xml', $schemaId->getVersion()->toString())
+        ) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml file "%s" version. Expected location "%s".',
+                $file->getFilename(),
+                $schemaId->getVersion()->toString()
+            ));
+        }
 
         // duplicate schema
         if (array_key_exists($schemaId->toString(), $schemas)) {
