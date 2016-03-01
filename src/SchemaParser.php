@@ -20,7 +20,7 @@ class SchemaParser
      * @throw \InvalidArgumentException
      * @throw MissingSchema
      */
-    public function create(array $data)
+    public function parse(array $data)
     {
         $schema = new SchemaDescriptor($data['id']);
 

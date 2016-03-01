@@ -16,7 +16,7 @@ class EnumParser
      *
      * @throw \InvalidArgumentException
      */
-    public function create(array $data)
+    public function parse(array $data)
     {
         // generate id
         $enumId = EnumId::fromString(sprintf('%s:%s', $data['namespace'], $data['name']));

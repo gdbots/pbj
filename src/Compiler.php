@@ -188,7 +188,7 @@ final class Compiler
 
         foreach ($enums as $enum) {
             if (is_array($enum)) {
-                if (!$enum = $parser->create($enum)) {
+                if (!$enum = $parser->parse($enum)) {
                     continue;
                 }
             }
@@ -221,7 +221,7 @@ final class Compiler
 
             if (is_array($schema)) {
                 try {
-                    $schema = $parser->create($schema);
+                    $schema = $parser->parse($schema);
                 } catch (MissingSchema $e) {
                     $keys = preg_grep(sprintf('/^pbj:%s*/', str_replace(':v', ':', $e->getMessage())), array_keys($schemas));
 
