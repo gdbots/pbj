@@ -121,6 +121,7 @@ class PhpGenerator extends Generator
 
         $messages = [];
 
+        // extract previous schemas
         if (file_exists($filename)) {
             $content = file_get_contents($filename);
 
@@ -131,6 +132,7 @@ class PhpGenerator extends Generator
             }
         }
 
+        // merge with selected schemas (only non-mixin schema's)
         foreach ($schemas as $schema) {
             if ($schema->isMixinSchema()) {
                 continue;
@@ -156,6 +158,13 @@ class PhpGenerator extends Generator
                         );
                     }
                 }
+            }
+        }
+
+        // delete invalid schemas
+        foreach ($messages as $key => $value) {
+            if (!SchemaStore::getSchemaById($key, true)) {
+                unset($messages[$key]);
             }
         }
 
