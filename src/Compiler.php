@@ -4,9 +4,7 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
-use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
 final class Compiler
 {
@@ -15,243 +13,84 @@ final class Compiler
      */
     public function __construct()
     {
-        list($enums, $schemas) = $this->loadXmlFiles();
-
-        $this->loadParseEnums($enums);
-        $this->loadParseSchemas($schemas);
-    }
-
-    /**
-     * Reads all xml files from all stored directories.
-     *
-     * @return array [enums, schemas]
-     *
-     * @throws \RuntimeException
-     */
-    private function loadXmlFiles()
-    {
         $enums = [];
         $schemas = [];
 
-        // load all schema and store XML data
         foreach (SchemaStore::getDirs() as $dir) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             foreach ($files as $key => $file) {
                 if ($file->getFilename() == 'enums.xml') {
-                    $this->addEnumXml($file, $enums);
+                    $enums[] = $file->getPathName();
                 } else {
-                    $this->addSchemaXml($file, $schemas);
+                    $schemas[] = $file->getPathName();
                 }
             }
         }
 
-        ksort($schemas);
-        ksort($enums);
+        /**
+         * Enums
+         */
 
-        return [$enums, $schemas];
-    }
-
-    /**
-     * Reads and validate XML file, and add all $enums.
-     *
-     * @param SplFileInfo $file
-     * @param array       $enums
-     *
-     * @throw \RuntimeException
-     */
-    private function addEnumXml(SplFileInfo $file, &$enums)
-    {
-        // invalid schema
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../enums.xsd')) {
-            throw new \RuntimeException(sprintf(
-                'Invalid enums xml file "%s".',
-                $file
-            ));
-        }
-
-        // bad \DOMDocument
-        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-            throw new \RuntimeException('Invalid enum DOM object.');
-        }
-
-        $namespace = $xmlData['enums']['namespace'];
-
-        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-        $enumsPath = str_replace(':', '/', $namespace);
-
-        // invalid enum file location
-        if (strrpos($filePath, $enumsPath) === false) {
-            throw new \RuntimeException(sprintf(
-                'Invalid enums xml file "%s" location. Expected location "%s".',
-                $filePath,
-                $enumsPath
-            ));
-        }
-
-        // get language options
-        $languages = [];
-        foreach ($xmlData['enums'] as $key => $value) {
-            if (substr($key, -8) == '_options') {
-                $languages[$key] = $value;
-            }
-        }
-
-        if (isset($xmlData['enums']['enum'])) {
-            foreach ($xmlData['enums']['enum'] as $enum) {
-                $enumId = EnumId::fromString(sprintf('%s:%s', $namespace, $enum['name']));
-
-                // duplicate schema
-                if (array_key_exists($enumId->toString(), $enums)) {
-                    throw new \RuntimeException(sprintf(
-                        'Duplicate enum "%s" in file "%s".',
-                        $enumId->toString(),
-                        $file
-                    ));
-                }
-
-                $enums[$enumId->toString()] = array_merge($enum, $languages, ['namespace' => $namespace]);
-            }
-        }
-    }
-
-    /**
-     * Reads and validate XML file, and add schema to $schemas.
-     *
-     * @param SplFileInfo $file
-     * @param array       $schemas
-     *
-     * @throw \RuntimeException
-     */
-    private function addSchemaXml(SplFileInfo $file, &$schemas)
-    {
-        // invalid schema
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
-            throw new \RuntimeException(sprintf(
-                'Invalid schema xml file "%s".',
-                $file
-            ));
-        }
-
-        // bad \DOMDocument
-        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-            throw new \RuntimeException('Invalid schema DOM object.');
-        }
-
-        $schemaId = SchemaId::fromString($xmlData['entity']['id']);
-
-        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-        $schemaPath = str_replace(':', '/', $schemaId->getCurie());
-
-        // invalid schema file location
-        if (strrpos($filePath, $schemaPath) === false) {
-            throw new \RuntimeException(sprintf(
-                'Invalid schema xml file "%s" location. Expected location "%s".',
-                $filePath,
-                $schemaPath
-            ));
-        }
-
-        // validate version to file
-        if ($file->getFilename() != 'latest.xml'
-            && $file->getFilename() != sprintf('%s.xml', $schemaId->getVersion()->toString())
-        ) {
-            throw new \RuntimeException(sprintf(
-                'Invalid schema xml file "%s" version. Expected location "%s".',
-                $file->getFilename(),
-                $schemaId->getVersion()->toString()
-            ));
-        }
-
-        // duplicate schema
-        if (array_key_exists($schemaId->toString(), $schemas)) {
-            throw new \RuntimeException(sprintf(
-                'Duplicate schema "%s" in file "%s".',
-                $schemaId->toString(),
-                $file
-            ));
-        }
-
-        $schemas[$schemaId->toString()] = $xmlData['entity'];
-    }
-
-    /**
-     * Parse enums and add to SchemaStore enums.
-     *
-     * @param array $enums
-     *
-     * @throw \RuntimeException
-     */
-    private function loadParseEnums($enums)
-    {
         $parser = new EnumParser();
 
-        foreach ($enums as $enum) {
-            if (is_array($enum)) {
-                if (!$enum = $parser->parse($enum)) {
-                    continue;
-                }
+        foreach ($enums as $file) {
+            $enums = $parser->fromFile($file);
+
+            foreach ($enums as $enum) {
+                SchemaStore::addEnum($enum->getId(), $enum);
             }
-
-            SchemaStore::addEnum($enum->getId(), $enum);
         }
-    }
 
-    /**
-     * Parse schemas and add to SchemaStore schemas.
-     *
-     * @param array $schemas
-     *
-     * @throw \RuntimeException
-     */
-    private function loadParseSchemas($schemas)
-    {
+        /**
+         * Schemas
+         */
+
         $parser = new SchemaParser();
         $validator = new SchemaValidator();
 
-        $currentSchemaId = null;
-        $exceptionSchemaId = [];
+        $currentFile = null;
+        $exceptionFile = [];
 
         while (count($schemas) > 0) {
-            if (!$currentSchemaId) {
-                $currentSchemaId = key($schemas);
+            if (!$currentFile) {
+                $currentFile = current($schemas);
             }
 
-            $schema = $schemas[$currentSchemaId];
+            $file = $currentFile;
 
-            if (is_array($schema)) {
-                try {
-                    $schema = $parser->parse($schema);
-                } catch (MissingSchema $e) {
-                    $keys = preg_grep(sprintf('/^pbj:%s*/', str_replace(':v', ':', $e->getMessage())), array_keys($schemas));
+            try {
+                $schema = $parser->fromFile($file);
 
-                    if (count($keys) === 0) {
-                        throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
-                    }
+            } catch (MissingSchema $e) {
+                $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
 
-                    $currentSchemaId = end($keys);
-
-                    if (in_array($currentSchemaId, $exceptionSchemaId)) {
-                        throw new \RuntimeException(sprintf('Recursively requesting schema with id "%s".', $currentSchemaId));
-                    }
-
-                    $exceptionSchemaId[] = $currentSchemaId;
-
-                    continue;
+                if (count($files) === 0) {
+                    throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
                 }
+
+                $currentFile = end($files);
+
+                if (in_array($currentFile, $exceptionFile)) {
+                    throw new \RuntimeException(sprintf('Recursively requesting schema file "%s".', $currentFile));
+                }
+
+                $exceptionFile[] = $currentFile;
+
+                continue;
             }
 
             SchemaStore::addSchema($schema->getId(), $schema);
 
             $validator->validate($schema);
 
-            unset($schemas[$currentSchemaId]);
+            unset($schemas[array_search($currentFile, $schemas)]);
 
-            if (isset($exceptionSchemaId[$currentSchemaId])) {
-                unset($exceptionSchemaId[$currentSchemaId]);
+            if (in_array($currentFile, $exceptionFile)) {
+                unset($exceptionFile[array_search($currentFile, $exceptionFile)]);
             }
 
-            $currentSchemaId = null;
+            $currentFile = null;
         }
 
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {

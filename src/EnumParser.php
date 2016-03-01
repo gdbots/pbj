@@ -2,11 +2,81 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Util\XmlUtils;
+
 /**
  * The EnumParser is a tool to create/update enum class descriptors.
  */
 class EnumParser
 {
+    /**
+     * Reads and validate XML file.
+     *
+     * @param string $file
+     *
+     * @return EnumDescriptor[]
+     *
+     * @throw \RuntimeException
+     */
+    public function fromFile($file)
+    {
+        // invalid schema
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../enums.xsd')) {
+            throw new \RuntimeException(sprintf(
+                'Invalid enums xml file "%s".',
+                $file
+            ));
+        }
+
+        // bad \DOMDocument
+        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+            throw new \RuntimeException('Invalid enum DOM object.');
+        }
+
+        $namespace = $xmlData['enums']['namespace'];
+
+        $filePath = substr($file, 0, -basename($file) - 1);
+        $enumsPath = str_replace(':', '/', $namespace);
+
+        // invalid enum file location
+        if (strrpos($filePath, $enumsPath) === false) {
+            throw new \RuntimeException(sprintf(
+                'Invalid enums xml file "%s" location. Expected location "%s".',
+                $filePath,
+                $enumsPath
+            ));
+        }
+
+        // get language options
+        $languages = [];
+        foreach ($xmlData['enums'] as $key => $value) {
+            if (substr($key, -8) == '_options') {
+                $languages[$key] = $value;
+            }
+        }
+
+        $enums = [];
+
+        if (isset($xmlData['enums']['enum'])) {
+            foreach ($xmlData['enums']['enum'] as $enum) {
+                $enumId = EnumId::fromString(sprintf('%s:%s', $namespace, $enum['name']));
+
+                // duplicate schema
+                if (array_key_exists($enumId->toString(), $enums)) {
+                    throw new \RuntimeException(sprintf(
+                        'Duplicate enum "%s" in file "%s".',
+                        $enumId->toString(),
+                        $file
+                    ));
+                }
+
+                $enums[] = $this->parse(array_merge($enum, $languages, ['namespace' => $namespace]));
+            }
+        }
+
+        return $enums;
+    }
+
     /**
      * Builds an Enum instance from a given set of data.
      *
@@ -16,7 +86,7 @@ class EnumParser
      *
      * @throw \InvalidArgumentException
      */
-    public function parse(array $data)
+    private function parse(array $data)
     {
         // generate id
         $enumId = EnumId::fromString(sprintf('%s:%s', $data['namespace'], $data['name']));

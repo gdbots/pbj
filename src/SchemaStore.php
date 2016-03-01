@@ -57,13 +57,12 @@ class SchemaStore
      *
      * @param SchemaId         $schemaId
      * @param SchemaDescriptor $schema
-     * @param bool             $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate id
      */
-    public static function addSchema(SchemaId $schemaId, SchemaDescriptor $schema, $ignoreDuplication = false)
+    public static function addSchema(SchemaId $schemaId, SchemaDescriptor $schema)
     {
-        if (isset(self::$schemas[$schemaId->toString()]) && !$ignoreDuplication) {
+        if (isset(self::$schemas[$schemaId->toString()])) {
             throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $schemaId->toString()));
         }
 
@@ -274,13 +273,12 @@ class SchemaStore
      *
      * @param EnumId         $enumId
      * @param EnumDescriptor $enum
-     * @param bool           $ignoreDuplication
      *
      * @throw \RuntimeException on duplicate id
      */
-    public static function addEnum(EnumId $enumId, EnumDescriptor $enum, $ignoreDuplication = false)
+    public static function addEnum(EnumId $enumId, EnumDescriptor $enum)
     {
-        if (isset(self::$enums[$enumId->toString()]) && !$ignoreDuplication) {
+        if (isset(self::$enums[$enumId->toString()])) {
             throw new \RuntimeException(sprintf('Enum with id "%s" is already exists.', $enumId->toString()));
         }
 

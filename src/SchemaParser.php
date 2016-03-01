@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc;
 
 use Gdbots\Pbjc\Enum\TypeName;
+use Gdbots\Pbjc\Util\XmlUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
 
 /**
@@ -10,6 +11,67 @@ use Gdbots\Pbjc\Exception\MissingSchema;
  */
 class SchemaParser
 {
+    /** @var array */
+    protected $files = [];
+
+    /**
+     * Reads and validate XML file.
+     *
+     * @param string $file
+     *
+     * @return SchemaDescriptor[]
+     *
+     * @throw \RuntimeException
+     * @throw MissingSchema
+     */
+    public function fromFile($file)
+    {
+        if (!array_key_exists($file, $this->files)) {
+
+            // invalid schema
+            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
+                throw new \RuntimeException(sprintf(
+                    'Invalid schema xml file "%s".',
+                    $file
+                ));
+            }
+
+            // bad \DOMDocument
+            if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+                throw new \RuntimeException('Invalid schema DOM object.');
+            }
+
+            $schemaId = SchemaId::fromString($xmlData['entity']['id']);
+
+            $filePath = substr($file, 0, -basename($file) - 1);
+            $schemaPath = str_replace(':', '/', $schemaId->getCurie());
+
+            // invalid schema file location
+            if (strrpos($filePath, $schemaPath) === false) {
+                throw new \RuntimeException(sprintf(
+                    'Invalid schema xml file "%s" location. Expected location "%s".',
+                    $filePath,
+                    $schemaPath
+                ));
+            }
+
+            // validate version to file
+            if (basename($file) != 'latest.xml'
+                && basename($file) != sprintf('%s.xml', $schemaId->getVersion()->toString())
+            ) {
+                throw new \RuntimeException(sprintf(
+                    'Invalid schema xml file "%s" version. Expected location "%s".',
+                    basename($file),
+                    $schemaId->getVersion()->toString()
+                ));
+            }
+
+            $this->files[$file] = $xmlData['entity'];
+        }
+
+        return $this->parse($this->files[$file]);
+    }
+
     /**
      * Builds a Schema instance from a given set of data.
      *
@@ -20,7 +82,7 @@ class SchemaParser
      * @throw \InvalidArgumentException
      * @throw MissingSchema
      */
-    public function parse(array $data)
+    private function parse(array $data)
     {
         $schema = new SchemaDescriptor($data['id']);
 
