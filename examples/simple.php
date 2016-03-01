@@ -24,8 +24,8 @@ foreach (['acme:blog', 'acme:core', 'gdbots:pbj'] as $namespace) {
         echo highlight_string($output, true).'<hr />';
     }
 
-    // generate JSON files
-    $generator = $compile->run('json', $namespace, __DIR__.'/json-schema');
+    // generate JSON Schema files
+    $generator = $compile->run('json-schema', $namespace, __DIR__.'/json-schema');
 
     foreach ($generator->getFiles() as $file => $output) {
         $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
