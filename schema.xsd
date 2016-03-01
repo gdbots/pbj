@@ -85,16 +85,16 @@
   <xs:complexType name="schema-php-options">
     <xs:sequence>
       <xs:element name="namespace" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="insertion" type="pbjc:insertion-php-options" minOccurs="0" maxOccurs="1" />
+      <xs:element name="insertion-points" type="pbjc:insertion-points-php-options" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />
   </xs:complexType>
 
-  <xs:complexType name="insertion-php-options">
+  <xs:complexType name="insertion-points-php-options">
     <xs:sequence>
-      <xs:element name="use_statements" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="class_body" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="imports" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="methods" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xs:sequence>
     <xs:anyAttribute namespace="##other" />

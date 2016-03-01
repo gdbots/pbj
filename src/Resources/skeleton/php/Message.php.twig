@@ -23,7 +23,7 @@ use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }}T
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;
-{{ schema.languageSubKey('php', 'insertion', 'use_statements') }}
+{{ schema.languageSubKey('php', 'insertion-points', 'imports') }}
 {% endif %}
 {% endblock use_statements %}
 
@@ -61,6 +61,6 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
         );
     }
 
-    {{ schema.languageSubKey('php', 'insertion', 'class_body') }}
+    {{ schema.languageSubKey('php', 'insertion-points', 'methods') }}
 {% endblock class_body %}
 }

@@ -12,22 +12,22 @@ use Gdbots\Pbj\Schema;
 trait CommandV2Trait
 {
     /**
-     * @param string $tag
-     * @return MessageRef
-     */
-    public function generateMessageRef($tag = null)
-    {
-        return new MessageRef(static::schema()->getCurie(), $this->get('command_id'), $tag);
-    }
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('command_id'), $tag);
+}
 
-    /**
-     * @return array
-     */
-    public function getUriTemplateVars()
-    {
-        return [
-            'command_id' => (string)$this->get('command_id'),
-            'microtime' => (string)$this->get('microtime'),
-        ];
-    }
+/**
+ * @return array
+ */
+public function getUriTemplateVars()
+{
+    return [
+        'command_id' => (string)$this->get('command_id'),
+        'microtime' => (string)$this->get('microtime'),
+    ];
+}
 }
