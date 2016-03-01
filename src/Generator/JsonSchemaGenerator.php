@@ -4,10 +4,10 @@ namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class JsonGenerator extends Generator
+class JsonSchemaGenerator extends Generator
 {
     /** @var string */
-    protected $language = 'json';
+    protected $language = 'json-schema';
 
     /** @var string */
     protected $extension = '.json';
