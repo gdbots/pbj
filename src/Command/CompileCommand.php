@@ -30,18 +30,6 @@ class CompileCommand extends Command
                 'php'
             )
             ->addOption(
-                'output',
-                'o',
-                 InputOption::VALUE_OPTIONAL,
-                'The output directory files will be generate in'
-            )
-            ->addOption(
-                'namespaces',
-                'ns',
-                 InputOption::VALUE_OPTIONAL,
-                'The schema namespaces (vendor:package)'
-            )
-            ->addOption(
                 'config',
                 'c',
                  InputOption::VALUE_OPTIONAL,
@@ -53,11 +41,7 @@ The <info>%command.name%</info> command compiles and generates files for a selec
 
 To generate files you would need to specify the language, namespace and output directory:
 
-  <info>pbjc --language=php --output=src --namespacess=vendor:package</info>
-
-For multi namespaces use comma to seperate between each namespace:
-
-  <info>pbjc --language=php --output=src --namespacess="vendor:package","vendor:package2"</info>
+  <info>pbjc --language=php</info>
 
 By default no option is required when running from the same folder contains the
 <comment>pbjc.yml</comment> configuration file.
@@ -75,9 +59,10 @@ EOF
         $io = new SymfonyStyle($input, $output);
 
         $language = $input->getOption('language') ?: 'php';
-        $namespaces = $input->getOption('namespaces');
-        $output = $input->getOption('output');
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
+
+        $namespaces = null;
+        $options = null;
 
         if (!empty($namespaces)) {
             $namespaces = explode(',', $namespaces);
@@ -87,14 +72,12 @@ EOF
             $parser = new Parser();
             $config = $parser->parse(file_get_contents($file));
 
-            if (!$namespaces && isset($config['namespaces'])) {
+            if (isset($config['namespaces'])) {
                 $namespaces = $config['namespaces'];
             }
 
-            if (!$output) {
-                if (isset($config['languages'][$language]['output'])) {
-                    $output = $config['languages'][$language]['output'];
-                }
+            if (isset($config['languages'][$language])) {
+                $options = $config['languages'][$language];
             }
         }
 
@@ -102,13 +85,12 @@ EOF
             $namespaces = [$namespaces];
         }
 
+        $options['namespaces'] = $namespaces;
+
         try {
             $compile = new Compiler();
 
-            $generator = $compile->run($language, [
-                'namespaces' => $namespaces,
-                'output' => $output
-            ]);
+            $generator = $compile->run($language, $options);
 
             if (count($generator->getFiles()) === 0) {
                 throw new \Exception('No files were generated.');
