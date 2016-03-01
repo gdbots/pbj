@@ -44,7 +44,7 @@ final class EnumDescriptor
     }
 
     /**
-     * @return SchemaId
+     * @return EnumId
      */
     public function getId()
     {
