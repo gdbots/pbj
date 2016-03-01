@@ -11,9 +11,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Parser;
 
 /**
- * Provides the console command to generate compiled files.
+ * Provides the console command to compile files.
  */
-class CompilerCommand extends Command
+class CompileCommand extends Command
 {
     /**
      * {@inheritdoc}
@@ -21,7 +21,7 @@ class CompilerCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('pbjc:compiler')
+            ->setName('pbjc')
             ->addOption(
                 'language',
                 'l',
@@ -36,10 +36,10 @@ class CompilerCommand extends Command
                 'The output directory files will be generate in'
             )
             ->addOption(
-                'namespace',
-                's',
+                'namespaces',
+                'ns',
                  InputOption::VALUE_OPTIONAL,
-                'The schema namespace (vendor:package)'
+                'The schema namespaces (vendor:package)'
             )
             ->addOption(
                 'config',
@@ -53,9 +53,11 @@ The <info>%command.name%</info> command compiles and generates files for a selec
 
 To generate files you would need to specify the language, namespace and output directory:
 
-  <info>pbjc --language=php --output=src --namespace=vendor:package</info>
+  <info>pbjc --language=php --output=src --namespacess=vendor:package</info>
 
-Note that currently we only support <comment>php</comment> or <comment>json</comment> languages.
+For multi namespaces use comma to seperate between each namespace:
+
+  <info>pbjc --language=php --output=src --namespacess="vendor:package","vendor:package2"</info>
 
 By default no option is required when running from the same folder contains the
 <comment>pbjc.yml</comment> configuration file.
@@ -73,46 +75,48 @@ EOF
         $io = new SymfonyStyle($input, $output);
 
         $language = $input->getOption('language') ?: 'php';
-        $namespace = $input->getOption('namespace');
+        $namespaces = $input->getOption('namespaces');
         $output = $input->getOption('output');
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
+
+        if (!empty($namespaces)) {
+            $namespaces = explode(',', $namespaces);
+        }
 
         if (file_exists($file)) {
             $parser = new Parser();
             $config = $parser->parse(file_get_contents($file));
 
-            if (!$namespace && isset($config['pbjc']['namespace'])) {
-                $namespace = $config['pbjc']['namespace'];
+            if (!$namespaces && isset($config['namespaces'])) {
+                $namespaces = $config['namespaces'];
             }
 
             if (!$output) {
-                if (isset($config['pbjc']['output'])) {
-                    $output = $config['pbjc']['output'];
-                }
-
-                if (isset($config['pbjc']['language'][$language])) {
-                    $output = $config['pbjc']['language'][$language];
+                if (isset($config['languages'][$language]['output'])) {
+                    $output = $config['languages'][$language]['output'];
                 }
             }
         }
 
-        if (!is_array($namespace)) {
-            $namespace = [$namespace];
+        if (!is_array($namespaces)) {
+            $namespaces = [$namespaces];
         }
 
         try {
             $compile = new Compiler();
 
-            foreach ($namespace as $ns) {
-                $generator = $compile->run($language, $ns, $output);
+            $generator = $compile->run($language, [
+                'namespaces' => $namespaces,
+                'output' => $output
+            ]);
 
-                if (count($generator->getFiles()) === 0) {
-                    throw new \Exception('No files were generated.');
-                }
-
-                $io->title(sprintf('Generated files for "%s":', $ns));
-                $io->listing(array_keys($generator->getFiles()));
+            if (count($generator->getFiles()) === 0) {
+                throw new \Exception('No files were generated.');
             }
+
+            $io->title(sprintf('Generated files for "%s":', $ns));
+            $io->listing(array_keys($generator->getFiles()));
+
             $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
         } catch (\Exception $e) {
             $io->error($e->getMessage());

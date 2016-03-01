@@ -12,7 +12,7 @@ class PbjcApplication extends Application
      */
     protected function getCommandName(InputInterface $input)
     {
-        return 'pbjc:compiler';
+        return 'pbjc';
     }
 
     /**
@@ -22,7 +22,7 @@ class PbjcApplication extends Application
     {
         $defaultCommands = parent::getDefaultCommands();
 
-        $defaultCommands[] = new CompilerCommand();
+        $defaultCommands[] = new CompileCommand();
 
         return $defaultCommands;
     }

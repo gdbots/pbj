@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Symfony\Component\Finder\Finder;
@@ -76,8 +77,8 @@ final class Compiler
 
         $namespace = $xmlData['enums']['namespace'];
 
-        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-        $enumsPath = str_replace(':', '/', $namespace);
+        $filePath = $file->getPathName();
+        $enumsPath = str_replace(':', '/', $namespace).'/'.$file->getFilename();
 
         // invalid enum file location
         if (strrpos($filePath, $enumsPath) === false) {
@@ -139,8 +140,8 @@ final class Compiler
 
         $schemaId = SchemaId::fromString($xmlData['entity']['id']);
 
-        $filePath = substr($file->getPathName(), 0, -strlen($file->getFilename()) - 1);
-        $schemaPath = str_replace(':', '/', $schemaId->getCurie());
+        $filePath = $file->getPathName();
+        $schemaPath = str_replace(':', '/', $schemaId->getCurie()).'/'.$file->getFilename();
 
         // invalid schema file location
         if (strrpos($filePath, $schemaPath) === false) {
@@ -150,6 +151,9 @@ final class Compiler
                 $schemaPath
             ));
         }
+
+        // todo: validate schema id against name (latest?)
+        // todo: override or create xml from latest
 
         // duplicate schema
         if (array_key_exists($schemaId->toString(), $schemas)) {
@@ -250,35 +254,41 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param string      $language
-     * @param string      $namespace
-     * @param string|null $output
+     * @param string $language
+     * @param array  $options
      *
      * @return \Gdbots\Pbjc\Generator\Generator
      *
      * @throw \InvalidArgumentException
      */
-    public function run($language, $namespace, $output = null)
+    public function run($language, array $options)
     {
-        if (!in_array($language, ['php', 'json'])) {
-            throw new \InvalidArgumentException(sprintf(
-                'The language "%s" is not supported. Only support "php" or "json".',
-                $language
-            ));
+        if (!isset($options['namespaces'])) {
+            throw new \InvalidArgumentException('Missing "namespaces" options.');
         }
 
-        if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The namespace "%s" must follow "vendor:package" format.',
-                $namespace
-            ));
+        $namespaces = $options['namespaces'];
+        if (!is_array($namespaces)) {
+            $namespaces = [$namespaces];
+        }
+        foreach ($namespaces as $namespace) {
+            if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The namespace "%s" must follow "vendor:package" format.',
+                    $namespace
+                ));
+            }
         }
 
-        $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', ucfirst($language));
-        $generator = new $class($output);
+        if (!isset($options['output'])) {
+            throw new \InvalidArgumentException('Missing "output" directory options.');
+        }
+
+        $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
+        $generator = new $class($options['output']);
 
         foreach (SchemaStore::getEnums() as $enum) {
-            if ($namespace !== $enum->getId()->getNamespace()) {
+            if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
@@ -286,14 +296,14 @@ final class Compiler
         }
 
         foreach (SchemaStore::getSchemas() as $schema) {
-            if ($namespace !== $schema->getId()->getNamespace()) {
+            if (!in_array($schema->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
             $generator->generateSchema($schema);
         }
 
-        $generator->generateAdditionalFiles(SchemaStore::getSchemasByNamespace($namespace));
+        $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces));
 
         return $generator;
     }
