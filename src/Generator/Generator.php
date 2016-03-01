@@ -172,11 +172,11 @@ abstract class Generator
     }
 
     /**
-     * Generates and writes additional files.
+     * Generates and writes manifest files.
      *
      * @param array $schemas
      */
-    public function generateAdditionalFiles(array $schemas)
+    public function generateManifest(array $schemas)
     {
     }
 

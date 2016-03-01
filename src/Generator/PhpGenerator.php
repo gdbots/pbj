@@ -114,17 +114,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateAdditionalFiles(array $schemas)
-    {
-        $this->generateMessageResolver($schemas);
-    }
-
-    /**
-     * Generates and writes message resolver files.
-     *
-     * @param array $schemas
-     */
-    private function generateMessageResolver(array $schemas)
+    public function generateManifest(array $schemas)
     {
         // store in root - current working directory
         $filename = sprintf('%s/pbj-schemas.php', getcwd());
