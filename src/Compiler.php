@@ -303,7 +303,9 @@ final class Compiler
             $generator->generateSchema($schema);
         }
 
-        $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces));
+        if (isset($options['manifest'])) {
+            $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options['manifest']);
+        }
 
         return $generator;
     }

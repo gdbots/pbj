@@ -114,11 +114,8 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateManifest(array $schemas)
+    public function generateManifest(array $schemas, $filename)
     {
-        // store in root - current working directory
-        $filename = sprintf('%s/pbj-schemas.php', getcwd());
-
         $messages = [];
 
         // extract previous schemas

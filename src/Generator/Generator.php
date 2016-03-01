@@ -174,9 +174,10 @@ abstract class Generator
     /**
      * Generates and writes manifest files.
      *
-     * @param array $schemas
+     * @param array  $schemas
+     * @param string $filename
      */
-    public function generateManifest(array $schemas)
+    public function generateManifest(array $schemas, $filename)
     {
     }
 

@@ -20,7 +20,8 @@ $namespaces = ['acme:blog', 'acme:core', 'gdbots:pbj'];
 // generate PHP files
 $generator = $compile->run('php', [
     'namespaces' => $namespaces,
-    'output' => __DIR__.'/src'
+    'output' => __DIR__.'/src',
+    'manifest' => __DIR__.'/pbj-schemas.php',
 ]);
 
 foreach ($generator->getFiles() as $file => $output) {
