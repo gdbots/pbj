@@ -110,14 +110,16 @@ final class Compiler
      */
     public function run($language, CompileOptions $options)
     {
-        if (!$options->getNamespaces()) {
+        $namespaces = $options->getNamespaces();
+
+        if (!$namespaces || count($namespaces) === 0) {
             throw new \InvalidArgumentException('Missing "namespaces" options.');
         }
 
-        $namespaces = $options->getNamespaces();
         if (!is_array($namespaces)) {
             $namespaces = [$namespaces];
         }
+
         foreach ($namespaces as $namespace) {
             if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
                 throw new \InvalidArgumentException(sprintf(
