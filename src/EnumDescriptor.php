@@ -24,7 +24,7 @@ final class EnumDescriptor
      * @param array         $values
      * @param ParameterBag  $languages
      */
-    public function __construct($id, $type, array $values, ParameterBag $languages)
+    public function __construct($id, $type, array $values, ParameterBag $languages = null)
     {
         $this->id = $id instanceof EnumId ? $id : EnumId::fromString($id);
         $this->type = $type;
