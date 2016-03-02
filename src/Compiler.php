@@ -69,7 +69,7 @@ final class Compiler
             } catch (MissingSchema $e) {
                 $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
 
-                if (count($files) === 0) {
+                if ($files === false || count($files) === 0) {
                     throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
                 }
 
