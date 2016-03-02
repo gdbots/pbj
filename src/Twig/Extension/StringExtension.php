@@ -13,6 +13,7 @@ class StringExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('getClass', array($this, 'getClass')),
+            new \Twig_SimpleFunction('indentString', array($this, 'indentString')),
         );
     }
 
@@ -35,6 +36,31 @@ class StringExtension extends \Twig_Extension
     public function getClass($object)
     {
         return (new \ReflectionClass($object))->getShortName();
+    }
+
+    /**
+     * @param string $str
+     * @param int    $spaces
+     *
+     * @return string|null
+     */
+    public function indentString($str, $spaces)
+    {
+        if (!$str) {
+            return;
+        }
+
+        if ($spaces === 0) {
+            return $str;
+        }
+
+        $lines = explode("\n", $str);
+
+        foreach ($lines as &$line) {
+            $line = sprintf('%\' '.$spaces.'s%s', '', $line);
+        }
+
+        return implode("\n", $lines);
     }
 
     /**

@@ -6,7 +6,7 @@ namespace {{ schema.language('php').get('namespace') }};
 {% block use_statements %}
 use Gdbots\Pbj\Schema;
 {% if insertionPoints %}
-{{ insertionPoints.imports }}
+{{ indentString(insertionPoints.imports, 0) }}
 {% endif %}
 {% endblock use_statements %}
 
@@ -20,7 +20,7 @@ trait {{ getClassName(schema, true) }}Trait
 {
 {% block class_body %}
 {% if insertionPoints %}
-    {{ insertionPoints.methods }}
+{{ indentString(insertionPoints.methods, 4) }}
 {% endif %}
 {% endblock class_body %}
 }

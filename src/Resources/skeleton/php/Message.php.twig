@@ -25,7 +25,7 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;
 {% if insertionPoints %}
-{{ insertionPoints.imports }}
+{{ indentString(insertionPoints.imports, 0) }}
 {% endif %}
 {% endif %}
 {% endblock use_statements %}
@@ -65,7 +65,7 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
     }
 
 {% if insertionPoints %}
-    {{ insertionPoints.methods }}
+{{ indentString(insertionPoints.methods, 4) }}
 {% endif %}
 {% endblock class_body %}
 }
