@@ -3,8 +3,8 @@
 namespace Gdbots\Pbjc\Command;
 
 use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\Util\OutputFile;
-use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,7 +64,7 @@ EOF
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
 
         $namespaces = null;
-        $options = new ParameterBag();
+        $options = [];
 
         if (!empty($namespaces)) {
             $namespaces = explode(',', $namespaces);
@@ -79,7 +79,7 @@ EOF
             }
 
             if (isset($config['languages'][$language])) {
-                $options->add($config['languages'][$language]);
+                $options = array_merge($options, $config['languages'][$language]);
             }
         }
 
@@ -87,18 +87,17 @@ EOF
             $namespaces = [$namespaces];
         }
 
-        $options->set('namespaces', $namespaces);
+        $options['namespaces'] = $namespaces;
+
+        $options['callback'] = function (OutputFile $file) use ($io) {
+            $io->text($file->getFile());
+        };
 
         try {
             $io->title(sprintf('Generated files for "%s":',  implode('", "', $namespaces)));
 
             $compile = new Compiler();
-
-            $compile->setDispatcher(function (OutputFile $file) use ($io) {
-                $io->text($file->getFile());
-            });
-
-            $compile->run($language, $options);
+            $compile->run($language, new CompileOptions($options));
 
             $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
         } catch (\Exception $e) {

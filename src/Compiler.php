@@ -4,14 +4,10 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
-use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
-    /** @\Closure */
-    private $dispatcher;
-
     /**
      * Construct.
      */
@@ -108,18 +104,18 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param string       $language
-     * @param ParameterBag $options
+     * @param string         $language
+     * @param CompileOptions $options
      *
      * @throw \InvalidArgumentException
      */
-    public function run($language, ParameterBag $options)
+    public function run($language, CompileOptions $options)
     {
-        if (!$options->has('namespaces')) {
+        if (!$options->getNamespaces()) {
             throw new \InvalidArgumentException('Missing "namespaces" options.');
         }
 
-        $namespaces = $options->get('namespaces');
+        $namespaces = $options->getNamespaces();
         if (!is_array($namespaces)) {
             $namespaces = [$namespaces];
         }
@@ -132,12 +128,12 @@ final class Compiler
             }
         }
 
-        if (!$options->has('output')) {
+        if (!$options->getOutput()) {
             throw new \InvalidArgumentException('Missing "output" directory options.');
         }
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
-        $generator = new $class($options->get('output'));
+        $generator = new $class($options->getOutput());
 
         $outputFiles = [];
 
@@ -161,29 +157,16 @@ final class Compiler
             }
         }
 
-        if ($options->has('manifest')) {
-            if ($result = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options->get('manifest'))) {
+        if ($manifest = $options->getManifest()) {
+            if ($result = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $manifest)) {
                 $outputFiles = array_merge($outputFiles, $result);
             }
         }
 
-        if ($this->dispatcher) {
+        if ($callback = $options->getCallback()) {
             foreach ($outputFiles as $outputFile) {
-                call_user_func($this->dispatcher, $outputFile);
+                call_user_func($callback, $outputFile);
             }
         }
-    }
-
-    /**
-     * Sets a dispatcher call for handling generator response.
-     *
-     * @param \Closure $dispatcher
-     *
-     * @return this
-     */
-    public function setDispatcher(\Closure $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-        return $this;
     }
 }
