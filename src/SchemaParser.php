@@ -20,7 +20,7 @@ class SchemaParser
      *
      * @param string $file
      *
-     * @return SchemaDescriptor[]
+     * @return SchemaDescriptor|null
      *
      * @throw \RuntimeException
      * @throw MissingSchema
@@ -50,7 +50,7 @@ class SchemaParser
             // invalid schema file location
             if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
                 throw new \RuntimeException(sprintf(
-                    'Invalid schema xml file "%s" location. Expected location "%s".',
+                    'Invalid schema xml directory "%s". Expected sub-directory "%s".',
                     $filePath,
                     $schemaPath
                 ));
@@ -61,10 +61,33 @@ class SchemaParser
                 && basename($file) != sprintf('%s.xml', $schemaId->getVersion()->toString())
             ) {
                 throw new \RuntimeException(sprintf(
-                    'Invalid schema xml file "%s" version. Expected location "%s".',
-                    basename($file),
+                    'Invalid schema xml file "%s" name. Expected name "%s.xml".',
+                    $file,
                     $schemaId->getVersion()->toString()
                 ));
+            }
+
+            // check "latest.xml"
+            $latestPath = sprintf('%s/latest.xml', $filePath);
+            if (!file_exists($latestPath)) {
+                file_put_contents($latestPath, file_get_contents($file));
+
+                $this->files[$latestPath] = $xmlData['entity'];
+            }
+            if (isset($this->files[$latestPath])) {
+                $version = SchemaId::fromString($this->files[$latestPath]['id'])->getVersion()->toString();
+
+                if (version_compare($schemaId->getVersion()->toString(), $version) === 1) {
+                    file_put_contents($latestPath, file_get_contents($file));
+
+                    $this->files[$latestPath] = $xmlData['entity'];
+                }
+            }
+
+            // override or create "latest" version file
+            $versionPath = sprintf('%s/%s.xml', $filePath, $schemaId->getVersion()->toString());
+            if (basename($file) == 'latest.xml' && !file_exists($versionPath)) {
+                file_put_contents($versionPath, file_get_contents($file));
             }
 
             $this->files[$file] = $xmlData['entity'];

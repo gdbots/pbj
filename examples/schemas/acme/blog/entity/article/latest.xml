@@ -1,0 +1,40 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:entity:article:1-0-1">
+    <fields>
+      <field name="title" type="string" />
+      <field name="excerpt" type="text" />
+      <field name="excerpt_html" type="text" />
+      <field name="thumbnails" type="string" format="url" rule="map" />
+      <field name="private" type="boolean" />
+
+      <field name="publish_status" type="string-enum">
+        <default>draft</default>
+        <enum id="acme:blog:publish-status" />
+      </field>
+
+      <field name="content_type" type="string-enum">
+        <default>unknown</default>
+        <enum id="acme:blog:content-type" />
+      </field>
+
+      <field name="expires_at" type="timestamp" use_type_default="false" />
+
+      <field name="comments" type="message-ref" rule="list">
+        <any_of>
+          <curie>acme:blog:entity:comment</curie>
+        </any_of>
+      </field>
+    </fields>
+
+    <mixins>
+      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
+      <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
+    </mixins>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

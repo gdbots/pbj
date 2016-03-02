@@ -1,0 +1,23 @@
+<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <entity id="pbj:acme:blog:command:update-article:2-0-0">
+    <fields>
+      <field name="entity" type="message" required="true">
+        <any_of>
+          <curie>gdbots:pbj:mixin:entity</curie>
+        </any_of>
+      </field>
+      <field name="user_id" type="identifier"/>
+    </fields>
+
+    <mixins>
+      <curie_major>gdbots:pbj:mixin:command:v2</curie_major>
+      <curie_major>acme:core:mixin:update-entity:v2</curie_major>
+    </mixins>
+
+    <php_options>
+      <namespace>Acme\Schemas\Blog\Command</namespace>
+    </php_options>
+  </entity>
+</schema-mapping>

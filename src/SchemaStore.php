@@ -62,10 +62,6 @@ class SchemaStore
      */
     public static function addSchema(SchemaId $schemaId, SchemaDescriptor $schema)
     {
-        if (isset(self::$schemas[$schemaId->toString()])) {
-            throw new \RuntimeException(sprintf('Schema with id "%s" is already exists.', $schemaId->toString()));
-        }
-
         $curie = $schemaId->getCurie();
         $curieMajor = $schemaId->getCurieWithMajorRev();
 
@@ -278,10 +274,6 @@ class SchemaStore
      */
     public static function addEnum(EnumId $enumId, EnumDescriptor $enum)
     {
-        if (isset(self::$enums[$enumId->toString()])) {
-            throw new \RuntimeException(sprintf('Enum with id "%s" is already exists.', $enumId->toString()));
-        }
-
         self::$enums[$enumId->toString()] = $enum;
 
         ksort(self::$enums);

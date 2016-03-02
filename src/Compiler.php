@@ -32,6 +32,9 @@ final class Compiler
             }
         }
 
+        ksort($enums);
+        ksort($schemas);
+
         /**
          * Enums
          */
@@ -64,7 +67,11 @@ final class Compiler
             $file = $currentFile;
 
             try {
-                $schema = $parser->fromFile($file);
+                if ($schema = $parser->fromFile($file)) {
+                    SchemaStore::addSchema($schema->getId(), $schema);
+
+                    $validator->validate($schema);
+                }
 
             } catch (MissingSchema $e) {
                 $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
@@ -83,10 +90,6 @@ final class Compiler
 
                 continue;
             }
-
-            SchemaStore::addSchema($schema->getId(), $schema);
-
-            $validator->validate($schema);
 
             unset($schemas[array_search($currentFile, $schemas)]);
 
