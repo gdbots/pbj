@@ -53,6 +53,13 @@ class FieldAttributeEqualTo implements Constraint
                     $value = $value->getTypeName()->__toString();
                 }
 
+                if ($value === true) {
+                    $value = 'true';
+                }
+                if ($value === false) {
+                    $value = 'false';
+                }
+
                 throw new ValidatorException(sprintf(
                     'The schema "%s" field "%s" should be of %s "%s".',
                     $b,
