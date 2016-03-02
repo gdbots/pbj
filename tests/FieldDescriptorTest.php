@@ -146,35 +146,13 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('vendor:package:number', $this->field->getEnum()->toString());
     }
 
-    public function testSetLanguage()
-    {
-        $value = ['convert' => false];
-
-        $this->field->setLanguage('json', $value);
-
-        $this->assertEquals($value, $this->field->getLanguage('json'));
-    }
-
     public function testGetLanguage()
     {
-        $this->assertEquals([], $this->field->getLanguage('json'));
-        $this->assertEquals(['namespace' => 'Acme\Blog\Entity'], $this->field->getLanguage('php'));
-    }
-
-    public function tetSetLanguageKey()
-    {
-        $this->field->setLanguageKey('php', 'class_name', 'Article');
-
-        $this->assertEquals('Article', $this->field->getLanguageKey('php', 'class_name'));
-    }
-
-    public function testGetLanguageKey()
-    {
-        $this->assertEquals('Acme\Blog\Entity', $this->field->getLanguageKey('php', 'namespace'));
+        $this->assertEquals('Acme\Blog\Entity', $this->field->getLanguage('php')->get('namespace'));
     }
 
     public function testGetLanguages()
     {
-        $this->assertCount(1, $this->field->getLanguages());
+        $this->assertCount(1, $this->field->getLanguages()->all());
     }
 }

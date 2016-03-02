@@ -33,15 +33,4 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SchemaStore::getSchemaById('pbj:vendor:package:category:message:1-0-0'), $this->schema);
     }
-
-    /**
-     * @depends testAddSchema
-     * @expectedException RuntimeException
-     *
-     * @param Schema $schema
-     */
-    public function testAddDuplicateSchema()
-    {
-        SchemaStore::addSchema($this->schema->getId(), $this->schema);
-    }
 }
