@@ -1,7 +1,6 @@
 namespaces:
   - acme:core
   - acme:blog
-  - gdbots:pbj
 
 languages:
   php:

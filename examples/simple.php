@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
 use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\SchemaStore;
@@ -28,7 +28,7 @@ $compile->setDispatcher(function (OutputFile $file) {
     echo highlight_string($content, true).'<hr />';
 });
 
-$namespaces = ['acme:blog', 'acme:core', 'gdbots:pbj'];
+$namespaces = ['acme:blog', 'acme:core'];
 
 // generate PHP files
 $compile->run('php', new ParameterBag([
