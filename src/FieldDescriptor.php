@@ -7,7 +7,7 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\StringType;
-use Gdbots\Pbjc\Util\ParameterBag;
+use Gdbots\Pbjc\Util\LanguageBag;
 
 final class FieldDescriptor
 {
@@ -80,7 +80,7 @@ final class FieldDescriptor
     /** @var EnumDescriptor */
     private $enum;
 
-    /** @var ParameterBag */
+    /** @var LanguageBag */
     private $languages;
 
     /**
@@ -156,7 +156,7 @@ final class FieldDescriptor
                 $language = substr($key, 0, -8); // remove "_options"
 
                 if (is_array($value)) {
-                    $value = new ParameterBag($value);
+                    $value = new LanguageBag($value);
                 }
 
                 $this->getLanguages()->set($language, $value);
@@ -407,22 +407,22 @@ final class FieldDescriptor
     }
 
     /**
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguages()
     {
-        return $this->languages ?: $this->languages = new ParameterBag();
+        return $this->languages ?: $this->languages = new LanguageBag();
     }
 
     /**
      * @param string $language
      *
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguage($language)
     {
         if (!$this->getLanguages()->has($language)) {
-            $this->getLanguages()->set($language, new ParameterBag());
+            $this->getLanguages()->set($language, new LanguageBag());
         }
 
         return $this->getLanguages()->get($language);

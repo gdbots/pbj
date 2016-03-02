@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Util\ParameterBag;
+use Gdbots\Pbjc\Util\LanguageBag;
 
 final class SchemaDescriptor
 {
@@ -24,7 +24,7 @@ final class SchemaDescriptor
     /** @var bool */
     private $isLatestVersion = false;
 
-    /** @var ParameterBag */
+    /** @var LanguageBag */
     private $languages = [];
 
     /**
@@ -32,7 +32,7 @@ final class SchemaDescriptor
      * @param SchemaDescriptor|null $extends
      * @param FieldDescriptor[]     $fields
      * @param SchemaDescriptor[]    $mixins
-     * @param ParameterBag          $languages
+     * @param LanguageBag           $languages
      * @param bool                  $isMixin
      * @param bool                  $isLatestVersion
      */
@@ -41,7 +41,7 @@ final class SchemaDescriptor
         SchemaDescriptor $extends = null,
         array $fields = [],
         array $mixins = [],
-        ParameterBag $languages = null,
+        LanguageBag $languages = null,
         $isMixin = false,
         $isLatestVersion = false
     ) {
@@ -185,22 +185,22 @@ final class SchemaDescriptor
     }
 
     /**
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguages()
     {
-        return $this->languages ?: $this->languages = new ParameterBag();
+        return $this->languages ?: $this->languages = new LanguageBag();
     }
 
     /**
      * @param string $language
      *
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguage($language)
     {
         if (!$this->getLanguages()->has($language)) {
-            $this->getLanguages()->set($language, new ParameterBag());
+            $this->getLanguages()->set($language, new LanguageBag());
         }
 
         return $this->getLanguages()->get($language);

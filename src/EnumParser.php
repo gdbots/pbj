@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Util\ParameterBag;
+use Gdbots\Pbjc\Util\LanguageBag;
 use Gdbots\Pbjc\Util\XmlUtils;
 
 /**
@@ -145,14 +145,14 @@ class EnumParser
      */
     private function getLanguageOptions(array $data)
     {
-        $options = new ParameterBag();
+        $options = new LanguageBag();
 
         foreach ($data as $key => $value) {
             if (substr($key, -8) == '_options') {
                 $language = substr($key, 0, -8); // remove "_options"
 
                 if (is_array($value)) {
-                    $value = new ParameterBag($value);
+                    $value = new LanguageBag($value);
                 }
 
                 $options->set($language, $value);

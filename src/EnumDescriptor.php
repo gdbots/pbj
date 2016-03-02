@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Util\ParameterBag;
+use Gdbots\Pbjc\Util\LanguageBag;
 
 final class EnumDescriptor
 {
@@ -15,16 +15,16 @@ final class EnumDescriptor
     /** @var array */
     private $values = [];
 
-    /** @var ParameterBag */
+    /** @var LanguageBag */
     private $languages = [];
 
     /**
      * @param EnumId|string $id
      * @param string        $type
      * @param array         $values
-     * @param ParameterBag  $languages
+     * @param LanguageBag   $languages
      */
-    public function __construct($id, $type, array $values, ParameterBag $languages = null)
+    public function __construct($id, $type, array $values, LanguageBag $languages = null)
     {
         $this->id = $id instanceof EnumId ? $id : EnumId::fromString($id);
         $this->type = $type;
@@ -83,22 +83,22 @@ final class EnumDescriptor
     }
 
     /**
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguages()
     {
-        return $this->languages ?: $this->languages = new ParameterBag();
+        return $this->languages ?: $this->languages = new LanguageBag();
     }
 
     /**
      * @param string $language
      *
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguage($language)
     {
         if (!$this->getLanguages()->has($language)) {
-            $this->getLanguages()->set($language, new ParameterBag());
+            $this->getLanguages()->set($language, new LanguageBag());
         }
 
         return $this->getLanguages()->get($language);
