@@ -9,6 +9,9 @@ use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
+    /** @\Closure */
+    private $dispatcher;
+
     /**
      * Construct.
      */
@@ -105,8 +108,6 @@ final class Compiler
      * @param string       $language
      * @param ParameterBag $options
      *
-     * @return \Gdbots\Pbjc\Generator\Generator
-     *
      * @throw \InvalidArgumentException
      */
     public function run($language, ParameterBag $options)
@@ -135,12 +136,16 @@ final class Compiler
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
         $generator = new $class($options->get('output'));
 
+        $outputFiles = [];
+
         foreach (SchemaStore::getEnums() as $enum) {
             if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
-            $generator->generateEnum($enum);
+            if ($result = $generator->generateEnum($enum)) {
+                $outputFiles = array_merge($outputFiles, $result);
+            }
         }
 
         foreach (SchemaStore::getSchemas() as $schema) {
@@ -148,13 +153,34 @@ final class Compiler
                 continue;
             }
 
-            $generator->generateSchema($schema);
+            if ($result = $generator->generateSchema($schema)) {
+                $outputFiles = array_merge($outputFiles, $result);
+            }
         }
 
-        if (!$options->has('manifest')) {
-            $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options->get('manifest'));
+        if ($options->has('manifest')) {
+            if ($result = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options->get('manifest'))) {
+                $outputFiles = array_merge($outputFiles, $result);
+            }
         }
 
-        return $generator;
+        if ($this->dispatcher) {
+            foreach ($outputFiles as $outputFile) {
+                call_user_func($this->dispatcher, $outputFile);
+            }
+        }
+    }
+
+    /**
+     * Sets a dispatcher call for handling generator response.
+     *
+     * @param \Closure $dispatcher
+     *
+     * @return this
+     */
+    public function setDispatcher(\Closure $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+        return $this;
     }
 }

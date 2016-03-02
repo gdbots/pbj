@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Command;
 
 use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\Util\OutputFile;
 use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -89,16 +90,15 @@ EOF
         $options->set('namespaces', $namespaces);
 
         try {
+            $io->title(sprintf('Generated files for "%s":',  implode('", "', $namespaces)));
+
             $compile = new Compiler();
 
-            $generator = $compile->run($language, $options);
+            $compile->setDispatcher(function (OutputFile $file) use ($io) {
+                $io->text($file->getFile());
+            });
 
-            if (count($generator->getFiles()) === 0) {
-                throw new \Exception('No files were generated.');
-            }
-
-            $io->title(sprintf('Generated files for "%s":', $ns));
-            $io->listing(array_keys($generator->getFiles()));
+            $compile->run($language, $options);
 
             $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
         } catch (\Exception $e) {

@@ -6,35 +6,39 @@ error_reporting(E_ALL);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\SchemaStore;
+use Gdbots\Pbjc\Util\OutputFile;
 use Gdbots\Pbjc\Util\ParameterBag;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
 $compile = new Compiler();
 
+// dispatcher to pretty print file content
+$compile->setDispatcher(function (OutputFile $file) {
+    $extension = pathinfo($file->getFile(), PATHINFO_EXTENSION);
+
+    $content = $file->getContents();
+
+    if ($extension == 'json') {
+        $content = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($content, true), true));
+    }
+
+    echo highlight_string($content, true).'<hr />';
+});
+
 $namespaces = ['acme:blog', 'acme:core', 'gdbots:pbj'];
 
 // generate PHP files
-$generator = $compile->run('php', new ParameterBag([
+$compile->run('php', new ParameterBag([
     'namespaces' => $namespaces,
     'output' => __DIR__.'/src',
-    'manifest' => __DIR__.'/pbj-schemas.php',
+    'manifest' => __DIR__.'/pbj-schemas.php'
 ]));
 
-foreach ($generator->getFiles() as $file => $output) {
-    echo highlight_string($output, true).'<hr />';
-}
-
 // generate JSON Schema files
-$generator = $compile->run('json-schema', new ParameterBag([
+$compile->run('json-schema', new ParameterBag([
     'namespaces' => $namespaces,
     'output' => __DIR__.'/json-schema'
 ]));
-
-foreach ($generator->getFiles() as $file => $output) {
-    $output = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($output, true), true));
-
-    echo highlight_string($output, true).'<hr />';
-}
