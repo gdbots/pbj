@@ -42,7 +42,7 @@ class EnumParser
         // invalid enum file location
         if (substr($filePath, -strlen($enumsPath)) !== $enumsPath) {
             throw new \RuntimeException(sprintf(
-                'Invalid enums xml file "%s" location. Expected location "%s".',
+                'Invalid enums xml directory "%s". Expected sub-directory "%s".',
                 $filePath,
                 $enumsPath
             ));
