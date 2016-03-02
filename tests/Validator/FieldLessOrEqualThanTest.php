@@ -13,13 +13,13 @@ class FieldLessOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-            ])
+            ]),
         ]);
 
         $asset = new FieldLessOrEqualThan();
@@ -34,14 +34,14 @@ class FieldLessOrEqualThanTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 100,
-            ])
+            ]),
         ]);
 
         $asset = new FieldLessOrEqualThan();
@@ -56,14 +56,14 @@ class FieldLessOrEqualThanTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 10,
-            ])
+            ]),
         ]);
 
         $asset = new FieldLessOrEqualThan();
@@ -81,14 +81,14 @@ class FieldLessOrEqualThanTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'min' => 1000,
-            ])
+            ]),
         ]);
 
         $asset = new FieldLessOrEqualThan();

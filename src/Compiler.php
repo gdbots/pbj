@@ -31,7 +31,7 @@ final class Compiler
         ksort($enums);
         ksort($schemas);
 
-        /**
+        /*
          * Enums
          */
 
@@ -45,7 +45,7 @@ final class Compiler
             }
         }
 
-        /**
+        /*
          * Schemas
          */
 
@@ -68,7 +68,6 @@ final class Compiler
 
                     $validator->validate($schema);
                 }
-
             } catch (MissingSchema $e) {
                 $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
 

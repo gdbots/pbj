@@ -7,7 +7,6 @@ use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
-use Gdbots\Pbjc\Util\OutputFile;
 
 class PhpGenerator extends Generator
 {

@@ -13,13 +13,13 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-            ])
+            ]),
         ]);
 
         $asset = new FieldMaxLength();
@@ -34,14 +34,14 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 100,
-            ])
+            ]),
         ]);
 
         $asset = new FieldMaxLength();
@@ -56,14 +56,14 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 1000,
-            ])
+            ]),
         ]);
 
         $asset = new FieldMaxLength();
@@ -81,14 +81,14 @@ class FieldMaxLengthTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 100,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'max' => 10,
-            ])
+            ]),
         ]);
 
         $asset = new FieldMaxLength();

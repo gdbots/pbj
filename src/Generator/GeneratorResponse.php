@@ -17,6 +17,7 @@ final class GeneratorResponse
     public function addFile(OutputFile $file)
     {
         $this->fields[$file->getFile()] = $file;
+
         return $this;
     }
 

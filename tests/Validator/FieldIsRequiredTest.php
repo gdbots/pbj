@@ -14,14 +14,14 @@ class FieldIsRequiredTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'required' => true,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'required' => true,
-            ])
+            ]),
         ]);
 
         $asset = new FieldIsRequired();
@@ -39,13 +39,13 @@ class FieldIsRequiredTest extends \PHPUnit_Framework_TestCase
             new FieldDescriptor('f1', [
                 'type' => 'string',
                 'required' => true,
-            ])
+            ]),
         ]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-            ])
+            ]),
         ]);
 
         $asset = new FieldIsRequired();
