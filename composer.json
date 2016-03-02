@@ -27,6 +27,7 @@
       "Gdbots\\Tests\\Pbjc\\": "tests"
     }
   },
+  "bin": ["bin/pbjc"],
   "extra": {
     "branch-alias": {
       "dev-master": "0.1.x-dev"
