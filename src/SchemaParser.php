@@ -44,11 +44,11 @@ class SchemaParser
 
             $schemaId = SchemaId::fromString($xmlData['entity']['id']);
 
-            $filePath = substr($file, 0, -basename($file) - 1);
+            $filePath = substr($file, 0, -strlen(basename($file)) - 1);
             $schemaPath = str_replace(':', '/', $schemaId->getCurie());
 
             // invalid schema file location
-            if (strrpos($filePath, $schemaPath) === false) {
+            if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
                 throw new \RuntimeException(sprintf(
                     'Invalid schema xml file "%s" location. Expected location "%s".',
                     $filePath,

@@ -36,11 +36,11 @@ class EnumParser
 
         $namespace = $xmlData['enums']['namespace'];
 
-        $filePath = substr($file, 0, -basename($file) - 1);
+        $filePath = substr($file, 0, -strlen(basename($file)) - 1);
         $enumsPath = str_replace(':', '/', $namespace);
 
         // invalid enum file location
-        if (strrpos($filePath, $enumsPath) === false) {
+        if (substr($filePath, -strlen($enumsPath)) !== $enumsPath) {
             throw new \RuntimeException(sprintf(
                 'Invalid enums xml file "%s" location. Expected location "%s".',
                 $filePath,
