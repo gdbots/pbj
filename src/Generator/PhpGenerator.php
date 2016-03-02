@@ -101,7 +101,9 @@ class PhpGenerator extends Generator
             )
         ;
 
-        $outputFile = $this->renderFile(
+        $response = new GeneratorResponse();
+
+        $response->addFile($this->renderFile(
             'Enum.php.twig',
             $filename,
             [
@@ -109,9 +111,9 @@ class PhpGenerator extends Generator
                 'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
                 'isInt' => is_int(current($enum->getValues())),
             ]
-        );
+        ));
 
-        return [$outputFile];
+        return $response;
     }
 
     /**
@@ -168,15 +170,17 @@ class PhpGenerator extends Generator
             }
         }
 
-        $outputFile = $this->renderFile(
+        $response = new GeneratorResponse();
+
+        $response->addFile($this->renderFile(
             'pbj-schemas.php.twig',
             $filename,
             [
                 'messages' => $messages,
             ]
-        );
+        ));
 
-        return [$outputFile];
+        return $response;
     }
 
     /**

@@ -142,8 +142,9 @@ final class Compiler
                 continue;
             }
 
-            if ($result = $generator->generateEnum($enum)) {
-                $outputFiles = array_merge($outputFiles, $result);
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateEnum($enum)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
@@ -152,14 +153,16 @@ final class Compiler
                 continue;
             }
 
-            if ($result = $generator->generateSchema($schema)) {
-                $outputFiles = array_merge($outputFiles, $result);
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateSchema($schema)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
         if ($manifest = $options->getManifest()) {
-            if ($result = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $manifest)) {
-                $outputFiles = array_merge($outputFiles, $result);
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $manifest)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
