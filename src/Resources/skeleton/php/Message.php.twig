@@ -1,6 +1,7 @@
+{% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
-namespace {{ schema.languageKey('php', 'namespace') }};
+namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\AbstractMessage;
@@ -12,18 +13,20 @@ use Gdbots\Pbj\Type as T;
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-{% if field.languageKey('php', 'class_name') %}
-use {{ field.languageKey('php', 'class_name') }};
+{% if field.language('php').get('class_name') %}
+use {{ field.language('php').get('class_name') }};
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
-use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }};
-use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }}Mixin;
-use {{ mixin.languageKey('php', 'namespace') }}\{{ getClassName(mixin, true) }}Trait;
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }};
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Mixin;
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Trait;
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;
-{{ schema.languageSubKey('php', 'insertion-points', 'imports') }}
+{% if insertionPoints %}
+{{ insertionPoints.imports }}
+{% endif %}
 {% endif %}
 {% endblock use_statements %}
 
@@ -61,6 +64,8 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements 
         );
     }
 
-    {{ schema.languageSubKey('php', 'insertion-points', 'methods') }}
+{% if insertionPoints %}
+    {{ insertionPoints.methods }}
+{% endif %}
 {% endblock class_body %}
 }

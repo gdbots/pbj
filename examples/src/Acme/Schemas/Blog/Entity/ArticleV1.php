@@ -60,6 +60,4 @@ final class ArticleV1 extends AbstractMessage implements Article, EntityV1, HasC
             ]
         );
     }
-
-    
 }

@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc;
 
 use Gdbots\Pbjc\Enum\TypeName;
+use Gdbots\Pbjc\Util\ParameterBag;
 use Gdbots\Pbjc\Util\XmlUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
 
@@ -89,7 +90,6 @@ class SchemaParser
         $extends = null;
         $fields = [];
         $mixins = [];
-        $languages = [];
         $isMixin = false;
 
         // can't extends yourself
@@ -126,10 +126,7 @@ class SchemaParser
         }
 
         // default language options
-        $options = $this->getLanguageOptions($data);
-        foreach ($options as $language => $option) {
-            $languages[$language] = $option;
-        }
+        $languages = $this->getLanguageOptions($data);
 
         if (isset($data['fields']['field'])) {
             $fieldsData = $this->fixArray($data['fields']['field']);
@@ -174,13 +171,17 @@ class SchemaParser
      */
     private function getLanguageOptions(array $data)
     {
-        $options = [];
+        $options = new ParameterBag();
 
         foreach ($data as $key => $value) {
             if (substr($key, -8) == '_options') {
                 $language = substr($key, 0, -8); // remove "_options"
 
-                $options[$language] = $value;
+                if (is_array($value)) {
+                    $value = new ParameterBag($value);
+                }
+
+                $options->set($language, $value);
             }
         }
 

@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Pbjc\Util\ParameterBag;
 use Gdbots\Pbjc\Util\XmlUtils;
 
 /**
@@ -116,15 +117,10 @@ class EnumParser
             ));
         }
 
-        $enum = new EnumDescriptor($enumId, $data['type'], $values);
-
         // add enums language options
-        $options = $this->getLanguageOptions($data);
-        foreach ($options as $language => $option) {
-            $enum->setLanguage($language, $option);
-        }
+        $languages = $this->getLanguageOptions($data);
 
-        return $enum;
+        return new EnumDescriptor($enumId, $data['type'], $values, $languages);
     }
 
     /**
@@ -149,13 +145,17 @@ class EnumParser
      */
     private function getLanguageOptions(array $data)
     {
-        $options = [];
+        $options = new ParameterBag();
 
         foreach ($data as $key => $value) {
             if (substr($key, -8) == '_options') {
                 $language = substr($key, 0, -8); // remove "_options"
 
-                $options[$language] = $value;
+                if (is_array($value)) {
+                    $value = new ParameterBag($value);
+                }
+
+                $options->set($language, $value);
             }
         }
 

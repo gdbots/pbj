@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ schema.languageKey('php', 'namespace') }};
+namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 {% if schema.extends %}
-use {{ schema.extends.languageKey('php', 'namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends) }}{% endif %};
+use {{ schema.extends.language('php').get('namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends) }}{% endif %};
 {% else %}
 use Gdbots\Pbj\Message;
 {% endif %}

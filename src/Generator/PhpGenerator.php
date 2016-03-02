@@ -22,7 +22,7 @@ class PhpGenerator extends Generator
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
-            $namespace = $enum->getLanguageKey('php', 'namespace');
+            $namespace = $enum->getLanguage('php')->get('namespace');
             if (substr($namespace, 0, 1) == '\\') {
                 $namespace = substr($namespace, 1);
             }
@@ -39,8 +39,8 @@ class PhpGenerator extends Generator
                 : 'unknown'
             ;
 
-            $field->setLanguageKey('php', 'class_name', $className);
-            $field->setLanguageKey('php', 'default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
+            $field->getLanguage('php')->set('class_name', $className);
+            $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
         }
     }
 
@@ -55,7 +55,7 @@ class PhpGenerator extends Generator
             StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
         ], $filename);
 
-        $directory = str_replace('\\', '/', $schema->getLanguageKey('php', 'namespace'));
+        $directory = str_replace('\\', '/', $schema->getLanguage('php')->get('namespace'));
 
         return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
     }
@@ -84,7 +84,7 @@ class PhpGenerator extends Generator
      */
     public function generateEnum(EnumDescriptor $enum)
     {
-        $namespace = $enum->getLanguageKey('php', 'namespace');
+        $namespace = $enum->getLanguage('php')->get('namespace');
         if (substr($namespace, 0, 1) == '\\') {
             $namespace = substr($namespace, 1);
         }
@@ -138,7 +138,7 @@ class PhpGenerator extends Generator
             if (!array_key_exists($schema->getId()->getCurie(), $messages)) {
                 $messages[$schema->getId()->getCurie()] = sprintf(
                     '%s\%sV%d',
-                    $schema->getLanguageKey('php', 'namespace'),
+                    $schema->getLanguage('php')->get('namespace'),
                     StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                     $schema->getId()->getVersion()->getMajor()
                 );
@@ -149,7 +149,7 @@ class PhpGenerator extends Generator
                     if (!array_key_exists($s->getId()->getCurieWithMajorRev(), $messages)) {
                         $messages[$s->getId()->getCurieWithMajorRev()] = sprintf(
                             '%s\%sV%d',
-                            $s->getLanguageKey('php', 'namespace'),
+                            $s->getLanguage('php')->get('namespace'),
                             StringUtils::toCamelFromSlug($s->getId()->getMessage()),
                             $s->getId()->getVersion()->getMajor()
                         );
@@ -217,10 +217,12 @@ class PhpGenerator extends Generator
                 ';;',
                 "\n\n\n",
                 "{\n    \n}",
+                "}\n\n}",
             ], [
                 ';',
                 "\n\n",
                 "{\n}",
+                "}\n}",
             ],
             $code
         );

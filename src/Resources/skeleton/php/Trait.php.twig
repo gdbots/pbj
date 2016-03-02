@@ -1,10 +1,13 @@
+{% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
-namespace {{ schema.languageKey('php', 'namespace') }};
+namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\Schema;
-{{ schema.languageSubKey('php', 'insertion-points', 'imports') }}
+{% if insertionPoints %}
+{{ insertionPoints.imports }}
+{% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
@@ -16,6 +19,8 @@ trait {{ getClassName(schema, true) }}Trait
 {% endblock class_definition %}
 {
 {% block class_body %}
-    {{ schema.languageSubKey('php', 'insertion-points', 'methods') }}
+{% if insertionPoints %}
+    {{ insertionPoints.methods }}
+{% endif %}
 {% endblock class_body %}
 }

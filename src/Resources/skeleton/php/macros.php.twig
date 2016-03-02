@@ -40,8 +40,8 @@
 {% if field.scale %}
     {{ spaces|format('') }}->scale({{ field.scale }})
 {% endif %}
-{% if field.languageKey('php', 'default') %}
-    {{ spaces|format('') }}->withDefault({{ field.languageKey('php', 'default')|replace({"\n": ''})|reduceSpaces }})
+{% if field.language('php').get('default') %}
+    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|replace({"\n": ''})|reduceSpaces }})
 {% elseif field.default %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
@@ -50,12 +50,12 @@
 {% endif %}
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
-    {{ spaces|format('') }}->className('{{ field.anyOf.0.languageKey('php', 'namespace') }}')
+    {{ spaces|format('') }}->className('{{ field.anyOf.0.language('php').get('namespace') }}')
 {% else %}
-    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.languageKey('php', 'namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.language('php').get('namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
 {% endif %}
-{% elseif field.languageKey('php', 'class_name') %}
-    {{ spaces|format('') }}->className('{{ field.languageKey('php', 'class_name') }}')
+{% elseif field.language('php').get('class_name') %}
+    {{ spaces|format('') }}->className('{{ field.language('php').get('class_name') }}')
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)

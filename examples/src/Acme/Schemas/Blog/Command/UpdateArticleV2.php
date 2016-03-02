@@ -38,6 +38,4 @@ final class UpdateArticleV2 extends AbstractMessage implements UpdateArticle, Co
             ]
         );
     }
-
-    
 }

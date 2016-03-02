@@ -37,6 +37,4 @@ final class CommentV1 extends AbstractMessage implements Comment, EntityV1
             ]
         );
     }
-
-    
 }

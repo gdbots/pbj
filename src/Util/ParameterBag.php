@@ -7,7 +7,7 @@ namespace Gdbots\Pbjc\Util;
  *
  * @see \Symfony\Component\HttpFoundation\ParameterBag
  */
-class ParameterBag implements \IteratorAggregate, \Countable
+class ParameterBag
 {
     /**
      * Parameter storage.
@@ -110,25 +110,5 @@ class ParameterBag implements \IteratorAggregate, \Countable
     public function remove($key)
     {
         unset($this->parameters[$key]);
-    }
-
-    /**
-     * Returns an iterator for parameters.
-     *
-     * @return \ArrayIterator An \ArrayIterator instance
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->parameters);
-    }
-
-    /**
-     * Returns the number of parameters.
-     *
-     * @return int The number of parameters
-     */
-    public function count()
-    {
-        return count($this->parameters);
     }
 }

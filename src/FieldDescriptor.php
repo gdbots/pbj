@@ -7,11 +7,10 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\StringType;
+use Gdbots\Pbjc\Util\ParameterBag;
 
 final class FieldDescriptor
 {
-    use LanguageDescriptorTrait;
-
     /**
      * Regular expression pattern for matching a valid field name.  The pattern allows
      * for camelCase fields name but snake_case is recommend.
@@ -81,6 +80,9 @@ final class FieldDescriptor
     /** @var EnumDescriptor */
     private $enum;
 
+    /** @var ParameterBag */
+    private $languages;
+
     /**
      * @param string $name
      * @param array  $parameters
@@ -106,6 +108,7 @@ final class FieldDescriptor
             if (property_exists(get_called_class(), $classProperty)) {
                 switch ($key) {
                     case 'name':
+                    case 'languages':
                         continue 2;
 
                     case 'type':
@@ -152,7 +155,11 @@ final class FieldDescriptor
             elseif (substr($key, -8) == '_options') {
                 $language = substr($key, 0, -8); // remove "_options"
 
-                $this->setLanguage($language, $value);
+                if (is_array($value)) {
+                    $value = new ParameterBag($value);
+                }
+
+                $this->getLanguages()->set($language, $value);
             }
         }
 
@@ -397,5 +404,27 @@ final class FieldDescriptor
     public function getEnum()
     {
         return $this->enum;
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getLanguages()
+    {
+        return $this->languages ?: $this->languages = new ParameterBag();
+    }
+
+    /**
+     * @param string $language
+     *
+     * @return ParameterBag
+     */
+    public function getLanguage($language)
+    {
+        if (!$this->getLanguages()->has($language)) {
+            $this->getLanguages()->set($language, new ParameterBag());
+        }
+
+        return $this->getLanguages()->get($language);
     }
 }
