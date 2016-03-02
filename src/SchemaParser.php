@@ -155,7 +155,7 @@ class SchemaParser
             $fieldsData = $this->fixArray($data['fields']['field']);
             foreach ($fieldsData as $field) {
                 if ($field = $this->getFieldDescriptor($schemaId, $field)) {
-                    $fields[$field->getName()] = $field;
+                    $fields[] = $field;
                 }
             }
         }
@@ -164,7 +164,7 @@ class SchemaParser
             $mixinsData = $this->fixArray($data['mixins']['curie_major']);
             foreach ($mixinsData as $curieWithMajorRev) {
                 if ($mixin = $this->getMixin($schemaId, $curieWithMajorRev)) {
-                    $mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
+                    $mixins[] = $mixin;
                 }
             }
         }

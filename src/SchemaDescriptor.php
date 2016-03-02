@@ -28,7 +28,7 @@ final class SchemaDescriptor
     private $languages = [];
 
     /**
-     * @param SchemaId              $id
+     * @param SchemaId|string       $id
      * @param SchemaDescriptor|null $extends
      * @param FieldDescriptor[]     $fields
      * @param SchemaDescriptor[]    $mixins
@@ -37,7 +37,7 @@ final class SchemaDescriptor
      * @param bool                  $isLatestVersion
      */
     public function __construct(
-        SchemaId $id,
+        $id,
         SchemaDescriptor $extends = null,
         array $fields = [],
         array $mixins = [],
@@ -45,13 +45,21 @@ final class SchemaDescriptor
         $isMixin = false,
         $isLatestVersion = false
     ) {
-        $this->id = $id;
+        $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
         $this->extends = $extends;
-        $this->fields = $fields;
-        $this->mixins = $mixins;
         $this->languages = $languages;
         $this->isMixin = $isMixin;
         $this->isLatestVersion = $isLatestVersion;
+
+        $this->fields = [];
+        foreach ($fields as $field) {
+            $this->fields[$field->getName()] = $field;
+        }
+
+        $this->mixins = [];
+        foreach ($mixins as $mixin) {
+            $this->mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
+        }
     }
 
     /**
