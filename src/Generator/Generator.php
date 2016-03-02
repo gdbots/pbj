@@ -8,6 +8,7 @@ use Gdbots\Pbjc\Twig\Extension\StringExtension;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Util\OutputFile;
 
 abstract class Generator
 {
@@ -25,47 +26,31 @@ abstract class Generator
     /** @var string */
     protected $output;
 
-    /** @var bool */
-    protected $outputDisabled = false;
-
-    /** @var array */
-    protected $files = [];
-
     /**
      * @param string $output
      */
-    public function __construct($output = null)
+    public function __construct($output)
     {
         $this->output = $output;
-
-        if (!$this->output) {
-            $this->outputDisabled = true;
-        }
-    }
-
-    /**
-     * Returns list of files (with output target).
-     *
-     * @return array
-     */
-    public function getFiles()
-    {
-        return $this->files;
     }
 
     /**
      * Generates and writes schema related files.
      *
      * @param SchemaDescriptor $schema
+     *
+     * @return OutputFile[]
      */
     public function generateSchema(SchemaDescriptor $schema)
     {
+        $outputFiles = [];
+
         foreach ($schema->getFields() as $field) {
             $this->updateFieldOptions($schema, $field);
         }
 
         foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-            $this->renderFile(
+            $outputFiles[] = $this->renderFile(
                 $template,
                 $this->getSchemaTarget($schema, $filename),
                 $this->getSchemaParameters($schema)
@@ -75,7 +60,7 @@ abstract class Generator
         if ($schema->isLatestVersion()) {
             foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
                 if ($this->getSchemaTarget($schema, $filename) != $this->getSchemaTarget($schema, $filename, null, true)) {
-                    $this->renderFile(
+                    $outputFiles[] = $this->renderFile(
                         $template,
                         $this->getSchemaTarget($schema, $filename, null, true),
                         $this->getSchemaParameters($schema)
@@ -83,6 +68,8 @@ abstract class Generator
                 }
             }
         }
+
+        return $outputFiles;
     }
 
     /**
@@ -166,6 +153,8 @@ abstract class Generator
      * Generates and writes enum files.
      *
      * @param EnumDescriptor $enum
+     *
+     * @return OutputFile[]
      */
     public function generateEnum(EnumDescriptor $enum)
     {
@@ -176,6 +165,8 @@ abstract class Generator
      *
      * @param array  $schemas
      * @param string $filename
+     *
+     * @return OutputFile[]
      */
     public function generateManifest(array $schemas, $filename)
     {
@@ -218,21 +209,21 @@ abstract class Generator
      * @param string $template
      * @param string $target
      * @param array  $parameters
+     *
+     * @return OutputFile
      */
     protected function renderFile($template, $target, $parameters)
     {
         $template = sprintf('%s/%s', $this->language, $template);
 
-        $render = $this->render($template, $parameters);
+        $content = $this->render($template, $parameters);
 
-        $this->files[$target] = $render;
-
-        if (!$this->outputDisabled) {
-            if (!is_dir(dirname($target))) {
-                mkdir(dirname($target), 0777, true);
-            }
-
-            file_put_contents($target, $render);
+        if (!is_dir(dirname($target))) {
+            mkdir(dirname($target), 0777, true);
         }
+
+        file_put_contents($target, $content);
+
+        return new OutputFile($target, $content);
     }
 }
