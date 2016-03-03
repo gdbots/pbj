@@ -1,7 +1,0 @@
-{
-  "$schema": "http://json-schema.org/schema#",
-  "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/article/1-0-0.json",
-  "type": "object",
-  "properties": {},
-  "additionalProperties": false
-}

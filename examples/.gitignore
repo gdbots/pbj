@@ -1,1 +1,5 @@
+json-schema/
+src/
 vendor/
+pbj-schema-stores.php
+pbj-schemas.php
