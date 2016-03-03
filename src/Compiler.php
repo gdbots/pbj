@@ -162,7 +162,7 @@ final class Compiler
 
         if ($manifest = $options->getManifest()) {
             /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $manifest)) {
+            if ($response = $generator->generateManifest(SchemaStore::getSchemas(), $manifest)) {
                 $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
