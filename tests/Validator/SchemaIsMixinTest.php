@@ -9,11 +9,8 @@ class SchemaIsMixinTest extends \PHPUnit_Framework_TestCase
 {
     public function testValidateSame()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
-        $a->setIsMixin(true);
-
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
-        $b->setIsMixin(true);
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [], [], null, true);
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [], [], null, true);
 
         $asset = new SchemaIsMixin();
         $asset->validate($a, $b);
@@ -26,11 +23,8 @@ class SchemaIsMixinTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateException()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0');
-        $a->setIsMixin(true);
-
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [], [], null, true);
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1');
-        $b->setIsMixin(false);
 
         $asset = new SchemaIsMixin();
         $asset->validate($a, $b);

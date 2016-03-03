@@ -6,7 +6,7 @@ use Gdbots\Pbjc\Exception\InvalidEnumId;
 
 /**
  * Enum Id Format:
- *  vendor:package:name
+ *  vendor:package:name.
  *
  * Formats:
  *  VENDOR:  [a-z0-9-]+

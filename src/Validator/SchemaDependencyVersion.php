@@ -2,7 +2,6 @@
 
 namespace Gdbots\Pbjc\Validator;
 
-use Gdbots\Pbjc\Exception\ValidatorException;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class SchemaDependencyVersion implements Constraint

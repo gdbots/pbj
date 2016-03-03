@@ -3,11 +3,9 @@
 namespace Gdbots\Pbjc\Util;
 
 /**
- * ParameterBag is a container for key/value pairs.
- *
- * @see \Symfony\Component\HttpFoundation\ParameterBag
+ * LanguageBag is a container for key/value pairs.
  */
-class ParameterBag
+class LanguageBag
 {
     /**
      * Parameter storage.

@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Util\ParameterBag;
+use Gdbots\Pbjc\Util\LanguageBag;
 
 final class SchemaDescriptor
 {
@@ -24,34 +24,42 @@ final class SchemaDescriptor
     /** @var bool */
     private $isLatestVersion = false;
 
-    /** @var ParameterBag */
+    /** @var LanguageBag */
     private $languages = [];
 
     /**
-     * @param SchemaId              $id
+     * @param SchemaId|string       $id
      * @param SchemaDescriptor|null $extends
      * @param FieldDescriptor[]     $fields
      * @param SchemaDescriptor[]    $mixins
-     * @param ParameterBag          $languages
+     * @param LanguageBag           $languages
      * @param bool                  $isMixin
      * @param bool                  $isLatestVersion
      */
     public function __construct(
-        SchemaId $id,
+        $id,
         SchemaDescriptor $extends = null,
         array $fields = [],
         array $mixins = [],
-        ParameterBag $languages = null,
+        LanguageBag $languages = null,
         $isMixin = false,
         $isLatestVersion = false
     ) {
-        $this->id = $id;
+        $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
         $this->extends = $extends;
-        $this->fields = $fields;
-        $this->mixins = $mixins;
         $this->languages = $languages;
         $this->isMixin = $isMixin;
         $this->isLatestVersion = $isLatestVersion;
+
+        $this->fields = [];
+        foreach ($fields as $field) {
+            $this->fields[$field->getName()] = $field;
+        }
+
+        $this->mixins = [];
+        foreach ($mixins as $mixin) {
+            $this->mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
+        }
     }
 
     /**
@@ -177,22 +185,22 @@ final class SchemaDescriptor
     }
 
     /**
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguages()
     {
-        return $this->languages ?: $this->languages = new ParameterBag();
+        return $this->languages ?: $this->languages = new LanguageBag();
     }
 
     /**
      * @param string $language
      *
-     * @return ParameterBag
+     * @return LanguageBag
      */
     public function getLanguage($language)
     {
         if (!$this->getLanguages()->has($language)) {
-            $this->getLanguages()->set($language, new ParameterBag());
+            $this->getLanguages()->set($language, new LanguageBag());
         }
 
         return $this->getLanguages()->get($language);

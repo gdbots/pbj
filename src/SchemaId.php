@@ -5,9 +5,10 @@ namespace Gdbots\Pbjc;
 use Gdbots\Pbjc\Exception\InvalidSchemaId;
 
 /**
- * Schemas have fully qualified names, similar to a "urn".  This is combination of ideas from:
+ * Schemas have fully qualified names, similar to a "urn".
  *
  * Amazon Resource Names (ARNs) and AWS Service Namespaces
+ *
  * @link http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
  *
  * SnowPlow Analytics (Iglu)

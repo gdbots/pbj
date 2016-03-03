@@ -39,37 +39,37 @@ abstract class Generator
      *
      * @param SchemaDescriptor $schema
      *
-     * @return OutputFile[]
+     * @return GeneratorResponse
      */
     public function generateSchema(SchemaDescriptor $schema)
     {
-        $outputFiles = [];
+        $response = new GeneratorResponse();
 
         foreach ($schema->getFields() as $field) {
             $this->updateFieldOptions($schema, $field);
         }
 
         foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-            $outputFiles[] = $this->renderFile(
+            $response->addFile($this->renderFile(
                 $template,
                 $this->getSchemaTarget($schema, $filename),
                 $this->getSchemaParameters($schema)
-            );
+            ));
         }
 
         if ($schema->isLatestVersion()) {
             foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
                 if ($this->getSchemaTarget($schema, $filename) != $this->getSchemaTarget($schema, $filename, null, true)) {
-                    $outputFiles[] = $this->renderFile(
+                    $response->addFile($this->renderFile(
                         $template,
                         $this->getSchemaTarget($schema, $filename, null, true),
                         $this->getSchemaParameters($schema)
-                    );
+                    ));
                 }
             }
         }
 
-        return $outputFiles;
+        return $response;
     }
 
     /**
@@ -154,7 +154,7 @@ abstract class Generator
      *
      * @param EnumDescriptor $enum
      *
-     * @return OutputFile[]
+     * @return GeneratorResponse
      */
     public function generateEnum(EnumDescriptor $enum)
     {
@@ -166,7 +166,7 @@ abstract class Generator
      * @param array  $schemas
      * @param string $filename
      *
-     * @return OutputFile[]
+     * @return GeneratorResponse
      */
     public function generateManifest(array $schemas, $filename)
     {

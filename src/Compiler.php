@@ -4,14 +4,10 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
-use Gdbots\Pbjc\Util\ParameterBag;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
 {
-    /** @\Closure */
-    private $dispatcher;
-
     /**
      * Construct.
      */
@@ -35,7 +31,7 @@ final class Compiler
         ksort($enums);
         ksort($schemas);
 
-        /**
+        /*
          * Enums
          */
 
@@ -49,7 +45,7 @@ final class Compiler
             }
         }
 
-        /**
+        /*
          * Schemas
          */
 
@@ -72,7 +68,6 @@ final class Compiler
 
                     $validator->validate($schema);
                 }
-
             } catch (MissingSchema $e) {
                 $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
 
@@ -108,21 +103,23 @@ final class Compiler
     /**
      * Generates and writes files for each schema.
      *
-     * @param string       $language
-     * @param ParameterBag $options
+     * @param string         $language
+     * @param CompileOptions $options
      *
      * @throw \InvalidArgumentException
      */
-    public function run($language, ParameterBag $options)
+    public function run($language, CompileOptions $options)
     {
-        if (!$options->has('namespaces')) {
+        $namespaces = $options->getNamespaces();
+
+        if (!$namespaces || count($namespaces) === 0) {
             throw new \InvalidArgumentException('Missing "namespaces" options.');
         }
 
-        $namespaces = $options->get('namespaces');
         if (!is_array($namespaces)) {
             $namespaces = [$namespaces];
         }
+
         foreach ($namespaces as $namespace) {
             if (!preg_match('/^([a-z0-9-]+):([a-z0-9\.-]+)$/', $namespace)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -132,12 +129,12 @@ final class Compiler
             }
         }
 
-        if (!$options->has('output')) {
+        if (!$options->getOutput()) {
             throw new \InvalidArgumentException('Missing "output" directory options.');
         }
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
-        $generator = new $class($options->get('output'));
+        $generator = new $class($options->getOutput());
 
         $outputFiles = [];
 
@@ -146,8 +143,9 @@ final class Compiler
                 continue;
             }
 
-            if ($result = $generator->generateEnum($enum)) {
-                $outputFiles = array_merge($outputFiles, $result);
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateEnum($enum)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
@@ -156,34 +154,23 @@ final class Compiler
                 continue;
             }
 
-            if ($result = $generator->generateSchema($schema)) {
-                $outputFiles = array_merge($outputFiles, $result);
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateSchema($schema)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
-        if ($options->has('manifest')) {
-            if ($result = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $options->get('manifest'))) {
-                $outputFiles = array_merge($outputFiles, $result);
+        if ($manifest = $options->getManifest()) {
+            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
+            if ($response = $generator->generateManifest(SchemaStore::getSchemasByNamespaces($namespaces), $manifest)) {
+                $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }
 
-        if ($this->dispatcher) {
+        if ($callback = $options->getCallback()) {
             foreach ($outputFiles as $outputFile) {
-                call_user_func($this->dispatcher, $outputFile);
+                call_user_func($callback, $outputFile);
             }
         }
-    }
-
-    /**
-     * Sets a dispatcher call for handling generator response.
-     *
-     * @param \Closure $dispatcher
-     *
-     * @return this
-     */
-    public function setDispatcher(\Closure $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-        return $this;
     }
 }
