@@ -32,7 +32,13 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ classNameVMajor }} extends AbstractMessage implements {{ getClassName(schema) }}{% for mixin in schema.mixins %}, {{ getClassName(mixin, true, classNameVMajor) }}{% endfor %}
+final class {{ classNameVMajor }} extends AbstractMessage
+  implements
+    {{ getClassName(schema) }},
+{% for mixin in schema.mixins %}
+    {{ getClassName(mixin, true, classNameVMajor) }}{% if not loop.last %},{% endif %}
+
+{% endfor %}
 {% if schema.mixins|length %}
   {# note: linebreak for cleaner print #}
 

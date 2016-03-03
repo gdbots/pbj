@@ -1,4 +1,3 @@
-{% set classNameVMajor = getClassName(schema, true) %}
 <?php
 
 namespace {{ schema.language('php').get('namespace') }};
@@ -23,7 +22,7 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ classNameVMajor }}Mixin extends AbstractMixin
+final class {{ getClassName(schema, true) }}Mixin extends AbstractMixin
 {% endblock class_definition %}
 {
 {% block class_body %}
