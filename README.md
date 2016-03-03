@@ -133,7 +133,7 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 </field>
 ```
 
-The `any_of` attribute define the message id that will be used to pull the message details.
+The `any-of` attribute define the message id that will be used to pull the message details.
 
 ### Full Schma Options
 
@@ -200,7 +200,7 @@ The `any_of` attribute define the message id that will be used to pull the messa
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
 
   <enums namespace="{vendor:package}">
-    <enum>
+    <enum name="{string}" type="int|string">
       <option key="{string}" value="{string}" />
       <!-- ... -->
     </enum>
@@ -277,5 +277,3 @@ $compile->run('php', new CompileOptions([
     },
 ]));
 ```
-
-> **Note:** if no output folder was provided no files will be generated.
