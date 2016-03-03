@@ -13,20 +13,23 @@ This guide describes how to use the XML language to structure your schema file s
 First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.xml` file you use to define the schema.
 
 ```xml
-<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="pbj:acme:blog:entity:article:1-0-0" mixin="true">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:entity:article:1-0-0" mixin="true">
     <fields>
       <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
       <field name="title" type="text" required="true" />
     </fields>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Blog\Entity</namespace>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>
 ```
 
 Each schema required a few basic elements: id and fields.
@@ -95,9 +98,9 @@ When you're defining a schema, you might want one of its fields to only have one
 
 The define the enum in `enums.xml`:
 
-```
+```xml
 <enums namespace="acme:blog">
-  <enum name="publish-status">
+  <enum name="publish-status" type="string">
     <option key="PUBLISHED" value="published" />
     <option key="DRAFT" value="draft" />
     <option key="PENDING" value="pending" />
@@ -105,9 +108,9 @@ The define the enum in `enums.xml`:
     <option key="DELETED" value="deleted" />
   </enum>
 
-  <php_options>
+  <php-options>
     <namespace>Acme\Schemas\Blog\Enum</namespace>
-  </php_options>
+  </php-options>
 <enums>
 ```
 
@@ -124,21 +127,28 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 
 ```xml
 <field name="failed_request" type="message">
-  <any_of>
-    <curie>gdbots:pbj:mixin:request</curie_major>
-  </any_of>
+  <any-of>
+    <curie>gdbots:pbj:mixin:request</curie>
+  </any-of>
 </field>
 ```
 
-The `any_of` attribute define the message id that will be used to pull the message details.
+The `any-of` attribute define the message id that will be used to pull the message details.
 
 ### Full Schma Options
 
 ```xml
-<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="{pbj:vendor:package:category:message:major-minor-patch}" mixin="{bool}">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema
+    id="{pbj:vendor:package:category:message:major-minor-patch}"
+    mixin="{bool}"
+    extends="{pbj:vendor:package:category:vmajor}"
+  >
     <fields>
       <field
         name="{/^([a-zA-Z_]{1}[a-zA-Z0-9_]+)$/}"
@@ -151,55 +161,82 @@ The `any_of` attribute define the message id that will be used to pull the messa
         rule="{\Gdbots\Pbjc\Enum\FieldRule}"
         pattern="{string}"
         format="{Gdbots\Pbjc\Enum\Format}"
-        use_type_default="{bool}"
+        use-type-default="{bool}"
         overridable="{bool}"
       >
         <default>{string}</default>
 
         <enum id="{vendor:package:enum}" />
 
-        <any_of>
+        <any-of>
           <curie>{pbj:vendor:package:category}</curie>
           <!-- ... -->
-        </any_of>
+        </any-of>
 
-        <php_options>
-          <class_name>{string}</class_name>
+        <php-options>
+          <classname>{string}</classname>
           <default>{string}</default>
-        </php_options>
+        </php-options>
       </field>
     </fields>
 
     <mixins>
-      <curie_major>{pbj:vendor:package:category:vmajor}</curie_major>
+      <curie-major>{pbj:vendor:package:category:vmajor}</curie-major>
       <!-- ... -->
     </mixins>
 
     <php_options>
       <namespace>{string}</namespace>
-      <trait_class>
-        <use_statements>{string}</use_statements>
-        <class_body>{string}</class_body>
-      </trait_class>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>
 ```
 
 ```xml
-<enums-mapping xmlns="gdbots:pbjc:enums-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<pbj-enums xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
 
   <enums namespace="{vendor:package}">
-    <enum>
+    <enum name="{string}" type="int|string">
       <option key="{string}" value="{string}" />
       <!-- ... -->
     </enum>
-    <php_options>
+
+    <php-options>
       <namespace>{string}</namespace>
-    </php_options>
+    </php-options>
   <enums>
 </enums-mapping>
+```
+
+> **Note:** For each `php-options` you can also add dynamic tags. For example:
+
+```xml
+<php-options>
+  <namespace>Acme\Blog\Entity</namespace>
+  <insertion-points>
+    <imports>
+        <![CDATA[
+use Gdbots\Pbj\MessageRef;
+        ]]>
+    </imports>
+    <methods>
+        <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('command_id'), $tag);
+}
+        ]]>
+    </methods>
+  </insertion-points>
+</php-options>
 ```
 
 # Basic Usage
@@ -222,8 +259,21 @@ Once all directories are added, you can then start compiling:
 ```php
 <?php
 
-$compile = new Compiler();
-$generator = $compile->run('php', 'vendor:package', '/put/your/output/folder');
-```
+use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\Util\OutputFile;
 
-> **Note:** if no output folder was provided no files will be generated.
+$compile = new Compiler();
+
+$compile->run('php', new CompileOptions([
+    'namespaces' => [
+      'vendor:package',
+    ],
+    'output' => '/put/your/output/folder',
+    'manifest' => '/put/your/output/folder/pbj-schemas.php',
+    'callback' => function (OutputFile $file) {
+        // do something, like print content for example:
+        echo highlight_string($file->getContents(), true).'<hr />';
+    },
+]));
+```
