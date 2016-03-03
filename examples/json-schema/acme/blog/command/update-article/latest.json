@@ -1,0 +1,210 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/blog/command/update-article/2-0-0.json",
+  "type": "object",
+  "properties": {
+    "entity": {
+      "type": "object",
+      "required": true,
+      "anyOf": [
+        {
+          "$ref": "#/definitions/entity"
+        }
+      ],
+      "additionalProperties": {
+        "customType": "message",
+        "rule": "single"
+      }
+    },
+    "user_id": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "identifier",
+        "rule": "single"
+      }
+    }
+  },
+  "required": [
+    "entity"
+  ],
+  "definitions": {
+    "entity": {
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-1.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier",
+            "rule": "single",
+            "overridable": true
+          }
+        },
+        "etag": {
+          "type": "string",
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9_\\-]+$",
+          "additionalProperties": {
+            "customType": "string",
+            "rule": "single"
+          }
+        },
+        "created_at": {
+          "type": "number",
+          "required": true,
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        },
+        "updated_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        }
+      },
+      "required": [
+        "_id",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "command": {
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/command/1-0-2.json",
+      "type": "object",
+      "properties": {
+        "command_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "time-uuid",
+            "rule": "single"
+          }
+        },
+        "microtime": {
+          "type": "number",
+          "required": true,
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        },
+        "causator": {
+          "type": "object",
+          "additionalProperties": {
+            "customType": "message-ref",
+            "rule": "single"
+          }
+        },
+        "correlator": {
+          "type": "object",
+          "additionalProperties": {
+            "customType": "message-ref",
+            "rule": "single"
+          }
+        },
+        "retries": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "tiny-int",
+            "rule": "single"
+          }
+        }
+      },
+      "required": [
+        "command_id",
+        "microtime"
+      ],
+      "additionalProperties": false
+    },
+    "updateentity": {
+      "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/update-entity/2-0-0.json",
+      "type": "object",
+      "properties": {
+        "entity": {
+          "type": "object",
+          "required": true,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/entity"
+            }
+          ],
+          "additionalProperties": {
+            "customType": "message",
+            "rule": "single"
+          }
+        },
+        "user_id": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "identifier",
+            "rule": "single"
+          }
+        }
+      },
+      "required": [
+        "entity"
+      ],
+      "definitions": {
+        "entity": {
+          "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-1.json",
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "required": true,
+              "additionalProperties": {
+                "customType": "identifier",
+                "rule": "single",
+                "overridable": true
+              }
+            },
+            "etag": {
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_\\-]+$",
+              "additionalProperties": {
+                "customType": "string",
+                "rule": "single"
+              }
+            },
+            "created_at": {
+              "type": "number",
+              "required": true,
+              "additionalProperties": {
+                "customType": "microtime",
+                "rule": "single"
+              }
+            },
+            "updated_at": {
+              "type": "number",
+              "additionalProperties": {
+                "customType": "microtime",
+                "rule": "single"
+              }
+            }
+          },
+          "required": [
+            "_id",
+            "created_at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": {
+    "mixin": [
+      {
+        "$ref": "#/definitions/command"
+      },
+      {
+        "$ref": "#/definitions/updateentity"
+      }
+    ]
+  }
+}

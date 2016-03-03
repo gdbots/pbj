@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "http://yourdomain.com/schemas/acme/acme/blog/entity/article/1-0-1.json",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string",
+        "rule": "single"
+      }
+    },
+    "excerpt": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text",
+        "rule": "single"
+      }
+    },
+    "excerpt_html": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "text",
+        "rule": "single"
+      }
+    },
+    "thumbnails": {
+      "type": "string",
+      "additionalProperties": {
+        "customType": "string",
+        "rule": "map",
+        "format": "url"
+      }
+    },
+    "private": {
+      "type": "boolean",
+      "additionalProperties": {
+        "customType": "boolean",
+        "rule": "single"
+      }
+    },
+    "publish_status": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "published",
+        "draft",
+        "pending",
+        "expired",
+        "deleted"
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "rule": "single",
+        "withDefault": "draft"
+      }
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "article",
+        "link",
+        "photo",
+        "quote",
+        "text",
+        "video"
+      ],
+      "additionalProperties": {
+        "customType": "string-enum",
+        "rule": "single",
+        "withDefault": "unknown"
+      }
+    },
+    "expires_at": {
+      "type": "number",
+      "additionalProperties": {
+        "customType": "timestamp",
+        "rule": "single",
+        "useTypeDefault": true
+      }
+    },
+    "comments": {
+      "type": "object",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/comment"
+        }
+      ],
+      "additionalProperties": {
+        "customType": "message",
+        "rule": "list"
+      }
+    }
+  },
+  "definitions": {
+    "comment": {
+      "id": "http://yourdomain.com/schemas/acme/acme/blog/entity/comment/1-0-0.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier",
+            "rule": "single"
+          }
+        },
+        "comment": {
+          "type": "string",
+          "additionalProperties": {
+            "customType": "text",
+            "rule": "single"
+          }
+        },
+        "published_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        }
+      },
+      "required": [
+        "_id"
+      ],
+      "definitions": {
+        "entity": {
+          "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-1.json",
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "required": true,
+              "additionalProperties": {
+                "customType": "identifier",
+                "rule": "single",
+                "overridable": true
+              }
+            },
+            "etag": {
+              "type": "string",
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_\\-]+$",
+              "additionalProperties": {
+                "customType": "string",
+                "rule": "single"
+              }
+            },
+            "created_at": {
+              "type": "number",
+              "required": true,
+              "additionalProperties": {
+                "customType": "microtime",
+                "rule": "single"
+              }
+            },
+            "updated_at": {
+              "type": "number",
+              "additionalProperties": {
+                "customType": "microtime",
+                "rule": "single"
+              }
+            }
+          },
+          "required": [
+            "_id",
+            "created_at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": {
+        "mixin": [
+          {
+            "$ref": "#/definitions/entity"
+          }
+        ]
+      }
+    },
+    "entity": {
+      "id": "http://yourdomain.com/schemas/gdbots/gdbots/pbj/mixin/entity/1-0-1.json",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "required": true,
+          "additionalProperties": {
+            "customType": "identifier",
+            "rule": "single",
+            "overridable": true
+          }
+        },
+        "etag": {
+          "type": "string",
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9_\\-]+$",
+          "additionalProperties": {
+            "customType": "string",
+            "rule": "single"
+          }
+        },
+        "created_at": {
+          "type": "number",
+          "required": true,
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        },
+        "updated_at": {
+          "type": "number",
+          "additionalProperties": {
+            "customType": "microtime",
+            "rule": "single"
+          }
+        }
+      },
+      "required": [
+        "_id",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "article": {
+      "id": "http://yourdomain.com/schemas/acme/acme/core/mixin/article/1-0-0.json",
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "hascomments": {
+      "id": "http://yourdomain.com/schemas/acme/acme/blog/mixin/has-comments/1-0-0.json",
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": {
+    "mixin": [
+      {
+        "$ref": "#/definitions/entity"
+      },
+      {
+        "$ref": "#/definitions/article"
+      },
+      {
+        "$ref": "#/definitions/hascomments"
+      }
+    ]
+  }
+}
