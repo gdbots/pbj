@@ -110,7 +110,9 @@ class SchemaParser
     {
         $schemaId = SchemaId::fromString($data['id']);
 
-        $parameters = [];
+        $parameters = [
+            'deprecated' => isset($data['deprecated']) && $data['deprecated'],
+        ];
 
         // can't extends yourself
         if (isset($data['extends'])) {

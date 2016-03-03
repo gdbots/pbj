@@ -28,6 +28,9 @@ final class SchemaDescriptor
     /** @var LanguageBag */
     private $languages = [];
 
+    /** @var bool */
+    private $deprecated = false;
+
     /**
      * @param SchemaId|string $id
      * @param array           $parameters
@@ -44,6 +47,7 @@ final class SchemaDescriptor
                 switch ($classProperty) {
                     case 'isMixin':
                     case 'isLatestVersion':
+                    case 'deprecated':
                         $value = (bool) $value;
                         break;
 
@@ -211,5 +215,13 @@ final class SchemaDescriptor
         }
 
         return $this->getLanguages()->get($language);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeprecated()
+    {
+        return $this->deprecated;
     }
 }

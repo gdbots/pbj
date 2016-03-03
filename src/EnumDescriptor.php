@@ -18,18 +18,23 @@ final class EnumDescriptor
     /** @var LanguageBag */
     private $languages = [];
 
+    /** @var bool */
+    private $deprecated = false;
+
     /**
      * @param EnumId|string $id
      * @param string        $type
      * @param array         $values
      * @param LanguageBag   $languages
+     * @param bool          $deprecated
      */
-    public function __construct($id, $type, array $values, LanguageBag $languages = null)
+    public function __construct($id, $type, array $values, LanguageBag $languages = null, $deprecated = false)
     {
         $this->id = $id instanceof EnumId ? $id : EnumId::fromString($id);
         $this->type = $type;
         $this->values = $values;
         $this->languages = $languages;
+        $this->deprecated = $deprecated;
     }
 
     /**
@@ -102,5 +107,13 @@ final class EnumDescriptor
         }
 
         return $this->getLanguages()->get($language);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeprecated()
+    {
+        return $this->deprecated;
     }
 }

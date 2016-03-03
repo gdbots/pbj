@@ -120,7 +120,9 @@ class EnumParser
         // add enums language options
         $languages = $this->getLanguageOptions($data);
 
-        return new EnumDescriptor($enumId, $data['type'], $values, $languages);
+        $isDeprecated = isset($data['deprecated']) && $data['deprecated'];
+
+        return new EnumDescriptor($enumId, $data['type'], $values, $languages, $isDeprecated);
     }
 
     /**

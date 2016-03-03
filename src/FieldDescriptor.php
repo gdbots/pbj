@@ -22,6 +22,9 @@ final class FieldDescriptor
     /** @var string */
     private $name;
 
+    /** @var string */
+    private $description;
+
     /** @var \Gdbots\Pbjc\Type\Type */
     private $type;
 
@@ -83,6 +86,9 @@ final class FieldDescriptor
     /** @var LanguageBag */
     private $languages;
 
+    /** @var bool */
+    private $deprecated = false;
+
     /**
      * @param string $name
      * @param array  $parameters
@@ -135,6 +141,7 @@ final class FieldDescriptor
                     case 'required':
                     case 'useTypeDefault':
                     case 'overridable':
+                    case 'deprecated':
                         $value = (bool) $value;
                         break;
 
@@ -231,6 +238,14 @@ final class FieldDescriptor
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
@@ -426,5 +441,13 @@ final class FieldDescriptor
         }
 
         return $this->getLanguages()->get($language);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeprecated()
+    {
+        return $this->deprecated;
     }
 }
