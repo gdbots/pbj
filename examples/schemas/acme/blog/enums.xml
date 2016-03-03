@@ -1,10 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+
 <pbj-enums xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
 
   <enums namespace="acme:blog">
-    <enum name="publish-status">
+    <enum name="publish-status" type="string">
       <option key="UNKNOWN" value="unknown" />
       <option key="PUBLISHED" value="published" />
       <option key="DRAFT" value="draft" />
@@ -13,7 +14,7 @@
       <option key="DELETED" value="deleted" />
     </enum>
 
-    <enum name="content-type">
+    <enum name="content-type" type="string">
       <option key="UNKNOWN" value="unknown" />
       <option key="ARTICLE" value="article" />
       <option key="LINK" value="link" />
@@ -23,9 +24,8 @@
       <option key="VIDEO" value="video" />
     </enum>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Schemas\Blog\Enum</namespace>
-    </php_options>
+    </php-options>
   </enums>
-
 </pbj-enums>

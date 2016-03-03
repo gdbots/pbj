@@ -1,18 +1,21 @@
-<schema-mapping xmlns="/Users/greg/www/gdbots/pbjc-php/xsd/schema.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="pbj:acme:core:mixin:update-entity:1-0-0" mixin="true" extends="gdbots:pbj:mixin:command:v1">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:core:mixin:update-entity:1-0-0" mixin="true" extends="gdbots:pbj:mixin:command:v1">
     <fields>
       <field name="entity" type="message" required="true">
-        <any_of>
+        <any-of>
           <curie>gdbots:pbj:mixin:entity</curie>
-        </any_of>
+        </any-of>
       </field>
       <field name="user_id" type="identifier"/>
     </fields>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Schemas\Core\Command</namespace>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>

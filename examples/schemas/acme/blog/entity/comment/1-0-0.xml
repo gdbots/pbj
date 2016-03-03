@@ -1,11 +1,14 @@
-<schema-mapping xmlns="/Users/greg/www/gdbots/pbjc-php/xsd/schema.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="pbj:acme:blog:entity:comment:1-0-0">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:entity:comment:1-0-0">
     <fields>
       <field name="_id" type="identifier" required="true">
-        <php_options>
-          <class_name>Gdbots\Identifiers\UuidIdentifier</class_name>
+        <php-options>
+          <classname>Gdbots\Identifiers\UuidIdentifier</classname>
           <default>
             <![CDATA[
                 function() {
@@ -13,7 +16,7 @@
                 }
             ]]>
           </default>
-        </php_options>
+        </php-options>
       </field>
 
       <field name="comment" type="text" />
@@ -21,11 +24,11 @@
     </fields>
 
     <mixins>
-      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
+      <curie-major>gdbots:pbj:mixin:entity:v1</curie-major>
     </mixins>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>

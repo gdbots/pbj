@@ -1,7 +1,10 @@
-<schema-mapping xmlns="/Users/greg/www/gdbots/pbjc-php/xsd/schema.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="pbj:acme:blog:entity:article:1-0-1">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:entity:article:1-0-1">
     <fields>
       <field name="title" type="string" />
       <field name="excerpt" type="text" />
@@ -19,22 +22,22 @@
         <enum id="acme:blog:content-type" />
       </field>
 
-      <field name="expires_at" type="timestamp" use_type_default="false" />
+      <field name="expires_at" type="timestamp" use-type-default="true" />
 
-      <field name="comments" type="message-ref" rule="list">
-        <any_of>
+      <field name="comments" type="message" rule="list">
+        <any-of>
           <curie>acme:blog:entity:comment</curie>
-        </any_of>
+        </any-of>
       </field>
     </fields>
 
     <mixins>
-      <curie_major>gdbots:pbj:mixin:entity:v1</curie_major>
-      <curie_major>acme:blog:mixin:has-comments:v1</curie_major>
+      <curie-major>gdbots:pbj:mixin:entity:v1</curie-major>
+      <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
     </mixins>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>

@@ -1,23 +1,26 @@
-<schema-mapping xmlns="/Users/greg/www/gdbots/pbjc-php/xsd/schema.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" ?>
 
-  <entity id="pbj:acme:blog:command:update-article:1-0-0">
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:command:update-article:1-0-0">
     <fields>
       <field name="entity" type="message" required="true">
-        <any_of>
+        <any-of>
           <curie>gdbots:pbj:mixin:entity</curie>
-        </any_of>
+        </any-of>
       </field>
       <field name="user_id" type="identifier"/>
     </fields>
 
     <mixins>
-      <curie_major>gdbots:pbj:mixin:command:v1</curie_major>
-      <curie_major>acme:core:mixin:update-entity:v1</curie_major>
+      <curie-major>gdbots:pbj:mixin:command:v1</curie-major>
+      <curie-major>acme:core:mixin:update-entity:v1</curie-major>
     </mixins>
 
-    <php_options>
+    <php-options>
       <namespace>Acme\Schemas\Blog\Command</namespace>
-    </php_options>
-  </entity>
-</schema-mapping>
+    </php-options>
+  </schema>
+</pbj-schema>
