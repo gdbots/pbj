@@ -1,15 +1,16 @@
+{% set className = getClassName(schema, true) %}
 <?php
 
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 {% if hasOtherMajorRev(schema) and schema.extends %}
-use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true) }};
+use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true, className, true) }};
 {% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ getClassName(schema, true) }} extends {% if hasOtherMajorRev(schema) and schema.extends %}{{ getClassName(schema) }}, {{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema) }}{% endif %}
+interface {{ className }} extends {% if hasOtherMajorRev(schema) and schema.extends %}{{ getClassName(schema) }}, {{ getClassName(schema.extends, true, className) }}{% else %}{{ getClassName(schema) }}{% endif %}
 
 {% endblock class_definition %}
 {

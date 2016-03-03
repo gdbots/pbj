@@ -22,20 +22,39 @@ class SchemaExtension extends \Twig_Extension
     /**
      * @param SchemaDescriptor $schema
      * @param bool             $majorRev
+     * @param string           $baseClassName
+     * @param bool             $withAs
      *
      * @return bool
      */
-    public function getClassName(SchemaDescriptor $schema, $majorRev = false)
+    public function getClassName(SchemaDescriptor $schema, $majorRev = false, $baseClassName = null, $withAs = false)
     {
+        $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
+
         if ($majorRev) {
-            return sprintf(
+            $className = sprintf(
                 '%sV%d',
                 StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                 $schema->getId()->getVersion()->getMajor()
             );
         }
 
-        return StringUtils::toCamelFromSlug($schema->getId()->getMessage());
+        if ($baseClassName && $baseClassName == $className) {
+            $classNameBase = sprintf(
+                '%s%s%s',
+                StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
+                StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
+                $className
+            );
+
+            if ($withAs) {
+                $className = sprintf('%s as %s', $className, $classNameBase);
+            } else {
+                $className = $classNameBase;
+            }
+        }
+
+        return $className;
     }
 
     /**

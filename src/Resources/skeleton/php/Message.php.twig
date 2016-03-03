@@ -1,3 +1,4 @@
+{% set className = getClassName(schema, true) %}
 {% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
@@ -18,7 +19,7 @@ use {{ field.language('php').get('classname') }};
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }};
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, className, true) }};
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Mixin;
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Trait;
 {% endfor %}
@@ -31,7 +32,7 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ getClassName(schema, true) }} extends AbstractMessage implements {{ getClassName(schema) }}{% for mixin in schema.mixins %}, {{ getClassName(mixin, true) }}{% endfor %}
+final class {{ className }} extends AbstractMessage implements {{ getClassName(schema) }}{% for mixin in schema.mixins %}, {{ getClassName(mixin, true, className) }}{% endfor %}
 {% if schema.mixins|length %}
   {# note: linebreak for cleaner print #}
 
