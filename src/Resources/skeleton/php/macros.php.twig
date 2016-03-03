@@ -50,9 +50,9 @@
 {% endif %}
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
-    {{ spaces|format('') }}->className('{{ field.anyOf.0.language('php').get('namespace') }}')
+    {{ spaces|format('') }}->className('{{ field.anyOf.0.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0) }}')
 {% else %}
-    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.language('php').get('namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0) }}'{% if not loop.last %}, {% endif %}{% endfor %}])
 {% endif %}
 {% elseif field.language('php').get('classname') %}
     {{ spaces|format('') }}->className('{{ field.language('php').get('classname') }}')
