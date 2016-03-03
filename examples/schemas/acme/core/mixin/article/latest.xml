@@ -5,9 +5,6 @@
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
 
   <schema id="pbj:acme:core:mixin:article:1-0-0" mixin="true">
-    <fields>
-    </fields>
-
     <php-options>
       <namespace>Acme\Schemas\Core\Entity</namespace>
     </php-options>
