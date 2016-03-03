@@ -1,4 +1,4 @@
-<schema-mapping xmlns="gdbots:pbjc:schema-mapping"
+<schema-mapping xmlns="/Users/greg/www/gdbots/pbjc-php/xsd/schema.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
   <entity id="pbj:acme:blog:entity:comment:1-0-0">

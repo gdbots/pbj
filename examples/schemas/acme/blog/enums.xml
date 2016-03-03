@@ -1,5 +1,7 @@
-<enums-mapping xmlns="gdbots:pbjc:enums-mapping"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0"?>
+<pbj-enums xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
 
   <enums namespace="acme:blog">
     <enum name="publish-status">
@@ -25,4 +27,5 @@
       <namespace>Acme\Schemas\Blog\Enum</namespace>
     </php_options>
   </enums>
-</enums-mapping>
+
+</pbj-enums>

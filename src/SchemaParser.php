@@ -30,7 +30,7 @@ class SchemaParser
         if (!array_key_exists($file, $this->files)) {
 
             // invalid schema
-            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../schema.xsd')) {
+            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../schema.xsd')) {
                 throw new \RuntimeException(sprintf(
                     'Invalid schema xml file "%s".',
                     $file

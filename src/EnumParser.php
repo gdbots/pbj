@@ -22,7 +22,7 @@ class EnumParser
     public function fromFile($file)
     {
         // invalid schema
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../enums.xsd')) {
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../enums.xsd')) {
             throw new \RuntimeException(sprintf(
                 'Invalid enums xml file "%s".',
                 $file
