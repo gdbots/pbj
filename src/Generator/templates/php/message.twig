@@ -57,7 +57,7 @@ final class {{ classNameVMajor }} extends AbstractMessage
     {
         return new Schema('{{ schema.id }}', __CLASS__,
             [
-{% import 'php/macros.php.twig' as macros %}
+{% import 'php/macros.twig' as macros %}
 {% for field in schema.fields %}
               {{ macros.draw_field(field, 16, loop.last) }}
 {%- endfor %}

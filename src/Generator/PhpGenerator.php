@@ -67,14 +67,14 @@ class PhpGenerator extends Generator
     {
         return $schema->isMixinSchema()
             ? [
-                'MessageInterface.php.twig' => '{className}',
-                'Interface.php.twig' => '{className}V{major}',
-                'Mixin.php.twig' => '{className}V{major}Mixin',
-                'Trait.php.twig' => '{className}V{major}Trait',
+                'curie-interface.twig' => '{className}',
+                'curie-major-interface.twig' => '{className}V{major}',
+                'mixin.twig' => '{className}V{major}Mixin',
+                'trait.twig' => '{className}V{major}Trait',
             ]
             : [
-                'MessageInterface.php.twig' => '{className}',
-                'Message.php.twig' => '{className}V{major}',
+                'curie-interface.twig' => '{className}',
+                'message.twig' => '{className}V{major}',
             ]
         ;
     }
@@ -103,7 +103,7 @@ class PhpGenerator extends Generator
         $response = new GeneratorResponse();
 
         $response->addFile($this->renderFile(
-            'Enum.php.twig',
+            'enum.twig',
             $filename,
             [
                 'enum' => $enum,
@@ -172,7 +172,7 @@ class PhpGenerator extends Generator
         $response = new GeneratorResponse();
 
         $response->addFile($this->renderFile(
-            'pbj-schemas.php.twig',
+            'manifest.twig',
             $filename,
             [
                 'messages' => $messages,

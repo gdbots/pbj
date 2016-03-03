@@ -15,7 +15,7 @@ abstract class Generator
     /**
      * The directory to look for templates.
      */
-    const SKELETON_DIR = __DIR__.'/../Resources/skeleton/';
+    const SKELETON_DIR = __DIR__.'/templates/';
 
     /** @var string */
     protected $language;

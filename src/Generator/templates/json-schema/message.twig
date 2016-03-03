@@ -1,4 +1,4 @@
 {% block json_body %}
-  {% import 'json-schema/macros.json.twig' as macros %}
+  {% import 'json-schema/macros.twig' as macros %}
   {{ macros.draw_schema(schema) }}
 {% endblock json_body %}

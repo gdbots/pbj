@@ -41,7 +41,7 @@ final class {{ getClassName(schema, true) }}Mixin extends AbstractMixin
     {
 {% if schema.fields|length %}
         return [
-{% import 'php/macros.php.twig' as macros %}
+{% import 'php/macros.twig' as macros %}
 {% for field in schema.fields %}
           {{ macros.draw_field(field, 12, loop.last) }}
 {%- endfor %}

@@ -37,7 +37,7 @@ class JsonSchemaGenerator extends Generator
     protected function getSchemaTemplates(SchemaDescriptor $schema)
     {
         return [
-            'Message.json.twig' => '{version}',
+            'message.twig' => '{version}',
         ];
     }
 
