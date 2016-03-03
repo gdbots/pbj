@@ -65,6 +65,7 @@
   <xsd:complexType name="enumPhpOptions">
     <xsd:sequence>
       <xsd:element name="namespace" type="xsd:string" minOccurs="1" maxOccurs="1" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" />
