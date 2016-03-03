@@ -54,8 +54,8 @@
 {% else %}
     {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.language('php').get('namespace') }}'{% if not loop.last %}, {% endif %}{% endfor %}])
 {% endif %}
-{% elseif field.language('php').get('class_name') %}
-    {{ spaces|format('') }}->className('{{ field.language('php').get('class_name') }}')
+{% elseif field.language('php').get('classname') %}
+    {{ spaces|format('') }}->className('{{ field.language('php').get('classname') }}')
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)

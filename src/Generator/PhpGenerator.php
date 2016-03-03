@@ -39,7 +39,7 @@ class PhpGenerator extends Generator
                 : 'unknown'
             ;
 
-            $field->getLanguage('php')->set('class_name', $className);
+            $field->getLanguage('php')->set('classname', $className);
             $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
         }
     }

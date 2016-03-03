@@ -30,7 +30,7 @@ class SchemaParser
         if (!array_key_exists($file, $this->files)) {
 
             // invalid schema
-            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../schema.xsd')) {
+            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/schema.xsd')) {
                 throw new \RuntimeException(sprintf(
                     'Invalid schema xml file "%s".',
                     $file
@@ -42,7 +42,7 @@ class SchemaParser
                 throw new \RuntimeException('Invalid schema DOM object.');
             }
 
-            $schemaId = SchemaId::fromString($xmlData['entity']['id']);
+            $schemaId = SchemaId::fromString($xmlData['schema']['id']);
 
             $filePath = substr($file, 0, -strlen(basename($file)) - 1);
             $schemaPath = str_replace(':', '/', $schemaId->getCurie());
@@ -72,7 +72,7 @@ class SchemaParser
             if (!file_exists($latestPath)) {
                 file_put_contents($latestPath, file_get_contents($file));
 
-                $this->files[$latestPath] = $xmlData['entity'];
+                $this->files[$latestPath] = $xmlData['schema'];
             }
             if (isset($this->files[$latestPath])) {
                 $version = SchemaId::fromString($this->files[$latestPath]['id'])->getVersion()->toString();
@@ -80,7 +80,7 @@ class SchemaParser
                 if (version_compare($schemaId->getVersion()->toString(), $version) === 1) {
                     file_put_contents($latestPath, file_get_contents($file));
 
-                    $this->files[$latestPath] = $xmlData['entity'];
+                    $this->files[$latestPath] = $xmlData['schema'];
                 }
             }
 
@@ -90,7 +90,7 @@ class SchemaParser
                 file_put_contents($versionPath, file_get_contents($file));
             }
 
-            $this->files[$file] = $xmlData['entity'];
+            $this->files[$file] = $xmlData['schema'];
         }
 
         return $this->parse($this->files[$file]);
@@ -152,7 +152,7 @@ class SchemaParser
         $languages = $this->getLanguageOptions($data);
 
         if (isset($data['fields']['field'])) {
-            $fieldsData = $this->fixArray($data['fields']['field']);
+            $fieldsData = $this->fixArray($data['fields']['field'], 'name');
             foreach ($fieldsData as $field) {
                 if ($field = $this->getFieldDescriptor($schemaId, $field)) {
                     $fields[] = $field;
@@ -160,8 +160,8 @@ class SchemaParser
             }
         }
 
-        if (isset($data['mixins']['curie_major'])) {
-            $mixinsData = $this->fixArray($data['mixins']['curie_major']);
+        if (isset($data['mixins']['curie-major'])) {
+            $mixinsData = $this->fixArray($data['mixins']['curie-major']);
             foreach ($mixinsData as $curieWithMajorRev) {
                 if ($mixin = $this->getMixin($schemaId, $curieWithMajorRev)) {
                     $mixins[] = $mixin;
@@ -197,8 +197,8 @@ class SchemaParser
         $options = new LanguageBag();
 
         foreach ($data as $key => $value) {
-            if (substr($key, -8) == '_options') {
-                $language = substr($key, 0, -8); // remove "_options"
+            if (substr($key, -8) == '-options') {
+                $language = substr($key, 0, -8); // remove "-options"
 
                 if (is_array($value)) {
                     $value = new LanguageBag($value);
@@ -228,23 +228,23 @@ class SchemaParser
             $field['options'] = [];
         }
 
-        if (isset($field['any_of']) &&
+        if (isset($field['any-of']) &&
             in_array($field['type'], [
                 TypeName::GEO_POINT(),
                 TypeName::IDENTIFIER(),
                 TypeName::MESSAGE_REF(),
             ])
         ) {
-            unset($field['any_of']);
+            unset($field['any-of']);
         }
-        if (isset($field['any_of']['curie'])) {
-            $field['any_of'] = $this->getAnyOf(
+        if (isset($field['any-of']['curie'])) {
+            $field['any-of'] = $this->getAnyOf(
                 $schemaId,
-                $this->fixArray($field['any_of']['curie'])
+                $this->fixArray($field['any-of']['curie'])
             );
         }
-        if (isset($field['any_of']) && count($field['any_of']) === 0) {
-            unset($field['any_of']);
+        if (isset($field['any-of']) && count($field['any-of']) === 0) {
+            unset($field['any-of']);
         }
 
         if (isset($field['enum'])) {

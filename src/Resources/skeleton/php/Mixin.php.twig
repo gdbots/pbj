@@ -12,8 +12,8 @@ use Gdbots\Pbj\Type as T;
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-{% if field.language('php').get('class_name') %}
-use {{ field.language('php').get('class_name') }};
+{% if field.language('php').get('classname') %}
+use {{ field.language('php').get('classname') }};
 {% endif %}
 {% endfor %}
 {% if format_class %}

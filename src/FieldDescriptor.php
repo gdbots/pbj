@@ -102,11 +102,11 @@ final class FieldDescriptor
         }
 
         foreach ($parameters as $key => $value) {
-            $classProperty = lcfirst(StringUtils::toCamelFromSnake($key));
+            $classProperty = lcfirst(StringUtils::toCamelFromSlug($key));
 
             // existing properties
             if (property_exists(get_called_class(), $classProperty)) {
-                switch ($key) {
+                switch ($classProperty) {
                     case 'name':
                     case 'languages':
                         continue 2;
@@ -133,7 +133,7 @@ final class FieldDescriptor
                         break;
 
                     case 'required':
-                    case 'use_type_default':
+                    case 'useTypeDefault':
                     case 'overridable':
                         $value = (bool) $value;
                         break;
@@ -152,8 +152,8 @@ final class FieldDescriptor
             }
 
             // language options
-            elseif (substr($key, -8) == '_options') {
-                $language = substr($key, 0, -8); // remove "_options"
+            elseif (substr($key, -8) == '-options') {
+                $language = substr($key, 0, -8); // remove "-options"
 
                 if (is_array($value)) {
                     $value = new LanguageBag($value);

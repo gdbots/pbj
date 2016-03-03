@@ -22,7 +22,7 @@ class EnumParser
     public function fromFile($file)
     {
         // invalid schema
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../enums.xsd')) {
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/enums.xsd')) {
             throw new \RuntimeException(sprintf(
                 'Invalid enums xml file "%s".',
                 $file
@@ -51,7 +51,7 @@ class EnumParser
         // get language options
         $languages = [];
         foreach ($xmlData['enums'] as $key => $value) {
-            if (substr($key, -8) == '_options') {
+            if (substr($key, -8) == '-options') {
                 $languages[$key] = $value;
             }
         }
@@ -148,8 +148,8 @@ class EnumParser
         $options = new LanguageBag();
 
         foreach ($data as $key => $value) {
-            if (substr($key, -8) == '_options') {
-                $language = substr($key, 0, -8); // remove "_options"
+            if (substr($key, -8) == '-options') {
+                $language = substr($key, 0, -8); // remove "-options"
 
                 if (is_array($value)) {
                     $value = new LanguageBag($value);
