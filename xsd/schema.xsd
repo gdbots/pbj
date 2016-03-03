@@ -32,6 +32,7 @@
     <xsd:attribute name="id" type="schemaIdentifierRegex" use="required" />
     <xsd:attribute name="extends" type="schemaCurieMajorRegex" use="optional" />
     <xsd:attribute name="mixin" type="xsd:boolean" default="false" />
+    <xsd:attribute name="deprecated" type="xsd:boolean" default="false" />
     <xsd:anyAttribute namespace="##other" />
   </xsd:complexType>
 
@@ -45,6 +46,7 @@
 
   <xsd:complexType name="field">
     <xsd:sequence>
+      <xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="enum" type="fieldEnum" minOccurs="0" maxOccurs="1" />
       <xsd:element name="any-of" type="schemaCurieIds" minOccurs="0" maxOccurs="1" />
@@ -63,6 +65,7 @@
     <xsd:attribute name="format" type="fieldFormat" use="optional" />
     <xsd:attribute name="use-type-default" type="xsd:boolean" default="false" />
     <xsd:attribute name="overridable" type="xsd:boolean" default="false" />
+    <xsd:attribute name="deprecated" type="xsd:boolean" default="false" />
     <xsd:anyAttribute namespace="##other" />
   </xsd:complexType>
 
