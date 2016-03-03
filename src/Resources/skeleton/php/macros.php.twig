@@ -1,6 +1,6 @@
 {% macro draw_field(field, spaces, isLastItem) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
-  Fb::create('{{ field.name }}', T\{{ getClass(field.type) }}::create())
+  Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
 {% if field.isASingleValue %}
     {{ spaces|format('') }}->asASingleValue()
 {% endif %}

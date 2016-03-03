@@ -12,7 +12,7 @@ class StringExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('getClass', array($this, 'getClass')),
+            new \Twig_SimpleFunction('className', array($this, 'className')),
             new \Twig_SimpleFunction('indentString', array($this, 'indentString')),
         );
     }
@@ -33,7 +33,7 @@ class StringExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function getClass($object)
+    public function className($object)
     {
         return (new \ReflectionClass($object))->getShortName();
     }

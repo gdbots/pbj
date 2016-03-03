@@ -25,7 +25,7 @@ class SchemaExtension extends \Twig_Extension
      * @param string           $baseClassName
      * @param bool             $withAs
      *
-     * @return bool
+     * @return string
      */
     public function getClassName(SchemaDescriptor $schema, $majorRev = false, $baseClassName = null, $withAs = false)
     {
@@ -39,7 +39,7 @@ class SchemaExtension extends \Twig_Extension
             );
         }
 
-        if ($baseClassName && $baseClassName == $className) {
+        if ($baseClassName == $className) {
             $classNameBase = sprintf(
                 '%s%s%s',
                 StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
