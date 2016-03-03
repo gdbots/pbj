@@ -110,10 +110,7 @@ class SchemaParser
     {
         $schemaId = SchemaId::fromString($data['id']);
 
-        $extends = null;
-        $fields = [];
-        $mixins = [];
-        $isMixin = false;
+        $parameters = [];
 
         // can't extends yourself
         if (isset($data['extends'])) {
@@ -141,35 +138,41 @@ class SchemaParser
                 $check = $check->getExtends();
             }
 
-            $extends = $extendsSchema;
+            $parameters['extends'] = $extendsSchema;
         }
 
         if (isset($data['mixin']) && $data['mixin']) {
-            $isMixin = true;
+            $parameters['isMixin'] = true;
         }
 
         // default language options
-        $languages = $this->getLanguageOptions($data);
+        $parameters['languages'] = $this->getLanguageOptions($data);
 
         if (isset($data['fields']['field'])) {
             $fieldsData = $this->fixArray($data['fields']['field'], 'name');
+            if (count($fieldsData)) {
+                $parameters['fields'] = [];
+            }
             foreach ($fieldsData as $field) {
                 if ($field = $this->getFieldDescriptor($schemaId, $field)) {
-                    $fields[] = $field;
+                    $parameters['fields'][] = $field;
                 }
             }
         }
 
         if (isset($data['mixins']['curie-major'])) {
             $mixinsData = $this->fixArray($data['mixins']['curie-major']);
+            if (count($mixinsData)) {
+                $parameters['mixins'] = [];
+            }
             foreach ($mixinsData as $curieWithMajorRev) {
                 if ($mixin = $this->getMixin($schemaId, $curieWithMajorRev)) {
-                    $mixins[] = $mixin;
+                    $parameters['mixins'][] = $mixin;
                 }
             }
         }
 
-        return new SchemaDescriptor($schemaId, $extends, $fields, $mixins, $languages, $isMixin);
+        return new SchemaDescriptor($schemaId, $parameters);
     }
 
     /**

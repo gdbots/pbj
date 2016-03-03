@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
+use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Util\LanguageBag;
 
 final class SchemaDescriptor
@@ -28,37 +29,43 @@ final class SchemaDescriptor
     private $languages = [];
 
     /**
-     * @param SchemaId|string       $id
-     * @param SchemaDescriptor|null $extends
-     * @param FieldDescriptor[]     $fields
-     * @param SchemaDescriptor[]    $mixins
-     * @param LanguageBag           $languages
-     * @param bool                  $isMixin
-     * @param bool                  $isLatestVersion
+     * @param SchemaId|string $id
+     * @param array           $parameters
      */
-    public function __construct(
-        $id,
-        SchemaDescriptor $extends = null,
-        array $fields = [],
-        array $mixins = [],
-        LanguageBag $languages = null,
-        $isMixin = false,
-        $isLatestVersion = false
-    ) {
+    public function __construct($id, array $parameters = [])
+    {
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
-        $this->extends = $extends;
-        $this->languages = $languages;
-        $this->isMixin = $isMixin;
-        $this->isLatestVersion = $isLatestVersion;
 
-        $this->fields = [];
-        foreach ($fields as $field) {
-            $this->fields[$field->getName()] = $field;
-        }
+        foreach ($parameters as $key => $value) {
+            $classProperty = lcfirst(StringUtils::toCamelFromSlug($key));
 
-        $this->mixins = [];
-        foreach ($mixins as $mixin) {
-            $this->mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
+            // existing properties
+            if (property_exists(get_called_class(), $classProperty)) {
+                switch ($classProperty) {
+                    case 'isMixin':
+                    case 'isLatestVersion':
+                        $value = (bool) $value;
+                        break;
+
+                    case 'fields':
+                        $fields = [];
+                        foreach ($value as $field) {
+                            $fields[$field->getName()] = $field;
+                        }
+                        $value = $fields;
+                        break;
+
+                    case 'mixins':
+                        $mixins = [];
+                        foreach ($value as $mixin) {
+                            $mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
+                        }
+                        $value = $mixins;
+                        break;
+                }
+
+                $this->$classProperty = $value;
+            }
         }
     }
 
