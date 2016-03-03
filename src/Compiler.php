@@ -19,7 +19,8 @@ final class Compiler
         foreach (SchemaStore::getDirs() as $dir) {
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
-            foreach ($files as $key => $file) {
+            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+            foreach ($files as $file) {
                 if ($file->getFilename() == 'enums.xml') {
                     $enums[] = $file->getPathName();
                 } else {
@@ -95,6 +96,7 @@ final class Compiler
             $currentFile = null;
         }
 
+        /** @var SchemaDescriptor $schema */
         foreach (SchemaStore::getSchemasByCurieMajor() as $schema) {
             $schema->setIsLatestVersion(true);
         }
@@ -134,10 +136,13 @@ final class Compiler
         }
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
+
+        /** @var \Gdbots\Pbjc\Generator\Generator $generator */
         $generator = new $class($options->getOutput());
 
         $outputFiles = [];
 
+        /** @var EnumDescriptor $enum */
         foreach (SchemaStore::getEnums() as $enum) {
             if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
@@ -149,6 +154,7 @@ final class Compiler
             }
         }
 
+        /** @var SchemaDescriptor $schema */
         foreach (SchemaStore::getSchemas() as $schema) {
             if (!in_array($schema->getId()->getNamespace(), $namespaces)) {
                 continue;

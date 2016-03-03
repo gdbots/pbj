@@ -118,6 +118,7 @@ final class FieldDescriptor
                         continue 2;
 
                     case 'type':
+                        /** @var \Gdbots\Pbjc\Type\Type $class */
                         $class = sprintf(
                             '\\Gdbots\\Pbjc\\Type\\%sType',
                             StringUtils::toCamelFromSlug($parameters['type'])

@@ -11,8 +11,6 @@ class SchemaDependencyVersion implements Constraint
      */
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b /* ignored */)
     {
-        $schemaIds = [];
-
         $schemaIds = array_merge(
             $this->getExtendsSchemas($a),
             $this->getMixinSchemas($a)

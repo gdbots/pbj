@@ -134,6 +134,8 @@ class PhpGenerator extends Generator
         }
 
         // merge with selected schemas (only non-mixin schema's)
+
+        /** @var SchemaDescriptor $schema */
         foreach ($schemas as $schema) {
             if ($schema->isMixinSchema()) {
                 continue;
@@ -149,6 +151,7 @@ class PhpGenerator extends Generator
             }
 
             if (SchemaStore::hasOtherSchemaMajorRev($schema->getId())) {
+                /** @var SchemaDescriptor $s */
                 foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
                     if (!array_key_exists($s->getId()->getCurieWithMajorRev(), $messages)) {
                         $messages[$s->getId()->getCurieWithMajorRev()] = sprintf(
@@ -185,7 +188,7 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function render($template, $parameters)
+    protected function render($template, array $parameters)
     {
         $code = parent::render($template, $parameters);
 

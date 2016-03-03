@@ -12,11 +12,11 @@ final class GeneratorResponse
     /**
      * @param OutputFile $file
      *
-     * @return this
+     * @return self
      */
     public function addFile(OutputFile $file)
     {
-        $this->fields[$file->getFile()] = $file;
+        $this->files[$file->getFile()] = $file;
 
         return $this;
     }
@@ -26,6 +26,6 @@ final class GeneratorResponse
      */
     public function getFiles()
     {
-        return $this->fields ?: [];
+        return $this->files ?: [];
     }
 }

@@ -6,7 +6,6 @@ use Composer\Installer\PackageEvent;
 use Composer\Package\PackageInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-// todo: clean this up, it seems mutant, addDir could be addDirs and accept an array.
 class ScriptHandler
 {
     /**

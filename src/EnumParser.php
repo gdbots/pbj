@@ -21,7 +21,7 @@ class EnumParser
      */
     public function fromFile($file)
     {
-        // invalid schema
+        /** @var \DOMDocument $xmlDomDocument */
         if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/enums.xsd')) {
             throw new \RuntimeException(sprintf(
                 'Invalid enums xml file "%s".',
@@ -29,7 +29,7 @@ class EnumParser
             ));
         }
 
-        // bad \DOMDocument
+        /** @var array $xmlData */
         if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
             throw new \RuntimeException('Invalid enum DOM object.');
         }
@@ -83,7 +83,7 @@ class EnumParser
      *
      * @param array $data
      *
-     * @return EnumDescriptor
+     * @return EnumDescriptor|null
      *
      * @throw \InvalidArgumentException
      */

@@ -52,7 +52,7 @@ class SchemaStore
     }
 
     /**
-     * Adds a schema. An exception will be thorwn when attempting to load
+     * Adds a schema. An exception will be thrown when attempting to load
      * the same id multi times.
      *
      * @param SchemaId         $schemaId
@@ -70,6 +70,7 @@ class SchemaStore
 
         // by curie
         if (isset(self::$schemasByCurie[$curie])) {
+            /** @var SchemaDescriptor $tmpSchema */
             $tmpSchema = self::$schemasByCurie[$curie];
 
             if ($schemaId->getVersion()->compare($tmpSchema->getId()->getVersion()) === 1) {
@@ -81,6 +82,7 @@ class SchemaStore
 
         // by curie major
         if (isset(self::$schemasByCurieMajor[$curieMajor])) {
+            /** @var SchemaDescriptor $tmpSchema */
             $tmpSchema = self::$schemasByCurieMajor[$curieMajor];
 
             if ($schemaId->getVersion()->compare($tmpSchema->getId()->getVersion()) === 1) {
@@ -154,7 +156,7 @@ class SchemaStore
      * @param SchemaId|string $schemaId
      * @param bool            $ignoreNotFound
      *
-     * @return array|SchemaDescriptor|null
+     * @return SchemaDescriptor|null
      */
     public static function getSchemaById($schemaId, $ignoreNotFound = false)
     {
@@ -285,7 +287,7 @@ class SchemaStore
      * @param EnumId|string $enumId
      * @param bool          $ignoreNotFound
      *
-     * @return array|EnumDescriptor|null
+     * @return EnumDescriptor|null
      */
     public static function getEnumById($enumId, $ignoreNotFound = false)
     {

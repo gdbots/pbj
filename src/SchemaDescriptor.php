@@ -53,18 +53,26 @@ final class SchemaDescriptor
 
                     case 'fields':
                         $fields = [];
+
+                        /** @var FieldDescriptor $field */
                         foreach ($value as $field) {
                             $fields[$field->getName()] = $field;
                         }
+
                         $value = $fields;
+
                         break;
 
                     case 'mixins':
                         $mixins = [];
+
+                        /** @var SchemaDescriptor $mixin */
                         foreach ($value as $mixin) {
                             $mixins[$mixin->getId()->getCurieWithMajorRev()] = $mixin;
                         }
+
                         $value = $mixins;
+
                         break;
                 }
 
@@ -178,7 +186,7 @@ final class SchemaDescriptor
     /**
      * @param bool $bool
      *
-     * @return this
+     * @return self
      */
     public function setIsLatestVersion($bool)
     {

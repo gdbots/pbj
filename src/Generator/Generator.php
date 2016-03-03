@@ -163,8 +163,8 @@ abstract class Generator
     /**
      * Generates and writes manifest files.
      *
-     * @param array  $schemas
-     * @param string $filename
+     * @param SchemaDescriptor[] $schemas
+     * @param string             $filename
      *
      * @return GeneratorResponse
      */
@@ -178,7 +178,7 @@ abstract class Generator
      *
      * @return string
      */
-    protected function render($template, $parameters)
+    protected function render($template, array $parameters)
     {
         $twig = $this->getTwigEnvironment();
 
@@ -212,7 +212,7 @@ abstract class Generator
      *
      * @return OutputFile
      */
-    protected function renderFile($template, $target, $parameters)
+    protected function renderFile($template, $target, array $parameters)
     {
         $template = sprintf('%s/%s', $this->language, $template);
 

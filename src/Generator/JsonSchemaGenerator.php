@@ -44,7 +44,7 @@ class JsonSchemaGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function render($template, $parameters)
+    protected function render($template, array $parameters)
     {
         return str_replace(
             [

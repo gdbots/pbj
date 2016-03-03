@@ -29,7 +29,7 @@ class SchemaParser
     {
         if (!array_key_exists($file, $this->files)) {
 
-            // invalid schema
+            /** @var \DOMDocument $xmlDomDocument */
             if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/schema.xsd')) {
                 throw new \RuntimeException(sprintf(
                     'Invalid schema xml file "%s".',
@@ -37,7 +37,7 @@ class SchemaParser
                 ));
             }
 
-            // bad \DOMDocument
+            /** @var array $xmlData */
             if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
                 throw new \RuntimeException('Invalid schema DOM object.');
             }
@@ -114,7 +114,6 @@ class SchemaParser
             'deprecated' => isset($data['deprecated']) && $data['deprecated'],
         ];
 
-        // can't extends yourself
         if (isset($data['extends'])) {
             if ($data['extends'] == $schemaId->getCurieWithMajorRev()) {
                 throw new \InvalidArgumentException(sprintf(
@@ -296,7 +295,6 @@ class SchemaParser
      */
     private function getAnyOf($schemaId, $curies)
     {
-        // can't add yourself to anyof
         if (in_array($schemaId->getCurie(), $curies)) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot add yourself "%s" as to anyof.',
@@ -347,7 +345,6 @@ class SchemaParser
      */
     private function getMixin(SchemaId $schemaId, $curieWithMajorRev)
     {
-        // can't add yourself to mixins
         if ($curieWithMajorRev == $schemaId->getCurieWithMajorRev()) {
             throw new \InvalidArgumentException(sprintf(
                 'Cannot add yourself "%s" as to mixins.',
