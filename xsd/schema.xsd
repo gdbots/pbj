@@ -88,7 +88,17 @@
   <xsd:complexType name="schemaPhpOptions">
     <xsd:sequence>
       <xsd:element name="namespace" type="xsd:string" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="insertion-points" type="insertionPointsPhpOptions" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
+  <xsd:complexType name="insertionPointsPhpOptions">
+    <xsd:sequence>
+      <xsd:element name="imports" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="methods" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" />
