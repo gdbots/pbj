@@ -11,8 +11,8 @@ class SchemaValidExtendsTest extends \PHPUnit_Framework_TestCase
     {
         $m = new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0');
 
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', $m);
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', $m);
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['extends' => $m]);
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['extends' => $m]);
 
         $asset = new SchemaValidExtends();
         $asset->validate($a, $b);
@@ -25,8 +25,8 @@ class SchemaValidExtendsTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateException()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'));
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', new SchemaDescriptor('pbj:vendor3:package3:category3:message3:1-0-0'));
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['extends' => new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0')]);
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['extends' => new SchemaDescriptor('pbj:vendor3:package3:category3:message3:1-0-0')]);
 
         $asset = new SchemaValidExtends();
         $asset->validate($a, $b);

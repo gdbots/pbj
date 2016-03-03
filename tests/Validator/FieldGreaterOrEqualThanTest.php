@@ -10,17 +10,17 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
 {
     public function testValidateNoConfig()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
             ]),
-        ]);
+        ]]);
 
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
             ]),
-        ]);
+        ]]);
 
         $asset = new FieldGreaterOrEqualThan();
         $asset->validate($a, $b);
@@ -30,19 +30,19 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateSame()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 100,
             ]),
-        ]);
+        ]]);
 
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 100,
             ]),
-        ]);
+        ]]);
 
         $asset = new FieldGreaterOrEqualThan();
         $asset->validate($a, $b);
@@ -52,19 +52,19 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateLessThan()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 100,
             ]),
-        ]);
+        ]]);
 
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 1000,
             ]),
-        ]);
+        ]]);
 
         $asset = new FieldGreaterOrEqualThan();
         $asset->validate($a, $b);
@@ -77,19 +77,19 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidateException()
     {
-        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', null, [
+        $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 100,
             ]),
-        ]);
+        ]]);
 
-        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', null, [
+        $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
                 'max' => 10,
             ]),
-        ]);
+        ]]);
 
         $asset = new FieldGreaterOrEqualThan();
         $asset->validate($a, $b);

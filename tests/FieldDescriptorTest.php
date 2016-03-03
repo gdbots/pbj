@@ -21,11 +21,11 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
             'max' => 100,
             'pattern' => '^[A-Za-z0-9_\-]+$',
             'default' => 'jonny',
-            'any_of' => [
+            'any-of' => [
                 new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0'),
             ],
             'enum' => new EnumDescriptor('vendor:package:number', 'int', [1, 2, 3, 4]),
-            'php_options' => [
+            'php-options' => [
                 'namespace' => 'Acme\Blog\Entity',
             ],
         ]);

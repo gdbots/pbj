@@ -14,25 +14,28 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
     {
         $this->schema = new SchemaDescriptor(
             'pbj:vendor:package:category:message:1-0-0',
-            new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
             [
-                new FieldDescriptor('first_name', [
-                    'type' => 'string',
-                ]),
-                new FieldDescriptor('last_name', [
-                    'type' => 'string',
-                ]),
-            ],
-            [
-                new SchemaDescriptor(
-                    'pbj:vendor2:package2:category2:message2:1-0-0',
-                    null,
-                    [
-                        'created_at' => new FieldDescriptor('created_at', [
-                            'type' => 'microtime',
-                        ]),
-                    ]
-                ),
+                'extends' => new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
+                'fields' => [
+                    new FieldDescriptor('first_name', [
+                        'type' => 'string',
+                    ]),
+                    new FieldDescriptor('last_name', [
+                        'type' => 'string',
+                    ]),
+                ],
+                'mixins' => [
+                    new SchemaDescriptor(
+                        'pbj:vendor2:package2:category2:message2:1-0-0',
+                        [
+                            'fields' => [
+                                'created_at' => new FieldDescriptor('created_at', [
+                                    'type' => 'microtime',
+                                ]),
+                            ],
+                        ]
+                    ),
+                ]
             ]
         );
     }
