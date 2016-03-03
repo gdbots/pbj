@@ -259,8 +259,23 @@ Once all directories are added, you can then start compiling:
 ```php
 <?php
 
+use Gdbots\Pbjc\Compiler;
+use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\Util\OutputFile;
+
 $compile = new Compiler();
-$generator = $compile->run('php', 'vendor:package', '/put/your/output/folder');
+
+$compile->run('php', new CompileOptions([
+    'namespaces' => [
+      'vendor:package',
+    ],
+    'output' => '/put/your/output/folder',
+    'manifest' => '/put/your/output/folder/pbj-schemas.php',
+    'callback' => function (OutputFile $file) {
+        // do something, like print content for example:
+        echo highlight_string($file->getContents(), true).'<hr />';
+    },
+]));
 ```
 
 > **Note:** if no output folder was provided no files will be generated.
