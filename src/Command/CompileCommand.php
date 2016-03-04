@@ -28,7 +28,7 @@ class CompileCommand extends Command
                 'language',
                 'l',
                  InputOption::VALUE_OPTIONAL,
-                'The generated language (php, or json)',
+                'The generated language',
                 'php'
             )
             ->addOption(

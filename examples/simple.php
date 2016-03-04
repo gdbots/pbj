@@ -27,14 +27,3 @@ $compile->run('php', new CompileOptions([
         echo highlight_string($file->getContents(), true).'<hr />';
     },
 ]));
-
-// generate JSON Schema files
-$compile->run('json-schema', new CompileOptions([
-    'namespaces' => $namespaces,
-    'output' => __DIR__.'/json-schema',
-    'callback' => function (OutputFile $file) {
-        $content = sprintf("<?php\n\n\$json = %s;\n", var_export(json_decode($file->getContents(), true), true));
-
-        echo highlight_string($content, true).'<hr />';
-    },
-]));
