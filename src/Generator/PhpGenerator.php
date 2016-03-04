@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Schema;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
@@ -117,6 +118,11 @@ class PhpGenerator extends Generator
 
     /**
      * {@inheritdoc}
+     *
+     * @param SchemaDescriptor[] $schemas
+     * @param string $filename
+     *
+     * @return GeneratorResponse
      */
     public function generateManifest(array $schemas, $filename)
     {

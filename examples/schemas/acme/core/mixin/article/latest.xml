@@ -7,6 +7,25 @@
   <schema id="pbj:acme:core:mixin:article:1-0-0" mixin="true">
     <php-options>
       <namespace>Acme\Schemas\Core\Entity</namespace>
+      <insertion-points>
+        <imports>
+            <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
+        <methods>
+            <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('command_id'), $tag);
+}
+            ]]>
+        </methods>
+      </insertion-points>
     </php-options>
   </schema>
 </pbj-schema>
