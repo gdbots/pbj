@@ -125,7 +125,7 @@ class SchemaParser
                 throw new MissingSchema($data['extends']);
             }
 
-            // recursivly check that chain not pointing back to schema
+            // recursively check that chain not pointing back to schema
             $check = $extendsSchema->getExtends();
             while ($check) {
                 if ($check->getId()->getCurieWithMajorRev() == $schemaId->getCurieWithMajorRev()) {
