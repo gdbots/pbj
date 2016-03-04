@@ -76,7 +76,7 @@ final class Compiler
                     throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
                 }
 
-                $currentFile = end($files);
+                $currentFile = current($files);
 
                 if (in_array($currentFile, $exceptionFile)) {
                     throw new \RuntimeException(sprintf('Recursively requesting schema file "%s".', $currentFile));
