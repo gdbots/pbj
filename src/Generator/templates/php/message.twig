@@ -63,10 +63,11 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {% for field in schema.fields %}
               {{ macros.draw_field(field, 16, loop.last) }}
 {%- endfor %}
-            ],
+            ]{% if schema.mixins|length %},{% endif %}
 {% else %}
-            [],
+            []{% if schema.mixins|length %},{% endif %}
 {% endif %}
+
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
@@ -74,8 +75,6 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 
 {% endfor %}
             ]
-{% else %}
-            []
 {% endif %}
         );
 {% else %}
