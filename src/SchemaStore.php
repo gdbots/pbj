@@ -128,6 +128,7 @@ class SchemaStore
     {
         $schemas = [];
 
+        /** @var SchemaDescriptor $schema */
         foreach (self::$schemasByCurie as $schema) {
             if (in_array($schema->getId()->getNamespace(), $namespaces)) {
                 $schemas[] = $schema;
@@ -201,12 +202,16 @@ class SchemaStore
                 --$key;
             }
 
-            if ($ids[$key] !== $id
-              && ($prev = self::$schemas[$ids[$key]])
-              && $prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
-              && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
-            ) {
-                return $prev;
+            if ($ids[$key] !== $id) {
+                /** @var SchemaDescriptor $prev */
+                $prev = self::$schemas[$ids[$key]];
+
+                if ($prev
+                    && $prev->getId()->getCurieWithMajorRev() === $schemaId->getCurieWithMajorRev()
+                    && $prev->getId()->getVersion()->compare($schemaId->getVersion()) === -1
+                ) {
+                    return $prev;
+                }
             }
         }
 
@@ -266,7 +271,7 @@ class SchemaStore
     }
 
     /**
-     * Adds an enum. An exception will be thorwn when attempting to load
+     * Adds an enum. An exception will be thrown when attempting to load
      * the same id multi times.
      *
      * @param EnumId         $enumId

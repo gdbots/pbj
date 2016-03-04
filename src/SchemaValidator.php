@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Pbjc\Validator as Assert;
+use Gdbots\Pbjc\Validator as Constraint;
 
 /**
  * Performs strict validation of the mapping schema.
@@ -18,29 +18,29 @@ class SchemaValidator
     public function __construct()
     {
         $this->constraints = [
-            new Assert\SchemaValidExtends(),
-            new Assert\SchemaIsMixin(),
-            new Assert\SchemaIsNotMixin(),
-            new Assert\SchemaMustContainsMixin(),
-            new Assert\SchemaMustContainsField(),
-            new Assert\SchemaMixinsMustContainsMixin(),
+            new Constraint\SchemaValidExtends(),
+            new Constraint\SchemaIsMixin(),
+            new Constraint\SchemaIsNotMixin(),
+            new Constraint\SchemaMustContainsMixin(),
+            new Constraint\SchemaMustContainsField(),
+            new Constraint\SchemaMixinsMustContainsMixin(),
 
-            new Assert\FieldAttributeEqualTo('type'),
-            new Assert\FieldAttributeEqualTo('rule'),
-            new Assert\FieldAttributeEqualTo('format'),
-            new Assert\FieldAttributeEqualTo('precision'),
-            new Assert\FieldAttributeEqualTo('scale'),
-            new Assert\FieldAttributeEqualTo('use_type_default'),
-            new Assert\FieldAttributeEqualTo('overridable'),
-            new Assert\FieldIsRequired(),
-            new Assert\FieldIsNotRequired(),
-            new Assert\FieldValidPattern(),
-            new Assert\FieldGreaterOrEqualThan(),
-            new Assert\FieldLessOrEqualThan(),
-            new Assert\FieldMinLength(),
-            new Assert\FieldMaxLength(),
-            new Assert\FieldSameEnum(),
-            new Assert\FieldMustContainsAnyOfClasses(),
+            new Constraint\FieldAttributeEqualTo('type'),
+            new Constraint\FieldAttributeEqualTo('rule'),
+            new Constraint\FieldAttributeEqualTo('format'),
+            new Constraint\FieldAttributeEqualTo('precision'),
+            new Constraint\FieldAttributeEqualTo('scale'),
+            new Constraint\FieldAttributeEqualTo('use_type_default'),
+            new Constraint\FieldAttributeEqualTo('overridable'),
+            new Constraint\FieldIsRequired(),
+            new Constraint\FieldIsNotRequired(),
+            new Constraint\FieldValidPattern(),
+            new Constraint\FieldGreaterOrEqualThan(),
+            new Constraint\FieldLessOrEqualThan(),
+            new Constraint\FieldMinLength(),
+            new Constraint\FieldMaxLength(),
+            new Constraint\FieldSameEnum(),
+            new Constraint\FieldMustContainsAnyOfClasses(),
         ];
     }
 
@@ -61,12 +61,13 @@ class SchemaValidator
                 ));
             }
 
+            /** @var \Gdbots\Pbjc\Validator\Constraint $constraint */
             foreach ($this->constraints as $constraint) {
                 $constraint->validate($prevSchema, $schema);
             }
         }
 
-        $constraint = new Assert\SchemaDependencyVersion();
+        $constraint = new Constraint\SchemaDependencyVersion();
         $constraint->validate($schema, $schema);
     }
 }
