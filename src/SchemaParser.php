@@ -45,7 +45,7 @@ class SchemaParser
             $schemaId = SchemaId::fromString($xmlData['schema']['id']);
 
             $filePath = substr($file, 0, -strlen(basename($file)) - 1);
-            $schemaPath = str_replace(':', '/', $schemaId->getCurie());
+            $schemaPath = str_replace([':', '//'], ['/', '/'], $schemaId->getCurie());
 
             // invalid schema file location
             if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
