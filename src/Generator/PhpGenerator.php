@@ -118,11 +118,6 @@ class PhpGenerator extends Generator
 
     /**
      * {@inheritdoc}
-     *
-     * @param SchemaDescriptor[] $schemas
-     * @param string $filename
-     *
-     * @return GeneratorResponse
      */
     public function generateManifest(array $schemas, $filename)
     {

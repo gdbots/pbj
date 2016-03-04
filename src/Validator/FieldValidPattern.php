@@ -15,6 +15,8 @@ class FieldValidPattern implements Constraint
         $fa = array_merge($a->getInheritedFields(), $a->getFields());
         $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
+        /** @var \Gdbots\Pbjc\FieldDescriptor $field */
+        /** @var \Gdbots\Pbjc\FieldDescriptor[] $fb */
         foreach ($fa as $name => $field) {
             if (!isset($fb[$name])) {
                 continue;
