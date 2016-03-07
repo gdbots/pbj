@@ -14,12 +14,12 @@ use Gdbots\Pbjc\Util\OutputFile;
 
 SchemaStore::addDir(__DIR__.'/schemas');
 
-$compile = new Compiler();
+$compiler = new Compiler();
 
 $namespaces = ['acme:blog', 'acme:core'];
 
 // generate PHP files
-$compile->run('php', new CompileOptions([
+$compiler->run('php', new CompileOptions([
     'namespaces' => $namespaces,
     'output' => __DIR__.'/src',
     'manifest' => __DIR__.'/pbj-schemas.php',
