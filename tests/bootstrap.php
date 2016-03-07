@@ -11,3 +11,8 @@ if (!file_exists(dirname(__DIR__).'/composer.lock')) {
 
 // Include the composer autoloader
 $loader = require dirname(__DIR__).'/vendor/autoload.php';
+
+use Gdbots\Pbjc\SchemaStore;
+
+SchemaStore::addDir(__DIR__.'/../examples/vendor/gdbots/schemas/schemas/');
+SchemaStore::addDir(__DIR__.'/../examples/schemas');
