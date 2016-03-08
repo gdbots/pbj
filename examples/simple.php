@@ -25,5 +25,11 @@ $compiler->run('php', new CompileOptions([
     'manifest' => __DIR__.'/pbj-schemas.php',
     'callback' => function (OutputFile $file) {
         echo highlight_string($file->getContents(), true).'<hr />';
+
+        if (!is_dir(dirname($file->getFile()))) {
+            mkdir(dirname($file->getFile()), 0777, true);
+        }
+
+        file_put_contents($file->getFile(), $file->getContents());
     },
 ]));

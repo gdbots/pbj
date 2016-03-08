@@ -16,7 +16,7 @@ class OutputFile
      * @param string $file    The file name
      * @param string $content The file content
      */
-    public function __construct($file, $content = null)
+    public function __construct($file, $content)
     {
         $this->file = $file;
         $this->content = $content;
@@ -39,6 +39,6 @@ class OutputFile
      */
     public function getContents()
     {
-        return $this->content ?: $this->content = file_get_contents($this->file);
+        return $this->content;
     }
 }

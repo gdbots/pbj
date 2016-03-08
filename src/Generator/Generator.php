@@ -218,12 +218,6 @@ abstract class Generator
 
         $content = $this->render($template, $parameters);
 
-        if (!is_dir(dirname($target))) {
-            mkdir(dirname($target), 0777, true);
-        }
-
-        file_put_contents($target, $content);
-
         return new OutputFile($target, $content);
     }
 }
