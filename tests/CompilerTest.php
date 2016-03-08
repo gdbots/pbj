@@ -20,21 +20,16 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
         $compiler = new Compiler();
 
         $schemaIds = [
-            'pbj:acme:blog:command:update-article:1-0-0',
-            'pbj:acme:blog:command:update-article:2-0-0',
             'pbj:acme:blog:entity:article:1-0-0',
             'pbj:acme:blog:entity:article:1-0-1',
             'pbj:acme:blog:entity:comment:1-0-0',
             'pbj:acme:blog:mixin:has-comments:1-0-0',
-            'pbj:acme:core::test-message:1-0-0',
             'pbj:acme:core:mixin:article:1-0-0',
-            'pbj:acme:core:mixin:update-entity:1-0-0',
-            'pbj:acme:core:mixin:update-entity:2-0-0',
         ];
 
         $found = preg_grep('/pbj:acme:*/', array_keys(SchemaStore::getSchemas()));
 
-        $this->assertCount(10, $found);
+        $this->assertCount(5, $found);
         $this->assertEquals($schemaIds, $found);
     }
 
@@ -56,6 +51,6 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
             },
         ]));
 
-        $this->assertEquals(27, $count);
+        $this->assertEquals(15, $count);
     }
 }

@@ -11,7 +11,7 @@ class SchemaStoreTest extends \PHPUnit_Framework_TestCase
     public function testAddDir()
     {
         // @see bootstrap.php addDir
-        $this->assertCount(2, SchemaStore::getDirs());
+        $this->assertCount(1, SchemaStore::getDirs());
     }
 
     public function testAddSchema()
