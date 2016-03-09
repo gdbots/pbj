@@ -8,14 +8,14 @@
     <fields>
       <field name="entity" type="message" required="true">
         <any-of>
-          <curie>gdbots:pbj:mixin:entity</curie>
+          <curie>acme:core:mixin:entity</curie>
         </any-of>
       </field>
       <field name="user_id" type="identifier"/>
     </fields>
 
     <mixins>
-      <curie-major>gdbots:pbj:mixin:command:v1</curie-major>
+      <curie-major>gdbots:pbjx:mixin:command:v1</curie-major>
       <curie-major>acme:core:mixin:update-entity:v2</curie-major>
     </mixins>
 

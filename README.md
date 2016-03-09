@@ -128,7 +128,7 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 ```xml
 <field name="failed_request" type="message">
   <any-of>
-    <curie>gdbots:pbj:mixin:request</curie>
+    <curie>gdbots:pbjx:mixin:request</curie>
   </any-of>
 </field>
 ```
