@@ -19,9 +19,11 @@ use {{ field.language('php').get('classname') }};
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
+{% if not isSameNamespace(schema, mixin) %}
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true) }};
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Mixin;
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Trait;
+{% endif %}
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;

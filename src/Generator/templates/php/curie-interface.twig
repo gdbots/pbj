@@ -4,7 +4,7 @@
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
-{% if schema.extends %}
+{% if schema.extends and not isSameNamespace(schema, schema.extends) %}
 use {{ schema.extends.language('php').get('namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className, true) }}{% endif %};
 {% else %}
 use Gdbots\Pbj\Message;
