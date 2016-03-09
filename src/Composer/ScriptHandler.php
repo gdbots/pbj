@@ -30,19 +30,23 @@ class ScriptHandler
                 continue;
             }
 
-            $dirs[] = $package->getName().'/schemas/';
+            $dir = sprintf('$vendorDir.\'/%s/schemas/\'', $package->getName());
+
+            // override for current package
+            if ($event->getComposer()->getPackage()->getName() == $package->getName()) {
+                $dir = '__DIR__.\'/schemas/\'';
+            }
+
+            $dirs[] = sprintf('%s    %s', PHP_EOL, $dir);
         }
 
         if (empty($dirs)) {
             return;
         }
 
-        $event->getIO()->write('<info>Writing "pbj-schema-store" locations to "pbj-schema-stores.php"</info>');
-        $stores = '';
+        $dirs = implode(',', $dirs);
 
-        foreach ($dirs as $dir) {
-            $stores .= PHP_EOL."    \$vendorDir.'/{$dir}',";
-        }
+        $event->getIO()->write('<info>Writing "pbj-schema-store" locations to "pbj-schema-stores.php"</info>');
 
         $timestamp = date('Y-m-d H:i:s T');
 
@@ -61,7 +65,7 @@ class ScriptHandler
 
 \$vendorDir = realpath(__DIR__.'/vendor');
 
-\\Gdbots\\Pbjc\\SchemaStore::addDirs([{$stores}
+\\Gdbots\\Pbjc\\SchemaStore::addDirs([{$dirs}
 ]);
 
 TEXT;
