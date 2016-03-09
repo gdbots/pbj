@@ -91,6 +91,12 @@ EOF
 
         $options['callback'] = function (OutputFile $file) use ($io) {
             $io->text($file->getFile());
+
+            if (!is_dir(dirname($file->getFile()))) {
+                mkdir(dirname($file->getFile()), 0777, true);
+            }
+
+            file_put_contents($file->getFile(), $file->getContents());
         };
 
         try {
