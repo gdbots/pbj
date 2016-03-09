@@ -12,8 +12,6 @@ use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\OutputFile;
 
-SchemaStore::addDir(__DIR__.'/schemas');
-
 $compiler = new Compiler();
 
 $namespaces = ['acme:blog', 'acme:core'];
