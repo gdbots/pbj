@@ -25,9 +25,9 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;
+{% endif %}
 {% if insertionPoints %}
 {{ indentString(insertionPoints.imports, 0) }}
-{% endif %}
 {% endif %}
 {% endblock use_statements %}
 
