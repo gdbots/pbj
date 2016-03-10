@@ -34,8 +34,13 @@ class PhpGenerator extends Generator
                 )
             ;
 
-            $enumKey = $enum->hasValue(strtoupper($field->getDefault()))
-                ? $field->getDefault()
+            $default = $field->getDefault();
+            if (is_array($default)) {
+                $default = count($default) ? current($default) : null;
+            }
+
+            $enumKey = $default && $enum->hasValue(strtoupper($default))
+                ? $default
                 : 'unknown'
             ;
 

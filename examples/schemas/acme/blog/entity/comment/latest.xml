@@ -24,7 +24,7 @@
     </fields>
 
     <mixins>
-      <curie-major>gdbots:pbj:mixin:entity:v1</curie-major>
+      <curie-major>acme:core:mixin:entity:v1</curie-major>
     </mixins>
 
     <php-options>

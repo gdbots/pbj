@@ -4,7 +4,7 @@
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
-{% if hasOtherMajorRev(schema) and schema.extends %}
+{% if hasOtherMajorRev(schema) and schema.extends and not isSameNamespace(schema, schema.extends) %}
 use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true, classNameVMajor, true) }};
 {% endif %}
 {% endblock use_statements %}

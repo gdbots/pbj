@@ -45,7 +45,7 @@ class SchemaParser
             $schemaId = SchemaId::fromString($xmlData['schema']['id']);
 
             $filePath = substr($file, 0, -strlen(basename($file)) - 1);
-            $schemaPath = str_replace(':', '/', $schemaId->getCurie());
+            $schemaPath = str_replace([':', '//'], ['/', '/'], $schemaId->getCurie());
 
             // invalid schema file location
             if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
@@ -86,7 +86,7 @@ class SchemaParser
 
             // override or create "latest" version file
             $versionPath = sprintf('%s/%s.xml', $filePath, $schemaId->getVersion()->toString());
-            if (basename($file) == 'latest.xml' && !file_exists($versionPath)) {
+            if (basename($file) == 'latest.xml') {
                 file_put_contents($versionPath, file_get_contents($file));
             }
 
@@ -125,7 +125,7 @@ class SchemaParser
                 throw new MissingSchema($data['extends']);
             }
 
-            // recursivly check that chain not pointing back to schema
+            // recursively check that chain not pointing back to schema
             $check = $extendsSchema->getExtends();
             while ($check) {
                 if ($check->getId()->getCurieWithMajorRev() == $schemaId->getCurieWithMajorRev()) {

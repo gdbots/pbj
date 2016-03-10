@@ -17,6 +17,10 @@ final class Compiler
         $schemas = [];
 
         foreach (SchemaStore::getDirs() as $dir) {
+            if (!is_dir($dir)) {
+                continue;
+            }
+
             $files = Finder::create()->files()->in($dir)->name('*.xml');
 
             /** @var \Symfony\Component\Finder\SplFileInfo $file */

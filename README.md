@@ -9,6 +9,23 @@ Compiler for converting pbj schemas into jsonschema, php, js, etc.
 # Language Guide
 This guide describes how to use the XML language to structure your schema file syntax and how to generate data classes files.
 
+### References
+Let's start by defining each of the elements and key options used across the compiler.
+
+- **Schema:** The purpose of a Schema is to define a pbj message, with the fields and related mixins (other schemas used to extend the schema capability).
+
+- **Enum:** An Enum is a collection of key-value, used in schema fields (see Enumerations below).
+
+- **SchemaId:** A Schema fully qualified name (id).
+
+  - Schema Id Format: `pbj:vendor:package:category:message:version`
+  - Message Curie Format: `vendor:package:category:message`
+  - Message Curie With Major Version Format: `vendor:package:category:message:v#`
+
+- **SchemaVersion:** Similar to semantic versioning but with dashes and no "alpha, beta, etc." qualifiers.
+
+  - Schema Version Format: `major-minor-patch`
+
 ### Defining A Schema
 First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.xml` file you use to define the schema.
 
@@ -41,39 +58,36 @@ Since we are creating a mixin schema, we set in the second line `mixin = true`.
 In addition, we allow to add language specific options which will be used while generating the language output file.
 
 #### Schema Field Types
-A schema field can have one of the following types – the table shows the type specified in the `.xml` file, and the options allowed:
+The following list contains all available field types:
 
-Field Type | Default| Min | Max | Max Bytes | Notes
------------| ------ | --- | --- | --------- | -----
-*BASE* | *null* | *-2147483648* | *2147483647* | *65535* |
-big-int | 0 | | | |
-binary | 0 | | | 255 |
-blob | 0 | | | 255 |
-boolean | false | | | |
-date | | | | |
-date-time | | | | |
-decimal | 0.0 | -1 | INF | |
-float | 0.0 | -1 | INF | |
-geo-point | | | | |
-identifier | | | | 100 |
-float | | | | |
-int | | 0 | 4294967295 | |
-medium-blob | | | | 16777215 |
-medium-int | | 0 | 16777215 | |
-medium-text | | | | 16777215 |
-microtime | | | | | | @see \Gdbots\Common\Microtime::create()
-signed-big-int | BigNumber(0) | | | |
-signed-int | | | | |
-signed-medium-int | | -8388608 | 8388607 | |
-signed-small-int | | -32768 | 32767 | |
-signed-tiny-int | | -128 | 127 | |
-small-int | | 0 | 65535 | |
-string | | | | 255 |
-text | | | | |
-time-uuid | | | | |
-timestamp | time() | | | | @see \Gdbots\Identifiers\TimeUuidIdentifier::generate()
-tiny-int | | 0 | 255 | |
-uuid | | | | | @see \Gdbots\Identifiers\UuidIdentifier::generate()
+    - big-int
+    - binary
+    - blob
+    - boolean
+    - date
+    - date-time
+    - decimal
+    - float
+    - geo-point
+    - identifier
+    - float
+    - int
+    - medium-blob
+    - medium-int
+    - medium-text
+    - microtime
+    - signed-big-int
+    - signed-int
+    - signed-medium-int
+    - signed-small-int
+    - signed-tiny-int
+    - small-int
+    - string
+    - text
+    - time-uuid
+    - timestamp
+    - tiny-int
+    - uuid
 
 #### Default Values
 When a schema is parsed, if the encoded schema does not contain a particular singular element, the corresponding field in the parsed object is set to the default value for that field. These defaults are type-specific:
@@ -128,7 +142,7 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 ```xml
 <field name="failed_request" type="message">
   <any-of>
-    <curie>gdbots:pbj:mixin:request</curie>
+    <curie>gdbots:pbjx:mixin:request</curie>
   </any-of>
 </field>
 ```
@@ -241,39 +255,26 @@ public function generateMessageRef($tag = null)
 
 # Basic Usage
 
-Before compiling you have to add the directory or directories where your
-XML file exists:
-
-```php
-<?php
-
-use Gdbots\Pbjc\SchemaStore;
-
-SchemaStore::addDir('/your/schemas/path1');
-SchemaStore::addDir('/your/schemas/path2');
-//...
+```sh
+pbjc --language[=LANGUAGE] --config[=CONFIG]
 ```
 
-Once all directories are added, you can then start compiling:
+Option | Notes
+------ | -----
+-l or --language[=LANGUAGE] | The generated language [default: "php"]
+-c or --config[=CONFIG] | The pbjc config yaml file
 
-```php
-<?php
+Define compile settings in `pbjc.yml` file:
 
-use Gdbots\Pbjc\Compiler;
-use Gdbots\Pbjc\CompileOptions;
-use Gdbots\Pbjc\Util\OutputFile;
+```yaml
+namespaces:
+  - <vendor1>:<package1>
+  - <vendor2>:<package2>
 
-$compile = new Compiler();
-
-$compile->run('php', new CompileOptions([
-    'namespaces' => [
-      'vendor:package',
-    ],
-    'output' => '/put/your/output/folder',
-    'manifest' => '/put/your/output/folder/pbj-schemas.php',
-    'callback' => function (OutputFile $file) {
-        // do something, like print content for example:
-        echo highlight_string($file->getContents(), true).'<hr />';
-    },
-]));
+languages:
+  php:
+    output: <div>
+    manifest: <dir>/<filename>
 ```
+
+> **Note:** by default the compiler searches for `pbjc.yml` in the root folder.

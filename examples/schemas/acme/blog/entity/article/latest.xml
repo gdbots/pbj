@@ -32,7 +32,7 @@
     </fields>
 
     <mixins>
-      <curie-major>gdbots:pbj:mixin:entity:v1</curie-major>
+      <curie-major>acme:core:mixin:entity:v1</curie-major>
       <curie-major>acme:core:mixin:article:v1</curie-major>
       <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
     </mixins>

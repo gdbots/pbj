@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <xsd:schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://gdbots.io/pbj/xsd"
@@ -7,8 +6,7 @@
 
   <xsd:annotation>
     <xsd:documentation><![CDATA[
-      This is the XML Enum(s) for the object/relational
-      mapping file used by the Pbjc.
+      This is the XML Schema for the Pbj Enum IDL used by the Pbjc.
     ]]></xsd:documentation>
   </xsd:annotation>
 

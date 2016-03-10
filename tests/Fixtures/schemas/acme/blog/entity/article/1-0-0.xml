@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:entity:article:1-0-0">
+    <fields>
+      <field name="title" type="string" />
+      <field name="excerpt" type="text" />
+      <field name="excerpt_html" type="text" />
+      <field name="thumbnails" type="string" format="url" rule="map" />
+      <field name="publish_status" type="string-enum">
+        <default>draft</default>
+        <enum id="acme:blog:publish-status" />
+      </field>
+    </fields>
+
+    <mixins>
+      <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
+    </mixins>
+
+    <php-options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+    </php-options>
+  </schema>
+</pbj-schema>

@@ -23,7 +23,7 @@
     {{ spaces|format('') }}->maxLength({{ field.maxLength }})
 {% endif %}
 {% if field.pattern %}
-    {{ spaces|format('') }}->pattern('/{{ field.pattern }}/')
+    {{ spaces|format('') }}->pattern('{{ field.pattern }}')
 {% endif %}
 {% if field.format %}
     {{ spaces|format('') }}->format(Format::{{ field.format|upper }}())
