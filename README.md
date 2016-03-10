@@ -13,7 +13,9 @@ This guide describes how to use the XML language to structure your schema file s
 Let's start by defining each of the elements and key options used across the compiler.
 
 - **Schema:** The purpose of a Schema is to define a pbj message, with the fields and related mixins (other schemas used to extend the schema capability).
+
 - **Enum:** An Enum is a collection of key-value, used in schema fields (see Enumerations below).
+
 - **SchemaId:** A Schema fully qualified name (id).
 
   - Schema Id Format: `pbj:vendor:package:category:message:version`
