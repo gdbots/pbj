@@ -6,7 +6,6 @@
   },
   "require-dev": {
     "composer/composer": "1.0.*@dev",
-    "gdbots/pbj": "dev-aws3 as dev-master",
     "gdbots/pbjc": "dev-master",
     "gdbots/schemas": "dev-master"
   },
@@ -32,5 +31,6 @@
     "post-package-update": [
       "Gdbots\\Pbjc\\Composer\\ScriptHandler::writePbjSchemaStoresFile"
     ]
-  }
+  },
+  "minimum-stability": "dev"
 }
