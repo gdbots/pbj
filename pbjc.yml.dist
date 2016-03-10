@@ -1,8 +1,0 @@
-namespaces:
-  - <vendor1>:<package1>
-  - <vendor2>:<package2>
-
-languages:
-  php:
-    output: <div>
-    manifest: <dir>/<filename>

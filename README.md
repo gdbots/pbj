@@ -43,37 +43,34 @@ In addition, we allow to add language specific options which will be used while 
 #### Schema Field Types
 A schema field can have one of the following types – the table shows the type specified in the `.xml` file, and the options allowed:
 
-Field Type | Default| Min | Max | Max Bytes | Notes
------------| ------ | --- | --- | --------- | -----
-*BASE* | *null* | *-2147483648* | *2147483647* | *65535* |
-big-int | 0 | | | |
-binary | 0 | | | 255 |
-blob | 0 | | | 255 |
-boolean | false | | | |
-date | | | | |
-date-time | | | | |
-decimal | 0.0 | -1 | INF | |
-float | 0.0 | -1 | INF | |
-geo-point | | | | |
-identifier | | | | 100 |
-float | | | | |
-int | | 0 | 4294967295 | |
-medium-blob | | | | 16777215 |
-medium-int | | 0 | 16777215 | |
-medium-text | | | | 16777215 |
-microtime | | | | | | @see \Gdbots\Common\Microtime::create()
-signed-big-int | BigNumber(0) | | | |
-signed-int | | | | |
-signed-medium-int | | -8388608 | 8388607 | |
-signed-small-int | | -32768 | 32767 | |
-signed-tiny-int | | -128 | 127 | |
-small-int | | 0 | 65535 | |
-string | | | | 255 |
-text | | | | |
-time-uuid | | | | |
-timestamp | time() | | | | @see \Gdbots\Identifiers\TimeUuidIdentifier::generate()
-tiny-int | | 0 | 255 | |
-uuid | | | | | @see \Gdbots\Identifiers\UuidIdentifier::generate()
+    - big-int
+    - binary
+    - blob
+    - boolean
+    - date
+    - date-time
+    - decimal
+    - float
+    - geo-point
+    - identifier
+    - float
+    - int
+    - medium-blob
+    - medium-int
+    - medium-text
+    - microtime
+    - signed-big-int
+    - signed-int
+    - signed-medium-int
+    - signed-small-int
+    - signed-tiny-int
+    - small-int
+    - string
+    - text
+    - time-uuid
+    - timestamp
+    - tiny-int
+    - uuid
 
 #### Default Values
 When a schema is parsed, if the encoded schema does not contain a particular singular element, the corresponding field in the parsed object is set to the default value for that field. These defaults are type-specific:
@@ -241,39 +238,26 @@ public function generateMessageRef($tag = null)
 
 # Basic Usage
 
-Before compiling you have to add the directory or directories where your
-XML file exists:
-
-```php
-<?php
-
-use Gdbots\Pbjc\SchemaStore;
-
-SchemaStore::addDir('/your/schemas/path1');
-SchemaStore::addDir('/your/schemas/path2');
-//...
+```sh
+pbjc --language[=LANGUAGE] --config[=CONFIG]
 ```
 
-Once all directories are added, you can then start compiling:
+Option | Notes
+------ | -----
+-l or --language[=LANGUAGE] | The generated language [default: "php"]
+-c or --config[=CONFIG] | The pbjc config yaml file
 
-```php
-<?php
+Define compile settings in `pbjc.yml` file:
 
-use Gdbots\Pbjc\Compiler;
-use Gdbots\Pbjc\CompileOptions;
-use Gdbots\Pbjc\Util\OutputFile;
+```yaml
+namespaces:
+  - <vendor1>:<package1>
+  - <vendor2>:<package2>
 
-$compile = new Compiler();
-
-$compile->run('php', new CompileOptions([
-    'namespaces' => [
-      'vendor:package',
-    ],
-    'output' => '/put/your/output/folder',
-    'manifest' => '/put/your/output/folder/pbj-schemas.php',
-    'callback' => function (OutputFile $file) {
-        // do something, like print content for example:
-        echo highlight_string($file->getContents(), true).'<hr />';
-    },
-]));
+languages:
+  php:
+    output: <div>
+    manifest: <dir>/<filename>
 ```
+
+> **Note:** by default the compiler searches for `pbjc.yml` in the root folder.
