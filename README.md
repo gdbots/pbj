@@ -41,7 +41,7 @@ Since we are creating a mixin schema, we set in the second line `mixin = true`.
 In addition, we allow to add language specific options which will be used while generating the language output file.
 
 #### Schema Field Types
-A schema field can have one of the following types – the table shows the type specified in the `.xml` file, and the options allowed:
+The following list contains all available field types:
 
     - big-int
     - binary
