@@ -5,9 +5,6 @@ use Gdbots\Pbjc\Command\PbjcApplication;
 
 set_time_limit(0);
 
-/**
- * @var Composer\Autoload\ClassLoader $loader
- */
 $autoloadFiles = [
   __DIR__.'/../vendor/autoload.php',
   __DIR__.'/../../../autoload.php'
