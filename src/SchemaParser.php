@@ -86,7 +86,7 @@ class SchemaParser
 
             // override or create "latest" version file
             $versionPath = sprintf('%s/%s.xml', $filePath, $schemaId->getVersion()->toString());
-            if (basename($file) == 'latest.xml' && !file_exists($versionPath)) {
+            if (basename($file) == 'latest.xml') {
                 file_put_contents($versionPath, file_get_contents($file));
             }
 
