@@ -9,6 +9,17 @@ Compiler for converting pbj schemas into jsonschema, php, js, etc.
 # Language Guide
 This guide describes how to use the XML language to structure your schema file syntax and how to generate data classes files.
 
+### References
+Let's start by defining each of the elements and key options used across the compiler.
+
+- **Schema:** The purpose of a Schema is to define a pbj message, with the fields and related mixins (other schemas used to extend the schema capability).
+- **Enum:** An Enum is a collection of key-value, used in schema fields (see Enumerations below).
+- **SchemaId:** A Schema fully qualified name (id).
+
+  - Schema Id Format: `pbj:vendor:package:category:message:version`
+  - Message Curie Format: `vendor:package:category:message`
+  - Message Curie With Major Version Format: `vendor:package:category:message:v#`
+
 ### Defining A Schema
 First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.xml` file you use to define the schema.
 
