@@ -22,6 +22,10 @@ Let's start by defining each of the elements and key options used across the com
   - Message Curie Format: `vendor:package:category:message`
   - Message Curie With Major Version Format: `vendor:package:category:message:v#`
 
+- **SchemaVersion:** Similar to semantic versioning but with dashes and no "alpha, beta, etc." qualifiers.
+
+  - Schema Version Format: `major-minor-patch`
+
 ### Defining A Schema
 First let's look at a very simple example. Let's say you want to define a **mixin** schema, with slug and name fields. Here's the `.xml` file you use to define the schema.
 
