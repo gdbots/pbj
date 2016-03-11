@@ -61,7 +61,7 @@
     <xsd:attribute name="rule" type="fieldRule" use="optional" />
     <xsd:attribute name="pattern" type="xsd:string" use="optional" />
     <xsd:attribute name="format" type="fieldFormat" use="optional" />
-    <xsd:attribute name="use-type-default" type="xsd:boolean" default="false" />
+    <xsd:attribute name="use-type-default" type="xsd:boolean" default="true" />
     <xsd:attribute name="overridable" type="xsd:boolean" default="false" />
     <xsd:attribute name="deprecated" type="xsd:boolean" default="false" />
     <xsd:anyAttribute namespace="##other" />

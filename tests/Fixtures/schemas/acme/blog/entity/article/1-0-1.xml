@@ -22,7 +22,7 @@
         <enum id="acme:blog:content-type" />
       </field>
 
-      <field name="expires_at" type="timestamp" use-type-default="true" />
+      <field name="expires_at" type="timestamp" />
 
       <field name="comments" type="message" rule="list">
         <any-of>
@@ -32,6 +32,7 @@
     </fields>
 
     <mixins>
+      <curie-major>acme:core:mixin:article:v1</curie-major>
       <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
     </mixins>
 

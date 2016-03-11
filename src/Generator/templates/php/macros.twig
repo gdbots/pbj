@@ -45,8 +45,8 @@
 {% elseif field.default %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
-{% if field.useTypeDefault %}
-    {{ spaces|format('') }}->useTypeDefault(true)
+{% if not field.useTypeDefault %}
+    {{ spaces|format('') }}->useTypeDefault(false)
 {% endif %}
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
