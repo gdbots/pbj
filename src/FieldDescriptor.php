@@ -72,7 +72,7 @@ final class FieldDescriptor
     private $default;
 
     /** @var bool */
-    private $useTypeDefault = false;
+    private $useTypeDefault = true;
 
     /** @var array */
     private $anyOf;

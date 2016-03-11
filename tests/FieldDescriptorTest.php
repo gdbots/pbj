@@ -125,7 +125,7 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
 
     public function testIsUseTypeDefault()
     {
-        $this->assertFalse($this->field->isUseTypeDefault());
+        $this->assertTrue($this->field->isUseTypeDefault());
     }
 
     public function tetGetAnyOf()
