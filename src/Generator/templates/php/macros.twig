@@ -60,6 +60,9 @@
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)
 {% endif %}
+{% if field.language('php').get('assertion') %}
+    {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|replace({"\n": ''})|reduceSpaces }})
+{% endif %}
     {{ spaces|format('') }}->build(){% if not isLastItem %},{% endif %}
 
 {% endmacro %}
