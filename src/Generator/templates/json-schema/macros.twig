@@ -119,8 +119,8 @@
       {% if field.default %}
         "withDefault": {{ field.default|json_encode }},
       {% endif %}
-      {% if field.useTypeDefault %}
-        "useTypeDefault": true,
+      {% if not field.useTypeDefault %}
+        "useTypeDefault": false,
       {% endif %}
       {% if field.overridable %}
         "overridable": true,
