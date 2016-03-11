@@ -1,6 +1,17 @@
 {% macro draw_field(field, spaces, isLastItem) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
+{% if field.description %}
+{% set lines = field.description|split("\n") %}
+
+{{ spaces|format('') }}/**
+{% for line in lines %}
+{{ spaces|format('') }} * {{ line|reduceSpaces }}
+{% endfor %}
+{{ spaces|format('') }} */
+{{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
+{% else %}
   Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
+{% endif %}
 {% if field.isASingleValue %}
     {{ spaces|format('') }}->asASingleValue()
 {% endif %}
@@ -41,7 +52,7 @@
     {{ spaces|format('') }}->scale({{ field.scale }})
 {% endif %}
 {% if field.language('php').get('default') %}
-    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|replace({"\n": ''})|reduceSpaces }})
+    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|reduceSpaces }})
 {% elseif field.default %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
@@ -59,6 +70,9 @@
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)
+{% endif %}
+{% if field.language('php').get('assertion') %}
+    {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|reduceSpaces }})
 {% endif %}
     {{ spaces|format('') }}->build(){% if not isLastItem %},{% endif %}
 

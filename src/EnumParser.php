@@ -59,6 +59,8 @@ class EnumParser
         $enums = [];
 
         if (isset($xmlData['enums']['enum'])) {
+            $xmlData['enums']['enum'] = $this->fixArray($xmlData['enums']['enum'], 'name');
+
             foreach ($xmlData['enums']['enum'] as $enum) {
                 $enumId = EnumId::fromString(sprintf('%s:%s', $namespace, $enum['name']));
 
