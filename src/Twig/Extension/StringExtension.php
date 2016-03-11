@@ -70,7 +70,7 @@ class StringExtension extends \Twig_Extension
      */
     public function reduceSpaces($str)
     {
-        return preg_replace('/\s+/', ' ', $str);
+        return trim(preg_replace('/\s+/', ' ', $str));
     }
 
     /**
