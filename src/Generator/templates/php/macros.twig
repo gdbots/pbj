@@ -3,9 +3,8 @@
 {% if field.description %}
 {% set lines = field.description|split("\n") %}
 
-{{ spaces|format('') }}/*
 {% for line in lines %}
-{{ spaces|format('') }} * {{ line|reduceSpaces }}
+{{ spaces|format('') }}{% if loop.first %}/{% else %} {% endif %}* {{ line|reduceSpaces }}
 {% endfor %}
 {{ spaces|format('') }} */
 {{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
