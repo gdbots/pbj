@@ -37,7 +37,7 @@
     {{ spaces|format('') }}->pattern('{{ field.pattern }}')
 {% endif %}
 {% if field.format %}
-    {{ spaces|format('') }}->format(Format::{{ field.format|upper }}())
+    {{ spaces|format('') }}->format(Format::{{ field.format|upper|replace({'-': '_'}) }}())
 {% endif %}
 {% if field.min %}
     {{ spaces|format('') }}->min({{ field.min }})
