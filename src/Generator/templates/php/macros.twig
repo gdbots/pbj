@@ -2,9 +2,9 @@
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
 {% set lines = field.description|split("\n") %}
-
+  /*
 {% for line in lines %}
-{{ spaces|format('') }}{% if loop.first %}/{% else %} {% endif %}* {{ line|reduceSpaces }}
+{{ spaces|format('') }} * {{ line|reduceSpaces }}
 {% endfor %}
 {{ spaces|format('') }} */
 {{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
