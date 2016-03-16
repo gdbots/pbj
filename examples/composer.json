@@ -6,7 +6,7 @@
   },
   "require-dev": {
     "composer/composer": "1.0.*@dev",
-    "gdbots/pbjc": "dev-master",
+    "gdbots/pbjc": "dev-jsonschema",
     "gdbots/schemas": "dev-master"
   },
   "autoload": {
