@@ -10,7 +10,6 @@ use Gdbots\Common\Enum;
  * @method static Format UNKNOWN()
  * @method static Format DATE()
  * @method static Format DATE_TIME()
- * @method static Format DATED_SLUG()
  * @method static Format EMAIL()
  * @method static Format HASHTAG()
  * @method static Format HOSTNAME()
@@ -26,7 +25,6 @@ final class Format extends Enum
     const UNKNOWN = 'unknown';
     const DATE = 'date';
     const DATE_TIME = 'date-time';
-    const DATED_SLUG = 'dated-slug';
     const EMAIL = 'email';
     const HASHTAG = 'hashtag';
     const HOSTNAME = 'hostname';

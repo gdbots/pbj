@@ -192,7 +192,6 @@
       <xsd:enumeration value="unknown" />
       <xsd:enumeration value="date" />
       <xsd:enumeration value="date-time" />
-      <xsd:enumeration value="dated-slug" />
       <xsd:enumeration value="email" />
       <xsd:enumeration value="hashtag" />
       <xsd:enumeration value="hostname" />
