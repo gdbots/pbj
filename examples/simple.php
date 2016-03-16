@@ -34,6 +34,7 @@ $compiler->run('php', new CompileOptions([
 
 // generate JSON-SCHEMA files
 $compiler->run('json-schema', new CompileOptions([
+    'domain' => 'http://example.com/schemas',
     'namespaces' => $namespaces,
     'output' => __DIR__.'/json-schema',
     'callback' => function (OutputFile $file) {

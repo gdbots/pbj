@@ -1,3 +1,5 @@
+domain: http://example.com/schemas
+
 namespaces:
   - acme:core
   - acme:blog
