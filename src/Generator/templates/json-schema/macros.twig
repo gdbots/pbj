@@ -8,8 +8,18 @@
   "type": "object",
   "properties": {
     {% for field in schema.fields %}
-      {{ _self.draw_field(field) }}{% if not loop.last %},{% endif %}
+      {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
+    {% if schema.mixins|length %}
+      "mixin": {
+        "type": "array",
+        "anyOf": [
+          {% for mixin in schema.mixins %}
+            { "$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        ]
+      }
+    {% endif %}
   },
 
   {% set required = [] %}
@@ -36,24 +46,14 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.id.message|toCamelFromSlug|lower }}": {{ _self.draw_schema(def, deep+1) }}{% if not loop.last %},{% endif %}
+           "{{ def.id.message|toCamelFromSlug|lower }}": {"$ref": "http://yourdomain.com/schemas/{{ def.id.vendor }}/{{ def.id.vendor }}/{{ def.id.package }}/{{ def.id.category }}/{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
            {% set shown = shown|merge([def.id]) %}
          {% endif %}
       {% endfor %}
     },
   {% endif %}
 
-  {% if schema.mixins|length %}
-    "additionalProperties": {
-      "mixin": [
-        {% for mixin in schema.mixins %}
-          {"$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
-        {% endfor %}
-      ]
-    }
-  {% else %}
-    "additionalProperties": false
-  {% endif %}
+  "additionalProperties": {% if schema.mixins|length %}true{% else %}false{% endif %}
 }
 {% endmacro %}
 
@@ -73,9 +73,6 @@
       "type": "object",
     {% else %}
       "type": "string",
-    {% endif %}
-    {% if field.required %}
-      "required": true,
     {% endif %}
     {% if field.minLength %}
       "minLength": {{ field.minLength }},
