@@ -8,3 +8,6 @@ languages:
   php:
     output: ./src
     manifest: ./pbj-schemas.php
+
+  json-schema:
+    output: ./json-schema
