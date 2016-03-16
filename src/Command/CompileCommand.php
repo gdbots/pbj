@@ -94,7 +94,7 @@ EOF
         };
 
         try {
-            $io->title(sprintf('Generated files for "%s":',  implode('", "', $namespaces)));
+            $io->title(sprintf('Generated files for "%s":',  implode('", "', $options['namespaces'])));
 
             $compile = new Compiler();
             $compile->run($language, new CompileOptions($options));
