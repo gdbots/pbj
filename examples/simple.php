@@ -36,7 +36,6 @@ $compiler->run('php', new CompileOptions([
 $compiler->run('json-schema', new CompileOptions([
     'namespaces' => $namespaces,
     'output' => __DIR__.'/json-schema',
-    'manifest' => __DIR__.'/pbj-schemas.php',
     'callback' => function (OutputFile $file) {
         echo highlight_string($file->getContents(), true).'<hr />';
 
