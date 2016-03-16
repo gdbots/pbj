@@ -98,7 +98,7 @@ class PhpGenerator extends Generator
 
         $filename =
             sprintf('%s/%s/%s%s',
-                $this->output,
+                $this->compileOptions->getOutput(),
                 str_replace('\\', '/', $namespace),
                 str_replace('\\', '/', $className),
                 $this->extension
@@ -123,9 +123,13 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateManifest(array $schemas, $filename)
+    public function generateManifest(array $schemas)
     {
         $messages = [];
+
+        if (!$filename = $this->compileOptions->getManifest()) {
+            return;
+        }
 
         // extract previous schemas
         if (file_exists($filename)) {

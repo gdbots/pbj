@@ -8,6 +8,9 @@ final class CompileOptions
     private $namespaces = [];
 
     /** @var string */
+    private $domain;
+
+    /** @var string */
     private $output;
 
     /** @var string */
@@ -36,6 +39,14 @@ final class CompileOptions
     public function getNamespaces()
     {
         return $this->namespaces;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
     }
 
     /**

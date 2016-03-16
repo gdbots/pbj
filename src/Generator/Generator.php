@@ -3,11 +3,12 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
-use Gdbots\Pbjc\Twig\Extension\StringExtension;
+use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
+use Gdbots\Pbjc\Twig\Extension\StringExtension;
 use Gdbots\Pbjc\Util\OutputFile;
 
 abstract class Generator
@@ -23,15 +24,15 @@ abstract class Generator
     /** @var string */
     protected $extension;
 
-    /** @var string */
-    protected $output;
+    /** @var CompileOptions */
+    protected $compileOptions;
 
     /**
-     * @param string $output
+     * @param CompileOptions $compileOptions
      */
-    public function __construct($output)
+    public function __construct(CompileOptions $compileOptions)
     {
-        $this->output = $output;
+        $this->compileOptions = $compileOptions;
     }
 
     /**
@@ -120,7 +121,7 @@ abstract class Generator
         }
 
         return sprintf('%s/%s%s%s',
-            $this->output,
+            $this->compileOptions->getOutput(),
             $directory,
             $filename,
             $this->extension
@@ -164,11 +165,10 @@ abstract class Generator
      * Generates and writes manifest files.
      *
      * @param SchemaDescriptor[] $schemas
-     * @param string             $filename
      *
      * @return GeneratorResponse
      */
-    public function generateManifest(array $schemas, $filename)
+    public function generateManifest(array $schemas)
     {
     }
 
@@ -181,6 +181,8 @@ abstract class Generator
     protected function render($template, array $parameters)
     {
         $twig = $this->getTwigEnvironment();
+
+        $parameters['compileOptions'] = $this->compileOptions;
 
         return $twig->render($template, $parameters);
     }

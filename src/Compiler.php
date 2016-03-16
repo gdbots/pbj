@@ -142,7 +142,7 @@ final class Compiler
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
 
         /** @var \Gdbots\Pbjc\Generator\Generator $generator */
-        $generator = new $class($options->getOutput());
+        $generator = new $class($options);
 
         $outputFiles = [];
 
@@ -170,9 +170,9 @@ final class Compiler
             }
         }
 
-        if ($manifest = $options->getManifest()) {
+        if ($options->getManifest()) {
             /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateManifest(SchemaStore::getSchemas(), $manifest)) {
+            if ($response = $generator->generateManifest(SchemaStore::getSchemas())) {
                 $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }

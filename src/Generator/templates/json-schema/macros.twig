@@ -1,10 +1,7 @@
-{% macro draw_schema(schema, deep) %}
+{% macro draw_schema(schema, compileOptions) %}
 {
-  {% if not deep %}
-    {% set deep = 0 %}
-    "$schema": "http://json-schema.org/schema#",
-  {% endif %}
-  "id": "http://yourdomain.com/schemas/{{ schema.id.vendor }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.version }}.json",
+  "$schema": "http://json-schema.org/schema#",
+  "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.version }}.json",
   "type": "object",
   "properties": {
     {% for field in schema.fields %}
@@ -46,7 +43,7 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.id.message|toCamelFromSlug|lower }}": {"$ref": "http://yourdomain.com/schemas/{{ def.id.vendor }}/{{ def.id.vendor }}/{{ def.id.package }}/{{ def.id.category }}/{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
+           "{{ def.id.message|toCamelFromSlug|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{{ def.id.category }}/{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
            {% set shown = shown|merge([def.id]) %}
          {% endif %}
       {% endfor %}
