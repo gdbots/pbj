@@ -9,7 +9,6 @@ require __DIR__.'/pbj-schema-stores.php';
 
 use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\CompileOptions;
-use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\OutputFile;
 
 $compiler = new Compiler();
