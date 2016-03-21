@@ -3,6 +3,7 @@
 
 ## v0.1.2
 * issue #9: Schema parse error when "category" is empty.
+* issue #10: Fixed recursive schema requesting.
 
 
 ## v0.1.1
