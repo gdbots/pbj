@@ -74,30 +74,39 @@ final class Compiler
                     $validator->validate($schema);
                 }
             } catch (MissingSchema $e) {
-                $files = preg_grep(sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage())), $schemas);
+                // remove "v" (version) from schemaId,
+                // and replace colons with slashes (convert to path format)
+                $pattern = sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage()));
+
+                // remove duplicate slashes
+                $pattern = str_replace('\/\/', '\/', $pattern);
+
+                // get matched files
+                $files = preg_grep($pattern, $schemas);
 
                 if ($files === false || count($files) === 0) {
                     throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
                 }
 
-                $currentFile = current($files);
-
                 if (in_array($currentFile, $exceptionFile)) {
-                    throw new \RuntimeException(sprintf('Recursively requesting schema file "%s".', $currentFile));
+                    throw new \RuntimeException(sprintf('Recursively requesting schema id "%s" from file "%s".', $e->getMessage(), $currentFile));
                 }
 
                 $exceptionFile[] = $currentFile;
+
+                $currentFile = strpos(':v', $e->getMessage())
+                    // curie + version
+                    ? current($files)
+                    // curie
+                    : end($files);
 
                 continue;
             }
 
             unset($schemas[array_search($currentFile, $schemas)]);
 
-            if (in_array($currentFile, $exceptionFile)) {
-                unset($exceptionFile[array_search($currentFile, $exceptionFile)]);
-            }
-
             $currentFile = null;
+            $exceptionFile = [];
         }
 
         /** @var SchemaDescriptor $schema */

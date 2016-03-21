@@ -7,8 +7,6 @@
   <schema id="pbj:acme:core::test-message:1-0-0">
     <php-options>
       <namespace>Acme\Schemas\Core</namespace>
-      <insertion-points>
-      </insertion-points>
     </php-options>
   </schema>
 </pbj-schema>
