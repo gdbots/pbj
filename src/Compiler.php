@@ -88,24 +88,25 @@ final class Compiler
                     throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $e->getMessage()));
                 }
 
-                $currentFile = current($files);
-
                 if (in_array($currentFile, $exceptionFile)) {
-                    throw new \RuntimeException(sprintf('Recursively requesting schema file "%s".', $currentFile));
+                    throw new \RuntimeException(sprintf('Recursively requesting schema id "%s" from file "%s".', $e->getMessage(), $currentFile));
                 }
 
                 $exceptionFile[] = $currentFile;
+
+                $currentFile = strpos(':v', $e->getMessage())
+                    // curie + version
+                    ? current($files)
+                    // curie
+                    : end($files);
 
                 continue;
             }
 
             unset($schemas[array_search($currentFile, $schemas)]);
 
-            if (in_array($currentFile, $exceptionFile)) {
-                unset($exceptionFile[array_search($currentFile, $exceptionFile)]);
-            }
-
             $currentFile = null;
+            $exceptionFile = [];
         }
 
         /** @var SchemaDescriptor $schema */
