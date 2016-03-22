@@ -4,6 +4,11 @@
   "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.version }}.json",
   "type": "object",
   "properties": {
+    "_schema": {
+      "type": "string",
+      "pattern": "^pbj:([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$",
+      "id": "{{ schema.id }}"
+    },
     {% for field in schema.fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
@@ -12,7 +17,7 @@
         "type": "array",
         "anyOf": [
           {% for mixin in schema.mixins %}
-            { "$ref": "#/definitions/{{ mixin.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
+            { "$ref": "#/definitions/{{ mixin.id.message|lower }}" }{% if not loop.last %}, {% endif %}
           {% endfor %}
         ]
       }
@@ -43,7 +48,7 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.id.message|toCamelFromSlug|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{{ def.id.category }}/{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
+           "{{ def.id.message|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{{ def.id.category }}/{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
            {% set shown = shown|merge([def.id]) %}
          {% endif %}
       {% endfor %}
@@ -89,14 +94,14 @@
     {% if field.anyOf %}
       "anyOf": [
         {% for schema in field.anyOf %}
-          { "$ref": "#/definitions/{{ schema.id.message|toCamelFromSlug|lower }}" }{% if not loop.last %}, {% endif %}
+          { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
       ],
     {% endif %}
     {% if field.enum %}
       "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
     {% endif %}
-    "additionalProperties": {
+    "pbj": {
       "customType": "{{ field.type.typeName }}",
       {% if field.rule %}
         "rule": "{{ field.rule }}",
