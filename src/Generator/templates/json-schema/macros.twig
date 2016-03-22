@@ -102,7 +102,7 @@
       "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
     {% endif %}
     "pbj": {
-      "customType": "{{ field.type.typeName }}",
+      "type": "{{ field.type.typeName }}",
       {% if field.rule %}
         "rule": "{{ field.rule }}",
       {% endif %}
