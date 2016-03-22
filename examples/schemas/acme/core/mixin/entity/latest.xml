@@ -22,6 +22,12 @@
       <field name="etag" type="string" pattern="^[A-Za-z0-9_\-]+$" max="100" />
       <field name="created_at" type="microtime" required="true" />
       <field name="updated_at" type="microtime" use-type-default="false" />
+
+      <field name="test_message" type="message">
+        <any-of>
+          <curie>acme:core::test-message</curie>
+        </any-of>
+      </field>
     </fields>
 
     <php-options>
