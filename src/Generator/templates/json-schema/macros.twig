@@ -48,7 +48,7 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.id.message|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{% if def.id.category %}{{ def.id.category }}/{% endif %}{{ def.id.message }}/{{ def.id.version }}.json#/properties" }{% if not loop.last %}, {% endif %}
+           "{{ def.id.message|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{% if def.id.category %}{{ def.id.category }}/{% endif %}{{ def.id.message }}/{{ def.id.version }}.json" }{% if not loop.last %}, {% endif %}
            {% set shown = shown|merge([def.id]) %}
          {% endif %}
       {% endfor %}
