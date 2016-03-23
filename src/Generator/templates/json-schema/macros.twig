@@ -24,7 +24,7 @@
     {% endif %}
   },
 
-  {% set required = [] %}
+  {% set required = ['_schema'] %}
   {% for field in schema.fields %}
     {% if field.required %}
       {% set required = required|merge([field.name]) %}
