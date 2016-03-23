@@ -55,7 +55,7 @@
     },
   {% endif %}
 
-  "additionalProperties": {% if schema.mixins|length %}true{% else %}false{% endif %}
+  "additionalProperties": {% if schema.isMixinSchema %}true{% else %}false{% endif %}
 }
 {% endmacro %}
 
