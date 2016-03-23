@@ -29,6 +29,34 @@
 
     <php-options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('_id'), $tag);
+}
+/**
+ * @return array
+ */
+public function getUriTemplateVars()
+{
+    return [
+        '_id' => (string)$this->get('_id'),
+    ];
+}
+            ]]>
+        </methods>
+      </insertion-points>
     </php-options>
   </schema>
 </pbj-schema>
