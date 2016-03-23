@@ -14,7 +14,7 @@
     {% endfor %}
     {% if schema.mixins|length %}
       "mixin": {
-        "type": "array",
+        "type": "object",
         "anyOf": [
           {% for mixin in schema.mixins %}
             { "$ref": "#/definitions/{{ mixin.id.message|lower }}" }{% if not loop.last %}, {% endif %}
