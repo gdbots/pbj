@@ -1,3 +1,30 @@
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Gdbots\Pbj\Serializer\JsonSerializer;
+
+// verifying json with PHP message
+if (isset($_REQUEST['verify'])) {
+    $json = file_get_contents('php://input');
+
+    try {
+        $serializer = new JsonSerializer();
+        $message = $serializer->deserialize($json);
+
+        var_dump($message);
+    } catch (\Exception $e) {
+        echo $e->getMessage();
+    }
+
+    exit(1);
+}
+?>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.2.15/json-schema-faker.min.js"></script>
 <script src="https://raw.githubusercontent.com/BigstickCarpet/json-schema-ref-parser/master/dist/ref-parser.min.js"></script>
 
@@ -12,6 +39,7 @@ pre {
   margin: 0;
   padding: 10px 20px;
   overflow: auto;
+  max-height: 250px;
 }
 .json-key {
   color: brown;
@@ -25,7 +53,9 @@ pre {
 textarea {
   width: 100%;
   height: 250px;
-  margin-bottom: 10px;
+}
+button {
+  margin: 10px 0 10px;
 }
 </style>
 
@@ -35,6 +65,8 @@ textarea {
 
 <h5>Fake Data Object</h5>
 <pre id="json-fake-object"></pre>
+<button type="button" id="btn-verify">Verify PHP Message</button>
+<pre id="json-fake-object-validation"></pre>
 
 <h5>Parsed Schema Object</h5>
 <pre id="json-schema-object"></pre>
@@ -74,14 +106,51 @@ textarea {
    * Handle generator button onClick
    */
   document.getElementById('btn-generate').onclick = function() {
-    var jsonSchema = JSON.parse(document.getElementById('json-schema').value);
+    try {
+      var jsonSchema = JSON.parse(document.getElementById('json-schema').value);
+    } catch (e) {
+      return;
+    }
 
     $RefParser
         .dereference(jsonSchema)
         .then(function(schema) {
+            // force _schame value to schemaId
+            var fixSchemaValue = function(obj) {
+                Object.keys(obj).forEach(function(key) {
+                    if ('object' === typeof obj[key]) {
+                        fixSchemaValue(obj[key]);
+                    }
+                    if ('_schema' === key) {
+                        obj[key].pattern = '^' + obj[key].id + '$';
+                    }
+                });
+            };
+            fixSchemaValue(schema);
+
             document.getElementById('json-schema-object').innerHTML = jsonPrettyPrint(schema);
             document.getElementById('json-fake-object').innerHTML = jsonPrettyPrint(jsf(schema));
         })
     ;
   };
+
+  /**
+   * Handle generator button onClick
+   */
+  document.getElementById('btn-verify').onclick = function() {
+    try {
+      var jsonObj = eval('(' + document.getElementById('json-fake-object').innerHTML.replace(/<\/?[^>]+(>|$)/g, '') + ')');
+    } catch (e) {
+      return;
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      document.getElementById('json-fake-object-validation').innerHTML = xhr.responseText;
+    };
+
+    xhr.open('post', 'faker.php?verify');
+    xhr.send(JSON.stringify(jsonObj));
+  }
 </script>
