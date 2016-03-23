@@ -61,38 +61,48 @@
 
 {% macro draw_field(field) %}
   "{{ field.name }}": {
-    {% if field.type.typeName ~ '' in [
-        'big-int', 'decimal', 'float', 'int-enum',
-        'int', 'medium-int', 'microtime',
-        'signed-big-int', 'signed-big-int', 'signed-medium-int',
-        'signed-small-int', 'signed-tiny-int', 'small-int',
-        'timestamp', 'tiny-int'
-      ] %}
+    {% if field.type.typeName ~ '' in ['decimal', 'float'] %}
       "type": "number",
+    {% elseif field.type.typeName ~ '' in [
+      'big-int', 'int-enum', 'int', 'medium-int',
+      'signed-big-int', 'signed-big-int', 'signed-medium-int',
+      'signed-small-int', 'signed-tiny-int', 'small-int',
+      'tiny-int', 'microtime', 'timestamp'
+    ] %}
+      "type": "integer",
     {% elseif field.type.typeName ~ '' in ['boolean'] %}
       "type": "boolean",
     {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
+      {% if field.rule == 'list' %}
+      "type": "array",
+      {% else %}
       "type": "object",
+      {% endif %}
     {% else %}
       "type": "string",
     {% endif %}
-    {% if field.minLength %}
-      "minLength": {{ field.minLength }},
-    {% endif %}
-    {% if field.maxLength %}
-      "maxLength": {{ field.maxLength }},
-    {% endif %}
-    {% if field.min %}
-      "minimum": {{ field.min }},
-    {% endif %}
-    {% if field.max %}
-      "maximum": {{ field.max }},
+    {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
+      {% if field.minLength or field.type.min %}
+      "minLength": {{ field.minLength|default(field.type.min) }},
+      {% endif %}
+      {% if field.maxLength or field.type.max %}
+      "maxLength": {{ field.maxLength|default(field.type.max) }},
+      {% endif %}
+    {% else %}
+      {% if field.min or field.type.min %}
+      "minimum": {{ field.min|default(field.type.min) }},
+      {% endif %}
+      {% if field.max or field.type.max %}
+      "maximum": {{ field.max|default(field.type.max) }},
+      {% endif %}
     {% endif %}
     {% if field.pattern %}
       "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
+    {% elseif field.type.typeName ~ '' == 'identifier' %}
+      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
     {% endif %}
     {% if field.anyOf %}
-      "anyOf": [
+      "{% if field.rule == 'list' %}items{% else %}anyOf{% endif %}": [
         {% for schema in field.anyOf %}
           { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
         {% endfor %}
