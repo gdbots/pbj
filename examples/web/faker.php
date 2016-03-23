@@ -132,6 +132,8 @@ button {
             document.getElementById('json-fake-object').innerHTML = jsonPrettyPrint(jsf(schema));
         })
     ;
+
+    document.getElementById('json-fake-object-validation').innerHTML = '';
   };
 
   /**
