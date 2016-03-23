@@ -109,6 +109,7 @@ button {
     try {
       var jsonSchema = JSON.parse(document.getElementById('json-schema').value);
     } catch (e) {
+      document.getElementById('json-fake-object').innerHTML = e;
       return;
     }
 
@@ -143,6 +144,7 @@ button {
     try {
       var jsonObj = eval('(' + document.getElementById('json-fake-object').innerHTML.replace(/<\/?[^>]+(>|$)/g, '') + ')');
     } catch (e) {
+      document.getElementById('json-fake-object-validation').innerHTML = e;
       return;
     }
 
