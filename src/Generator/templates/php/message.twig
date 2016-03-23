@@ -14,7 +14,7 @@ use Gdbots\Pbj\Type as T;
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-{% if className(field.type) in ['IntEnumType', 'StringEnumType'] and field.language('php').get('classname') %}
+{% if field.language('php').get('classname') %}
 use {{ field.language('php').get('classname') }};
 {% endif %}
 {% endfor %}
