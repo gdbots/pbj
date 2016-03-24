@@ -11,17 +11,23 @@
   "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json",
   "type": "object",
   "properties": {
-    "_schema": {
-      "type": "string",
-      "pattern": "^pbj:([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$",
-      "id": "{{ schema.id }}"
-    },
+    {% if not schema.isMixinSchema %}
+      "_schema": {
+        "type": "string",
+        "pattern": "^pbj:([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$",
+        "id": "{{ schema.id }}"
+      },
+    {% endif %}
+
     {% for field in fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
   },
 
-  {% set required = ['_schema'] %}
+  {% set required = [] %}
+  {% if not schema.isMixinSchema %}
+    {% set required = required|merge(['_schema']) %}
+  {% endif %}
   {% for field in fields %}
     {% if field.required %}
       {% set required = required|merge([field.name]) %}
