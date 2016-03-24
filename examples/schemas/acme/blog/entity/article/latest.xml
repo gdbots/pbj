@@ -11,6 +11,7 @@
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="map" />
       <field name="private" type="boolean" />
+      <field name="geo_point" type="geo-point" />
 
       <field name="publish_status" type="string-enum">
         <default>draft</default>
