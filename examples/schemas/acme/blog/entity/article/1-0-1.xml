@@ -16,7 +16,13 @@
       </field>
       <field name="excerpt" type="text" />
       <field name="excerpt_html" type="text" />
-      <field name="thumbnails" type="string" format="url" rule="map" />
+
+      <field name="thumbnails" type="string" format="url" rule="map">
+        <json-schema-options>
+          <faker>internet.url</faker>
+        </json-schema-options>
+      </field>
+
       <field name="private" type="boolean" />
       <field name="geo_point" type="geo-point" />
 
