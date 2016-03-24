@@ -171,7 +171,7 @@
   {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
     "minLength": {{ field.minLength|default(0) }},
     "maxLength": {{ field.maxLength|default(field.type.maxBytes) }},
-  {% elseif not field.type.typeName ~ '' in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
+  {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
     "minimum": {{ field.min|default(field.type.min) }},
     "maximum": {{ field.max|default(field.type.max) }},
   {% endif %}
