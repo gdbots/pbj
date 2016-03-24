@@ -60,11 +60,13 @@ class JsonSchemaGenerator extends Generator
                             "\n",
                             '  ',
                             ',}',
+                            ',]',
                         ],
                         [
                             '',
                             '',
                             '}',
+                            ']',
                         ],
                         parent::render($template, $parameters)
                     )
