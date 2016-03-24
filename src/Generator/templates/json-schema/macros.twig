@@ -5,6 +5,7 @@
         compileOptions - a CompileOptions instance
 #}
 {% macro draw_schema(schema, compileOptions) %}
+{% set fields = schema.fields|merge(schema.inheritedFields) %}
 {
   "$schema": "http://json-schema.org/schema#",
   "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json",
@@ -15,21 +16,13 @@
       "pattern": "^pbj:([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$",
       "id": "{{ schema.id }}"
     },
-    {% for field in schema.fields %}
+    {% for field in fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
   },
 
-  {% if schema.mixins|length %}
-    "allOf": [
-      {% for mixin in schema.mixins %}
-        { "$ref": "#/definitions/{{ mixin.id.message|lower }}" }{% if not loop.last %}, {% endif %}
-      {% endfor %}
-    ],
-  {% endif %}
-
   {% set required = ['_schema'] %}
-  {% for field in schema.fields %}
+  {% for field in fields %}
     {% if field.required %}
       {% set required = required|merge([field.name]) %}
     {% endif %}
@@ -39,14 +32,11 @@
   {% endif %}
 
   {% set defs = [] %}
-  {% for field in schema.fields %}
+  {% for field in fields %}
     {% if field.anyOf %}
       {% set defs = defs|merge(field.anyOf) %}
     {% endif %}
   {% endfor %}
-  {% if schema.mixins|length %}
-    {% set defs = defs|merge(schema.mixins) %}
-  {% endif %}
   {% if defs|length %}
     "definitions": {
       {% set shown = [] %}
@@ -162,5 +152,13 @@
   {% endif %}
   {% if field.enum %}
     "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+  {% endif %}
+
+  {% if field.anyOf %}
+    "anyOf": [
+      {% for schema in field.anyOf %}
+        { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    ],
   {% endif %}
 {% endmacro %}
