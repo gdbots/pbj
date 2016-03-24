@@ -181,7 +181,7 @@
   {% elseif field.type.typeName ~ '' == 'identifier' %}
     "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
   {% elseif field.type.typeName ~ '' == 'microtime' %}
-    "pattern": "^[1-9{1}][0-9]{12,15}$",
+    "pattern": "^[1-9]{1}[0-9]{12,15}$",
   {% elseif field.format ~ '' == 'url' %}
     "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
   {% endif %}
