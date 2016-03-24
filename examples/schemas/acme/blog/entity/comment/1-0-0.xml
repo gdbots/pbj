@@ -6,7 +6,7 @@
 
   <schema id="pbj:acme:blog:entity:comment:1-0-0">
     <fields>
-      <field name="_id" type="identifier" required="true">
+      <field name="_id" type="identifier" required="true" overridable="true">
         <php-options>
           <classname>Gdbots\Identifiers\UuidIdentifier</classname>
           <default>

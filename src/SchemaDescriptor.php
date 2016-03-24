@@ -145,8 +145,8 @@ final class SchemaDescriptor
         foreach ($this->getMixins() as $mixin) {
             $fields = array_merge(
                 $fields,
-                $mixin->getInheritedFields(),
-                $mixin->getFields()
+                $mixin->getFields(),
+                $mixin->getInheritedFields()
             );
         }
 
