@@ -76,10 +76,13 @@
           {
             "type": "object",
             "patternProperties": {
-              "^([a-zA-Z_]{1}[a-zA-Z0-9_]+)+$": {
+              "^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,99}$": {
                 {{ _self.draw_field_properties(field, true) }}
               }
-            }
+            },
+            "maxProperties": 1,
+            "minProperties": 1,
+            "additionalProperties": false
           }
         {% endif %}
       ],
