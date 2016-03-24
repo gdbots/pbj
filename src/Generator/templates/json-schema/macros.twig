@@ -1,3 +1,9 @@
+{#
+    Render schema block
+    Parameters:
+        schema - a SchemaDescriptor instance
+        compileOptions - a CompileOptions instance
+#}
 {% macro draw_schema(schema, compileOptions) %}
 {
   "$schema": "http://json-schema.org/schema#",
@@ -59,58 +65,35 @@
 }
 {% endmacro %}
 
+{#
+    Render field block
+    Parameters:
+        field - a FieldDescriptor instance
+#}
 {% macro draw_field(field) %}
   "{{ field.name }}": {
-    {% if field.type.typeName ~ '' in ['decimal', 'float'] %}
-      "type": "number",
-    {% elseif field.type.typeName ~ '' in [
-      'big-int', 'int-enum', 'int', 'medium-int',
-      'signed-big-int', 'signed-big-int', 'signed-medium-int',
-      'signed-small-int', 'signed-tiny-int', 'small-int',
-      'tiny-int', 'microtime', 'timestamp'
-    ] %}
-      "type": "integer",
-    {% elseif field.type.typeName ~ '' in ['boolean'] %}
-      "type": "boolean",
-    {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
-      {% if field.rule == 'list' %}
-      "type": "array",
-      {% else %}
-      "type": "object",
-      {% endif %}
-    {% else %}
-      "type": "string",
-    {% endif %}
-    {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
-      {% if field.minLength or field.type.min %}
-      "minLength": {{ field.minLength|default(field.type.min) }},
-      {% endif %}
-      {% if field.maxLength or field.type.max %}
-      "maxLength": {{ field.maxLength|default(field.type.max) }},
-      {% endif %}
-    {% else %}
-      {% if field.min or field.type.min %}
-      "minimum": {{ field.min|default(field.type.min) }},
-      {% endif %}
-      {% if field.max or field.type.max %}
-      "maximum": {{ field.max|default(field.type.max) }},
-      {% endif %}
-    {% endif %}
-    {% if field.pattern %}
-      "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
-    {% elseif field.type.typeName ~ '' == 'identifier' %}
-      "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
-    {% endif %}
-    {% if field.anyOf %}
-      "{% if field.rule == 'list' %}items{% else %}anyOf{% endif %}": [
-        {% for schema in field.anyOf %}
-          { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
-        {% endfor %}
+    {% if field.rule ~ '' in ['map', 'list'] %}
+      "{% if field.rule ~ '' == 'map' %}anyOf{% else %}items{% endif %}": [
+        {% if field.anyOf %}
+          {% for schema in field.anyOf %}
+            { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          {
+            "type": "object",
+            "properties": {
+              "key": {
+                {{ _self.draw_field_properties(field, true) }}
+              }
+            },
+            "required": ["key"]
+          }
+        {% endif %}
       ],
+    {% else %}
+      {{ _self.draw_field_properties(field) }}
     {% endif %}
-    {% if field.enum %}
-      "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
-    {% endif %}
+
     "pbj": {
       "type": "{{ field.type.typeName }}",
       {% if field.rule %}
@@ -136,4 +119,51 @@
       {% endif %}
     }
   }
+{% endmacro %}
+
+{#
+    Render field properties
+    Parameters:
+        field - a FieldDescriptor instance
+        isFirstLevel - whether or not to handle level one properties
+#}
+{% macro draw_field_properties(field, isFirstLevel) %}
+  {% if not isFirstLevel and field.rule ~ '' == 'map' %}
+    "type": "object",
+  {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
+    "type": "array",
+  {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
+    "type": "number",
+  {% elseif field.type.typeName ~ '' in [
+    'big-int', 'int-enum', 'int', 'medium-int',
+    'signed-big-int', 'signed-big-int', 'signed-medium-int',
+    'signed-small-int', 'signed-tiny-int', 'small-int',
+    'tiny-int', 'microtime', 'timestamp'
+  ] %}
+    "type": "integer",
+  {% elseif field.type.typeName ~ '' in ['boolean'] %}
+    "type": "boolean",
+  {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
+    "type": "object",
+  {% else %}
+    "type": "string",
+  {% endif %}
+
+  {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
+    "minLength": {{ field.minLength|default(0) }},
+    "maxLength": {{ field.maxLength|default(field.type.maxBytes) }},
+  {% elseif not field.type.typeName ~ '' in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
+    "minimum": {{ field.min|default(field.type.min) }},
+    "maximum": {{ field.max|default(field.type.max) }},
+  {% endif %}
+  {% if field.pattern %}
+    "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
+  {% elseif field.type.typeName ~ '' == 'identifier' %}
+    "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+  {% elseif field.format ~ '' == 'url' %}
+    "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+  {% endif %}
+  {% if field.enum %}
+    "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+  {% endif %}
 {% endmacro %}
