@@ -79,12 +79,11 @@
         {% else %}
           {
             "type": "object",
-            "properties": {
-              "key": {
+            "patternProperties": {
+              "^([a-zA-Z_]{1}[a-zA-Z0-9_]+)+$": {
                 {{ _self.draw_field_properties(field, true) }}
               }
-            },
-            "required": ["key"]
+            }
           }
         {% endif %}
       ],
