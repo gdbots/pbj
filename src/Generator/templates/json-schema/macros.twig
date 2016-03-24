@@ -127,9 +127,6 @@
       {% if field.scale %}
         "scale": {{ field.scale }},
       {% endif %}
-      {% if field.default %}
-        "withDefault": {{ field.default|json_encode }},
-      {% endif %}
       {% if not field.useTypeDefault %}
         "useTypeDefault": false,
       {% endif %}
@@ -166,6 +163,14 @@
     "type": "object",
   {% else %}
     "type": "string",
+  {% endif %}
+
+  {% if field.description %}
+    "description": "{{ field.description|reduceSpaces }}",
+  {% endif %}
+
+  {% if field.default %}
+    "default": {{ field.default|json_encode }},
   {% endif %}
 
   {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}

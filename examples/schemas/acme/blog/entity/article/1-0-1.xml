@@ -6,7 +6,14 @@
 
   <schema id="pbj:acme:blog:entity:article:1-0-1">
     <fields>
-      <field name="title" type="string" />
+      <field name="title" type="string">
+        <description>
+          <![CDATA[
+            The field holds the article title.
+          ]]>
+        </description>
+        <default>N/A</default>
+      </field>
       <field name="excerpt" type="text" />
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="map" />
