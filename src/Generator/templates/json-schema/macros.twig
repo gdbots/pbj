@@ -131,7 +131,7 @@
     'big-int', 'int-enum', 'int', 'medium-int',
     'signed-big-int', 'signed-big-int', 'signed-medium-int',
     'signed-small-int', 'signed-tiny-int', 'small-int',
-    'tiny-int', 'microtime', 'timestamp'
+    'tiny-int', 'timestamp'
   ] %}
     "type": "integer",
   {% elseif field.type.typeName ~ '' in ['boolean'] %}
@@ -149,13 +149,17 @@
     "minimum": {{ field.min|default(field.type.min) }},
     "maximum": {{ field.max|default(field.type.max) }},
   {% endif %}
+
   {% if field.pattern %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
   {% elseif field.type.typeName ~ '' == 'identifier' %}
     "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+  {% elseif field.type.typeName ~ '' == 'microtime' %}
+    "pattern": "^[1-9{1}][0-9]{12,15}$",
   {% elseif field.format ~ '' == 'url' %}
     "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
   {% endif %}
+
   {% if field.enum %}
     "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
   {% endif %}
