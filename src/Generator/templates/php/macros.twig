@@ -1,3 +1,10 @@
+{#
+    Render field block
+    Parameters:
+        field - a FieldDescriptor instance
+        spaces - number of spaces
+        isLastItem - whether or not to add comma at the end of the block
+#}
 {% macro draw_field(field, spaces, isLastItem) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
