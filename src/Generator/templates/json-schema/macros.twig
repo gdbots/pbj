@@ -18,17 +18,15 @@
     {% for field in schema.fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
-    {% if schema.mixins|length %}
-      "mixin": {
-        "type": "object",
-        "anyOf": [
-          {% for mixin in schema.mixins %}
-            { "$ref": "#/definitions/{{ mixin.id.message|lower }}" }{% if not loop.last %}, {% endif %}
-          {% endfor %}
-        ]
-      }
-    {% endif %}
   },
+
+  {% if schema.mixins|length %}
+    "allOf": [
+      {% for mixin in schema.mixins %}
+        { "$ref": "#/definitions/{{ mixin.id.message|lower }}" }{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    ],
+  {% endif %}
 
   {% set required = ['_schema'] %}
   {% for field in schema.fields %}
