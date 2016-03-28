@@ -72,7 +72,7 @@
 {% else %}
     {{ spaces|format('') }}->anyOfClassNames([
 {% for schema in field.anyOf %}
-    {{ spaces|format('') }}  '{{ schema.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0, true) }}'{% if not loop.last %}, {% endif %}
+    {{ spaces|format('') }}  '{{ schema.language('php').get('namespace') }}\{{ getClassName(schema, true) }}'{% if not loop.last %}, {% endif %}
 
 {% endfor %}
     {{ spaces|format('') }}])
