@@ -172,33 +172,40 @@
   {% endif %}
 
   {% if field.description %}
-    "description": "{{ field.description|reduceSpaces }}",
+    "description": "{{ field.description|reduceSpaces|replace({'"': '\\"'}) }}",
   {% endif %}
 
-  {% if field.default %}
-    "default": {{ field.default|json_encode }},
+  {% if field.default|default(field.type.default) %}
+    "default": {{ field.default|default(field.type.default)|json_encode }},
   {% endif %}
 
-  {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
-    "minLength": {{ field.minLength|default(0) }},
-    "maxLength": {{ field.maxLength|default(field.type.maxBytes) }},
-  {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
-    "minimum": {{ field.min|default(field.type.min) }},
-    "maximum": {{ field.max|default(field.type.max) }},
-  {% endif %}
-
+  {% set hasPattern = false %}
   {% if field.pattern %}
+    {% set hasPattern = true %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
   {% elseif field.type.typeName ~ '' == 'identifier' %}
+    {% set hasPattern = true %}
     "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
   {% elseif field.type.typeName ~ '' == 'microtime' %}
+    {% set hasPattern = true %}
     "pattern": "^[1-9]{1}[0-9]{12,15}$",
   {% elseif field.format ~ '' == 'url' %}
+    {% set hasPattern = true %}
     "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
   {% endif %}
 
   {% if field.enum %}
-    "enum": [{% for value in field.enum.values %}"{{ value }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+    "enum": [{% for value in field.enum.values %}{{ value|json_encode }}{% if not loop.last %}, {% endif %}{% endfor %}],
+  {% endif %}
+
+  {% if not field.enum and not hasPattern %}
+    {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
+      "minLength": {{ field.minLength|default(0) }},
+      "maxLength": {{ field.maxLength|default(field.type.maxBytes) }},
+    {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
+      "minimum": {{ field.min|default(field.type.min) }},
+      "maximum": {{ field.max|default(field.type.max) }},
+    {% endif %}
   {% endif %}
 
   {% if field.anyOf %}
