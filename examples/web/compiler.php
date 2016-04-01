@@ -10,41 +10,33 @@ require __DIR__.'/../pbj-schema-stores.php';
 use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\Util\OutputFile;
+use Symfony\Component\Yaml\Parser;
+
+$parser = new Parser();
+$settings = $parser->parse(file_get_contents(__DIR__.'/../pbjc.yml'));
 
 $compiler = new Compiler();
 
-$namespaces = ['acme:blog', 'acme:core'];
+$rootDir = __DIR__.'/.'; // folder location hack
 
-$rootDir = __DIR__.'/../';
+foreach ($settings['languages'] as $language => $values) {
+    $options = [
+        'namespaces' => $settings['namespaces'],
+        'output' => $rootDir.$values['output'],
+        'callback' => function (OutputFile $file) {
+            echo highlight_string($file->getContents(), true).'<hr />';
 
-// generate PHP files
-$compiler->run('php', new CompileOptions([
-    'namespaces' => $namespaces,
-    'output' => $rootDir.'/src',
-    'manifest' => $rootDir.'/pbj-schemas.php',
-    'callback' => function (OutputFile $file) {
-        echo highlight_string($file->getContents(), true).'<hr />';
+            if (!is_dir(dirname($file->getFile()))) {
+                mkdir(dirname($file->getFile()), 0777, true);
+            }
 
-        if (!is_dir(dirname($file->getFile()))) {
-            mkdir(dirname($file->getFile()), 0777, true);
+            file_put_contents($file->getFile(), $file->getContents());
         }
+    ];
 
-        file_put_contents($file->getFile(), $file->getContents());
-    },
-]));
+    if (isset($values['manifest']) && $values['manifest']) {
+        $options['manifest'] = $rootDir.$values['manifest'];
+    }
 
-// generate JSON-SCHEMA files
-$compiler->run('json-schema', new CompileOptions([
-    'domain' => 'http://pbjc.local/json-schema',
-    'namespaces' => $namespaces,
-    'output' => $rootDir.'/json-schema',
-    'callback' => function (OutputFile $file) {
-        echo highlight_string($file->getContents(), true).'<hr />';
-
-        if (!is_dir(dirname($file->getFile()))) {
-            mkdir(dirname($file->getFile()), 0777, true);
-        }
-
-        file_put_contents($file->getFile(), $file->getContents());
-    },
-]));
+    $compiler->run($language, new CompileOptions($options));
+}
