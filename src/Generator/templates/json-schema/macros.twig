@@ -96,6 +96,22 @@
           }
         {% endif %}
       ],
+    {% elseif field.type.typeName ~ '' == 'message-ref' %}
+      "type": "object",
+      "properties": {
+        "curie": {
+          "type": "string",
+          "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9:_-]+$"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "coordinates"],
     {% elseif field.type.typeName ~ '' == 'geo-point' %}
       "type": "object",
       "properties": {
@@ -175,7 +191,10 @@
     "description": "{{ field.description|reduceSpaces|replace({'"': '\\"'}) }}",
   {% endif %}
 
-  {% if field.default|default(field.type.default) %}
+  {% if
+    field.default|default(field.type.default)
+    and field.type.typeName ~ '' not in ['microtime', 'timestamp', 'uuid', 'time-uuid']
+  %}
     "default": {{ field.default|default(field.type.default)|json_encode }},
   {% endif %}
 
@@ -183,9 +202,12 @@
   {% if field.pattern %}
     {% set hasPattern = true %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
-  {% elseif field.type.typeName ~ '' in ['identifier', 'uuid', 'time-uuid'] %}
+  {% elseif field.type.typeName ~ '' in ['uuid', 'time-uuid'] %}
     {% set hasPattern = true %}
     "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+  {% elseif field.type.typeName ~ '' == 'identifier' %}
+    {% set hasPattern = true %}
+    "pattern": "^[\\w\\.-_]+$",
   {% elseif field.type.typeName ~ '' == 'microtime' %}
     {% set hasPattern = true %}
     "pattern": "^[1-9]{1}[0-9]{12,15}$",
