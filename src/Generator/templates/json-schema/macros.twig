@@ -177,7 +177,7 @@
     "type": "object",
   {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
     "type": "array",
-  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri', 'slug'] %}
+  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
     "type": "{{ field.format ~ '' }}",
   {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
     "type": "number",
