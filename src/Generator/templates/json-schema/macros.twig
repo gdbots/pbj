@@ -178,6 +178,8 @@
     "type": "object",
   {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
     "type": "array",
+  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
+    "type": "{{ field.format ~ '' }}",
   {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
     "type": "number",
   {% elseif field.type.typeName ~ '' in [
@@ -206,7 +208,7 @@
     "default": {{ field.default|default(field.type.default)|json_encode }},
   {% endif %}
 
-  {% set hasPattern = false %}
+  {% set hasPattern = field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
   {% if field.pattern %}
     {% set hasPattern = true %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
