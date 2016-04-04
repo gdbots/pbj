@@ -116,21 +116,29 @@
       "type": "object",
       "properties": {
         "type": {
+          "required": true,
           "type": "string",
           "pattern": "^Point$"
         },
         "coordinates": {
+          "required": true,
           "type": "array",
-          "items": {
-            "type": "number",
-            "minimum": -90,
-            "maximum": 90
-          },
-          "minItems": 2,
-          "maxItems": 2
+          "items": [
+            {
+              "required": true,
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            {
+              "required": true,
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            }
+          ]
         }
       },
-      "required": ["type", "coordinates"],
     {% else %}
       {{ _self.draw_field_properties(field) }}
     {% endif %}
