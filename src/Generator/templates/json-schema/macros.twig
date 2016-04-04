@@ -20,7 +20,6 @@
     {% endif %}
 
     {% set keys = schema.inheritedFields(true)|merge(schema.fields)|keys %}
-
     {% for key in keys %}
       {% set field = fields[key] %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
@@ -51,10 +50,14 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-          {% for s in getAllVersions(def) %}
-            "{{ s.id|lower|slugify }}": {"$ref": "{{ compileOptions.domain }}/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json" }{% if not loop.last %}, {% endif %}
-          {% endfor %}
-          {% if not loop.last %}, {% endif %}
+          "{{ def.id.message|lower|slugify }}": {
+            "type": "object",
+            "anyOf": [
+              {% for s in getAllVersions(def) %}
+                {"$ref": "{{ compileOptions.domain }}/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json" }{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            ]
+          }{% if not loop.last %}, {% endif %}
           {% set shown = shown|merge([def.id]) %}
         {% endif %}
       {% endfor %}
@@ -86,10 +89,7 @@
       "items": [
         {% if field.anyOf %}
           {% for schema in field.anyOf %}
-            {% for s in getAllVersions(schema) %}
-              { "$ref": "#/definitions/{{ s.id|lower|slugify }}" }{% if not loop.last %}, {% endif %}
-            {% endfor %}
-            {% if not loop.last %}, {% endif %}
+            { "$ref": "#/definitions/{{ schema.id.message|lower|slugify }}" }{% if not loop.last %}, {% endif %}
           {% endfor %}
         {% else %}
           {
@@ -264,10 +264,7 @@
   {% if field.anyOf %}
     "anyOf": [
       {% for schema in field.anyOf %}
-        {% for s in getAllVersions(schema) %}
-          { "$ref": "#/definitions/{{ s.id|lower|slugify }}" }{% if not loop.last %}, {% endif %}
-        {% endfor %}
-        {% if not loop.last %}, {% endif %}
+        { "$ref": "#/definitions/{{ schema.id.message|lower|slugify }}" }{% if not loop.last %}, {% endif %}
       {% endfor %}
     ],
   {% endif %}
