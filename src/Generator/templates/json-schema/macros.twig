@@ -178,7 +178,7 @@
     "type": "object",
   {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
     "type": "array",
-  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
+  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri', 'slug'] %}
     "type": "{{ field.format ~ '' }}",
   {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
     "type": "number",
@@ -224,6 +224,9 @@
   {% elseif field.format ~ '' == 'url' %}
     {% set hasPattern = true %}
     "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
+  {% elseif field.format ~ '' == 'slug' %}
+    {% set hasPattern = true %}
+    "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
   {% endif %}
 
   {% if field.enum %}
