@@ -17,6 +17,7 @@ class SchemaExtension extends \Twig_Extension
             new \Twig_SimpleFunction('getClassName', array($this, 'getClassName')),
             new \Twig_SimpleFunction('hasOtherMajorRev', array($this, 'hasOtherMajorRev')),
             new \Twig_SimpleFunction('isSameNamespace', array($this, 'isSameNamespace')),
+            new \Twig_SimpleFunction('getAllVersions', array($this, 'getAllVersions')),
         );
     }
 
@@ -77,6 +78,16 @@ class SchemaExtension extends \Twig_Extension
     public function isSameNamespace(SchemaDescriptor $a, SchemaDescriptor $b)
     {
         return $a->getLanguage('php')->get('namespace') == $b->getLanguage('php')->get('namespace');
+    }
+
+    /**
+     * @param SchemaDescriptor $schema
+     *
+     * @return array
+     */
+    public function getAllVersions(SchemaDescriptor $schema)
+    {
+        return SchemaStore::getAllSchemaVersions($schema->getId());
     }
 
     /**

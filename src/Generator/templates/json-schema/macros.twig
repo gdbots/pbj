@@ -48,9 +48,12 @@
       {% set shown = [] %}
       {% for def in defs %}
         {% if def.id not in shown %}
-           "{{ def.id.message|lower }}": {"$ref": "{{ compileOptions.domain }}/{{ def.id.vendor }}/{{ def.id.package }}/{% if def.id.category %}{{ def.id.category }}/{% endif %}{{ def.id.message }}/{{ def.id.version }}.json" }{% if not loop.last %}, {% endif %}
-           {% set shown = shown|merge([def.id]) %}
-         {% endif %}
+          {% for s in getAllVersions(def) %}
+            "{{ s.id|lower|slugify }}": {"$ref": "{{ compileOptions.domain }}/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json" }{% if not loop.last %}, {% endif %}
+          {% endfor %}
+          {% if not loop.last %}, {% endif %}
+          {% set shown = shown|merge([def.id]) %}
+        {% endif %}
       {% endfor %}
     },
   {% endif %}
@@ -80,7 +83,10 @@
       "items": [
         {% if field.anyOf %}
           {% for schema in field.anyOf %}
-            { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
+            {% for s in getAllVersions(schema) %}
+              { "$ref": "#/definitions/{{ s.id|lower|slugify }}" }{% if not loop.last %}, {% endif %}
+            {% endfor %}
+            {% if not loop.last %}, {% endif %}
           {% endfor %}
         {% else %}
           {
@@ -255,7 +261,10 @@
   {% if field.anyOf %}
     "anyOf": [
       {% for schema in field.anyOf %}
-        { "$ref": "#/definitions/{{ schema.id.message|lower }}" }{% if not loop.last %}, {% endif %}
+        {% for s in getAllVersions(schema) %}
+          { "$ref": "#/definitions/{{ s.id|lower|slugify }}" }{% if not loop.last %}, {% endif %}
+        {% endfor %}
+        {% if not loop.last %}, {% endif %}
       {% endfor %}
     ],
   {% endif %}

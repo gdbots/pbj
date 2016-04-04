@@ -219,6 +219,30 @@ class SchemaStore
     }
 
     /**
+     * Returns all schemas with the same curie.
+     *
+     * @param SchemaId $schemaId
+     *
+     * @return array|bool
+     */
+    public static function getAllSchemaVersions(SchemaId $schemaId)
+    {
+        $schemaIds = preg_grep(sprintf('/(%s):([0-9]+)-([0-9]+)-([0-9]+)/', $schemaId->getCurie()), array_keys(self::$schemas));
+
+        if ($schemaIds === false || count($schemaIds) === 0) {
+            return false;
+        }
+
+        $schemas = [];
+
+        foreach ($schemaIds as $schemaId) {
+            $schemas[] = self::$schemas[$schemaId];
+        }
+
+        return $schemas;
+    }
+
+    /**
      * Checks if schema has additional major version.
      *
      * @param SchemaId $schemaId
@@ -246,7 +270,7 @@ class SchemaStore
      *
      * @param SchemaId $schemaId
      *
-     * @return array
+     * @return array|bool
      */
     public static function getOtherSchemaMajorRev(SchemaId $schemaId)
     {
