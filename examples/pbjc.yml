@@ -1,8 +1,12 @@
-domain: http://pbjc.local/json-schema
+domain: http://schemas.gdbots.io/json-schema
 
 namespaces:
-  - acme:core
-  - acme:blog
+  - gdbots:common
+  - gdbots:contexts
+  - gdbots:enrichments
+  - gdbots:geo
+  - gdbots:ncr
+  - gdbots:pbjx
 
 languages:
   php:
