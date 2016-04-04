@@ -111,17 +111,14 @@
           "type": "string"
         }
       },
-      "required": ["type", "coordinates"],
     {% elseif field.type.typeName ~ '' == 'geo-point' %}
       "type": "object",
       "properties": {
         "type": {
-          "required": true,
           "type": "string",
           "pattern": "^Point$"
         },
         "coordinates": {
-          "required": true,
           "type": "array",
           "items": [
             {
@@ -139,6 +136,8 @@
           ]
         }
       },
+      "required": ["type", "coordinates"],
+      "additionalProperties": false,
     {% else %}
       {{ _self.draw_field_properties(field) }}
     {% endif %}
