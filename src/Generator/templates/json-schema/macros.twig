@@ -54,7 +54,7 @@
             "type": "object",
             "anyOf": [
               {% for s in getAllVersions(def) %}
-                {"$ref": "{{ compileOptions.domain }}/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json" }{% if not loop.last %}, {% endif %}
+                {"$ref": "{{ compileOptions.domain }}/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
               {% endfor %}
             ]
           }{% if not loop.last %}, {% endif %}
