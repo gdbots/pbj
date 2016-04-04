@@ -177,8 +177,6 @@
     "type": "object",
   {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
     "type": "array",
-  {% elseif field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
-    "type": "{{ field.format ~ '' }}",
   {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
     "type": "number",
   {% elseif field.type.typeName ~ '' in [
@@ -205,6 +203,10 @@
     and field.type.typeName ~ '' not in ['microtime', 'timestamp', 'uuid', 'time-uuid']
   %}
     "default": {{ field.default|default(field.type.default)|json_encode }},
+  {% endif %}
+
+  {% if field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
+    "format": "{{ field.format ~ '' }}",
   {% endif %}
 
   {% set hasPattern = field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
