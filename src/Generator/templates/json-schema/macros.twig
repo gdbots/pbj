@@ -7,7 +7,7 @@
 {% macro draw_schema(schema, compileOptions) %}
 {% set fields = schema.fields|merge(schema.inheritedFields) %}
 {
-  "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json",
+  "id": "{{ compileOptions.domain }}/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
