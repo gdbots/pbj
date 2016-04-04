@@ -123,7 +123,7 @@ button {
                         fixSchemaValue(obj[key]);
                     }
                     if ('_schema' === key) {
-                        obj[key].pattern = '^' + obj[key].id + '$';
+                        obj[key].pattern = '^' + obj[key].default + '$';
                     }
                 });
             };
