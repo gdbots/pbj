@@ -39,6 +39,7 @@ public function generateMessageRef($tag = null)
 {
     return new MessageRef(static::schema()->getCurie(), $this->generateEtag(), $tag);
 }
+
 /**
  * @return array
  */
