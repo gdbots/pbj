@@ -106,8 +106,6 @@
           }
         {% endif %}
       ],
-      "minItems": 1,
-      "uniqueItems": true,
       "additionalProperties": false,
     {% elseif field.type.typeName ~ '' == 'message-ref' %}
       "type": "object",
