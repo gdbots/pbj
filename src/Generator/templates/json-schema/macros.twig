@@ -86,6 +86,7 @@
       "minProperties": 1,
       "additionalProperties": false,
     {% elseif field.rule ~ '' == 'list' %}
+      "type": "array",
       "items": [
         {% if field.anyOf %}
           {% for schema in field.anyOf %}
@@ -105,6 +106,9 @@
           }
         {% endif %}
       ],
+      "minItems": 1,
+      "uniqueItems": true,
+      "additionalProperties": false,
     {% elseif field.type.typeName ~ '' == 'message-ref' %}
       "type": "object",
       "properties": {
