@@ -7,7 +7,7 @@ final class CompileOptions
     /** @var array */
     private $namespaces = [];
 
-    /** @var string|array */
+    /** @var string */
     private $domain;
 
     /** @var string */
@@ -42,33 +42,11 @@ final class CompileOptions
     }
 
     /**
-     * @return string|array
+     * @return string
      */
     public function getDomain()
     {
         return $this->domain;
-    }
-
-    /**
-     * @param string $namespace
-     *
-     * @return string|null
-     */
-    public function getDomainByNamespace($namespace = null)
-    {
-        if (is_string($this->domain)) {
-            return $this->domain;
-        }
-
-        if (isset($this->domain[$namespace])) {
-            return $this->domain[$namespace];
-        }
-
-        if (isset($this->domain['default'])) {
-            return $this->domain['default'];
-        }
-
-        return null;
     }
 
     /**
