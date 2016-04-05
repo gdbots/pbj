@@ -1,4 +1,8 @@
-domain: http://pbjc.local
+domain:
+  default: http://pbjc.local
+  gdbots-pbjx: http://schemas.gdbots.io
+  gdbots-contexts: http://schemas.gdbots.io
+  gdbots-geo: http://schemas.gdbots.io
 
 namespaces:
   - acme:core

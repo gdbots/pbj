@@ -6,8 +6,9 @@
 #}
 {% macro draw_schema(schema, compileOptions) %}
 {% set fields = schema.fields|merge(schema.inheritedFields) %}
+{% set namespace = schema.id.vendor ~ '-' ~ schema.id.package %}
 {
-  "id": "{{ compileOptions.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
+  "id": "{{ compileOptions.domainByNamespace(namespace|lower|slugify) }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -54,7 +55,8 @@
             "type": "object",
             "anyOf": [
               {% for s in getAllVersions(def) %}
-                {"$ref": "{{ compileOptions.domain }}/json-schema/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
+                {% set namespace = s.id.vendor ~ '-' ~ s.id.package %}
+                {"$ref": "{{ compileOptions.domainByNamespace(namespace|lower|slugify) }}/json-schema/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
               {% endfor %}
             ]
           }{% if not loop.last %}, {% endif %}
