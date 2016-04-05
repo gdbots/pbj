@@ -157,7 +157,7 @@ final class Compiler
 
         /** @var EnumDescriptor $enum */
         foreach (SchemaStore::getEnums() as $enum) {
-            if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
+            if (!$options->getIncludeAll() && !in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
@@ -169,7 +169,7 @@ final class Compiler
 
         /** @var SchemaDescriptor $schema */
         foreach (SchemaStore::getSchemas() as $schema) {
-            if (!in_array($schema->getId()->getNamespace(), $namespaces)) {
+            if (!$options->getIncludeAll() && !in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 

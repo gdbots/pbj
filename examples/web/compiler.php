@@ -16,15 +16,13 @@ $parser = new Parser();
 $settings = $parser->parse(file_get_contents(__DIR__.'/../pbjc.yml'));
 
 $languages = $settings['languages'];
-unset($settings['languages']);
 
 $compiler = new Compiler();
 
 $rootDir = __DIR__.'/.'; // folder location hack
 
 foreach ($languages as $language => $values) {
-
-    $options = array_merge($settings, [
+    $options = array_merge($settings, $settings['languages'][$language], [
         'output' => $rootDir.$values['output'],
         'callback' => function (OutputFile $file) {
             echo highlight_string($file->getContents(), true).'<hr />';

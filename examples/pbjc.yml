@@ -10,4 +10,5 @@ languages:
     manifest: ./pbj-schemas.php
 
   json-schema:
+    include_all: true
     output: ./json-schema
