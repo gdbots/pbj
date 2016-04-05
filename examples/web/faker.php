@@ -25,8 +25,8 @@ if (isset($_REQUEST['verify'])) {
 }
 ?>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.2.15/json-schema-faker.min.js"></script>
-<script src="https://raw.githubusercontent.com/BigstickCarpet/json-schema-ref-parser/master/dist/ref-parser.min.js"></script>
+<script src="js/json-schema-faker.min.js"></script>
+<script src="js/ref-parser.min.js"></script>
 
 <style>
 h5 {
