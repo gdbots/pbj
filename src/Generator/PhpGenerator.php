@@ -45,8 +45,8 @@ class PhpGenerator extends Generator
                 }
 
                 $enumKey = 'unknown';
-                if ($default && $enum->hasValue(strtoupper($default))) {
-                    $enumKey = $enum->getKeyByValue(strtoupper($default));
+                if ($default && $enum->hasValue($default)) {
+                    $enumKey = $enum->getKeyByValue($default);
                 }
 
                 $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
