@@ -9,8 +9,7 @@
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
 {% set lines = field.description|split("\n") %}
-
-{{ spaces|format('') }}/*
+  /*
 {% for line in lines %}
 {{ spaces|format('') }} * {{ line|reduceSpaces }}
 {% endfor %}
