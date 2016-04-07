@@ -23,11 +23,13 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}
  * @method static Schema schema
  * @method mixed get($fieldName, $default = null)
  */
-trait {{ getClassName(schema, true) }}Trait {% if schema.extends %}extends {{ getClassName(schema.extends, true) }}Trait{% endif %}
+trait {{ getClassName(schema, true) }}Trait
 {% endblock class_definition %}
-
 {
 {% block class_body %}
+{% if schema.extends %}
+    use {{ getClassName(schema.extends, true) }}Trait;
+{% endif %}
 {% for mixin in schema.mixins %}
     use {{ getClassName(mixin, true) }}Trait;
 {% endfor %}
