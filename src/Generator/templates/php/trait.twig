@@ -5,6 +5,9 @@ namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\Schema;
+{% if schema.extends %}
+use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true) }}Trait;
+{% endif %}
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Trait;
@@ -20,8 +23,9 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}
  * @method static Schema schema
  * @method mixed get($fieldName, $default = null)
  */
-trait {{ getClassName(schema, true) }}Trait
+trait {{ getClassName(schema, true) }}Trait {% if schema.extends %}extends {{ getClassName(schema.extends, true) }}Trait{% endif %}
 {% endblock class_definition %}
+
 {
 {% block class_body %}
 {% for mixin in schema.mixins %}

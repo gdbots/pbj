@@ -241,11 +241,13 @@ class PhpGenerator extends Generator
             [
                 ';;',
                 "\n\n\n",
+                "{\n\n",
                 "{\n    \n}",
                 "}\n\n}",
             ], [
                 ';',
                 "\n\n",
+                "{\n",
                 "{\n}",
                 "}\n}",
             ],
