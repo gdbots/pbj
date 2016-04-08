@@ -5,11 +5,7 @@
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
-{% if schema.extends and not isSameNamespace(schema, schema.extends) %}
-use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true) }};
-{% else %}
 use Gdbots\Pbj\AbstractMessage;
-{% endif %}
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
@@ -38,7 +34,7 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ classNameVMajor }} extends {% if schema.extends %}{{ getClassName(schema.extends, true) }}{% else %}AbstractMessage{% endif %} implements
+final class {{ classNameVMajor }} extends AbstractMessage implements
     {{ getClassName(schema) }}{% if schema.mixins|length %},{% endif %}
 
 {% for mixin in schema.mixins %}

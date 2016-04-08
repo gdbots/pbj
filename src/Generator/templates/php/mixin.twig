@@ -3,11 +3,7 @@
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
-{% if schema.extends and not isSameNamespace(schema, schema.extends) %}
-use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true) }}Mixin;
-{% else %}
 use Gdbots\Pbj\AbstractMixin;
-{% endif %}
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\SchemaId;
 use Gdbots\Pbj\Type as T;
@@ -26,8 +22,7 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ getClassName(schema, true) }}Mixin extends {% if schema.extends %}{{ getClassName(schema.extends, true) }}Mixin{% else %}AbstractMixin{% endif %}
-
+final class {{ getClassName(schema, true) }}Mixin extends AbstractMixin
 {% endblock class_definition %}
 {
 {% block class_body %}
