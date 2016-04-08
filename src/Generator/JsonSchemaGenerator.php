@@ -57,18 +57,28 @@ class JsonSchemaGenerator extends Generator
                 json_decode(
                     str_replace(
                         [
-                            "\n",
-                            '  ',
                             ',}',
                             ',]',
                         ],
                         [
-                            '',
-                            '',
                             '}',
                             ']',
                         ],
-                        parent::render($template, $parameters)
+                        str_replace(
+                            [
+                                "\n",
+                                '  ',
+                                ', ',
+                                ', ',
+                            ],
+                            [
+                                '',
+                                '',
+                                ',',
+                                ',',
+                            ],
+                            parent::render($template, $parameters)
+                        )
                     )
                 ),
                 JSON_PRETTY_PRINT
