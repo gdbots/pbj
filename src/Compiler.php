@@ -76,7 +76,11 @@ final class Compiler
             } catch (MissingSchema $e) {
                 // remove "v" (version) from schemaId,
                 // and replace colons with slashes (convert to path format)
-                $pattern = sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage()));
+                $pattern = sprintf(
+                    '/%s%s(.*)/',
+                    str_replace([':v', ':'], [':', '\/'], $e->getMessage()),
+                    strpos($e->getMessage(), ':v') === false ? '\/' : null
+                );
 
                 // remove duplicate slashes
                 $pattern = str_replace('\/\/', '\/', $pattern);
@@ -94,7 +98,7 @@ final class Compiler
 
                 $exceptionFile[] = $currentFile;
 
-                $currentFile = strpos(':v', $e->getMessage())
+                $currentFile = strpos($e->getMessage(), ':v')
                     // curie + version
                     ? current($files)
                     // curie
