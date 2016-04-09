@@ -18,9 +18,10 @@ Let's start by defining each of the elements and key options used across the com
 
 - **SchemaId:** A Schema fully qualified name (id).
 
-  - Schema Id Format: `pbj:vendor:package:category:message:version`
-  - Message Curie Format: `vendor:package:category:message`
-  - Message Curie With Major Version Format: `vendor:package:category:message:v#`
+  - Schema Id: `pbj:vendor:package:category:message:version`
+  - Schema Curie Major: `vendor:package:category:message:v#`
+  - Schema Curie: `vendor:package:category:message`
+  - Schema QName: `vendor:message`
 
 - **SchemaVersion:** Similar to semantic versioning but with dashes and no "alpha, beta, etc." qualifiers.
 
@@ -31,7 +32,6 @@ First let's look at a very simple example. Let's say you want to define a **mixi
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
@@ -153,7 +153,6 @@ The `any-of` attribute define the message id that will be used to pull the messa
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
