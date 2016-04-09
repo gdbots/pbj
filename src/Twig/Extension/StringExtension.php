@@ -2,6 +2,7 @@
 
 namespace Gdbots\Pbjc\Twig\Extension;
 
+use Gdbots\Common\Util\SlugUtils;
 use Gdbots\Common\Util\StringUtils;
 
 class StringExtension extends \Twig_Extension
@@ -25,6 +26,7 @@ class StringExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFilter('reduceSpaces', array($this, 'reduceSpaces')),
             new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
+            new \Twig_SimpleFilter('slugify', array($this, 'slugify')),
         );
     }
 
@@ -81,6 +83,16 @@ class StringExtension extends \Twig_Extension
     public function toCamelFromSlug($slug)
     {
         return StringUtils::toCamelFromSlug($slug);
+    }
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    public function slugify($string)
+    {
+        return SlugUtils::create($string);
     }
 
     /**

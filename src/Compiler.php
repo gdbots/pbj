@@ -76,7 +76,11 @@ final class Compiler
             } catch (MissingSchema $e) {
                 // remove "v" (version) from schemaId,
                 // and replace colons with slashes (convert to path format)
-                $pattern = sprintf('/%s*/', str_replace([':v', ':'], [':', '\/'], $e->getMessage()));
+                $pattern = sprintf(
+                    '/%s%s(.*)/',
+                    str_replace([':v', ':'], [':', '\/'], $e->getMessage()),
+                    strpos($e->getMessage(), ':v') === false ? '\/' : null
+                );
 
                 // remove duplicate slashes
                 $pattern = str_replace('\/\/', '\/', $pattern);
@@ -94,7 +98,7 @@ final class Compiler
 
                 $exceptionFile[] = $currentFile;
 
-                $currentFile = strpos(':v', $e->getMessage())
+                $currentFile = strpos($e->getMessage(), ':v')
                     // curie + version
                     ? current($files)
                     // curie
@@ -151,13 +155,13 @@ final class Compiler
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
 
         /** @var \Gdbots\Pbjc\Generator\Generator $generator */
-        $generator = new $class($options->getOutput());
+        $generator = new $class($options);
 
         $outputFiles = [];
 
         /** @var EnumDescriptor $enum */
         foreach (SchemaStore::getEnums() as $enum) {
-            if (!in_array($enum->getId()->getNamespace(), $namespaces)) {
+            if (!$options->getIncludeAll() && !in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
@@ -169,7 +173,7 @@ final class Compiler
 
         /** @var SchemaDescriptor $schema */
         foreach (SchemaStore::getSchemas() as $schema) {
-            if (!in_array($schema->getId()->getNamespace(), $namespaces)) {
+            if (!$options->getIncludeAll() && !in_array($schema->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
@@ -179,9 +183,9 @@ final class Compiler
             }
         }
 
-        if ($manifest = $options->getManifest()) {
+        if ($options->getManifest()) {
             /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateManifest(SchemaStore::getSchemas(), $manifest)) {
+            if ($response = $generator->generateManifest(SchemaStore::getSchemas())) {
                 $outputFiles = array_merge($outputFiles, $response->getFiles());
             }
         }

@@ -16,6 +16,56 @@ class SchemaParser
     protected $files = [];
 
     /**
+     * @param string $file
+     *
+     * @return array
+     *
+     * @throw \RuntimeException
+     */
+    private function getXmlData($file)
+    {
+        /** @var \DOMDocument $xmlDomDocument */
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/schema.xsd')) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml file "%s".',
+                $file
+            ));
+        }
+
+        /** @var array $xmlData */
+        if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
+            throw new \RuntimeException('Invalid schema DOM object.');
+        }
+
+        $schemaId = SchemaId::fromString($xmlData['schema']['id']);
+
+        $filePath = substr($file, 0, -strlen(basename($file)) - 1);
+        $schemaPath = str_replace([':', '//'], ['/', '/'], $schemaId->getCurie());
+
+        // invalid schema file location
+        if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml directory "%s". Expected sub-directory "%s".',
+                $filePath,
+                $schemaPath
+            ));
+        }
+
+        // validate version to file
+        if (basename($file) != 'latest.xml'
+            && basename($file) != sprintf('%s.xml', $schemaId->getVersion()->toString())
+        ) {
+            throw new \RuntimeException(sprintf(
+                'Invalid schema xml file "%s" name. Expected name "%s.xml".',
+                $file,
+                $schemaId->getVersion()->toString()
+            ));
+        }
+
+        return $xmlData;
+    }
+
+    /**
      * Reads and validate XML file.
      *
      * @param string $file
@@ -28,44 +78,10 @@ class SchemaParser
     public function fromFile($file)
     {
         if (!array_key_exists($file, $this->files)) {
-
-            /** @var \DOMDocument $xmlDomDocument */
-            if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/schema.xsd')) {
-                throw new \RuntimeException(sprintf(
-                    'Invalid schema xml file "%s".',
-                    $file
-                ));
-            }
-
-            /** @var array $xmlData */
-            if (!$xmlData = XmlUtils::convertDomElementToArray($xmlDomDocument->firstChild)) {
-                throw new \RuntimeException('Invalid schema DOM object.');
-            }
+            $xmlData = $this->getXmlData($file);
 
             $schemaId = SchemaId::fromString($xmlData['schema']['id']);
-
             $filePath = substr($file, 0, -strlen(basename($file)) - 1);
-            $schemaPath = str_replace([':', '//'], ['/', '/'], $schemaId->getCurie());
-
-            // invalid schema file location
-            if (substr($filePath, -strlen($schemaPath)) !== $schemaPath) {
-                throw new \RuntimeException(sprintf(
-                    'Invalid schema xml directory "%s". Expected sub-directory "%s".',
-                    $filePath,
-                    $schemaPath
-                ));
-            }
-
-            // validate version to file
-            if (basename($file) != 'latest.xml'
-                && basename($file) != sprintf('%s.xml', $schemaId->getVersion()->toString())
-            ) {
-                throw new \RuntimeException(sprintf(
-                    'Invalid schema xml file "%s" name. Expected name "%s.xml".',
-                    $file,
-                    $schemaId->getVersion()->toString()
-                ));
-            }
 
             // check "latest.xml"
             $latestPath = sprintf('%s/latest.xml', $filePath);
@@ -74,6 +90,23 @@ class SchemaParser
 
                 $this->files[$latestPath] = $xmlData['schema'];
             }
+
+            // override schema with "latest"
+            if (basename($file) != 'latest.xml' && file_exists($latestPath)) {
+                $lastestXmlData = $this->getXmlData($latestPath);
+
+                $latestSchemaId = SchemaId::fromString($lastestXmlData['schema']['id']);
+
+                if ($schemaId->getVersion()->toString() === $latestSchemaId->getVersion()->toString()
+                    && $xmlData != $lastestXmlData
+                ) {
+                    file_put_contents($file, file_get_contents($latestPath));
+
+                    $xmlData = $lastestXmlData;
+                }
+            }
+
+            // update "latest" with schema
             if (isset($this->files[$latestPath])) {
                 $version = SchemaId::fromString($this->files[$latestPath]['id'])->getVersion()->toString();
 

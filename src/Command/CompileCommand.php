@@ -63,31 +63,25 @@ EOF
         $language = $input->getOption('language') ?: 'php';
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
 
-        $namespaces = null;
-        $options = [];
-
-        if (!empty($namespaces)) {
-            $namespaces = explode(',', $namespaces);
+        if (!file_exists($file)) {
+            $io->error(sprintf('File "%s" does not exists.', $file));
+            return;
         }
 
-        if (file_exists($file)) {
-            $parser = new Parser();
-            $config = $parser->parse(file_get_contents($file));
+        $parser = new Parser();
+        $options = $parser->parse(file_get_contents($file));
 
-            if (isset($config['namespaces'])) {
-                $namespaces = $config['namespaces'];
-            }
-
-            if (isset($config['languages'][$language])) {
-                $options = array_merge($options, $config['languages'][$language]);
-            }
+        if (!is_array($options['namespaces'])) {
+            $options['namespaces'] = [$options['namespaces']];
         }
 
-        if (!is_array($namespaces)) {
-            $namespaces = [$namespaces];
+        if (isset($options['languages'][$language])) {
+            $options = array_merge($options, $options['languages'][$language]);
         }
 
-        $options['namespaces'] = $namespaces;
+        if (isset($options['languages'])) {
+            unset($options['languages']);
+        }
 
         $options['callback'] = function (OutputFile $file) use ($io) {
             $io->text($file->getFile());
@@ -100,7 +94,7 @@ EOF
         };
 
         try {
-            $io->title(sprintf('Generated files for "%s":',  implode('", "', $namespaces)));
+            $io->title(sprintf('Generated files for "%s":',  implode('", "', $options['namespaces'])));
 
             $compile = new Compiler();
             $compile->run($language, new CompileOptions($options));

@@ -14,7 +14,7 @@ use Gdbots\Pbj\Type as T;
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-{% if className(field.type) in ['IntEnumType', 'StringEnumType'] and field.language('php').get('classname') %}
+{% if field.language('php').get('classname') %}
 use {{ field.language('php').get('classname') }};
 {% endif %}
 {% endfor %}
@@ -49,7 +49,7 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {
 {% block class_body %}
 {% for mixin in schema.mixins %}
-    use {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Trait;
+    use {{ getClassName(mixin, true) }}Trait;
 {% endfor %}
 
     /**
@@ -73,7 +73,7 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
-                {{ mixin.id.message|toCamelFromSlug }}V{{ mixin.id.version.major }}Mixin::create(){% if not loop.last %}, {% endif %}
+                {{ getClassName(mixin, true) }}Mixin::create(){% if not loop.last %}, {% endif %}
 
 {% endfor %}
             ]

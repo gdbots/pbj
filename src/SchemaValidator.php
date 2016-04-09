@@ -69,5 +69,8 @@ class SchemaValidator
 
         $constraint = new Constraint\SchemaDependencyVersion();
         $constraint->validate($schema, $schema);
+
+        $constraint = new Constraint\SchemaInheritanceFields();
+        $constraint->validate($schema, $schema);
     }
 }

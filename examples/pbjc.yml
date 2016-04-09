@@ -1,3 +1,5 @@
+domain: http://pbjc.local
+
 namespaces:
   - acme:core
   - acme:blog
@@ -6,3 +8,7 @@ languages:
   php:
     output: ./src
     manifest: ./pbj-schemas.php
+
+  json-schema:
+    include_all: true
+    output: ./json-schema

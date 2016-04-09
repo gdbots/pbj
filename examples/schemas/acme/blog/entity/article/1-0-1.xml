@@ -6,11 +6,25 @@
 
   <schema id="pbj:acme:blog:entity:article:1-0-1">
     <fields>
-      <field name="title" type="string" />
+      <field name="title" type="string">
+        <description>
+          <![CDATA[
+            The field holds the article title.
+          ]]>
+        </description>
+        <default>N/A</default>
+      </field>
       <field name="excerpt" type="text" />
       <field name="excerpt_html" type="text" />
-      <field name="thumbnails" type="string" format="url" rule="map" />
+
+      <field name="thumbnails" type="string" format="url" rule="map">
+        <json-schema-options>
+          <faker>internet.url</faker>
+        </json-schema-options>
+      </field>
+
       <field name="private" type="boolean" />
+      <field name="geo_point" type="geo-point" />
 
       <field name="publish_status" type="string-enum">
         <default>draft</default>
@@ -39,6 +53,33 @@
 
     <php-options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->generateEtag(), $tag);
+}
+
+/**
+ * @return array
+ */
+public function getUriTemplateVars()
+{
+    return [];
+}
+            ]]>
+        </methods>
+      </insertion-points>
     </php-options>
   </schema>
 </pbj-schema>

@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v0.1.3
+* issue #14: BUG :: mixins using extends option won't compile.
+* issue #13: Test case and example of map, set and list in json schema.
+* issue #12: BUG :: any-of option with array produces incorrect php result.
+
+
 ## v0.1.2
 * issue #9: Schema parse error when "category" is empty.
 * issue #10: Fixed recursive schema requesting.

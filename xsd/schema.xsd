@@ -49,6 +49,7 @@
       <xsd:element name="enum" type="fieldEnum" minOccurs="0" maxOccurs="1" />
       <xsd:element name="any-of" type="schemaCurieIds" minOccurs="0" maxOccurs="1" />
       <xsd:element name="php-options" type="fieldPhpOptions" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="json-schema-options" type="fieldJsonSchemaOptions" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:attribute name="name" type="xsd:string" use="required" />
@@ -118,6 +119,15 @@
       <xsd:element name="classname" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="assertion" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
+  <xsd:complexType name="fieldJsonSchemaOptions">
+    <xsd:sequence>
+      <xsd:element name="faker" type="fakerMethod" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
@@ -201,6 +211,148 @@
       <xsd:enumeration value="uri" />
       <xsd:enumeration value="url" />
       <xsd:enumeration value="uuid" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="fakerMethod">
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="address.zipCode" />
+      <xsd:enumeration value="address.city" />
+      <xsd:enumeration value="address.cityPrefix" />
+      <xsd:enumeration value="address.citySuffix" />
+      <xsd:enumeration value="address.streetName" />
+      <xsd:enumeration value="address.streetAddress" />
+      <xsd:enumeration value="address.streetSuffix" />
+      <xsd:enumeration value="address.streetPrefix" />
+      <xsd:enumeration value="address.secondaryAddress" />
+      <xsd:enumeration value="address.county" />
+      <xsd:enumeration value="address.country" />
+      <xsd:enumeration value="address.countryCode" />
+      <xsd:enumeration value="address.state" />
+      <xsd:enumeration value="address.stateAbbr" />
+      <xsd:enumeration value="address.latitude" />
+      <xsd:enumeration value="address.longitude" />
+      <xsd:enumeration value="commerce.color" />
+      <xsd:enumeration value="commerce.department" />
+      <xsd:enumeration value="commerce.productName" />
+      <xsd:enumeration value="commerce.price" />
+      <xsd:enumeration value="commerce.productAdjective" />
+      <xsd:enumeration value="commerce.productMaterial" />
+      <xsd:enumeration value="commerce.product" />
+      <xsd:enumeration value="company.suffixes" />
+      <xsd:enumeration value="company.companyName" />
+      <xsd:enumeration value="company.companySuffix" />
+      <xsd:enumeration value="company.catchPhrase" />
+      <xsd:enumeration value="company.bs" />
+      <xsd:enumeration value="company.catchPhraseAdjective" />
+      <xsd:enumeration value="company.catchPhraseDescriptor" />
+      <xsd:enumeration value="company.catchPhraseNoun" />
+      <xsd:enumeration value="company.bsAdjective" />
+      <xsd:enumeration value="company.bsBuzz" />
+      <xsd:enumeration value="company.bsNoun" />
+      <xsd:enumeration value="date.past" />
+      <xsd:enumeration value="date.future" />
+      <xsd:enumeration value="date.between" />
+      <xsd:enumeration value="date.recent" />
+      <xsd:enumeration value="date.month" />
+      <xsd:enumeration value="date.weekday" />
+      <xsd:enumeration value="fake" />
+      <xsd:enumeration value="finance.account" />
+      <xsd:enumeration value="finance.accountName" />
+      <xsd:enumeration value="finance.mask" />
+      <xsd:enumeration value="finance.amount" />
+      <xsd:enumeration value="finance.transactionType" />
+      <xsd:enumeration value="finance.currencyCode" />
+      <xsd:enumeration value="finance.currencyName" />
+      <xsd:enumeration value="finance.currencySymbol" />
+      <xsd:enumeration value="finance.bitcoinAddress" />
+      <xsd:enumeration value="hacker.abbreviation" />
+      <xsd:enumeration value="hacker.adjective" />
+      <xsd:enumeration value="hacker.noun" />
+      <xsd:enumeration value="hacker.verb" />
+      <xsd:enumeration value="hacker.ingverb" />
+      <xsd:enumeration value="hacker.phrase" />
+      <xsd:enumeration value="helpers.randomize" />
+      <xsd:enumeration value="helpers.slugify" />
+      <xsd:enumeration value="helpers.replaceSymbolWithNumber" />
+      <xsd:enumeration value="helpers.replaceSymbols" />
+      <xsd:enumeration value="helpers.shuffle" />
+      <xsd:enumeration value="helpers.mustache" />
+      <xsd:enumeration value="helpers.createCard" />
+      <xsd:enumeration value="helpers.contextualCard" />
+      <xsd:enumeration value="helpers.userCard" />
+      <xsd:enumeration value="helpers.createTransaction" />
+      <xsd:enumeration value="image.image" />
+      <xsd:enumeration value="image.avatar" />
+      <xsd:enumeration value="image.imageUrl" />
+      <xsd:enumeration value="image.abstract" />
+      <xsd:enumeration value="image.animals" />
+      <xsd:enumeration value="image.business" />
+      <xsd:enumeration value="image.cats" />
+      <xsd:enumeration value="image.city" />
+      <xsd:enumeration value="image.food" />
+      <xsd:enumeration value="image.nightlife" />
+      <xsd:enumeration value="image.fashion" />
+      <xsd:enumeration value="image.people" />
+      <xsd:enumeration value="image.nature" />
+      <xsd:enumeration value="image.sports" />
+      <xsd:enumeration value="image.technics" />
+      <xsd:enumeration value="image.transport" />
+      <xsd:enumeration value="internet.avatar" />
+      <xsd:enumeration value="internet.email" />
+      <xsd:enumeration value="internet.exampleEmail" />
+      <xsd:enumeration value="internet.userName" />
+      <xsd:enumeration value="internet.protocol" />
+      <xsd:enumeration value="internet.url" />
+      <xsd:enumeration value="internet.domainName" />
+      <xsd:enumeration value="internet.domainSuffix" />
+      <xsd:enumeration value="internet.domainWord" />
+      <xsd:enumeration value="internet.ip" />
+      <xsd:enumeration value="internet.userAgent" />
+      <xsd:enumeration value="internet.color" />
+      <xsd:enumeration value="internet.mac" />
+      <xsd:enumeration value="internet.password" />
+      <xsd:enumeration value="lorem.word" />
+      <xsd:enumeration value="lorem.words" />
+      <xsd:enumeration value="lorem.sentence" />
+      <xsd:enumeration value="lorem.sentences" />
+      <xsd:enumeration value="lorem.paragraph" />
+      <xsd:enumeration value="lorem.paragraphs" />
+      <xsd:enumeration value="lorem.text" />
+      <xsd:enumeration value="lorem.lines" />
+      <xsd:enumeration value="name.firstName" />
+      <xsd:enumeration value="name.lastName" />
+      <xsd:enumeration value="name.findName" />
+      <xsd:enumeration value="name.jobTitle" />
+      <xsd:enumeration value="name.prefix" />
+      <xsd:enumeration value="name.suffix" />
+      <xsd:enumeration value="name.title" />
+      <xsd:enumeration value="name.jobDescriptor" />
+      <xsd:enumeration value="name.jobArea" />
+      <xsd:enumeration value="name.jobType" />
+      <xsd:enumeration value="phone.phoneNumber" />
+      <xsd:enumeration value="phone.phoneNumberFormat" />
+      <xsd:enumeration value="phone.phoneFormats" />
+      <xsd:enumeration value="random.number" />
+      <xsd:enumeration value="random.arrayElement" />
+      <xsd:enumeration value="random.objectElement" />
+      <xsd:enumeration value="random.uuid" />
+      <xsd:enumeration value="random.boolean" />
+      <xsd:enumeration value="random.word" />
+      <xsd:enumeration value="random.words" />
+      <xsd:enumeration value="random.image" />
+      <xsd:enumeration value="random.locale" />
+      <xsd:enumeration value="random.alphaNumeric" />
+      <xsd:enumeration value="system.fileName" />
+      <xsd:enumeration value="system.commonFileName" />
+      <xsd:enumeration value="system.mimeType" />
+      <xsd:enumeration value="system.commonFileType" />
+      <xsd:enumeration value="system.commonFileExt" />
+      <xsd:enumeration value="system.fileType" />
+      <xsd:enumeration value="system.fileExt" />
+      <xsd:enumeration value="system.directoryPath" />
+      <xsd:enumeration value="system.filePath" />
+      <xsd:enumeration value="system.semver" />
     </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>

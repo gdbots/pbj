@@ -22,30 +22,35 @@ class PhpGenerator extends Generator
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
-            $namespace = $enum->getLanguage('php')->get('namespace');
-            if (substr($namespace, 0, 1) == '\\') {
-                $namespace = substr($namespace, 1);
+            if (!$className = $field->getLanguage('php')->get('classname')) {
+                $namespace = $enum->getLanguage('php')->get('namespace');
+                if (substr($namespace, 0, 1) == '\\') {
+                    $namespace = substr($namespace, 1);
+                }
+
+                $className =
+                    sprintf('%s\\%s',
+                        $namespace,
+                        StringUtils::toCamelFromSlug($enum->getId()->getName())
+                    )
+                ;
+
+                $field->getLanguage('php')->set('classname', $className);
             }
 
-            $className =
-                sprintf('%s\\%s',
-                    $namespace,
-                    StringUtils::toCamelFromSlug($enum->getId()->getName())
-                )
-            ;
+            if (null === $field->getLanguage('php')->get('default', null)) {
+                $default = $field->getDefault();
+                if (is_array($default)) {
+                    $default = count($default) ? current($default) : null;
+                }
 
-            $default = $field->getDefault();
-            if (is_array($default)) {
-                $default = count($default) ? current($default) : null;
+                $enumKey = 'unknown';
+                if ($default && $enum->hasValue($default)) {
+                    $enumKey = $enum->getKeyByValue($default);
+                }
+
+                $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
             }
-
-            $enumKey = $default && $enum->hasValue(strtoupper($default))
-                ? $default
-                : 'unknown'
-            ;
-
-            $field->getLanguage('php')->set('classname', $className);
-            $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
         }
     }
 
@@ -98,7 +103,7 @@ class PhpGenerator extends Generator
 
         $filename =
             sprintf('%s/%s/%s%s',
-                $this->output,
+                $this->compileOptions->getOutput(),
                 str_replace('\\', '/', $namespace),
                 str_replace('\\', '/', $className),
                 $this->extension
@@ -123,9 +128,13 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateManifest(array $schemas, $filename)
+    public function generateManifest(array $schemas)
     {
         $messages = [];
+
+        if (!$filename = $this->compileOptions->getManifest()) {
+            return;
+        }
 
         // extract previous schemas
         if (file_exists($filename)) {
@@ -232,11 +241,13 @@ class PhpGenerator extends Generator
             [
                 ';;',
                 "\n\n\n",
+                "{\n\n",
                 "{\n    \n}",
                 "}\n\n}",
             ], [
                 ';',
                 "\n\n",
+                "{\n",
                 "{\n}",
                 "}\n}",
             ],

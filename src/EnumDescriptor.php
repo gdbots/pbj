@@ -78,13 +78,23 @@ final class EnumDescriptor
     }
 
     /**
-     * @param string $key
+     * @param string $value
      *
      * @return bool
      */
-    public function hasValue($key)
+    public function hasValue($value)
     {
-        return isset($this->values[$key]);
+        return in_array($value, $this->values);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getKeyByValue($value)
+    {
+        return array_search($value, $this->values);
     }
 
     /**

@@ -1,3 +1,10 @@
+{#
+    Render field block
+    Parameters:
+        field - a FieldDescriptor instance
+        spaces - number of spaces
+        isLastItem - whether or not to add comma at the end of the block
+#}
 {% macro draw_field(field, spaces, isLastItem) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
@@ -36,7 +43,7 @@
     {{ spaces|format('') }}->pattern('{{ field.pattern }}')
 {% endif %}
 {% if field.format %}
-    {{ spaces|format('') }}->format(Format::{{ field.format|upper|replace({'-': '_'}) }}())
+    {{ spaces|format('') }}->format(Format::{{ field.format|upper }}())
 {% endif %}
 {% if field.min %}
     {{ spaces|format('') }}->min({{ field.min }})
@@ -62,7 +69,12 @@
 {% if field.anyOf|length == 1 %}
     {{ spaces|format('') }}->className('{{ field.anyOf.0.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0) }}')
 {% else %}
-    {{ spaces|format('') }}->anyOfClassNames([{% for schema in field.anyOf %}'{{ schema.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0) }}'{% if not loop.last %}, {% endif %}{% endfor %}])
+    {{ spaces|format('') }}->anyOfClassNames([
+{% for schema in field.anyOf %}
+    {{ spaces|format('') }}  '{{ schema.language('php').get('namespace') }}\{{ getClassName(schema) }}'{% if not loop.last %}, {% endif %}
+
+{% endfor %}
+    {{ spaces|format('') }}])
 {% endif %}
 {% elseif field.language('php').get('classname') %}
     {{ spaces|format('') }}->className('{{ field.language('php').get('classname') }}')

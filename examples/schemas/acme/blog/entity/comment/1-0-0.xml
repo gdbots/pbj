@@ -6,7 +6,7 @@
 
   <schema id="pbj:acme:blog:entity:comment:1-0-0">
     <fields>
-      <field name="_id" type="identifier" required="true">
+      <field name="_id" type="identifier" required="true" overridable="true">
         <php-options>
           <classname>Gdbots\Identifiers\UuidIdentifier</classname>
           <default>
@@ -29,6 +29,35 @@
 
     <php-options>
       <namespace>Acme\Schemas\Blog\Entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('_id'), $tag);
+}
+
+/**
+ * @return array
+ */
+public function getUriTemplateVars()
+{
+    return [
+        '_id' => (string)$this->get('_id'),
+    ];
+}
+            ]]>
+        </methods>
+      </insertion-points>
     </php-options>
   </schema>
 </pbj-schema>

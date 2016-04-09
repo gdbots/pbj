@@ -7,6 +7,7 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\StringType;
+use Gdbots\Pbjc\Type\IntEnumType;
 use Gdbots\Pbjc\Util\LanguageBag;
 
 final class FieldDescriptor
@@ -385,6 +386,10 @@ final class FieldDescriptor
             }
 
             return $this->isASingleValue() ? null : [];
+        }
+
+        if ($this->type instanceof IntEnumType) {
+            return (int) $this->default;
         }
 
         return $this->default;
