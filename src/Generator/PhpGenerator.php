@@ -51,7 +51,7 @@ class PhpGenerator extends Generator
 
                 $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
 
-                if (empty($default) && 'unknown' === strtolower($enumKey)) {
+                if (empty($default)) {
                     $field->getLanguage('php')->set('hide_default', true);
                 }
             }
