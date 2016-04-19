@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## v0.1.4
+* issue #17: Generate all languages from pbjc.yml unless lang option is provided.
+* issue #16: BUG :: Compiler produces default for enums when one isn't set.
+
+
 ## v0.1.3
 * issue #14: BUG :: mixins using extends option won't compile.
 * issue #13: Test case and example of map, set and list in json schema.

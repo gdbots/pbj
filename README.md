@@ -149,7 +149,7 @@ You can use `Message` and `MessageRef` as field types. For example, let's say yo
 
 The `any-of` attribute define the message id that will be used to pull the message details.
 
-### Full Schma Options
+### Full Schema Options
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -207,7 +207,6 @@ The `any-of` attribute define the message id that will be used to pull the messa
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-enums xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
