@@ -208,7 +208,7 @@
     "type": "integer",
   {% elseif field.type.typeName ~ '' in ['boolean'] %}
     "type": "boolean",
-  {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
+  {% elseif field.type.typeName ~ '' in ['date', 'date-time', 'geo-point', 'message-ref', 'message'] %}
     "type": "object",
   {% else %}
     "type": "string",
@@ -227,9 +227,14 @@
 
   {% if field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
     "format": "{{ field.format ~ '' }}",
+  {% elseif field.type.typeName ~ '' == 'date-time' %}
+    "format": "date-time",
   {% endif %}
 
-  {% set hasPattern = field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
+  {% set hasPattern =
+    field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri']
+    or field.type.typeName ~ '' in ['date-time']
+  %}
   {% if field.pattern %}
     {% set hasPattern = true %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
