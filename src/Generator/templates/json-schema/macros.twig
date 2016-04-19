@@ -82,10 +82,8 @@
           {{ _self.draw_field_properties(field, true) }}
         }
       },
-      "maxProperties": 1,
-      "minProperties": 1,
       "additionalProperties": false,
-    {% elseif field.rule ~ '' == 'list' %}
+    {% elseif field.rule ~ '' in ['list', 'set'] %}
       "type": "array",
       "items": [
         {% if field.anyOf %}
@@ -94,18 +92,13 @@
           {% endfor %}
         {% else %}
           {
-            "type": "object",
-            "patternProperties": {
-              "^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,99}$": {
-                {{ _self.draw_field_properties(field, true) }}
-              }
-            },
-            "maxProperties": 1,
-            "minProperties": 1,
-            "additionalProperties": false
+            {{ _self.draw_field_properties(field, true) }}
           }
         {% endif %}
       ],
+      {% if field.rule ~ '' == 'set' %}
+        "uniqueItems": true,
+      {% endif %}
       "additionalProperties": false,
     {% elseif field.type.typeName ~ '' == 'message-ref' %}
       "type": "object",
