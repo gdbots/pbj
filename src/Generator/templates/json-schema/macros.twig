@@ -219,7 +219,7 @@
   {% endif %}
 
   {% if
-    field.default|default(field.type.default)
+    field.default|default(field.type.default) is not empty
     and field.type.typeName ~ '' not in ['microtime', 'timestamp', 'uuid', 'time-uuid']
   %}
     "default": {{ field.default|default(field.type.default)|json_encode }},

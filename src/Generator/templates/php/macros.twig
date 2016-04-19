@@ -61,7 +61,7 @@
 {% if not field.language('php').get('hide_default') %}
     {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|reduceSpaces }})
 {% endif %}
-{% elseif field.default %}
+{% elseif field.default is not empty %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
 {% endif %}
 {% if not field.useTypeDefault %}
