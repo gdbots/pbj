@@ -208,7 +208,7 @@
     "type": "integer",
   {% elseif field.type.typeName ~ '' in ['boolean'] %}
     "type": "boolean",
-  {% elseif field.type.typeName ~ '' in ['date', 'date-time', 'geo-point', 'message-ref', 'message'] %}
+  {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
     "type": "object",
   {% else %}
     "type": "string",
