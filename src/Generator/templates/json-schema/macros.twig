@@ -82,6 +82,9 @@
           {{ _self.draw_field_properties(field, true) }}
         }
       },
+      {% if field.required %}
+        "minProperties": 1,
+      {% endif %}
       "additionalProperties": false,
     {% elseif field.rule ~ '' in ['list', 'set'] %}
       "type": "array",
@@ -100,7 +103,7 @@
         "uniqueItems": true,
       {% endif %}
       {% if field.required %}
-        "minProperties": 1,
+        "minItems": 1,
       {% endif %}
       "additionalProperties": false,
     {% elseif field.type.typeName ~ '' == 'message-ref' %}
