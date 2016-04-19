@@ -28,8 +28,7 @@ class CompileCommand extends Command
                 'language',
                 'l',
                  InputOption::VALUE_OPTIONAL,
-                'The generated language',
-                'php'
+                'The generated language'
             )
             ->addOption(
                 'config',
@@ -60,7 +59,6 @@ EOF
     {
         $io = new SymfonyStyle($input, $output);
 
-        $language = $input->getOption('language') ?: 'php';
         $file = $input->getOption('config') ?: sprintf('%s/pbjc.yml', getcwd());
 
         if (!file_exists($file)) {
@@ -69,21 +67,17 @@ EOF
         }
 
         $parser = new Parser();
-        $options = $parser->parse(file_get_contents($file));
+        $data = $parser->parse(file_get_contents($file));
 
-        if (!is_array($options['namespaces'])) {
-            $options['namespaces'] = [$options['namespaces']];
+        if (!is_array($data['namespaces'])) {
+            $data['namespaces'] = [$data['namespaces']];
         }
 
-        if (isset($options['languages'][$language])) {
-            $options = array_merge($options, $options['languages'][$language]);
-        }
+        $io->title('Generated files for ');
+        $io->listing($data['namespaces']);
 
-        if (isset($options['languages'])) {
-            unset($options['languages']);
-        }
-
-        $options['callback'] = function (OutputFile $file) use ($io) {
+        // output callback
+        $callback = function (OutputFile $file) use ($io) {
             $io->text($file->getFile());
 
             if (!is_dir(dirname($file->getFile()))) {
@@ -93,15 +87,33 @@ EOF
             file_put_contents($file->getFile(), $file->getContents());
         };
 
-        try {
-            $io->title(sprintf('Generated files for "%s":',  implode('", "', $options['namespaces'])));
+        $languages = [];
+        if (isset($data['languages'])) {
+            $languages = $data['languages'];
 
-            $compile = new Compiler();
-            $compile->run($language, new CompileOptions($options));
+            unset($data['languages']);
+        }
 
-            $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
+        $compile = new Compiler();
+
+        foreach ($languages as $language => $options) {
+            if ($input->getOption('language') && $input->getOption('language') != $language) {
+                continue;
+            }
+
+            $options = array_merge($data, $options, [
+                'callback' => $callback,
+            ]);
+
+            try {
+                $io->section($language);
+
+                $compile->run($language, new CompileOptions($options));
+
+                $io->success("\xf0\x9f\x91\x8d"); //thumbs-up-sign
+            } catch (\Exception $e) {
+                $io->error($e->getMessage());
+            }
         }
     }
 }
