@@ -94,7 +94,7 @@ final class FieldDescriptor
      * @param string $name
      * @param array  $parameters
      *
-     * @throw \InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct($name, array $parameters)
     {

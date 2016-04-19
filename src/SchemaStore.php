@@ -58,7 +58,7 @@ class SchemaStore
      * @param SchemaId         $schemaId
      * @param SchemaDescriptor $schema
      *
-     * @throw \RuntimeException on duplicate id
+     * @throws \RuntimeException on duplicate id
      */
     public static function addSchema(SchemaId $schemaId, SchemaDescriptor $schema)
     {
@@ -301,7 +301,7 @@ class SchemaStore
      * @param EnumId         $enumId
      * @param EnumDescriptor $enum
      *
-     * @throw \RuntimeException on duplicate id
+     * @throws \RuntimeException on duplicate id
      */
     public static function addEnum(EnumId $enumId, EnumDescriptor $enum)
     {

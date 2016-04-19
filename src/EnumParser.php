@@ -17,7 +17,7 @@ class EnumParser
      *
      * @return EnumDescriptor[]
      *
-     * @throw \RuntimeException
+     * @throws \RuntimeException
      */
     public function fromFile($file)
     {
@@ -87,7 +87,7 @@ class EnumParser
      *
      * @return EnumDescriptor|null
      *
-     * @throw \InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     private function parse(array $data)
     {
