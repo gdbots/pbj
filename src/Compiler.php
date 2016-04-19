@@ -125,7 +125,7 @@ final class Compiler
      * @param string         $language
      * @param CompileOptions $options
      *
-     * @throw \InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function run($language, CompileOptions $options)
     {

@@ -49,7 +49,7 @@ class SchemaValidator
      *
      * @param SchemaDescriptor $schema
      *
-     * @throw \RuntimeException
+     * @throws \RuntimeException
      */
     public function validate(SchemaDescriptor $schema)
     {

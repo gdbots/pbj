@@ -20,7 +20,7 @@ class SchemaParser
      *
      * @return array
      *
-     * @throw \RuntimeException
+     * @throws \RuntimeException
      */
     private function getXmlData($file)
     {
@@ -72,8 +72,8 @@ class SchemaParser
      *
      * @return SchemaDescriptor|null
      *
-     * @throw \RuntimeException
-     * @throw MissingSchema
+     * @throws \RuntimeException
+     * @throws MissingSchema
      */
     public function fromFile($file)
     {
@@ -136,8 +136,8 @@ class SchemaParser
      *
      * @return SchemaDescriptor
      *
-     * @throw \InvalidArgumentException
-     * @throw MissingSchema
+     * @throws \InvalidArgumentException
+     * @throws MissingSchema
      */
     private function parse(array $data)
     {
@@ -323,8 +323,8 @@ class SchemaParser
      *
      * @return array
      *
-     * @throw \InvalidArgumentException
-     * @throw MissingSchema
+     * @throws \InvalidArgumentException
+     * @throws MissingSchema
      */
     private function getAnyOf($schemaId, $curies)
     {
@@ -353,7 +353,7 @@ class SchemaParser
      *
      * @return EnumDescriptor
      *
-     * @throw \InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     private function getEnumById($id)
     {
@@ -373,8 +373,8 @@ class SchemaParser
      *
      * @return SchemaDescriptor|null
      *
-     * @throw \InvalidArgumentException
-     * @throw MissingSchema
+     * @throws \InvalidArgumentException
+     * @throws MissingSchema
      */
     private function getMixin(SchemaId $schemaId, $curieWithMajorRev)
     {

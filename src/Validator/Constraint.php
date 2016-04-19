@@ -15,7 +15,7 @@ interface Constraint
      *
      * @return string
      *
-     * @throw \Gdbots\Pbjc\Exception\ValidatorException
+     * @throws \Gdbots\Pbjc\Exception\ValidatorException
      */
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b);
 }
