@@ -45,11 +45,15 @@ class PhpGenerator extends Generator
                 }
 
                 $enumKey = 'unknown';
-                if ($default && $enum->hasValue($default)) {
+                if (!empty($default) && $enum->hasValue($default)) {
                     $enumKey = $enum->getKeyByValue($default);
                 }
 
                 $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
+
+                if (empty($default)) {
+                    $field->getLanguage('php')->set('hide_default', true);
+                }
             }
         }
     }
