@@ -99,6 +99,9 @@
       {% if field.rule ~ '' == 'set' %}
         "uniqueItems": true,
       {% endif %}
+      {% if field.required %}
+        "minProperties": 1,
+      {% endif %}
       "additionalProperties": false,
     {% elseif field.type.typeName ~ '' == 'message-ref' %}
       "type": "object",
