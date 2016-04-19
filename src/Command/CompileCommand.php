@@ -73,7 +73,7 @@ EOF
             $data['namespaces'] = [$data['namespaces']];
         }
 
-        $io->title('Generated files for ');
+        $io->title('Generated files for namespaces:');
         $io->listing($data['namespaces']);
 
         // output callback
