@@ -79,7 +79,7 @@
       "type": "object",
       "patternProperties": {
         "^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,99}$": {
-          {{ _self.draw_field_properties(field, true) }}
+          {{ _self.draw_field_properties(field) }}
         }
       },
       {% if field.required %}
@@ -94,9 +94,7 @@
             { "$ref": "#/definitions/{{ schema.id.message|lower|slugify }}" }{% if not loop.last %}, {% endif %}
           {% endfor %}
         {% else %}
-          {
-            {{ _self.draw_field_properties(field, true) }}
-          }
+          { {{ _self.draw_field_properties(field) }} }
         {% endif %}
       ],
       {% if field.rule ~ '' == 'set' %}
@@ -106,59 +104,12 @@
         "minItems": 1,
       {% endif %}
       "additionalProperties": false,
-    {% elseif field.type.typeName ~ '' == 'message-ref' %}
-      "type": "object",
-      "properties": {
-        "curie": {
-          "type": "string",
-          "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
-          "minLength": 0,
-          "maxLength": 146
-        },
-        "id": {
-          "type": "string",
-          "pattern": "^[A-Za-z0-9:_\\-]+$",
-          "minLength": 0,
-          "maxLength": 255
-        },
-        "tag": {
-          "type": "string",
-          "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
-          "minLength": 0,
-          "maxLength": 255
-        }
-      },
-      "required": ["curie", "id"],
-      "additionalProperties": false,
-    {% elseif field.type.typeName ~ '' == 'geo-point' %}
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "pattern": "^Point$"
-        },
-        "coordinates": {
-          "type": "array",
-          "items": [
-            {
-              "required": true,
-              "type": "number",
-              "minimum": -180,
-              "maximum": 180
-            },
-            {
-              "required": true,
-              "type": "number",
-              "minimum": -90,
-              "maximum": 90
-            }
-          ]
-        }
-      },
-      "required": ["type", "coordinates"],
-      "additionalProperties": false,
     {% else %}
       {{ _self.draw_field_properties(field) }}
+    {% endif %}
+
+    {% if field.description %}
+      "description": "{{ field.description|reduceSpaces|replace({'"': '\\"'}) }}",
     {% endif %}
 
     "pbj": {
@@ -189,13 +140,12 @@
     Render field properties
     Parameters:
         field - a FieldDescriptor instance
-        isFirstLevel - whether or not to handle level one properties
 #}
-{% macro draw_field_properties(field, isFirstLevel) %}
-  {% if not isFirstLevel and field.rule ~ '' == 'map' %}
-    "type": "object",
-  {% elseif not isFirstLevel and field.rule ~ '' == 'list' %}
-    "type": "array",
+{% macro draw_field_properties(field) %}
+  {% if field.type.typeName ~ '' == 'message-ref' %}
+    {{ _self.draw_message_ref_properties() }}
+  {% elseif field.type.typeName ~ '' == 'geo-point' %}
+    {{ _self.draw_geo_point_properties() }}
   {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
     "type": "number",
   {% elseif field.type.typeName ~ '' in [
@@ -207,14 +157,10 @@
     "type": "integer",
   {% elseif field.type.typeName ~ '' in ['boolean'] %}
     "type": "boolean",
-  {% elseif field.type.typeName ~ '' in ['date', 'geo-point', 'message-ref', 'message'] %}
+  {% elseif field.type.typeName ~ '' in ['date', 'message'] %}
     "type": "object",
   {% else %}
     "type": "string",
-  {% endif %}
-
-  {% if field.description %}
-    "description": "{{ field.description|reduceSpaces|replace({'"': '\\"'}) }}",
   {% endif %}
 
   {% if
@@ -232,7 +178,7 @@
 
   {% set hasPattern =
     field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri']
-    or field.type.typeName ~ '' in ['date-time']
+    or field.type.typeName ~ '' in ['date-time', 'message-ref', 'geo-point']
   %}
   {% if field.pattern %}
     {% set hasPattern = true %}
@@ -278,4 +224,59 @@
   {% if field.language('json-schema').get('faker') %}
     "faker": "{{ field.language('json-schema').get('faker') }}",
   {% endif %}
+{% endmacro %}
+
+{% macro draw_message_ref_properties() %}
+  "type": "object",
+  "properties": {
+    "curie": {
+      "type": "string",
+      "pattern": "^([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+      "minLength": 0,
+      "maxLength": 146
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9:_\\-]+$",
+      "minLength": 0,
+      "maxLength": 255
+    },
+    "tag": {
+      "type": "string",
+      "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
+      "minLength": 0,
+      "maxLength": 255
+    }
+  },
+  "required": ["curie", "id"],
+  "additionalProperties": false,
+{% endmacro %}
+
+{% macro draw_geo_point_properties() %}
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "pattern": "^Point$"
+    },
+    "coordinates": {
+      "type": "array",
+      "items": [
+        {
+          "required": true,
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "required": true,
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      ]
+    }
+  },
+  "required": ["type", "coordinates"],
+  "additionalProperties": false,
 {% endmacro %}
