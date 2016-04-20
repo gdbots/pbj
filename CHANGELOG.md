@@ -2,9 +2,9 @@
 
 
 ## v0.1.5
-issue #22: BUG :: Multi-valued fields don't produce proper json-schema.
-issue #21: BUG :: Using an int-enum with a default of 0 won't render.
-issue #20: BUG :: date-time field types render as numbers in json schema.
+* issue #22: BUG :: Multi-valued fields don't produce proper json-schema.
+* issue #21: BUG :: Using an int-enum with a default of 0 won't render.
+* issue #20: BUG :: date-time field types render as numbers in json schema.
 
 
 ## v0.1.4
