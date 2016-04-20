@@ -70,6 +70,11 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
                                 'type' => 'message-ref',
                                 'rule' => 'set',
                             ]),
+                            new FieldDescriptor('set_with_pattern', [
+                                'type' => 'string',
+                                'pattern' => '^[\w\/\.:-]+$',
+                                'rule' => 'set',
+                            ]),
                         ],
                     ]
                 ),
@@ -200,6 +205,21 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
       "additionalProperties": false,
       "pbj": {
         "type": "message-ref",
+        "rule": "set"
+      }
+    },
+    "set_with_pattern": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string",
+          "pattern": "^[\\\\w\\\\/\\\\.:-]+$"
+        }
+      ],
+      "uniqueItems": true,
+      "additionalProperties": false,
+      "pbj": {
+        "type": "string",
         "rule": "set"
       }
     }

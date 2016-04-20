@@ -52,6 +52,30 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
                             new FieldDescriptor('int', [
                                 'type' => 'int',
                             ]),
+                            new FieldDescriptor('geo_point', [
+                                'type' => 'geo-point',
+                            ]),
+                            new FieldDescriptor('string_with_properties', [
+                                'type' => 'string',
+                                'default' => 'test',
+                                'description' => 'this is a short description',
+                                'min' => 10,
+                                'max' => 100,
+                            ]),
+                            new FieldDescriptor('url', [
+                                'type' => 'string',
+                                'format' => 'url',
+                                'rule' => 'map',
+                            ]),
+                            new FieldDescriptor('node_refs', [
+                                'type' => 'message-ref',
+                                'rule' => 'set',
+                            ]),
+                            new FieldDescriptor('set_with_pattern', [
+                                'type' => 'string',
+                                'pattern' => '^[\w\/\.:-]+$',
+                                'rule' => 'set',
+                            ]),
                         ],
                         'languages' => new LanguageBag([
                             'php' => new LanguageBag([
@@ -77,6 +101,7 @@ interface Article extends Message
 namespace Acme\Blog\Entity;
 
 use Gdbots\Pbj\AbstractMessage;
+use Gdbots\Pbj\Enum\Format;
 use Gdbots\Pbj\FieldBuilder as Fb;
 use Gdbots\Pbj\Schema;
 use Gdbots\Pbj\Type as T;
@@ -94,6 +119,27 @@ final class ArticleV1 extends AbstractMessage implements
                 Fb::create('string', T\StringType::create())
                     ->build(),
                 Fb::create('int', T\IntType::create())
+                    ->build(),
+                Fb::create('geo_point', T\GeoPointType::create())
+                    ->build(),
+                /*
+                 * this is a short description
+                 */
+                Fb::create('string_with_properties', T\StringType::create())
+                    ->minLength(10)
+                    ->maxLength(100)
+                    ->withDefault(\"test\")
+                    ->build(),
+                Fb::create('url', T\StringType::create())
+                    ->asAMap()
+                    ->format(Format::URL())
+                    ->build(),
+                Fb::create('node_refs', T\MessageRefType::create())
+                    ->asASet()
+                    ->build(),
+                Fb::create('set_with_pattern', T\StringType::create())
+                    ->asASet()
+                    ->pattern('^[\w\/\.:-]+$')
                     ->build()
             ]
         );
