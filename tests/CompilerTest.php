@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Compiler;
+namespace Gdbots\Tests\Pbjc;
 
 use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\CompileOptions;
