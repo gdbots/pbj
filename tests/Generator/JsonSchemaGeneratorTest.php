@@ -51,6 +51,25 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
                             new FieldDescriptor('int', [
                                 'type' => 'int',
                             ]),
+                            new FieldDescriptor('geo_point', [
+                                'type' => 'geo-point',
+                            ]),
+                            new FieldDescriptor('string_with_properties', [
+                                'type' => 'string',
+                                'default' => 'test',
+                                'description' => 'this is a short description',
+                                'min' => 10,
+                                'max' => 100,
+                            ]),
+                            new FieldDescriptor('url', [
+                                'type' => 'string',
+                                'format' => 'url',
+                                'rule' => 'map',
+                            ]),
+                            new FieldDescriptor('node_refs', [
+                                'type' => 'message-ref',
+                                'rule' => 'set',
+                            ]),
                         ],
                     ]
                 ),
@@ -82,6 +101,106 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
       "pbj": {
         "type": "int",
         "rule": "single"
+      }
+    },
+    "geo_point": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^Point$"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": [
+            {
+              "required": true,
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            {
+              "required": true,
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "additionalProperties": false,
+      "pbj": {
+        "type": "geo-point",
+        "rule": "single"
+      }
+    },
+    "string_with_properties": {
+      "type": "string",
+      "default": "test",
+      "minLength": 10,
+      "maxLength": 100,
+      "description": "this is a short description",
+      "pbj": {
+        "type": "string",
+        "rule": "single"
+      }
+    },
+    "url": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,99}$": {
+          "type": "string",
+          "pattern": "^(https?:\\\\/\\\\/)?([\\\\da-z\\\\.-]+)\\\\.([a-z\\\\.]{2,6})([\\\\/\\\\w \\\\.-]*)*\\\\/?$"
+        }
+      },
+      "additionalProperties": false,
+      "pbj": {
+        "type": "string",
+        "rule": "map",
+        "format": "url"
+      }
+    },
+    "node_refs": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "curie": {
+              "type": "string",
+              "pattern": "^([a-z0-9-]+):([a-z0-9\\\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+)$",
+              "minLength": 0,
+              "maxLength": 146
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9:_\\\\-]+$",
+              "minLength": 0,
+              "maxLength": 255
+            },
+            "tag": {
+              "type": "string",
+              "pattern": "^([\\\\w\\\\/-]|[\\\\w-][\\\\w\\\\/-]*[\\\\w-])$",
+              "minLength": 0,
+              "maxLength": 255
+            }
+          },
+          "required": [
+            "curie",
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "uniqueItems": true,
+      "additionalProperties": false,
+      "pbj": {
+        "type": "message-ref",
+        "rule": "set"
       }
     }
   },
