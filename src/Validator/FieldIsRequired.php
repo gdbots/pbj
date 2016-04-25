@@ -12,8 +12,8 @@ class FieldIsRequired implements Constraint
      */
     public function validate(SchemaDescriptor $a, SchemaDescriptor $b)
     {
-        $fa = array_merge($a->getFields(), $a->getInheritedFields());
-        $fb = array_merge($b->getFields(), $b->getInheritedFields());
+        $fa = array_merge($a->getInheritedFields(), $a->getFields());
+        $fb = array_merge($b->getInheritedFields(), $b->getFields());
 
         /** @var \Gdbots\Pbjc\FieldDescriptor $field */
         /** @var \Gdbots\Pbjc\FieldDescriptor[] $fb */

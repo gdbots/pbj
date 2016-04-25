@@ -5,7 +5,7 @@
         compileOptions - a CompileOptions instance
 #}
 {% macro draw_schema(schema, compileOptions) %}
-{% set fields = schema.fields|merge(schema.inheritedFields) %}
+{% set fields = schema.inheritedFields|merge(schema.fields) %}
 {
   "id": "{{ compileOptions.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -19,9 +19,7 @@
       },
     {% endif %}
 
-    {% set keys = schema.inheritedFields(true)|merge(schema.fields)|keys %}
-    {% for key in keys %}
-      {% set field = fields[key] %}
+    {% for field in fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
   },
