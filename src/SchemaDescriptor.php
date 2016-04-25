@@ -136,28 +136,18 @@ final class SchemaDescriptor
     }
 
     /**
-     * @param bool $flip
-     *
      * @return FieldDescriptor[]
      */
-    public function getInheritedFields($flip = false)
+    public function getInheritedFields()
     {
         $fields = [];
 
         foreach ($this->getMixins() as $mixin) {
-            if ($flip) {
-                $fields = array_merge(
-                    $fields,
-                    $mixin->getFields(),
-                    $mixin->getInheritedFields()
-                );
-            } else {
-                $fields = array_merge(
-                    $fields,
-                    $mixin->getInheritedFields(),
-                    $mixin->getFields()
-                );
-            }
+            $fields = array_merge(
+                $fields,
+                $mixin->getInheritedFields(),
+                $mixin->getFields()
+            );
         }
 
         return $fields;

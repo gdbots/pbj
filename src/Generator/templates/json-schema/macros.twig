@@ -19,9 +19,7 @@
       },
     {% endif %}
 
-    {% set keys = schema.fields|merge(schema.inheritedFields(true))|keys %}
-    {% for key in keys %}
-      {% set field = fields[key] %}
+    {% for field in fields %}
       {{ _self.draw_field(field) }}{% if not loop.last or schema.mixins|length  %},{% endif %}
     {% endfor %}
   },
