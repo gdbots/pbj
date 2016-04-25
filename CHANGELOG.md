@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.1.6
+* issue #25: BUG :: Ignore "overridable" on field inheritance, and fix json-schema fields order.
+
+
 ## v0.1.5
 * issue #22: BUG :: Multi-valued fields don't produce proper json-schema.
 * issue #21: BUG :: Using an int-enum with a default of 0 won't render.
