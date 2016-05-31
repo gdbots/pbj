@@ -206,11 +206,25 @@
 
   {% if not field.enum and not hasPattern %}
     {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
-      "minLength": {{ field.minLength|default(0) }},
-      "maxLength": {{ field.maxLength|default(field.type.maxBytes) }},
+      {% set minLength = field.minLength|default(0) %}
+      {% if '' ~ minLength not in ['INF', 'NAN'] %}
+        "minLength": {{ minLength }},
+      {% endif %}
+
+      {% set maxLength = maxLength|default(field.type.maxBytes) %}
+      {% if '' ~ maxLength not in ['INF', 'NAN'] %}
+        "maxLength": {{ maxLength }},
+      {% endif %}
     {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
-      "minimum": {{ field.min|default(field.type.min) }},
-      "maximum": {{ field.max|default(field.type.max) }},
+      {% set min = field.min|default(field.type.min) %}
+      {% if '' ~ min not in ['INF', 'NAN'] %}
+        "minimum": {{ min }},
+      {% endif %}
+
+      {% set max = field.max|default(field.type.max) %}
+      {% if '' ~ max not in ['INF', 'NAN'] %}
+        "maximum": {{ max }},
+      {% endif %}
     {% endif %}
   {% endif %}
 
