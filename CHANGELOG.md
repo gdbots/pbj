@@ -2,7 +2,7 @@
 
 
 ## v0.1.7
-* issue #27: BUG :: Handle INF & NAN numeric values.
+* issue #27: BUG :: Handle INF & NAN numeric values. Also removed min/max for decimals and floats fields.
 
 
 ## v0.1.6

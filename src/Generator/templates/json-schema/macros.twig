@@ -215,7 +215,7 @@
       {% if '' ~ maxLength not in ['INF', 'NAN'] %}
         "maxLength": {{ maxLength }},
       {% endif %}
-    {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
+    {% elseif field.type.typeName ~ '' not in ['float', 'decimal', 'boolean', 'date', 'geo-point', 'message-ref', 'message'] %}
       {% set min = field.min|default(field.type.min) %}
       {% if '' ~ min not in ['INF', 'NAN'] %}
         "minimum": {{ min }},
