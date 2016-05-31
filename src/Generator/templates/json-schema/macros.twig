@@ -211,7 +211,7 @@
         "minLength": {{ minLength }},
       {% endif %}
 
-      {% set maxLength = maxLength|default(field.type.maxBytes) %}
+      {% set maxLength = field.maxLength|default(field.type.maxBytes) %}
       {% if '' ~ maxLength not in ['INF', 'NAN'] %}
         "maxLength": {{ maxLength }},
       {% endif %}
