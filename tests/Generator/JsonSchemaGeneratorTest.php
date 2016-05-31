@@ -147,7 +147,7 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
       "type": "string",
       "default": "test",
       "minLength": 10,
-      "maxLength": 100,
+      "maxLength": 255,
       "description": "this is a short description",
       "pbj": {
         "type": "string",
