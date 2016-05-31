@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.1.7
+* issue #27: BUG :: Handle INF & NAN numeric values.
+
+
 ## v0.1.6
 * issue #25: BUG :: Ignore "overridable" on field inheritance, and fix json-schema fields order.
 
