@@ -63,6 +63,8 @@ class JsonSchemaGenerator extends Generator
                             ', ]',
                             ',}',
                             ',]',
+                            ': INF',
+                            ': NAN'
                         ],
                         [
                             '',
@@ -71,11 +73,13 @@ class JsonSchemaGenerator extends Generator
                             '}',
                             '}',
                             ']',
+                            ': "INF"',
+                            ': "NAN"'
                         ],
                         parent::render($template, $parameters)
                     )
                 ),
-                JSON_PRETTY_PRINT
+                JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT
             )
         );
     }
