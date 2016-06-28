@@ -43,7 +43,7 @@ Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
   {{ spaces|format('') }}.pattern('{{ field.pattern }}')
 {% endif %}
 {% if field.format %}
-  {{ spaces|format('') }}.format(Format.{{ field.format|upper }}
+  {{ spaces|format('') }}.format(Format.{{ field.format|upper }})
 {% endif %}
 {% if field.min %}
   {{ spaces|format('') }}.min({{ field.min }})
