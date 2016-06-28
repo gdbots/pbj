@@ -99,12 +99,14 @@ abstract class Generator
             '{vendor}',
             '{package}',
             '{category}',
+            '{message}',
             '{version}',
             '{major}',
         ], [
             $schema->getId()->getVendor(),
             $schema->getId()->getPackage(),
             $schema->getId()->getCategory(),
+            $schema->getId()->getMessage(),
             $schema->getId()->getVersion()->toString(),
             $schema->getId()->getVersion()->getMajor(),
         ], $filename);

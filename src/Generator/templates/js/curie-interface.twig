@@ -1,0 +1,19 @@
+{% set className = getClassName(schema) %}
+'use strict';
+
+{% block use_statements %}
+import SystemUtils from 'gdbots/common/util/system-utils';
+{% if schema.extends and not isSameNamespace(schema, schema.extends) %}
+import {% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className, true) }}{% endif %} from '{{ schema.extends.id.vendor }}/{{ schema.extends.id.package }}/{{ schema.extends.id.category }}/{{ schema.extends.id.message }}';
+{% else %}
+import Message from 'gdbots/pbj/message'
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ className }} extends SystemUtils.mixinClass({% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className) }}{% endif %}{% else %}Message{% endif %})
+{% endblock class_definition %}
+{
+{% block class_body %}
+{% endblock class_body %}
+}

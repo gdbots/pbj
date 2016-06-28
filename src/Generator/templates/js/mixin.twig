@@ -1,0 +1,59 @@
+'use strict';
+
+{% block use_statements %}
+import SystemUtils from 'gdbots/common/util/system-utils';
+import Fb from 'gdbots/pbj/field-builder';
+import Mixin from 'gdbots/pbj/mixin';
+import SchemaId from 'gdbots/pbj/schema-id';
+{% set format_class = false %}
+{% for field in schema.fields %}
+{% if field.format %}
+{% set format_class = true %}
+{% endif %}
+import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|lower }}-type';
+{% if field.anyOf %}
+{% if field.anyOf|length == 1 %}
+import {{ getClassName(field.anyOf.0) }} from '@todo';
+{% else %}
+{% for schema in field.anyOf %}
+import {{ getClassName(schema) }} from '@todo';
+{% endfor %}
+{% endif %}
+{% elseif field.language('js').get('instance') %}
+import {{ field.language('js').get('instance') }} from '@todo';
+{% endif %}
+{% endfor %}
+{% if format_class %}
+import Format from 'gdbots/pbj/enum/format';
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+export default class {{ getClassName(schema, true) }}Mixin extends SystemUtils.mixinClass(Mixin)
+{% endblock class_definition %}
+{
+{% block class_body %}
+  /**
+   * {@inheritdoc}
+   */
+  getId() {
+    return SchemaId::fromString('{{ schema.id }}');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  getFields() {
+{% if schema.fields|length %}
+    return [
+{% import 'js/macros.twig' as macros %}
+{% for field in schema.fields %}
+      {{ macros.draw_field(field, 6, loop.last) }}
+{%- endfor %}
+    ];
+{% else %}
+    return [];
+{% endif %}
+  }
+{% endblock class_body %}
+}

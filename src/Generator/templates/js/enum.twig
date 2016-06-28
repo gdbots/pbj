@@ -1,0 +1,23 @@
+'use strict';
+
+{% block use_statements %}
+import Enum from 'gdbots/common/enum';
+import SystemUtils from 'gdbots/common/util/system-utils';
+{% endblock use_statements %}
+
+{% block class_definition %}
+/**
+{% for key, value in enum.values %}
+ * @method static {{ className }} {{ key}}()
+{% endfor %}
+ */
+export default class {{ className }} extends SystemUtils.mixinClass(Enum) {}
+{% endblock class_definition %}
+
+{% block class_body %}
+{{ className }}.initEnum({
+{% for key, value in enum.values %}
+    {{ key|upper }}: {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %},
+{% endfor %}
+});
+{% endblock class_body %}
