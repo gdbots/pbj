@@ -113,8 +113,35 @@ class JsGenerator extends Generator
     {
         $code = parent::render($template, $parameters);
 
-        // @todo: use statements: removed duplicate
-        // @todo: use statements: sorting
+        // import statements: removed duplicate
+        if (preg_match_all('/\nimport\s(.*)\sfrom\s\'(.*)\';/', $code, $matches) !== false) {
+            $unique = array_unique($matches[1]);
+
+            foreach ($matches[1] as $key => $match) {
+                if (in_array($match, $unique)) {
+                    unset($unique[array_search($match, $unique)]);
+                } else {
+                    $code = preg_replace(sprintf("/%s/", str_replace('/', '\/', $matches[0][$key])), '', $code, 1);
+                }
+            }
+        }
+
+        // import statements: sorting
+        if (preg_match_all('/\nimport\s(.*);/', $code, $matches) !== false) {
+            $unique = array_unique($matches[1]);
+
+            asort($unique);
+            $unique = array_values($unique);
+
+            foreach ($matches[1] as $key => $match) {
+                $from = sprintf("\nimport %s;", $match);
+                $to = sprintf("\nimport %s[import_tmp];", $unique[$key]);
+
+                $code = str_replace($from, $to, $code);
+            }
+
+            $code = preg_replace("/\[import_tmp\];/", ';', $code);
+        }
 
         // generate replacements
         $code = str_replace(
