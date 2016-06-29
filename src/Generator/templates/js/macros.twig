@@ -79,13 +79,13 @@ Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
   {{ spaces|format('') }}])
 {% endif %}
 {% elseif field.language('js').get('instance') %}
-  {{ spaces|format('') }}.instance({{ field.language('js').get('instance') }})
+  {{ spaces|format('') }}.instance({{ field.language('js').get('instance').classname }})
 {% endif %}
 {% if field.overridable %}
   {{ spaces|format('') }}.overridable(true)
 {% endif %}
 {% if field.language('instance').get('assertion') %}
-  {{ spaces|format('') }}.assertion({{ field.language('instance').get('assertion')|reduceSpaces }})
+  {{ spaces|format('') }}.assertion({{ field.language('js').get('assertion')|reduceSpaces }})
 {% endif %}
   {{ spaces|format('') }}.build(){% if not isLastItem %},{% endif %}
 
