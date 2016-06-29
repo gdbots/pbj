@@ -5,7 +5,7 @@
 {% block use_statements %}
 import SystemUtils from 'gdbots/common/util/system-utils';
 import Schema from 'gdbots/pbj/schema';
-import {{ getClassName(schema) }} from '{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.message }}';
+import {{ getClassName(schema) }} from '{{ schema.language('js').get('namespace') }}/{{ schema.id.message }}';
 {% set format_class = false %}
 {% for field in schema.fields %}
 {% if field.format %}
@@ -14,19 +14,19 @@ import {{ getClassName(schema) }} from '{{ schema.id.vendor }}/{{ schema.id.pack
 import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|lower }}-type';
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
-import {{ getClassName(field.anyOf.0) }} from '@todo';
+import {{ getClassName(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('namespace') }}/{{ field.anyOf.0.id.message }}';
 {% else %}
-{% for schema in field.anyOf %}
-import {{ getClassName(schema) }} from '@todo';
+{% for s in field.anyOf %}
+import {{ getClassName(s) }} from '{{ s.language('js').get('namespace') }}/{{ s.id.message }}';
 {% endfor %}
 {% endif %}
 {% elseif field.language('js').get('instance') %}
-import {{ field.language('js').get('instance') }} from '@todo';
+import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance').namespace }}';
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
-import {{ getClassName(mixin, true) }}Mixin from '{{ schema.id.vendor }}/{{ schema.id.package }}/{{ schema.id.category }}/{{ schema.id.message }}/{{ schema.id.message }}-v{{ schema.id.version.major }}-mixin';
+import {{ getClassName(mixin, true) }}Mixin from '{{ mixin.language('js').get('namespace') }}/{{ mixin.id.message }}-v{{ mixin.id.version.major }}-mixin';
 {% endif %}
 {% endfor %}
 {% if format_class %}

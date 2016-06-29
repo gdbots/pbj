@@ -23,7 +23,10 @@ class JsGenerator extends Generator
     {
         if ($enum = $field->getEnum()) {
             if (!$instance = $field->getLanguage('js')->get('instance')) {
-                $instance = StringUtils::toCamelFromSlug($enum->getId()->getName());
+                $instance = [
+                    'namespace' => $enum->getLanguage('js')->get('namespace'),
+                    'classname' => StringUtils::toCamelFromSlug($enum->getId()->getName())
+                ];
 
                 $field->getLanguage('js')->set('instance', $instance);
             }
@@ -39,7 +42,7 @@ class JsGenerator extends Generator
                     $enumKey = $enum->getKeyByValue($default);
                 }
 
-                $field->getLanguage('js')->set('default', sprintf('%s.%s', $instance, strtoupper($enumKey)));
+                $field->getLanguage('js')->set('default', sprintf('%s.%s', $instance['classname'], strtoupper($enumKey)));
 
                 if (strlen($default) === 0) {
                     $field->getLanguage('js')->set('hide_default', true);
@@ -53,12 +56,7 @@ class JsGenerator extends Generator
      */
     protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
-        $directory = sprintf('%s/%s/%s/%s',
-            $schema->getId()->getVendor(),
-            $schema->getId()->getPackage(),
-            $schema->getId()->getCategory(),
-            $schema->getId()->getMessage()
-        );
+        $directory = $schema->getLanguage('js')->get('namespace');
 
         return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
     }
@@ -85,8 +83,9 @@ class JsGenerator extends Generator
     public function generateEnum(EnumDescriptor $enum)
     {
         $filename =
-            sprintf('%s/%s%s',
+            sprintf('%s/%s/%s%s',
                 $this->compileOptions->getOutput(),
+                $enum->getLanguage('js')->get('namespace'),
                 $enum->getId()->getName(),
                 $this->extension
             )

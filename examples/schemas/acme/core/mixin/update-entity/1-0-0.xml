@@ -17,5 +17,9 @@
     <php-options>
       <namespace>Acme\Schemas\Core\Command</namespace>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/core/command</namespace>
+    </js-options>
   </schema>
 </pbj-schema>

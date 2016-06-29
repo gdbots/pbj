@@ -17,6 +17,20 @@
             ]]>
           </default>
         </php-options>
+
+        <js-options>
+          <instance>
+            <namespace>gdbots/identifiers/uuid-identifier</namespace>
+            <classname>UuidIdentifier</classname>
+          </instance>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier.generate();
+              }
+            ]]>
+          </default>
+        </js-options>
       </field>
 
       <field name="comment" type="text" />
@@ -59,5 +73,34 @@ public function getUriTemplateVars()
         </methods>
       </insertion-points>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/blog/entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+import MessageRef from 'gdbots/pbj/message-ref';
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string tag
+ * @return MessageRef
+ */
+generateMessageRef(tag = null) {
+  return new MessageRef(this.constructor.schema().getCurie(), this.get('id'), tag);
+}
+
+/**
+ * @return object
+ */
+getUriTemplateVars() {
+  return {};
+}
+            ]]>
+        </methods>
+      </insertion-points>
+    </js-options>
   </schema>
 </pbj-schema>

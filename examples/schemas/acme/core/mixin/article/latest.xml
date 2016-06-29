@@ -8,5 +8,9 @@
     <php-options>
       <namespace>Acme\Schemas\Core\Entity</namespace>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/core/entity</namespace>
+    </js-options>
   </schema>
 </pbj-schema>

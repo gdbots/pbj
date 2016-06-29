@@ -17,6 +17,20 @@
             ]]>
           </default>
         </php-options>
+
+        <js-options>
+          <instance>
+            <namespace>gdbots/identifiers/uuid-identifier</namespace>
+            <classname>UuidIdentifier</classname>
+          </instance>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier.generate();
+              }
+            ]]>
+          </default>
+        </js-options>
       </field>
 
       <field name="etag" type="string" pattern="^[A-Za-z0-9_\-]+$" max="100" />
@@ -52,5 +66,27 @@ public function generateMessageRef($tag = null)
         </methods>
       </insertion-points>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/core/entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+import MessageRef from 'gdbots/pbj/message-ref';
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string tag
+ * @return MessageRef
+ */
+generateMessageRef(tag = null) {
+  return new MessageRef(this.constructor.schema().getCurie(), this.get('id'), tag);
+}
+            ]]>
+        </methods>
+      </insertion-points>
+    </js-options>
   </schema>
 </pbj-schema>

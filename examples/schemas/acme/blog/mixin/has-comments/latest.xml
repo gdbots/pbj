@@ -8,5 +8,9 @@
     <php-options>
       <namespace>Acme\Schemas\Blog</namespace>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/blog</namespace>
+    </js-options>
   </schema>
 </pbj-schema>

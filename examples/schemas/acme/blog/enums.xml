@@ -27,5 +27,9 @@
     <php-options>
       <namespace>Acme\Schemas\Blog\Enum</namespace>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/blog/enum</namespace>
+    </js-options>
   </enums>
 </pbj-enums>

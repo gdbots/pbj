@@ -4,7 +4,11 @@
 {% block use_statements %}
 import SystemUtils from 'gdbots/common/util/system-utils';
 {% if schema.extends and not isSameNamespace(schema, schema.extends) %}
-import {% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className, true) }}{% endif %} from '{{ schema.extends.id.vendor }}/{{ schema.extends.id.package }}/{{ schema.extends.id.category }}/{{ schema.extends.id.message }}';
+{% if not hasOtherMajorRev(schema) %}
+import {{ getClassName(schema.extends, true) }} from '{{ schema.extends.language('js').get('namespace') }}/{{ schema.extends.id.message }}-v{{ schema.extends.id.version.major }}';
+{% else %}
+import {{ getClassName(schema.extends, false, className) }} from '{{ schema.extends.language('js').get('namespace') }}/{{ schema.extends.id.message }}';
+{% endif %}
 {% else %}
 import Message from 'gdbots/pbj/message'
 {% endif %}
