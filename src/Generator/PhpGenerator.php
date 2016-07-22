@@ -3,6 +3,7 @@
 namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbjc\Exception\InvalidEnumValue;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
@@ -44,10 +45,15 @@ class PhpGenerator extends Generator
                     $default = count($default) ? current($default) : null;
                 }
 
-                $enumKey = 'unknown';
-                if ($enum->hasValue($default)) {
-                    $enumKey = $enum->getKeyByValue($default);
+                if (!$enum->hasValue($default)) {
+                    throw new InvalidEnumValue(sprintf(
+                        'The enum value "%s" doesn\'t exists in %s.',
+                        $default
+                        $className
+                    ));
                 }
+
+                $enumKey = $enum->getKeyByValue($default);
 
                 $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
 
