@@ -48,7 +48,7 @@ class PhpGenerator extends Generator
                 if (!$enum->hasValue($default)) {
                     throw new InvalidEnumValue(sprintf(
                         'The enum value "%s" doesn\'t exists in %s.',
-                        $default
+                        $default,
                         $className
                     ));
                 }
