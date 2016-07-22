@@ -21,10 +21,10 @@ class FieldValidEnumValue implements Constraint
                 && !$field->getEnum()->hasValue($field->getDefault())
             ) {
                 throw new ValidatorException(sprintf(
-                    'The schema "%s" field "%s" enum value "%s" doesn\'t exists. Check enum "%s" for all existing values.',
+                    'The schema "%s" field "%s" enum value "%s" doesn\'t exist. Check enum "%s" for all existing values.',
                     $a->toString(),
-                    $field->getDefault(),
                     $name,
+                    $field->getDefault(),
                     $field->getEnum()->toString()
                 ));
             }
