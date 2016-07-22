@@ -40,6 +40,7 @@ class SchemaValidator
             new Constraint\FieldMinLength(),
             new Constraint\FieldMaxLength(),
             new Constraint\FieldSameEnum(),
+            new Constraint\FieldValidEnumValue(),
             new Constraint\FieldMustContainsAnyOfClasses(),
         ];
     }
