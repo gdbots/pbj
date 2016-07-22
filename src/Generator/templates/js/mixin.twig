@@ -37,7 +37,7 @@ export default class {{ getClassName(schema, true) }}Mixin extends SystemUtils.m
    * {@inheritdoc}
    */
   getId() {
-    return SchemaId::fromString('{{ schema.id }}');
+    return SchemaId.fromString('{{ schema.id }}');
   }
 
   /**
