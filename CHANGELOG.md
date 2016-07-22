@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.1.8
+* issue #31: BUG :: Unable to change default on overridden field.
+
+
 ## v0.1.7
 * issue #27: BUG :: Handle INF & NAN numeric values. Also removed min/max for decimals and floats fields.
 

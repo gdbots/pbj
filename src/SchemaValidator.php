@@ -72,5 +72,8 @@ class SchemaValidator
 
         $constraint = new Constraint\SchemaInheritanceFields();
         $constraint->validate($schema, $schema);
+
+        $constraint = new Constraint\FieldValidEnumValue();
+        $constraint->validate($schema, $schema);
     }
 }

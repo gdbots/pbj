@@ -28,7 +28,7 @@ class SchemaInheritanceFields implements Constraint
             foreach ($diff as $name) {
                 foreach($ref->getProperties() as $property) {
                     // skip
-                    if (in_array($property->getName(), ['overridable', 'description', 'languages', 'deprecated'])) {
+                    if (in_array($property->getName(), ['default', 'overridable', 'description', 'languages', 'deprecated'])) {
                         continue;
                     }
 
