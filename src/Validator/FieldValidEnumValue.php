@@ -18,10 +18,11 @@ class FieldValidEnumValue implements Constraint
         foreach ($fields as $name => $field) {
             if ($field->getEnum()
                 && $field->getDefault()
-                && $field->getEnum()->hasValue($field->getDefault())
+                && !$field->getEnum()->hasValue($field->getDefault())
             ) {
                 throw new ValidatorException(sprintf(
-                    'The field "%s" enum value "%s" doesn\'t exists. Check enum "%s" for correct values.',
+                    'The schema "%s" field "%s" enum value "%s" doesn\'t exists. Check enum "%s" for all existing values.',
+                    $a->toString(),
                     $field->getDefault(),
                     $name,
                     $field->getEnum()->toString()

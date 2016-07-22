@@ -40,7 +40,6 @@ class SchemaValidator
             new Constraint\FieldMinLength(),
             new Constraint\FieldMaxLength(),
             new Constraint\FieldSameEnum(),
-            new Constraint\FieldValidEnumValue(),
             new Constraint\FieldMustContainsAnyOfClasses(),
         ];
     }
@@ -72,6 +71,9 @@ class SchemaValidator
         $constraint->validate($schema, $schema);
 
         $constraint = new Constraint\SchemaInheritanceFields();
+        $constraint->validate($schema, $schema);
+
+        $constraint = new Constraint\FieldValidEnumValue();
         $constraint->validate($schema, $schema);
     }
 }

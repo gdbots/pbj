@@ -27,7 +27,7 @@
       <field name="geo_point" type="geo-point" />
 
       <field name="publish_status" type="string-enum">
-        <default>draft123</default>
+        <default>draft</default>
         <enum id="acme:blog:publish-status" />
       </field>
 
