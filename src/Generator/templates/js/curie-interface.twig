@@ -15,7 +15,7 @@ import Message from 'gdbots/pbj/message';
 {% endblock use_statements %}
 
 {% block class_definition %}
-class {{ className }} extends SystemUtils.mixinClass({% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className) }}{% endif %}{% else %}Message{% endif %})
+export default class {{ className }} extends SystemUtils.mixinClass({% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className) }}{% endif %}{% else %}Message{% endif %})
 {% endblock class_definition %}
 {
 {% block class_body %}
