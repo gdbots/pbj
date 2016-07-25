@@ -10,7 +10,7 @@ import {{ getClassName(schema.extends, true) }} from '{{ schema.extends.language
 import {{ getClassName(schema.extends, false, className) }} from '{{ schema.extends.language('js').get('namespace') }}/{{ schema.extends.id.message }}';
 {% endif %}
 {% else %}
-import Message from 'gdbots/pbj/message'
+import Message from 'gdbots/pbj/message';
 {% endif %}
 {% endblock use_statements %}
 
