@@ -40,7 +40,7 @@ Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
   {{ spaces|format('') }}.maxLength({{ field.maxLength }})
 {% endif %}
 {% if field.pattern %}
-  {{ spaces|format('') }}.pattern('{{ field.pattern }}')
+  {{ spaces|format('') }}.pattern('{{ field.pattern|replace({'\\': '\\\\'}) }}')
 {% endif %}
 {% if field.format %}
   {{ spaces|format('') }}.format(Format.{{ field.format|upper }})
