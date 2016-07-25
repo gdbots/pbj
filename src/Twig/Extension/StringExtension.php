@@ -25,6 +25,7 @@ class StringExtension extends \Twig_Extension
     {
         return array(
             new \Twig_SimpleFilter('reduceSpaces', array($this, 'reduceSpaces')),
+            new \Twig_SimpleFilter('toSlugFromCamel', array($this, 'toSlugFromCamel')),
             new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
             new \Twig_SimpleFilter('slugify', array($this, 'slugify')),
         );
@@ -73,6 +74,16 @@ class StringExtension extends \Twig_Extension
     public function reduceSpaces($str)
     {
         return trim(preg_replace('/\s+/', ' ', $str));
+    }
+
+    /**
+     * @param string $camel
+     *
+     * @return string
+     */
+    public function toSlugFromCamel($camel)
+    {
+        return StringUtils::toSlugFromCamel($camel);
     }
 
     /**

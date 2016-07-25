@@ -11,7 +11,7 @@ import {{ getClassName(schema) }} from '{{ schema.language('js').get('namespace'
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|lower }}-type';
+import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|toSlugFromCamel|lower }}-type';
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
 import {{ getClassName(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('namespace') }}/{{ field.anyOf.0.id.message }}';
