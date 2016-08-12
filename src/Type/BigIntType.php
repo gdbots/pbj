@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-use Gdbots\Common\BigNumber;
+use Gdbots\Pbj\WellKnown\BigNumber;
 
 final class BigIntType extends AbstractType
 {

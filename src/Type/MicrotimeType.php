@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-use Gdbots\Common\Microtime;
+use Gdbots\Pbj\WellKnown\Microtime;
 
 final class MicrotimeType extends AbstractType
 {
