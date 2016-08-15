@@ -161,6 +161,7 @@
       <xsd:enumeration value="date" />
       <xsd:enumeration value="date-time" />
       <xsd:enumeration value="decimal" />
+      <xsd:enumeration value="dynamic-field" />
       <xsd:enumeration value="float" />
       <xsd:enumeration value="geo-point" />
       <xsd:enumeration value="identifier" />
