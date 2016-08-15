@@ -12,6 +12,7 @@ use Gdbots\Common\Enum;
  * @method static TypeName DATE()
  * @method static TypeName DATE_TIME()
  * @method static TypeName DECIMAL()
+ * @method static TypeName DYNAMIC_FIELD()
  * @method static TypeName FLOAT()
  * @method static TypeName GEO_POINT()
  * @method static TypeName IDENTIFIER()
@@ -46,6 +47,7 @@ final class TypeName extends Enum
     const DATE = 'date';
     const DATE_TIME = 'date-time';
     const DECIMAL = 'decimal';
+    const DYNAMIC_FIELD = 'dynamic-field';
     const FLOAT = 'float';
     const GEO_POINT = 'geo-point';
     const IDENTIFIER = 'identifier';
