@@ -299,8 +299,10 @@
 {% endmacro %}
 
 {% macro draw_dynamic_field_properties() %}
+  "type": "object",
   "oneOf": [
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
@@ -319,6 +321,7 @@
       "additionalProperties": false
     },
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
@@ -337,6 +340,7 @@
       "additionalProperties": false
     },
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
@@ -346,8 +350,7 @@
         },
         "float_val": {
           "type": "number",
-          "default": 0.0,
-          "minimum": -1
+          "default": 0.0
         }
       },
       "required": [
@@ -356,6 +359,7 @@
       "additionalProperties": false
     },
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
@@ -376,6 +380,7 @@
       "additionalProperties": false
     },
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
@@ -395,6 +400,7 @@
       "additionalProperties": false
     },
     {
+      "type": "object",
       "properties": {
         "name": {
           "type": "string",
