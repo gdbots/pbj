@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.1.9
+* issue #33: BUG :: Added support for dynamic-field type.
+
+
 ## v0.1.8
 * issue #31: BUG :: Unable to change default on overridden field.
 
