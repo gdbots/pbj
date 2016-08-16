@@ -203,7 +203,15 @@
   {% endif %}
 
   {% if field.enum %}
-    "enum": [{% for value in field.enum.values %}{{ value|json_encode }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    "enum": [
+      {% set uniqueValues = [] %}
+      {% for value in field.enum.values %}
+        {% if value not in uniqueValues %}
+          {{ value|json_encode }},
+          {% set uniqueValues = uniqueValues|merge([value]) %}
+        {% endif %}
+      {% endfor %}
+    ],
   {% endif %}
 
   {% if not field.enum and not hasPattern %}
