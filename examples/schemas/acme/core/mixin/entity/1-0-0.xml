@@ -8,7 +8,7 @@
     <fields>
       <field name="_id" type="identifier" required="true" overridable="true">
         <php-options>
-          <classname>Gdbots\Identifiers\UuidIdentifier</classname>
+          <classname>Gdbots\Pbj\WellKnown\UuidIdentifier</classname>
           <default>
             <![CDATA[
               function() {

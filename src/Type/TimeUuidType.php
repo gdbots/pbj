@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-use Gdbots\Identifiers\TimeUuidIdentifier;
+use Gdbots\Pbj\WellKnown\TimeUuidIdentifier;
 
 final class TimeUuidType extends AbstractType
 {

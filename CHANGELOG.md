@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## v0.2.0
+* issue #35: BUG :: When a jsonschema for an enum is produced it must be a unique set.
+* issue #33: Added support for dynamic-field type.
+
+
 ## v0.1.8
 * issue #31: BUG :: Unable to change default on overridden field.
 
