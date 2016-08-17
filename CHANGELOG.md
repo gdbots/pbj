@@ -1,8 +1,9 @@
 # CHANGELOG
 
 
-## v0.1.9
-* issue #33: BUG :: Added support for dynamic-field type.
+## v0.2.0
+* issue #35: BUG :: When a jsonschema for an enum is produced it must be a unique set.
+* issue #33: Added support for dynamic-field type.
 
 
 ## v0.1.8
