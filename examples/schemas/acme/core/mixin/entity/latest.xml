@@ -8,7 +8,7 @@
     <fields>
       <field name="_id" type="identifier" required="true" overridable="true">
         <php-options>
-          <classname>Gdbots\Identifiers\UuidIdentifier</classname>
+          <classname>Gdbots\Pbj\WellKnown\UuidIdentifier</classname>
           <default>
             <![CDATA[
               function() {
@@ -20,7 +20,7 @@
 
         <js-options>
           <instance>
-            <namespace>gdbots/identifiers/uuid-identifier</namespace>
+            <namespace>gdbots/pbj/well-known/uuid-identifier</namespace>
             <classname>UuidIdentifier</classname>
           </instance>
           <default>
