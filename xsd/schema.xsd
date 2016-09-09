@@ -185,6 +185,7 @@
       <xsd:enumeration value="time-uuid" />
       <xsd:enumeration value="timestamp" />
       <xsd:enumeration value="tiny-int" />
+      <xsd:enumeration value="trinary" />
       <xsd:enumeration value="uuid" />
     </xsd:restriction>
   </xsd:simpleType>
