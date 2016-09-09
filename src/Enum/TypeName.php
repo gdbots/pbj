@@ -36,6 +36,7 @@ use Gdbots\Common\Enum;
  * @method static TypeName TIME_UUID()
  * @method static TypeName TIMESTAMP()
  * @method static TypeName TINY_INT()
+ * @method static TypeName TRINARY()
  * @method static TypeName UUID()
  */
 final class TypeName extends Enum
@@ -71,5 +72,6 @@ final class TypeName extends Enum
     const TIME_UUID = 'time-uuid';
     const TIMESTAMP = 'timestamp';
     const TINY_INT = 'tiny-int';
+    const TRINARY = 'trinary';
     const UUID = 'uuid';
 }

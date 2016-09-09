@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-final class TrinaryType extends AbstractIntType
+final class TrinaryType extends AbstractType
 {
     /**
      * {@inheritdoc}
