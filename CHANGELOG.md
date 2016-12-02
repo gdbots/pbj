@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.2.2
+* issue #38: Fixed identifier type json schema pattern to allow for "^[\w\/\.:-]+$".
+
+
 ## v0.2.1
 * issue #36: Add "TrinaryType".  ref https://en.wikipedia.org/wiki/Three-valued_logic
 
