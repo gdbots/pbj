@@ -76,7 +76,7 @@
     {% if field.rule ~ '' == 'map' %}
       "type": "object",
       "patternProperties": {
-        "^[a-zA-Z_]{1}[a-zA-Z0-9:_]{1,99}$": {
+        "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
           {{ _self.draw_field_properties(field) }}
         }
       },
