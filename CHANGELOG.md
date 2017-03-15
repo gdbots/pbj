@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.2.3
+* issue #40: Fixed inheritance validation as well as removing duplicate items from array's (like AnyOf).
+
+
 ## v0.2.2
 * issue #38: Fixed identifier type json schema pattern to allow for "^[\w\/\.:-]+$".
 

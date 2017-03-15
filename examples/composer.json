@@ -7,7 +7,7 @@
   "require-dev": {
     "composer/composer": "1.0.*@dev",
     "gdbots/pbjc": "dev-master",
-    "gdbots/schemas": "dev-master"
+    "gdbots/acme-schemas": "dev-master"
   },
   "autoload": {
     "files": ["pbj-schemas.php"],
