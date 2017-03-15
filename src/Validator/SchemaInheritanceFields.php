@@ -127,19 +127,23 @@ class SchemaInheritanceFields implements Constraint
                                 foreach ($ea as $schemadId => $class) {
                                     $oa = new $class();
 
+                                    $found = false;
                                     foreach ($eb as $class) {
                                         $ob = new $class();
 
-                                        if (!$oa instanceof $ob) {
-                                            $error = sprintf(
-                                                'The schema "%s" field "%s" contains an invalid "%s" schema',
-                                                $a->getId()->toString(),
-                                                $property->getName(),
-                                                $schemadId
-                                            );
-
-                                            break 2;
+                                        if ($oa instanceof $ob) {
+                                            $found = true;
+                                            break;
                                         }
+                                    }
+
+                                    if (!$found) {
+                                        $error = sprintf(
+                                            'The schema "%s" field "%s" contains an invalid "%s" schema',
+                                            $a->getId()->toString(),
+                                            $property->getName(),
+                                            $schemadId
+                                        );
                                     }
                                 }
 
