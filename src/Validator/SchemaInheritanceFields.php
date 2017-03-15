@@ -80,10 +80,9 @@ class SchemaInheritanceFields implements Constraint
                                 $ea = array_reverse($ea);
                                 $eb = array_reverse($eb);
 
-                                $phpClasses = [];
                                 foreach ([$ea, $eb] as $classes) {
                                     $i = -1;
-                                    $isBaseClass = false;
+                                    $baseClass = array_values($classes)[0];
                                     foreach ($classes as $class) {
                                         $i++;
 
@@ -91,21 +90,12 @@ class SchemaInheritanceFields implements Constraint
                                             continue;
                                         }
 
-                                        if (!$isBaseClass) {
-                                            $class = sprintf('class %s {};', $class);
-                                            $isBaseClass = true;
+                                        if ($baseClass === $class) {
+                                            eval(sprintf('class %s {};', $class));
                                         } else {
-                                            $class = sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]);
-                                        }
-
-                                        if (!in_array($class, $phpClasses)) {
-                                            $phpClasses[] = $class;
+                                            eval(sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]));
                                         }
                                     }
-                                }
-
-                                if (count($phpClasses)) {
-                                    eval(implode("\n", $phpClasses));
                                 }
 
                                 if (0 === count($ea)) {
