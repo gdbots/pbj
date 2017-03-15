@@ -47,6 +47,8 @@ class SchemaInheritanceFields implements Constraint
                     $fb = $inheritedFields[$name];
 
                     if ($fa && $fb) {
+                        $error = null;
+
                         switch ($method) {
                             case 'getAnyOf':
                                 if (!$fa->$method() && !$fb->$method()) {
@@ -55,22 +57,22 @@ class SchemaInheritanceFields implements Constraint
 
                                 $ea = [];
                                 foreach ((array) $fa->$method() as $schema) {
-                                    $ea[] = $this->getClassName($schema);
+                                    $ea[(string) $schema] = $this->getClassName($schema);
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $ea[] = $this->getClassName($extends);
+                                            $ea[(string) $extends] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
                                 }
 
                                 $eb = [];
                                 foreach ((array) $fb->$method() as $schema) {
-                                    $eb[] = $this->getClassName($schema);
+                                    $eb[(string) $schema] = $this->getClassName($schema);
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $eb[] = $this->getClassName($extends);
+                                            $eb[(string) $extends] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
                                 }
@@ -80,15 +82,20 @@ class SchemaInheritanceFields implements Constraint
 
                                 $phpClasses = [];
                                 foreach ([$ea, $eb] as $classes) {
-                                    foreach ($classes as $index => $class) {
+                                    $i = -1;
+                                    $isBaseClass = false;
+                                    foreach ($classes as $class) {
+                                        $i++;
+
                                         if (class_exists($class)) {
                                             continue;
                                         }
 
-                                        if ($index === 0) {
+                                        if (!$isBaseClass) {
                                             $class = sprintf('class %s {};', $class);
+                                            $isBaseClass = true;
                                         } else {
-                                            $class = sprintf('class %s extends %s {};', $class, $classes[$index-1]);
+                                            $class = sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]);
                                         }
 
                                         if (!in_array($class, $phpClasses)) {
@@ -101,37 +108,55 @@ class SchemaInheritanceFields implements Constraint
                                     eval(implode("\n", $phpClasses));
                                 }
 
-                                // missing exnteded anyOf class
-                                if (!isset($ea[0]) || !isset($eb[0])) {
-                                    throw new \RuntimeException(sprintf(
-                                        'The schema "%s" field "%s" is invalid. See inherited mixin fields.',
+                                if (0 === count($ea)) {
+                                    $error = sprintf(
+                                        'The schema "%s" field "%s" required at least schema ("%s")',
+                                        $a->getId()->toString(),
+                                        $property->getName(),
+                                        implode('", "', array_keys($eb))
+                                    );
+                                }
+                                if (0 === count($eb)) {
+                                    $error = sprintf(
+                                        'The schema "%s" field "%s" can\'t include schema',
                                         $a->getId()->toString(),
                                         $property->getName()
-                                    ));
+                                    );
                                 }
 
-                                $oa = new $ea[0]();
-                                $ob = new $eb[0]();
+                                foreach ($ea as $schemadId => $class) {
+                                    $oa = new $class();
 
-                                // not class is not inherited
-                                if (!$oa instanceof $ob) {
-                                    throw new \RuntimeException(sprintf(
-                                        'The schema "%s" field "%s" is invalid. See inherited mixin fields.',
-                                        $a->getId()->toString(),
-                                        $property->getName()
-                                    ));
+                                    foreach ($eb as $class) {
+                                        $ob = new $class();
+
+                                        if (!$oa instanceof $ob) {
+                                            $error = sprintf(
+                                                'The schema "%s" field "%s" contains an invalid "%s" schema',
+                                                $a->getId()->toString(),
+                                                $property->getName(),
+                                                $schemadId
+                                            );
+
+                                            break 2;
+                                        }
+                                    }
                                 }
 
                                 break;
 
                             default:
                                 if ($fa->$method() != $fb->$method()) {
-                                    throw new \RuntimeException(sprintf(
-                                        'The schema "%s" field "%s" is invalid. See inherited mixin fields.',
+                                    $error = sprintf(
+                                        'The schema "%s" field "%s" is invalid',
                                         $a->getId()->toString(),
                                         $property->getName()
-                                    ));
+                                    );
                                 }
+                        }
+
+                        if ($error) {
+                            throw new \RuntimeException(sprintf('%s. See inherited mixin fields.', $error));
                         }
                     }
                 }
