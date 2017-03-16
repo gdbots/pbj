@@ -57,45 +57,28 @@ class SchemaInheritanceFields implements Constraint
 
                                 $ea = [];
                                 foreach ((array) $fa->$method() as $schema) {
-                                    $ea[(string) $schema] = $this->getClassName($schema);
+                                    $ea[(string) $schema] = [$this->getClassName($schema)];
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $ea[(string) $extends] = $this->getClassName($extends);
+                                            $ea[(string) $schema][] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
+
+                                    $ea[(string) $schema] = array_reverse($ea[(string) $schema]);
                                 }
 
                                 $eb = [];
                                 foreach ((array) $fb->$method() as $schema) {
-                                    $eb[(string) $schema] = $this->getClassName($schema);
+                                    $eb[(string) $schema] = [$this->getClassName($schema)];
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $eb[(string) $extends] = $this->getClassName($extends);
+                                            $eb[(string) $schema][] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
-                                }
 
-                                $ea = array_reverse($ea);
-                                $eb = array_reverse($eb);
-
-                                foreach ([$ea, $eb] as $classes) {
-                                    $i = -1;
-                                    $baseClass = array_values($classes)[0];
-                                    foreach ($classes as $class) {
-                                        $i++;
-
-                                        if (class_exists($class)) {
-                                            continue;
-                                        }
-
-                                        if ($baseClass === $class) {
-                                            eval(sprintf('class %s {};', $class));
-                                        } else {
-                                            eval(sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]));
-                                        }
-                                    }
+                                    $eb[(string) $schema] = array_reverse($eb[(string) $schema]);
                                 }
 
                                 if (0 === count($ea)) {
@@ -114,26 +97,51 @@ class SchemaInheritanceFields implements Constraint
                                     );
                                 }
 
-                                foreach ($ea as $schemadId => $class) {
-                                    $oa = new $class();
+                                foreach ([$ea, $eb] as $schemas) {
+                                    foreach ($schemas as $classes) {
+                                        $i = -1;
+                                        $baseClass = array_values($classes)[0];
 
-                                    $found = false;
-                                    foreach ($eb as $class) {
-                                        $ob = new $class();
+                                        foreach ($classes as $class) {
+                                            $i++;
 
-                                        if ($oa instanceof $ob) {
-                                            $found = true;
-                                            break;
+                                            if (class_exists($class)) {
+                                                continue;
+                                            }
+
+                                            if ($baseClass === $class) {
+                                                eval(sprintf('class %s {};', $class));
+                                            } else {
+                                                eval(sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]));
+                                            }
                                         }
                                     }
+                                }
 
-                                    if (!$found) {
-                                        $error = sprintf(
-                                            'The schema "%s" field "%s" contains an invalid "%s" schema',
-                                            $a->getId()->toString(),
-                                            $property->getName(),
-                                            $schemadId
-                                        );
+                                foreach ($ea as $schemadId => $classes) {
+                                    foreach ($classes as $class) {
+                                        $oa = new $class();
+
+                                        $found = false;
+                                        foreach ($eb as $subClasses) {
+                                            foreach ($subClasses as $subClass) {
+                                                $ob = new $subClass();
+
+                                                if ($oa instanceof $ob) {
+                                                    $found = true;
+                                                    break 2;
+                                                }
+                                            }
+                                        }
+
+                                        if (!$found) {
+                                            $error = sprintf(
+                                                'The schema "%s" field "%s" contains an invalid "%s" schema',
+                                                $a->getId()->toString(),
+                                                $property->getName(),
+                                                $schemadId
+                                            );
+                                        }
                                     }
                                 }
 

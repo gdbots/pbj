@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.2.4
+* Fixed inheritance validation with multi AnyOf classes.
+
+
 ## v0.2.3
 * issue #40: Fixed inheritance validation as well as removing duplicate items from array's (like AnyOf).
 
