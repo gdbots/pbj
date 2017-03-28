@@ -44,11 +44,10 @@ class SchemaExtension extends \Twig_Extension
 
         if ($baseClassName == $className) {
             $classNameBase = sprintf(
-                '%s%s%s%s',
+                '%s%s%s',
                 StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
                 StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
-                $className,
-                $postfix
+                $className
             );
 
             if ($withAs) {
