@@ -21,8 +21,8 @@ use {{ field.language('php').get('classname') }};
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
 use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true) }};
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor ~ 'Mixin', true) }}Mixin;
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor ~ 'Trait', true) }}Trait;
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true, 'Mixin') }};
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true, 'Trait') }};
 {% endif %}
 {% endfor %}
 {% if format_class %}
@@ -49,7 +49,7 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {
 {% block class_body %}
 {% for mixin in schema.mixins %}
-    use {{ getClassName(mixin, true, classNameVMajor ~ 'Trait') }}Trait;
+    use {{ getClassName(mixin, true, classNameVMajor, false, 'Trait') }};
 {% endfor %}
 
     /**
@@ -73,7 +73,7 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
-                {{ getClassName(mixin, true, classNameVMajor ~ 'Mixin') }}Mixin::create(){% if not loop.last %}, {% endif %}
+                {{ getClassName(mixin, true, classNameVMajor, false, 'Mixin') }}::create(){% if not loop.last %}, {% endif %}
 
 {% endfor %}
             ]
