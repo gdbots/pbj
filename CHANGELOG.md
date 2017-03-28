@@ -2,7 +2,7 @@
 
 
 ## v0.2.5
-* Fixed duplicate class names when generating messages.
+* Force aliasing "use" statements of mixins when generating message classes.
 
 
 ## v0.2.4
