@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.2.5
+* Fixed duplicate class names when generating messages.
+
+
 ## v0.2.4
 * Fixed inheritance validation with multi AnyOf classes.
 
