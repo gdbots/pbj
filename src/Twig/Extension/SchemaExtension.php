@@ -26,10 +26,11 @@ class SchemaExtension extends \Twig_Extension
      * @param bool             $majorRev
      * @param string           $baseClassName
      * @param bool             $withAs
+     * @param string           $postfix
      *
      * @return string
      */
-    public function getClassName(SchemaDescriptor $schema, $majorRev = false, $baseClassName = null, $withAs = false)
+    public function getClassName(SchemaDescriptor $schema, $majorRev = false, $baseClassName = null, $withAs = false, $postfix = null)
     {
         $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
 
@@ -50,7 +51,7 @@ class SchemaExtension extends \Twig_Extension
             );
 
             if ($withAs) {
-                $className = sprintf('%s as %s', $className, $classNameBase);
+                $className = sprintf('%s%s as %s', $className, $postfix, $classNameBase);
             } else {
                 $className = $classNameBase;
             }

@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.2.5
+* Force aliasing "use" statements of mixins when generating message classes.
+
+
 ## v0.2.4
 * Fixed inheritance validation with multi AnyOf classes.
 
