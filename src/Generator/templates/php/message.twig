@@ -1,4 +1,3 @@
-{% set classNameVMajor = getClassName(schema, true) %}
 {% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
@@ -20,9 +19,11 @@ use {{ field.language('php').get('classname') }};
 {% endfor %}
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true) }};
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true, 'Mixin') }}Mixin;
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, classNameVMajor, true, 'Trait') }}Trait;
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, true, true) }};
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, true, true, 'Mixin') }};
+{% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, true, true, 'Trait') }};
+{% endif %}
 {% endif %}
 {% endfor %}
 {% if format_class %}
@@ -34,11 +35,11 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ classNameVMajor }} extends AbstractMessage implements
+final class {{ getClassName(schema, true) }} extends AbstractMessage implements
     {{ getClassName(schema) }}{% if schema.mixins|length %},{% endif %}
 
 {% for mixin in schema.mixins %}
-    {{ getClassName(mixin, true, classNameVMajor) }}{% if not loop.last %},{% endif %}
+    {{ getClassName(mixin, true, true) }}{% if not loop.last %},{% endif %}
 
 {% endfor %}
 {% if schema.mixins|length %}
@@ -49,7 +50,9 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {
 {% block class_body %}
 {% for mixin in schema.mixins %}
-    use {{ getClassName(mixin, true, classNameVMajor) }}Trait;
+{% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
+    use {{ getClassName(mixin, true, true, false, 'Trait') }};
+{% endif %}
 {% endfor %}
 
     /**
@@ -73,7 +76,7 @@ final class {{ classNameVMajor }} extends AbstractMessage implements
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
-                {{ getClassName(mixin, true, classNameVMajor) }}Mixin::create(){% if not loop.last %}, {% endif %}
+                {{ getClassName(mixin, true, true, false, 'Mixin') }}::create(){% if not loop.last %}, {% endif %}
 
 {% endfor %}
             ]

@@ -7,7 +7,7 @@ namespace {{ schema.language('php').get('namespace') }};
 use Gdbots\Pbj\Schema;
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true) }}Trait;
+use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, true, true, 'Trait') }};
 {% endif %}
 {% endfor %}
 {% if insertionPoints %}
@@ -25,7 +25,7 @@ trait {{ getClassName(schema, true) }}Trait
 {
 {% block class_body %}
 {% for mixin in schema.mixins %}
-    use {{ getClassName(mixin, true) }}Trait;
+    use {{ getClassName(mixin, true, true, false, 'Trait') }};
 {% endfor %}
 
 {% if insertionPoints %}
