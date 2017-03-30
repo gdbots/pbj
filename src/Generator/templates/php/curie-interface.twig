@@ -1,18 +1,17 @@
-{% set className = getClassName(schema) %}
 <?php
 
 namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 {% if schema.extends and not isSameNamespace(schema, schema.extends) %}
-use {{ schema.extends.language('php').get('namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className, true) }}{% endif %};
+use {{ schema.extends.language('php').get('namespace') }}\{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, true, true) }}{% endif %};
 {% else %}
 use Gdbots\Pbj\Message;
 {% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-interface {{ className }} extends {% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, className) }}{% endif %}{% else %}Message{% endif %}
+interface {{ getClassName(schema) }} extends {% if schema.extends %}{% if not hasOtherMajorRev(schema) %}{{ getClassName(schema.extends, true) }}{% else %}{{ getClassName(schema.extends, false, true) }}{% endif %}{% else %}Message{% endif %}
 
 {% endblock class_definition %}
 {

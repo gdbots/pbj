@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## v0.2.6
+* Use aliasing "use" statements everywhere mixins are use.
+* Ignore adding trait classes to messages if schema doesn't include mixins and no insertion-points was define.
+
+
 ## v0.2.5
 * Force aliasing "use" statements of mixins when generating message classes.
 
