@@ -79,18 +79,25 @@ class PhpGenerator extends Generator
      */
     protected function getSchemaTemplates(SchemaDescriptor $schema)
     {
-        return $schema->isMixinSchema()
-            ? [
+        $templates = [
+            'curie-interface.twig' => '{className}',
+            'message.twig' => '{className}V{major}',
+        ];
+
+        if ($schema->isMixinSchema()) {
+            $templates = [
                 'curie-interface.twig' => '{className}',
                 'curie-major-interface.twig' => '{className}V{major}',
                 'mixin.twig' => '{className}V{major}Mixin',
-                'trait.twig' => '{className}V{major}Trait',
-            ]
-            : [
-                'curie-interface.twig' => '{className}',
-                'message.twig' => '{className}V{major}',
-            ]
-        ;
+            ];
+
+            // ignore empty trait classes
+            if (count($schema->getMixins()) || $schema->getLanguage('php')->get('insertion-points')) {
+                $templates['trait.twig'] = '{className}V{major}Trait';
+            }
+        }
+
+        return $templates;
     }
 
     /**
