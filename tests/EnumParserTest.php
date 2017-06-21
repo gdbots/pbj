@@ -15,7 +15,7 @@ class EnumParserTest extends \PHPUnit_Framework_TestCase
                 'namespace' => 'Acme\Schemas\Blog\Enum'
             ]),
             'js' => new LanguageBag([
-                'namespace' => 'acme/schemas/blog/enum'
+                'namespace' => 'Acme/Schemas/Blog/Enum'
             ])
         ]);
 
