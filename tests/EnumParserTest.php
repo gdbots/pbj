@@ -41,7 +41,7 @@ class EnumParserTest extends \PHPUnit_Framework_TestCase
 
         $parser = new EnumParser();
 
-        $this->assertEquals($parser->fromFile(__DIR__.'/../examples/schemas/acme/blog/enums.xml'), $enums);
+        $this->assertEquals($parser->fromFile(__DIR__.'/Fixtures/schemas/acme/blog/enums.xml'), $enums);
     }
 
     /**

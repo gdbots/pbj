@@ -67,6 +67,7 @@ The following list contains all available field types:
     - date
     - date-time
     - decimal
+    - dynamic-field
     - float
     - geo-point
     - identifier

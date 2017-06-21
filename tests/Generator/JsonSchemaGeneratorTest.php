@@ -157,7 +157,7 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
     "url": {
       "type": "object",
       "patternProperties": {
-        "^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,99}$": {
+        "^[a-zA-Z_]{1}[\\\\w\\\\.:-]+$": {
           "type": "string",
           "pattern": "^(https?:\\\\/\\\\/)?([\\\\da-z\\\\.-]+)\\\\.([a-z\\\\.]{2,6})([\\\\/\\\\w \\\\.-]*)*\\\\/?$"
         }

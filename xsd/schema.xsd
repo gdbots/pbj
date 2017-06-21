@@ -202,6 +202,7 @@
       <xsd:enumeration value="date" />
       <xsd:enumeration value="date-time" />
       <xsd:enumeration value="decimal" />
+      <xsd:enumeration value="dynamic-field" />
       <xsd:enumeration value="float" />
       <xsd:enumeration value="geo-point" />
       <xsd:enumeration value="identifier" />
@@ -225,6 +226,7 @@
       <xsd:enumeration value="time-uuid" />
       <xsd:enumeration value="timestamp" />
       <xsd:enumeration value="tiny-int" />
+      <xsd:enumeration value="trinary" />
       <xsd:enumeration value="uuid" />
     </xsd:restriction>
   </xsd:simpleType>

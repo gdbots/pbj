@@ -221,7 +221,8 @@ class SchemaParser
             $data = [$data];
         }
 
-        return $data;
+        // SORT_REGULAR = compare items normally (don't change types)
+        return array_unique($data, SORT_REGULAR);
     }
 
     /**

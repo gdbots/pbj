@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-use Gdbots\Identifiers\UuidIdentifier;
+use Gdbots\Pbj\WellKnown\UuidIdentifier;
 
 final class UuidType extends AbstractType
 {

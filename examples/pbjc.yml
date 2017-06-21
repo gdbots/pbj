@@ -1,8 +1,7 @@
 domain: http://pbjc.local
 
 namespaces:
-  - acme:core
-  - acme:blog
+  - acme:user
 
 languages:
   php:

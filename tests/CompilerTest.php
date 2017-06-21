@@ -51,6 +51,6 @@ class CompilerTest extends \PHPUnit_Framework_TestCase
             },
         ]));
 
-        $this->assertEquals(15, $count);
+        $this->assertEquals(14, $count);
     }
 }

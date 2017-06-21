@@ -1,6 +1,40 @@
 # CHANGELOG
 
 
+## v0.2.6
+* Use aliasing "use" statements everywhere mixins are use.
+* Ignore adding trait classes to messages if schema doesn't include mixins and no insertion-points was define.
+
+
+## v0.2.5
+* Force aliasing "use" statements of mixins when generating message classes.
+
+
+## v0.2.4
+* Fixed inheritance validation with multi AnyOf classes.
+
+
+## v0.2.3
+* issue #40: Fixed inheritance validation as well as removing duplicate items from array's (like AnyOf).
+
+
+## v0.2.2
+* issue #38: Fixed identifier type json schema pattern to allow for "^[\w\/\.:-]+$".
+
+
+## v0.2.1
+* issue #36: Add "TrinaryType".  ref https://en.wikipedia.org/wiki/Three-valued_logic
+
+
+## v0.2.0
+* issue #35: BUG :: When a jsonschema for an enum is produced it must be a unique set.
+* issue #33: Added support for dynamic-field type.
+
+
+## v0.1.8
+* issue #31: BUG :: Unable to change default on overridden field.
+
+
 ## v0.1.7
 * issue #27: BUG :: Handle INF & NAN numeric values. Also removed min/max for decimals and floats fields.
 
