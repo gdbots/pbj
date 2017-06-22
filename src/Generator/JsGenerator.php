@@ -58,7 +58,14 @@ class JsGenerator extends Generator
     {
         $directory = $schema->getLanguage('js')->get('namespace');
 
+        $filename = str_replace(
+            ['{className}'],
+            [StringUtils::toCamelFromSlug($schema->getId()->getMessage())],
+            $filename
+        );
+
         return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
+
     }
 
     /**
@@ -68,11 +75,11 @@ class JsGenerator extends Generator
     {
         return $schema->isMixinSchema()
             ? [
-                'mixin.twig' => '{message}-v{major}-mixin',
+                'mixin.twig' => '{className}V{major}Mixin',
             ]
             : [
-                'curie-interface.twig' => '{message}',
-                'message.twig' => '{message}-v{major}',
+                //'curie-interface.twig' => '{message}',
+                'message.twig' => '{className}V{major}',
             ]
         ;
     }

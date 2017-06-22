@@ -5,9 +5,13 @@ namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\AbstractMessage;
+{% if schema.fields|length %}
 use Gdbots\Pbj\FieldBuilder as Fb;
+{% endif %}
 use Gdbots\Pbj\Schema;
+{% if schema.fields|length %}
 use Gdbots\Pbj\Type as T;
+{% endif %}
 {% set format_class = false %}
 {% for field in schema.fields %}
 {% if field.format %}
@@ -42,10 +46,6 @@ final class {{ getClassName(schema, true) }} extends AbstractMessage implements
     {{ getClassName(mixin, true, true) }}{% if not loop.last %},{% endif %}
 
 {% endfor %}
-{% if schema.mixins|length %}
-  {# note: linebreak for cleaner print #}
-
-{% endif %}
 {% endblock class_definition %}
 {
 {% block class_body %}
