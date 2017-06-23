@@ -15,6 +15,7 @@ class StringExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFunction('className', array($this, 'className')),
             new \Twig_SimpleFunction('indentString', array($this, 'indentString')),
+            new \Twig_SimpleFunction('dump', array($this, 'dump')),
         );
     }
 
@@ -29,6 +30,16 @@ class StringExtension extends \Twig_Extension
             new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
             new \Twig_SimpleFilter('slugify', array($this, 'slugify')),
         );
+    }
+
+    /**
+     * @param mixed $object
+     *
+     * @return string
+     */
+    public function dump($object)
+    {
+        return print_r($object, true);
     }
 
     /**

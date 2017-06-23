@@ -14,9 +14,9 @@
 {{ spaces|format('') }} * {{ line|reduceSpaces }}
 {% endfor %}
 {{ spaces|format('') }} */
-{{ spaces|format('') }}Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
+{{ spaces|format('') }}Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
 {% else %}
-Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
+Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
 {% endif %}
 {% if field.isASingleValue %}
   {{ spaces|format('') }}.asASingleValue()
@@ -68,17 +68,13 @@ Fb.create('{{ field.name }}', {{ className(field.type) }}.create())
   {{ spaces|format('') }}.useTypeDefault(false)
 {% endif %}
 {% if field.anyOf %}
-{% if field.anyOf|length == 1 %}
-  {{ spaces|format('') }}.instance({{ getClassName(field.anyOf.0) }})
-{% else %}
-  {{ spaces|format('') }}.anyOfInstances([
+  {{ spaces|format('') }}.anyOfCuries([
 {% for schema in field.anyOf %}
-  {{ spaces|format('') }}  {{ getClassName(schema) }}{% if not loop.last %}, {% endif %}
-
+  {{ spaces|format('') }}  '{{ schema.getId().getCurie() }}',
 {% endfor %}
   {{ spaces|format('') }}])
 {% endif %}
-{% elseif field.language('js').get('instance') %}
+{% if field.language('js').get('instance') %}
   {{ spaces|format('') }}.instance({{ field.language('js').get('instance').classname }})
 {% endif %}
 {% if field.overridable %}

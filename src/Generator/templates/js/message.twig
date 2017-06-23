@@ -1,17 +1,16 @@
 {% set classNameVMajor = getClassName(schema, true) %}
 {% set insertionPoints = schema.language('js').get('insertion-points') %}
-'use strict';
-
 {% block use_statements %}
-import SystemUtils from 'gdbots/common/util/system-utils';
-import Schema from 'gdbots/pbj/schema';
-import {{ getClassName(schema) }} from '{{ schema.language('js').get('namespace') }}/{{ schema.id.message }}';
+import Message from '@gdbots/pbj/Message';
+import Schema from '@gdbots/pbj/Schema';
+{% if schema.fields|length %}
+import T from '@gdbots/pbj/Type';
+{% endif %}
 {% set format_class = false %}
 {% for field in schema.fields %}
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|toSlugFromCamel|lower }}-type';
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
 import {{ getClassName(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('namespace') }}/{{ field.anyOf.0.id.message }}';
@@ -30,7 +29,7 @@ import {{ getClassName(mixin, true) }}Mixin from '{{ mixin.language('js').get('n
 {% endif %}
 {% endfor %}
 {% if format_class %}
-import Format from 'gdbots/pbj/enum/format';
+import Format from '@gdbots/pbj/Enum/Format';
 {% endif %}
 {% if insertionPoints %}
 {{ indentString(insertionPoints.imports, 0) }}
@@ -38,12 +37,13 @@ import Format from 'gdbots/pbj/enum/format';
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default class {{ classNameVMajor }} extends SystemUtils.mixinClass({{ getClassName(schema) }})
+export default class {{ classNameVMajor }} extends Message {
 {% endblock class_definition %}
-{
 {% block class_body %}
   /**
-   * @return Schema
+   * @private
+   *
+   * @returns {Schema}
    */
   static defineSchema() {
 {% if schema.fields|length or schema.mixins|length %}

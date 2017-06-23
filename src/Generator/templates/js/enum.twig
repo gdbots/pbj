@@ -1,23 +1,16 @@
-'use strict';
-
 {% block use_statements %}
-import Enum from 'gdbots/common/enum';
-import SystemUtils from 'gdbots/common/util/system-utils';
+import Enum from '@gdbots/common/Enum';
 {% endblock use_statements %}
 
 {% block class_definition %}
-/**
-{% for key, value in enum.values %}
- * @method static {{ className }} {{ key}}()
-{% endfor %}
- */
-export default class {{ className }} extends SystemUtils.mixinClass(Enum) {}
+export default class {{ className }} extends Enum {
+}
 {% endblock class_definition %}
 
 {% block class_body %}
-{{ className }}.initEnum({
+{{ className }}.configure({
 {% for key, value in enum.values %}
-    {{ key|upper }}: {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %},
+  {{ key|upper }}: {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %},
 {% endfor %}
-});
+}, '{{ enum.getId() }}');
 {% endblock class_body %}

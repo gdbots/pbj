@@ -78,7 +78,6 @@ class JsGenerator extends Generator
                 'mixin.twig' => '{className}V{major}Mixin',
             ]
             : [
-                //'curie-interface.twig' => '{message}',
                 'message.twig' => '{className}V{major}',
             ]
         ;
@@ -92,8 +91,11 @@ class JsGenerator extends Generator
         $filename =
             sprintf('%s/%s/%s%s',
                 $this->compileOptions->getOutput(),
-                $enum->getLanguage('js')->get('namespace'),
-                $enum->getId()->getName(),
+                $enum->getLanguage('js')->get(
+                    'namespace',
+                    substr($enum->getId(), 0, strpos($enum->getId(),':')) . '/Enum'
+                ),
+                StringUtils::toCamelFromSlug($enum->getId()->getName()),
                 $this->extension
             )
         ;

@@ -1,47 +1,37 @@
-'use strict';
-
 {% block use_statements %}
-import SystemUtils from 'gdbots/common/util/system-utils';
-import Fb from 'gdbots/pbj/field-builder';
-import Mixin from 'gdbots/pbj/mixin';
-import SchemaId from 'gdbots/pbj/schema-id';
+import Fb from '@gdbots/pbj/FieldBuilder';
+import Mixin from '@gdbots/pbj/Mixin';
+import SchemaId from '@gdbots/pbj/SchemaId';
+{% if schema.fields|length %}
+import T from '@gdbots/pbj/Type';
+{% endif %}
 {% set format_class = false %}
 {% for field in schema.fields %}
 {% if field.format %}
 {% set format_class = true %}
 {% endif %}
-import {{ className(field.type) }} from 'gdbots/pbj/type/{{ className(field.type)|replace({'Type': ''})|toSlugFromCamel|lower }}-type';
-{% if field.anyOf %}
-{% if field.anyOf|length == 1 %}
-import {{ getClassName(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('namespace') }}/{{ field.anyOf.0.id.message }}';
-{% else %}
-{% for s in field.anyOf %}
-import {{ getClassName(s) }} from '{{ s.language('js').get('namespace') }}/{{ s.id.message }}';
-{% endfor %}
-{% endif %}
-{% elseif field.language('js').get('instance') %}
+{% if field.language('js').get('instance') %}
 import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance').namespace }}';
 {% endif %}
 {% endfor %}
 {% if format_class %}
-import Format from 'gdbots/pbj/enum/format';
+import Format from '@gdbots/pbj/Enum/Format';
 {% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default class {{ getClassName(schema, true) }}Mixin extends SystemUtils.mixinClass(Mixin)
+export default class {{ getClassName(schema, true) }}Mixin extends Mixin {
 {% endblock class_definition %}
-{
 {% block class_body %}
   /**
-   * {@inheritdoc}
+   * @returns {SchemaId}
    */
   getId() {
     return SchemaId.fromString('{{ schema.id }}');
   }
 
   /**
-   * {@inheritdoc}
+   * @returns {Field[]}
    */
   getFields() {
 {% if schema.fields|length %}
