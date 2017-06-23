@@ -68,17 +68,13 @@
     {{ spaces|format('') }}->useTypeDefault(false)
 {% endif %}
 {% if field.anyOf %}
-{% if field.anyOf|length == 1 %}
-    {{ spaces|format('') }}->className({{ getClassName(field.anyOf.0) }}::class)
-{% else %}
     {{ spaces|format('') }}->anyOfClassNames([
-{% for schema in field.anyOf %}
-    {{ spaces|format('') }}  {{ getClassName(schema) }}::class{% if not loop.last %}, {% endif %}
-
+{% for anyOf in field.anyOf %}
+    {{ spaces|format('') }}    {{ getClassName(anyOf, false, true) }}::class,
 {% endfor %}
     {{ spaces|format('') }}])
 {% endif %}
-{% elseif field.language('php').get('classname') %}
+{% if field.language('php').get('classname') %}
     {{ spaces|format('') }}->className({{ field.language('php').get('classname')|split('\\')|last }}::class)
 {% endif %}
 {% if field.overridable %}

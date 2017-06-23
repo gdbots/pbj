@@ -19,23 +19,9 @@ use Gdbots\Pbj\Type as T;
 {% if field.language('php').get('classname') %}
 use {{ field.language('php').get('classname') }};
 {% endif %}
-
-
-{#{% if field.anyOf %}#}
-{#{% if field.anyOf|length == 1 %}#}
-    {#{{ spaces|format('') }}->className({{ getClassName(field.anyOf.0) }}::class)#}
-{#{% else %}#}
-    {#{{ spaces|format('') }}->anyOfClassNames([#}
-{#{% for schema in field.anyOf %}#}
-    {#{{ spaces|format('') }}  {{ getClassName(schema) }}::class{% if not loop.last %}, {% endif %}#}
-
-{#{% endfor %}#}
-    {#{{ spaces|format('') }}])#}
-{#{% endif %}#}
-
-
-
-
+{% for anyOf in field.anyOf %}
+use {{ anyOf.language('php').get('namespace') }}\{{ getClassName(anyOf, false, true, true) }};
+{% endfor %}
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;

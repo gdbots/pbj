@@ -20,6 +20,9 @@ use Gdbots\Pbj\Type as T;
 {% if field.language('php').get('classname') %}
 use {{ field.language('php').get('classname') }};
 {% endif %}
+{% for anyOf in field.anyOf %}
+use {{ anyOf.language('php').get('namespace') }}\{{ getClassName(anyOf, false, true, true) }};
+{% endfor %}
 {% endfor %}
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
