@@ -1,4 +1,3 @@
-{% set classNameVMajor = getClassName(schema, true) %}
 {% set insertionPoints = schema.language('js').get('insertion-points') %}
 {% block use_statements %}
 import Message from '@gdbots/pbj/Message';
@@ -6,30 +5,34 @@ import Schema from '@gdbots/pbj/Schema';
 {% if schema.fields|length %}
 import T from '@gdbots/pbj/Type';
 {% endif %}
-{% set format_class = false %}
+{% set import_format_enum = false %}
+{% set import_message_ref = false %}
 {% for field in schema.fields %}
-{% if field.format %}
-{% set format_class = true %}
-{% endif %}
+{% set import_format_enum = field.format ? true : false %}
+{% set import_message_ref = field.getType().getTypeValue() == 'message-ref' %}
 {% if field.anyOf %}
 {% if field.anyOf|length == 1 %}
-import {{ getClassName(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('namespace') }}/{{ field.anyOf.0.id.message }}';
+import {{ schema_as_fq_class_name_with_major(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('package') }}/{{ field.anyOf.0.language('js').get('directory') }}/{{ schema_as_class_name_with_major(field.anyOf.0) }}';
 {% else %}
 {% for s in field.anyOf %}
-import {{ getClassName(s) }} from '{{ s.language('js').get('namespace') }}/{{ s.id.message }}';
+import {{ schema_as_fq_class_name_with_major(s) }} from '{{ s.language('js').get('package') }}/{{ s.language('js').get('directory') }}/{{ schema_as_class_name_with_major(s) }}';
 {% endfor %}
 {% endif %}
 {% elseif field.language('js').get('instance') %}
-import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance').namespace }}';
+import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}
-{% if not isSameNamespace(schema, mixin) %}
-import {{ getClassName(mixin, true) }}Mixin from '{{ mixin.language('js').get('namespace') }}/{{ mixin.id.message }}-v{{ mixin.id.version.major }}-mixin';
+import {{ schema_as_fq_class_name_with_major(mixin) }}Mixin from '{{ mixin.language('js').get('package') }}/{{ mixin.language('js').get('directory') }}/{{ schema_as_class_name_with_major(mixin) }}Mixin';
+{% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
+import {{ schema_as_fq_class_name_with_major(mixin) }}Trait from '{{ mixin.language('js').get('package') }}/{{ mixin.language('js').get('directory') }}/{{ schema_as_class_name_with_major(mixin) }}Trait';
 {% endif %}
 {% endfor %}
-{% if format_class %}
+{% if import_format_enum %}
 import Format from '@gdbots/pbj/Enum/Format';
+{% endif %}
+{% if import_message_ref %}
+import MessageRef from '@gdbots/pbj/MessageRef';
 {% endif %}
 {% if insertionPoints %}
 {{ indentString(insertionPoints.imports, 0) }}
@@ -37,7 +40,7 @@ import Format from '@gdbots/pbj/Enum/Format';
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default class {{ classNameVMajor }} extends Message {
+export default class {{ schema_as_class_name_with_major(schema) }} extends Message {
 {% endblock class_definition %}
 {% block class_body %}
   /**
@@ -62,8 +65,7 @@ export default class {{ classNameVMajor }} extends Message {
 {% if schema.mixins|length %}
       [
 {% for mixin in schema.mixins %}
-        {{ getClassName(mixin, true) }}Mixin.create(){% if not loop.last %}, {% endif %}
-
+        {{ schema_as_fq_class_name_with_major(mixin) }}Mixin.create(),
 {% endfor %}
       ]
 {% endif %}

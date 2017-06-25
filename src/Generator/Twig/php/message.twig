@@ -42,11 +42,11 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ getClassName(schema, true) }} extends AbstractMessage implements
-    {{ getClassName(schema) }}{% if schema.mixins|length %},{% endif %}
+final class {{ schema_as_class_name_with_major(schema) }} extends AbstractMessage implements
+    {{ schema_as_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
 
 {% for mixin in schema.mixins %}
-    {{ getClassName(mixin, true, true) }}{% if not loop.last %},{% endif %}
+    {{ schema_as_fq_class_name_with_major(mixin) }}{% if not loop.last %},{% endif %}
 
 {% endfor %}
 {% endblock class_definition %}

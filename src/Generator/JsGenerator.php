@@ -6,15 +6,11 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\SchemaStore;
 
 class JsGenerator extends Generator
 {
-    /** @var string */
-    protected $language = 'js';
-
-    /** @var string */
-    protected $extension = '.js';
+    const LANGUAGE = 'js';
+    const EXTENSION = '.js';
 
     /**
      * {@inheritdoc}
@@ -22,16 +18,16 @@ class JsGenerator extends Generator
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
-            if (!$instance = $field->getLanguage('js')->get('instance')) {
+            if (!$instance = $field->getLanguage(static::LANGUAGE)->get('instance')) {
                 $instance = [
-                    'namespace' => $enum->getLanguage('js')->get('namespace'),
-                    'classname' => StringUtils::toCamelFromSlug($enum->getId()->getName())
+                    'package'   => $enum->getLanguage(static::LANGUAGE)->get('package'),
+                    'classname' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
                 ];
 
-                $field->getLanguage('js')->set('instance', $instance);
+                $field->getLanguage(static::LANGUAGE)->set('instance', $instance);
             }
 
-            if (null === $field->getLanguage('js')->get('default', null)) {
+            if (null === $field->getLanguage(static::LANGUAGE)->get('default', null)) {
                 $default = $field->getDefault();
                 if (is_array($default)) {
                     $default = count($default) ? current($default) : null;
@@ -42,10 +38,10 @@ class JsGenerator extends Generator
                     $enumKey = $enum->getKeyByValue($default);
                 }
 
-                $field->getLanguage('js')->set('default', sprintf('%s.%s', $instance['classname'], strtoupper($enumKey)));
+                $field->getLanguage(static::LANGUAGE)->set('default', sprintf('%s.%s', $instance['classname'], strtoupper($enumKey)));
 
                 if (strlen($default) === 0) {
-                    $field->getLanguage('js')->set('hide_default', true);
+                    $field->getLanguage(static::LANGUAGE)->set('hide_default', true);
                 }
             }
         }
@@ -56,16 +52,26 @@ class JsGenerator extends Generator
      */
     protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
-        $directory = $schema->getLanguage('js')->get('namespace');
+        $id = $schema->getId();
+        $directory = $schema->getLanguage(static::LANGUAGE)->get('directory');
+
+        if (null === $directory) {
+            $directory = sprintf(
+                '%s/%s%s%s',
+                $id->getVendor(),
+                $id->getPackage(),
+                $id->getCategory() ? "/{$id->getCategory()}" : '',
+                $schema->isMixinSchema() ? "/{$id->getMessage()}" : ''
+            );
+        }
 
         $filename = str_replace(
             ['{className}'],
-            [StringUtils::toCamelFromSlug($schema->getId()->getMessage())],
+            [StringUtils::toCamelFromSlug($id->getMessage())],
             $filename
         );
 
         return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
-
     }
 
     /**
@@ -73,14 +79,16 @@ class JsGenerator extends Generator
      */
     protected function getSchemaTemplates(SchemaDescriptor $schema)
     {
-        return $schema->isMixinSchema()
-            ? [
-                'mixin.twig' => '{className}V{major}Mixin',
-            ]
-            : [
-                'message.twig' => '{className}V{major}',
-            ]
-        ;
+        if (!$schema->isMixinSchema()) {
+            return ['message.twig' => '{className}V{major}'];
+        }
+
+        $templates = ['mixin.twig' => '{className}V{major}Mixin'];
+        if (count($schema->getMixins()) || $schema->getLanguage(static::LANGUAGE)->get('insertion-points')) {
+            $templates['trait.twig'] = '{className}V{major}Trait';
+        }
+
+        return $templates;
     }
 
     /**
@@ -88,27 +96,32 @@ class JsGenerator extends Generator
      */
     public function generateEnum(EnumDescriptor $enum)
     {
-        $filename =
-            sprintf('%s/%s/%s%s',
-                $this->compileOptions->getOutput(),
-                $enum->getLanguage('js')->get(
-                    'namespace',
-                    substr($enum->getId(), 0, strpos($enum->getId(),':')) . '/Enum'
-                ),
-                StringUtils::toCamelFromSlug($enum->getId()->getName()),
-                $this->extension
-            )
-        ;
+        $directory = $enum->getLanguage(static::LANGUAGE)->get('directory');
+        if (null === $directory) {
+            $directory = sprintf(
+                '%s/%s/enum',
+                $enum->getId()->getVendor(),
+                $enum->getId()->getPackage()
+            );
+        }
+
+        $directory = trim($directory, '/');
+        $filename = sprintf(
+            '%s/%s/%s%s',
+            $this->compileOptions->getOutput(),
+            $directory,
+            StringUtils::toCamelFromSlug($enum->getId()->getName()),
+            static::EXTENSION
+        );
 
         $response = new GeneratorResponse();
-
         $response->addFile($this->renderFile(
             'enum.twig',
             $filename,
             [
-                'enum' => $enum,
+                'enum'      => $enum,
                 'className' => StringUtils::toCamelFromSlug($enum->getId()->getName()),
-                'isInt' => is_int(current($enum->getValues())),
+                'isInt'     => is_int(current($enum->getValues())),
             ]
         ));
 
@@ -158,15 +171,15 @@ class JsGenerator extends Generator
                 ';;',
                 "\n\n\n",
                 "{\n\n",
-                "{\n    \n}",
+                "{\n  \n}",
                 "}\n\n}",
             ], [
-                ';',
-                "\n\n",
-                "{\n",
-                "{\n}",
-                "}\n}",
-            ],
+            ';',
+            "\n\n",
+            "{\n",
+            "{\n}",
+            "}\n}",
+        ],
             $code
         );
 

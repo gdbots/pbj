@@ -128,6 +128,9 @@ final class SchemaVersion
      */
     public function compare(SchemaVersion $version)
     {
-        return version_compare($this->toString(), $version->toString());
+        return version_compare(
+            str_replace('-', '.', $this->toString()),
+            str_replace('-', '.', $version->toString())
+        );
     }
 }

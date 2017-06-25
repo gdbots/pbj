@@ -1,6 +1,6 @@
 <?php
 
-namespace Gdbots\Pbjc\Twig\Extension;
+namespace Gdbots\Pbjc\Generator\Twig;
 
 use Gdbots\Common\Util\SlugUtils;
 use Gdbots\Common\Util\StringUtils;
@@ -12,11 +12,11 @@ class StringExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('className', array($this, 'className')),
-            new \Twig_SimpleFunction('indentString', array($this, 'indentString')),
-            new \Twig_SimpleFunction('dump', array($this, 'dump')),
-        );
+        return [
+            new \Twig_SimpleFunction('className', [$this, 'className']),
+            new \Twig_SimpleFunction('indentString', [$this, 'indentString']),
+            new \Twig_SimpleFunction('dump', [$this, 'dump']),
+        ];
     }
 
     /**
@@ -24,12 +24,12 @@ class StringExtension extends \Twig_Extension
      */
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('reduceSpaces', array($this, 'reduceSpaces')),
-            new \Twig_SimpleFilter('toSlugFromCamel', array($this, 'toSlugFromCamel')),
-            new \Twig_SimpleFilter('toCamelFromSlug', array($this, 'toCamelFromSlug')),
-            new \Twig_SimpleFilter('slugify', array($this, 'slugify')),
-        );
+        return [
+            new \Twig_SimpleFilter('reduceSpaces', [$this, 'reduceSpaces']),
+            new \Twig_SimpleFilter('toSlugFromCamel', [$this, 'toSlugFromCamel']),
+            new \Twig_SimpleFilter('toCamelFromSlug', [$this, 'toCamelFromSlug']),
+            new \Twig_SimpleFilter('slugify', [$this, 'slugify']),
+        ];
     }
 
     /**
@@ -71,7 +71,7 @@ class StringExtension extends \Twig_Extension
         $lines = explode("\n", $str);
 
         foreach ($lines as &$line) {
-            $line = sprintf('%\' '.$spaces.'s%s', '', $line);
+            $line = sprintf('%\' ' . $spaces . 's%s', '', $line);
         }
 
         return implode("\n", $lines);

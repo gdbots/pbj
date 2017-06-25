@@ -80,7 +80,7 @@ Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
 {% if field.overridable %}
   {{ spaces|format('') }}.overridable(true)
 {% endif %}
-{% if field.language('instance').get('assertion') %}
+{% if field.language('js').get('assertion') %}
   {{ spaces|format('') }}.assertion({{ field.language('js').get('assertion')|reduceSpaces }})
 {% endif %}
   {{ spaces|format('') }}.build(){% if not isLastItem %},{% endif %}
