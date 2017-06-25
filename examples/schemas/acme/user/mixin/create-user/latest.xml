@@ -29,5 +29,34 @@ public function getUriTemplateVars()
         </methods>
       </insertion-points>
     </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/core</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+import MessageRef from 'gdbots/pbj/message-ref';
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string tag
+ * @return MessageRef
+ */
+generateMessageRef(tag = null) {
+  return new MessageRef(this.constructor.schema().getCurie(), this.generateEtag(), tag);
+}
+
+/**
+ * @return object
+ */
+getUriTemplateVars() {
+  return {};
+}
+            ]]>
+        </methods>
+      </insertion-points>
+    </js-options>
   </schema>
 </pbj-schema>

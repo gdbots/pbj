@@ -25,6 +25,7 @@
       <xsd:element name="fields" type="fields" minOccurs="0" maxOccurs="1" />
       <xsd:element name="mixins" type="schemaCurieMajorIds" minOccurs="0" maxOccurs="1" />
       <xsd:element name="php-options" type="schemaPhpOptions" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="js-options" type="schemaJsOptions" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:attribute name="id" type="schemaIdentifierRegex" use="required" />
@@ -49,6 +50,7 @@
       <xsd:element name="enum" type="fieldEnum" minOccurs="0" maxOccurs="1" />
       <xsd:element name="any-of" type="schemaCurieIds" minOccurs="0" maxOccurs="1" />
       <xsd:element name="php-options" type="fieldPhpOptions" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="js-options" type="fieldJsOptions" minOccurs="0" maxOccurs="1" />
       <xsd:element name="json-schema-options" type="fieldJsonSchemaOptions" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
@@ -103,6 +105,26 @@
     <xsd:anyAttribute namespace="##other" />
   </xsd:complexType>
 
+  <xsd:complexType name="schemaJsOptions">
+    <xsd:sequence>
+      <xsd:element name="package" type="xsd:string" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="directory" type="xsd:string" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="insertion-points" type="insertionPointsJsOptions" minOccurs="0" maxOccurs="1" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
+  <xsd:complexType name="insertionPointsJsOptions">
+    <xsd:sequence>
+      <xsd:element name="imports" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="methods" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
   <xsd:complexType name="fieldEnum">
     <xsd:attribute name="id" type="enumIdRegex" use="required" />
     <xsd:anyAttribute namespace="##other" />
@@ -120,6 +142,26 @@
       <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="assertion" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
+  <xsd:complexType name="fieldJsOptions">
+    <xsd:sequence>
+      <xsd:element name="instance" type="fieldJsInstanceOption" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:element name="assertion" type="xsd:string" minOccurs="0" maxOccurs="1" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" />
+  </xsd:complexType>
+
+  <xsd:complexType name="fieldJsInstanceOption">
+    <xsd:sequence>
+      <xsd:element name="namespace" type="xsd:string" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="classname" type="xsd:string" minOccurs="1" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" />

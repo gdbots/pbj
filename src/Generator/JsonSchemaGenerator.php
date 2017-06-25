@@ -6,11 +6,8 @@ use Gdbots\Pbjc\SchemaDescriptor;
 
 class JsonSchemaGenerator extends Generator
 {
-    /** @var string */
-    protected $language = 'json-schema';
-
-    /** @var string */
-    protected $extension = '.json';
+    const LANGUAGE = 'json-schema';
+    const EXTENSION = '.json';
 
     /**
      * {@inheritdoc}

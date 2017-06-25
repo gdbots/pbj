@@ -1,0 +1,82 @@
+{% set insertionPoints = schema.language('js').get('insertion-points') %}
+{% block use_statements %}
+import Message from '@gdbots/pbj/Message';
+import Schema from '@gdbots/pbj/Schema';
+{% if schema.fields|length %}
+import T from '@gdbots/pbj/Type';
+{% endif %}
+{% set import_format_enum = false %}
+{% set import_message_ref = false %}
+{% for field in schema.fields %}
+{% set import_format_enum = field.format ? true : false %}
+{% set import_message_ref = field.getType().getTypeValue() == 'message-ref' %}
+{% if field.anyOf %}
+{% if field.anyOf|length == 1 %}
+import {{ schema_as_fq_class_name_with_major(field.anyOf.0) }} from '{{ field.anyOf.0.language('js').get('package') }}/{{ field.anyOf.0.language('js').get('directory') }}/{{ schema_as_class_name_with_major(field.anyOf.0) }}';
+{% else %}
+{% for s in field.anyOf %}
+import {{ schema_as_fq_class_name_with_major(s) }} from '{{ s.language('js').get('package') }}/{{ s.language('js').get('directory') }}/{{ schema_as_class_name_with_major(s) }}';
+{% endfor %}
+{% endif %}
+{% elseif field.language('js').get('instance') %}
+import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';
+{% endif %}
+{% endfor %}
+{% for mixin in schema.mixins %}
+import {{ schema_as_fq_class_name_with_major(mixin) }}Mixin from '{{ mixin.language('js').get('package') }}/{{ mixin.language('js').get('directory') }}/{{ schema_as_class_name_with_major(mixin) }}Mixin';
+{% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
+import {{ schema_as_fq_class_name_with_major(mixin) }}Trait from '{{ mixin.language('js').get('package') }}/{{ mixin.language('js').get('directory') }}/{{ schema_as_class_name_with_major(mixin) }}Trait';
+{% endif %}
+{% endfor %}
+{% if import_format_enum %}
+import Format from '@gdbots/pbj/Enum/Format';
+{% endif %}
+{% if import_message_ref %}
+import MessageRef from '@gdbots/pbj/MessageRef';
+{% endif %}
+{% if insertionPoints %}
+{{ indentString(insertionPoints.imports, 0) }}
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+export default class {{ schema_as_class_name_with_major(schema) }} extends Message {
+{% endblock class_definition %}
+{% block class_body %}
+  /**
+   * @private
+   *
+   * @returns {Schema}
+   */
+  static defineSchema() {
+{% if schema.fields|length or schema.mixins|length %}
+    return new Schema('{{ schema.id }}', this.name,
+{% if schema.fields|length %}
+      [
+{% import 'js/macros.twig' as macros %}
+{% for field in schema.fields %}
+        {{ macros.draw_field(field, 8, loop.last) }}
+{%- endfor %}
+      ]{% if schema.mixins|length %},{% endif %}
+{% else %}
+      []{% if schema.mixins|length %},{% endif %}
+{% endif %}
+
+{% if schema.mixins|length %}
+      [
+{% for mixin in schema.mixins %}
+        {{ schema_as_fq_class_name_with_major(mixin) }}Mixin.create(),
+{% endfor %}
+      ]
+{% endif %}
+    );
+{% else %}
+    return new Schema('{{ schema.id }}', this.name);
+{% endif %}
+  }
+
+{% if insertionPoints %}
+{{ indentString(insertionPoints.methods, 2) }}
+{% endif %}
+{% endblock class_body %}
+}

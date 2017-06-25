@@ -4,9 +4,13 @@ namespace {{ schema.language('php').get('namespace') }};
 
 {% block use_statements %}
 use Gdbots\Pbj\AbstractMixin;
+{% if schema.fields|length %}
 use Gdbots\Pbj\FieldBuilder as Fb;
+{% endif %}
 use Gdbots\Pbj\SchemaId;
+{% if schema.fields|length %}
 use Gdbots\Pbj\Type as T;
+{% endif %}
 {% set format_class = false %}
 {% for field in schema.fields %}
 {% if field.format %}
@@ -15,6 +19,9 @@ use Gdbots\Pbj\Type as T;
 {% if field.language('php').get('classname') %}
 use {{ field.language('php').get('classname') }};
 {% endif %}
+{% for anyOf in field.anyOf %}
+use {{ anyOf.language('php').get('namespace') }}\{{ getClassName(anyOf, false, true, true) }};
+{% endfor %}
 {% endfor %}
 {% if format_class %}
 use Gdbots\Pbj\Enum\Format;

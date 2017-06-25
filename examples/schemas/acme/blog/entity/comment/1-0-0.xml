@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<pbj-schema xmlns="http://gdbots.io/pbj/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
+
+  <schema id="pbj:acme:blog:entity:comment:1-0-0">
+    <fields>
+      <field name="_id" type="identifier" required="true" overridable="false">
+        <php-options>
+          <classname>Gdbots\Pbj\WellKnown\UuidIdentifier</classname>
+          <default>
+            <![CDATA[
+                function() {
+                    return UuidIdentifier::generate();
+                }
+            ]]>
+          </default>
+        </php-options>
+
+        <js-options>
+          <instance>
+            <namespace>gdbots/pbj/well-known/uuid-identifier</namespace>
+            <classname>UuidIdentifier</classname>
+          </instance>
+          <default>
+            <![CDATA[
+              function() {
+                return UuidIdentifier.generate();
+              }
+            ]]>
+          </default>
+        </js-options>
+      </field>
+
+      <field name="comment" type="text" />
+      <field name="published_at" type="microtime" />
+    </fields>
+
+    <mixins>
+      <curie-major>acme:core:mixin:entity:v1</curie-major>
+    </mixins>
+
+    <php-options>
+      <namespace>Acme\Schemas\Blog\Entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->get('_id'), $tag);
+}
+
+/**
+ * @return array
+ */
+public function getUriTemplateVars()
+{
+    return [
+        '_id' => (string)$this->get('_id'),
+    ];
+}
+            ]]>
+        </methods>
+      </insertion-points>
+    </php-options>
+
+    <js-options>
+      <namespace>acme/schemas/blog/entity</namespace>
+      <insertion-points>
+        <imports>
+          <![CDATA[
+import MessageRef from 'gdbots/pbj/message-ref';
+            ]]>
+        </imports>
+        <methods>
+          <![CDATA[
+/**
+ * @param string tag
+ * @return MessageRef
+ */
+generateMessageRef(tag = null) {
+  return new MessageRef(this.constructor.schema().getCurie(), this.get('id'), tag);
+}
+
+/**
+ * @return object
+ */
+getUriTemplateVars() {
+  return {};
+}
+            ]]>
+        </methods>
+      </insertion-points>
+    </js-options>
+  </schema>
+</pbj-schema>

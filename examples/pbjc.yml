@@ -5,8 +5,11 @@ namespaces:
 
 languages:
   php:
-    output: ./src
+    output: ./src/php
     manifest: ./pbj-schemas.php
+
+  js:
+    output: ./src/js
 
   json-schema:
     include_all: true

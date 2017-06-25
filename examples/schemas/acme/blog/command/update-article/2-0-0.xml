@@ -1,29 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
 <pbj-schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
 
-  <schema id="pbj:acme:user:mixin:create-user:1-0-0" mixin="true" extends="gdbots:iam:mixin:create-user:v1">
+  <schema id="pbj:acme:blog:command:update-article:2-0-0">
     <fields>
-      <field name="node" type="message" required="true">
+      <field name="entity" type="message" required="true">
         <any-of>
-          <curie>gdbots:iam:mixin:user</curie>
+          <curie>acme:core:mixin:entity</curie>
         </any-of>
       </field>
+      <field name="user_id" type="identifier"/>
     </fields>
 
+    <mixins>
+      <curie-major>gdbots:pbjx:mixin:command:v1</curie-major>
+      <curie-major>acme:core:mixin:update-entity:v2</curie-major>
+    </mixins>
+
     <php-options>
-      <namespace>Acme\Schemas\User\Mixin\CreateUser</namespace>
+      <namespace>Acme\Schemas\Blog\Command</namespace>
       <insertion-points>
-        <imports/>
+        <imports>
+          <![CDATA[
+use Gdbots\Pbj\MessageRef;
+            ]]>
+        </imports>
         <methods>
           <![CDATA[
+/**
+ * @param string $tag
+ * @return MessageRef
+ */
+public function generateMessageRef($tag = null)
+{
+    return new MessageRef(static::schema()->getCurie(), $this->generateEtag(), $tag);
+}
+
 /**
  * @return array
  */
 public function getUriTemplateVars()
 {
-    return ['node' => (string)$this->get('node')];
+    return [];
 }
             ]]>
         </methods>
@@ -31,7 +51,7 @@ public function getUriTemplateVars()
     </php-options>
 
     <js-options>
-      <namespace>acme/schemas/core</namespace>
+      <namespace>acme/schemas/blog/command</namespace>
       <insertion-points>
         <imports>
           <![CDATA[

@@ -1,0 +1,49 @@
+{% block use_statements %}
+import Fb from '@gdbots/pbj/FieldBuilder';
+import Mixin from '@gdbots/pbj/Mixin';
+import SchemaId from '@gdbots/pbj/SchemaId';
+{% if schema.fields|length %}
+import T from '@gdbots/pbj/Type';
+{% endif %}
+{% set format_class = false %}
+{% for field in schema.fields %}
+{% if field.format %}
+{% set format_class = true %}
+{% endif %}
+{% if field.language('js').get('instance') %}
+# import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';
+{% endif %}
+{% endfor %}
+{% if format_class %}
+import Format from '@gdbots/pbj/Enum/Format';
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+export default class {{ schema_as_class_name_with_major(schema) }}Mixin extends Mixin {
+{% endblock class_definition %}
+{% block class_body %}
+  /**
+   * @returns {SchemaId}
+   */
+  getId() {
+    return SchemaId.fromString('{{ schema.id }}');
+  }
+
+  /**
+   * @returns {Field[]}
+   */
+  getFields() {
+{% if schema.fields|length %}
+    return [
+{% import 'js/macros.twig' as macros %}
+{% for field in schema.fields %}
+      {{ macros.draw_field(field, 6, loop.last) }}
+{%- endfor %}
+    ];
+{% else %}
+    return [];
+{% endif %}
+  }
+{% endblock class_body %}
+}

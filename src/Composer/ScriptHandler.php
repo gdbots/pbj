@@ -44,6 +44,7 @@ class ScriptHandler
             return;
         }
 
+        $dirs = array_unique($dirs);
         $dirs = implode(',', $dirs);
 
         $event->getIO()->write('<info>Writing "pbj-schema-store" locations to "pbj-schema-stores.php"</info>');

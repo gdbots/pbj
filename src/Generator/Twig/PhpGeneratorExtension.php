@@ -1,24 +1,22 @@
 <?php
 
-namespace Gdbots\Pbjc\Twig\Extension;
+namespace Gdbots\Pbjc\Generator\Twig;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\SchemaStore;
 
-class SchemaExtension extends \Twig_Extension
+class PhpGeneratorExtension extends GeneratorExtension
 {
+    const LANGUAGE = 'php';
+
     /**
      * {@inheritdoc}
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('getClassName', array($this, 'getClassName')),
-            new \Twig_SimpleFunction('hasOtherMajorRev', array($this, 'hasOtherMajorRev')),
-            new \Twig_SimpleFunction('isSameNamespace', array($this, 'isSameNamespace')),
-            new \Twig_SimpleFunction('getAllVersions', array($this, 'getAllVersions')),
-        );
+        return array_merge(parent::getFunctions(), [
+            new \Twig_SimpleFunction('getClassName', [$this, 'getClassName']),
+        ]);
     }
 
     /**
@@ -60,44 +58,5 @@ class SchemaExtension extends \Twig_Extension
         }
 
         return $className;
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return bool
-     */
-    public function hasOtherMajorRev(SchemaDescriptor $schema)
-    {
-        return SchemaStore::hasOtherSchemaMajorRev($schema->getId());
-    }
-
-    /**
-     * @param SchemaDescriptor $a
-     * @param SchemaDescriptor $b
-     *
-     * @return bool
-     */
-    public function isSameNamespace(SchemaDescriptor $a, SchemaDescriptor $b)
-    {
-        return $a->getLanguage('php')->get('namespace') == $b->getLanguage('php')->get('namespace');
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return array
-     */
-    public function getAllVersions(SchemaDescriptor $schema)
-    {
-        return SchemaStore::getAllSchemaVersions($schema->getId());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'schema';
     }
 }

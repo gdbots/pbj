@@ -68,18 +68,14 @@
     {{ spaces|format('') }}->useTypeDefault(false)
 {% endif %}
 {% if field.anyOf %}
-{% if field.anyOf|length == 1 %}
-    {{ spaces|format('') }}->className('{{ field.anyOf.0.language('php').get('namespace') }}\{{ getClassName(field.anyOf.0) }}')
-{% else %}
     {{ spaces|format('') }}->anyOfClassNames([
-{% for schema in field.anyOf %}
-    {{ spaces|format('') }}  '{{ schema.language('php').get('namespace') }}\{{ getClassName(schema) }}'{% if not loop.last %}, {% endif %}
-
+{% for anyOf in field.anyOf %}
+    {{ spaces|format('') }}    {{ getClassName(anyOf, false, true) }}::class,
 {% endfor %}
     {{ spaces|format('') }}])
 {% endif %}
-{% elseif field.language('php').get('classname') %}
-    {{ spaces|format('') }}->className('{{ field.language('php').get('classname') }}')
+{% if field.language('php').get('classname') %}
+    {{ spaces|format('') }}->className({{ field.language('php').get('classname')|split('\\')|last }}::class)
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)

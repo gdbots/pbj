@@ -12,7 +12,7 @@
   "autoload": {
     "files": ["pbj-schemas.php"],
     "psr-0": {
-      "": "src"
+      "": "src/php"
     }
   },
   "autoload-dev": {

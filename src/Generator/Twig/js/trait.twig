@@ -1,0 +1,21 @@
+{% set insertionPoints = schema.language('js').get('insertion-points') %}
+{% block use_statements %}
+{% for mixin in schema.mixins %}
+{% if not isSameNamespace(schema, mixin) %}
+use {{ mixin.language('js').get('package') }}\{{ schema_as_fq_class_name_with_major(mixin) }}Trait;
+{% endif %}
+{% endfor %}
+{% if insertionPoints %}
+{{ indentString(insertionPoints.imports, 0) }}
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+export default function {{ schema_as_class_name_with_major(schema) }}Trait(m) {
+{% endblock class_definition %}
+{% block class_body %}
+{% if insertionPoints %}
+{{ indentString(insertionPoints.methods, 2) }}
+{% endif %}
+{% endblock class_body %}
+}

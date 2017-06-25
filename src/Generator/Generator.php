@@ -6,26 +6,21 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\Generator\Twig\StringExtension;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
-use Gdbots\Pbjc\Twig\Extension\StringExtension;
 use Gdbots\Pbjc\Util\OutputFile;
 
 abstract class Generator
 {
-    /**
-     * The directory to look for templates.
-     */
-    const SKELETON_DIR = __DIR__.'/templates/';
-
-    /** @var string */
-    protected $language;
-
-    /** @var string */
-    protected $extension;
+    const TEMPLATE_DIR = __DIR__ . '/Twig/';
+    const LANGUAGE = 'unknown';
+    const EXTENSION = '.unk';
 
     /** @var CompileOptions */
     protected $compileOptions;
+
+    /** @var \Twig_Environment */
+    protected $twig;
 
     /**
      * @param CompileOptions $compileOptions
@@ -74,6 +69,30 @@ abstract class Generator
     }
 
     /**
+     * Generates and writes enum files.
+     *
+     * @param EnumDescriptor $enum
+     *
+     * @return GeneratorResponse
+     */
+    public function generateEnum(EnumDescriptor $enum)
+    {
+        return new GeneratorResponse();
+    }
+
+    /**
+     * Generates and writes manifest files.
+     *
+     * @param SchemaDescriptor[] $schemas
+     *
+     * @return GeneratorResponse
+     */
+    public function generateManifest(array $schemas)
+    {
+        return new GeneratorResponse();
+    }
+
+    /**
      * Adds and updates field php options.
      *
      * @param SchemaDescriptor $schema
@@ -99,13 +118,15 @@ abstract class Generator
             '{vendor}',
             '{package}',
             '{category}',
+            '{message}',
             '{version}',
             '{major}',
         ], [
             $schema->getId()->getVendor(),
             $schema->getId()->getPackage(),
             $schema->getId()->getCategory(),
-            $schema->getId()->getVersion()->toString(),
+            $schema->getId()->getMessage(),
+            $schema->getId()->getVersion(),
             $schema->getId()->getVersion()->getMajor(),
         ], $filename);
 
@@ -116,15 +137,14 @@ abstract class Generator
                 StringUtils::toCamelFromSlug($schema->getId()->getCategory())
             );
         }
-        if ($directory) {
-            $directory .= '/';
-        }
+
+        $directory = trim($directory, '/') . '/';
 
         return sprintf('%s/%s%s%s',
             $this->compileOptions->getOutput(),
             $directory,
             $filename,
-            $this->extension
+            static::EXTENSION
         );
     }
 
@@ -145,31 +165,7 @@ abstract class Generator
      */
     protected function getSchemaParameters(SchemaDescriptor $schema)
     {
-        return [
-            'schema' => $schema,
-        ];
-    }
-
-    /**
-     * Generates and writes enum files.
-     *
-     * @param EnumDescriptor $enum
-     *
-     * @return GeneratorResponse
-     */
-    public function generateEnum(EnumDescriptor $enum)
-    {
-    }
-
-    /**
-     * Generates and writes manifest files.
-     *
-     * @param SchemaDescriptor[] $schemas
-     *
-     * @return GeneratorResponse
-     */
-    public function generateManifest(array $schemas)
-    {
+        return ['schema' => $schema];
     }
 
     /**
@@ -180,10 +176,8 @@ abstract class Generator
      */
     protected function render($template, array $parameters)
     {
-        $twig = $this->getTwigEnvironment();
-
+        $twig = $this->getTwig();
         $parameters['compileOptions'] = $this->compileOptions;
-
         return $twig->render($template, $parameters);
     }
 
@@ -192,19 +186,26 @@ abstract class Generator
      *
      * @return \Twig_Environment
      */
-    protected function getTwigEnvironment()
+    protected function getTwig()
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_Filesystem(self::SKELETON_DIR), array(
-            'debug' => true,
-            'cache' => false,
-            'strict_variables' => true,
-            'autoescape' => false,
-        ));
+        if (null === $this->twig) {
+            $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem(self::TEMPLATE_DIR), [
+                'debug'            => true,
+                'cache'            => false,
+                'strict_variables' => true,
+                'autoescape'       => false,
+            ]);
 
-        $twig->addExtension(new SchemaExtension());
-        $twig->addExtension(new StringExtension());
+            $this->twig->addExtension(new StringExtension());
 
-        return $twig;
+            $class = sprintf(
+                '\Gdbots\Pbjc\Generator\Twig\%sGeneratorExtension',
+                StringUtils::toCamelFromSlug(static::LANGUAGE)
+            );
+            $this->twig->addExtension(new $class($this->compileOptions));
+        }
+
+        return $this->twig;
     }
 
     /**
@@ -216,10 +217,8 @@ abstract class Generator
      */
     protected function renderFile($template, $target, array $parameters)
     {
-        $template = sprintf('%s/%s', $this->language, $template);
-
+        $template = sprintf('%s/%s', static::LANGUAGE, $template);
         $content = $this->render($template, $parameters);
-
         return new OutputFile($target, $content);
     }
 }

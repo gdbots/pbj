@@ -10,11 +10,8 @@ use Gdbots\Pbjc\SchemaStore;
 
 class PhpGenerator extends Generator
 {
-    /** @var string */
-    protected $language = 'php';
-
-    /** @var string */
-    protected $extension = '.php';
+    const LANGUAGE = 'php';
+    const EXTENSION = '.php';
 
     /**
      * {@inheritdoc}
@@ -22,8 +19,8 @@ class PhpGenerator extends Generator
     protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
     {
         if ($enum = $field->getEnum()) {
-            if (!$className = $field->getLanguage('php')->get('classname')) {
-                $namespace = $enum->getLanguage('php')->get('namespace');
+            if (!$className = $field->getLanguage(static::LANGUAGE)->get('classname')) {
+                $namespace = $enum->getLanguage(static::LANGUAGE)->get('namespace');
                 if (substr($namespace, 0, 1) == '\\') {
                     $namespace = substr($namespace, 1);
                 }
@@ -35,10 +32,10 @@ class PhpGenerator extends Generator
                     )
                 ;
 
-                $field->getLanguage('php')->set('classname', $className);
+                $field->getLanguage(static::LANGUAGE)->set('classname', $className);
             }
 
-            if (null === $field->getLanguage('php')->get('default', null)) {
+            if (null === $field->getLanguage(static::LANGUAGE)->get('default', null)) {
                 $default = $field->getDefault();
                 if (is_array($default)) {
                     $default = count($default) ? current($default) : null;
@@ -49,10 +46,10 @@ class PhpGenerator extends Generator
                     $enumKey = $enum->getKeyByValue($default);
                 }
 
-                $field->getLanguage('php')->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
+                $field->getLanguage(static::LANGUAGE)->set('default', sprintf('%s::%s()', substr($className, strrpos($className, '\\') + 1), strtoupper($enumKey)));
 
                 if (strlen($default) === 0) {
-                    $field->getLanguage('php')->set('hide_default', true);
+                    $field->getLanguage(static::LANGUAGE)->set('hide_default', true);
                 }
             }
         }
@@ -69,7 +66,7 @@ class PhpGenerator extends Generator
             StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
         ], $filename);
 
-        $directory = str_replace('\\', '/', $schema->getLanguage('php')->get('namespace'));
+        $directory = str_replace('\\', '/', $schema->getLanguage(static::LANGUAGE)->get('namespace'));
 
         return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
     }
@@ -92,7 +89,7 @@ class PhpGenerator extends Generator
             ];
 
             // ignore empty trait classes
-            if (count($schema->getMixins()) || $schema->getLanguage('php')->get('insertion-points')) {
+            if (count($schema->getMixins()) || $schema->getLanguage(static::LANGUAGE)->get('insertion-points')) {
                 $templates['trait.twig'] = '{className}V{major}Trait';
             }
         }
@@ -105,7 +102,7 @@ class PhpGenerator extends Generator
      */
     public function generateEnum(EnumDescriptor $enum)
     {
-        $namespace = $enum->getLanguage('php')->get('namespace');
+        $namespace = $enum->getLanguage(static::LANGUAGE)->get('namespace');
         if (substr($namespace, 0, 1) == '\\') {
             $namespace = substr($namespace, 1);
         }
@@ -117,7 +114,7 @@ class PhpGenerator extends Generator
                 $this->compileOptions->getOutput(),
                 str_replace('\\', '/', $namespace),
                 str_replace('\\', '/', $className),
-                $this->extension
+                static::EXTENSION
             )
         ;
 
@@ -169,7 +166,7 @@ class PhpGenerator extends Generator
             if (!array_key_exists($schema->getId()->getCurie(), $messages)) {
                 $messages[$schema->getId()->getCurie()] = sprintf(
                     '%s\%sV%d',
-                    $schema->getLanguage('php')->get('namespace'),
+                    $schema->getLanguage(static::LANGUAGE)->get('namespace'),
                     StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
                     $schema->getId()->getVersion()->getMajor()
                 );
@@ -181,7 +178,7 @@ class PhpGenerator extends Generator
                     if (!array_key_exists($s->getId()->getCurieWithMajorRev(), $messages)) {
                         $messages[$s->getId()->getCurieWithMajorRev()] = sprintf(
                             '%s\%sV%d',
-                            $s->getLanguage('php')->get('namespace'),
+                            $s->getLanguage(static::LANGUAGE)->get('namespace'),
                             StringUtils::toCamelFromSlug($s->getId()->getMessage()),
                             $s->getId()->getVersion()->getMajor()
                         );

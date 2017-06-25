@@ -26,6 +26,9 @@
       "Gdbots\\Tests\\Pbjc\\": "tests"
     }
   },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
   "bin": ["bin/pbjc"],
   "extra": {
     "branch-alias": {
