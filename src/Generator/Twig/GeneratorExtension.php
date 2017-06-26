@@ -37,47 +37,46 @@ abstract class GeneratorExtension extends \Twig_Extension
             new \Twig_SimpleFunction('is_same_namespace', [$this, 'isSameNamespace']),
             new \Twig_SimpleFunction('get_all_versions', [$this, 'getAllVersions']),
 
-            new \Twig_SimpleFunction('schema_as_class_name', [$this, 'schemaAsClassName']),
-            new \Twig_SimpleFunction('schema_as_class_name_with_major', [$this, 'schemaAsClassNameWithMajor']),
-
-            new \Twig_SimpleFunction('schema_as_fq_class_name', [$this, 'schemaAsFqClassName']),
-            new \Twig_SimpleFunction('schema_as_fq_class_name_with_major', [$this, 'schemaAsFqClassNameWithMajor']),
+            new \Twig_SimpleFunction('schema_class_name', [$this, 'schemaClassName']),
+            new \Twig_SimpleFunction('schema_fq_class_name', [$this, 'schemaFqClassName']),
+            new \Twig_SimpleFunction('schema_package', [$this, 'schemaPackage']),
+            new \Twig_SimpleFunction('schema_import', [$this, 'schemaImport']),
         ];
     }
 
     /**
      * @param SchemaDescriptor $schema
+     * @param bool             $withMajor
      *
      * @return string
      */
-    public function schemaAsClassName(SchemaDescriptor $schema)
+    public function schemaClassName(SchemaDescriptor $schema, $withMajor = false)
     {
-        return StringUtils::toCamelFromSlug($schema->getId()->getMessage());
-    }
+        $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
+        if (!$withMajor) {
+            return $className;
+        }
 
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
-     */
-    public function schemaAsClassNameWithMajor(SchemaDescriptor $schema)
-    {
-        $className = $this->schemaAsClassName($schema);
         return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
     }
 
     /**
      * @param SchemaDescriptor $schema
+     * @param bool             $withMajor
      *
      * @return string
      */
-    public function schemaAsFqClassName(SchemaDescriptor $schema)
+    public function schemaFqClassName(SchemaDescriptor $schema, $withMajor = false)
     {
         $id = $schema->getId();
         $vendor = StringUtils::toCamelFromSlug($id->getVendor());
         $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-        $className = $this->schemaAsClassName($schema);
-        return "{$vendor}{$package}{$className}";
+        $className = "{$vendor}{$package}{$this->schemaClassName($schema)}";
+        if (!$withMajor) {
+            return $className;
+        }
+
+        return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
     }
 
     /**
@@ -85,10 +84,33 @@ abstract class GeneratorExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function schemaAsFqClassNameWithMajor(SchemaDescriptor $schema)
+    public function schemaPackage(SchemaDescriptor $schema)
     {
-        $className = $this->schemaAsFqClassName($schema);
-        return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
+        $packages = $this->compileOptions->getPackages();
+        $id = $schema->getId();
+
+        $vendorPackage = "{$id->getVendor()}:{$id->getPackage()}";
+
+        if (isset($packages[$vendorPackage])) {
+            return $packages[$vendorPackage];
+        }
+
+        if (isset($packages[$id->getVendor()])) {
+            return $packages[$id->getVendor()];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param SchemaDescriptor $schema
+     * @param bool             $withMajor
+     *
+     * @return string
+     */
+    public function schemaImport(SchemaDescriptor $schema, $withMajor = false)
+    {
+        return null;
     }
 
     /**

@@ -1,7 +1,7 @@
 {% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
-namespace {{ schema.language('php').get('namespace') }};
+namespace {{ schema_psr_namespace(schema) }};
 
 {% block use_statements %}
 use Gdbots\Pbj\AbstractMessage;
@@ -42,11 +42,11 @@ use Gdbots\Pbj\Enum\Format;
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ schema_as_class_name_with_major(schema) }} extends AbstractMessage implements
-    {{ schema_as_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
+final class {{ schema_class_name(schema, true) }} extends AbstractMessage implements
+    {{ schema_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
 
 {% for mixin in schema.mixins %}
-    {{ schema_as_fq_class_name_with_major(mixin) }}{% if not loop.last %},{% endif %}
+    {{ schema_fq_class_name(mixin, true) }}{% if not loop.last %},{% endif %}
 
 {% endfor %}
 {% endblock class_definition %}
@@ -54,7 +54,7 @@ final class {{ schema_as_class_name_with_major(schema) }} extends AbstractMessag
 {% block class_body %}
 {% for mixin in schema.mixins %}
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
-    use {{ getClassName(mixin, true, true, false, 'Trait') }};
+    use {{ schema_fq_class_name(mixin, true) }}Trait;
 {% endif %}
 {% endfor %}
 
@@ -79,8 +79,7 @@ final class {{ schema_as_class_name_with_major(schema) }} extends AbstractMessag
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
-                {{ getClassName(mixin, true, true, false, 'Mixin') }}::create(){% if not loop.last %}, {% endif %}
-
+                {{ schema_fq_class_name(mixin, true) }}Mixin::create(),
 {% endfor %}
             ]
 {% endif %}

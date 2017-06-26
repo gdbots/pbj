@@ -7,6 +7,9 @@ final class CompileOptions
     /** @var array */
     private $namespaces = [];
 
+    /** @var array */
+    private $packages = [];
+
     /** @var string */
     private $domain;
 
@@ -42,6 +45,14 @@ final class CompileOptions
     public function getNamespaces()
     {
         return $this->namespaces;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPackages()
+    {
+        return $this->packages;
     }
 
     /**

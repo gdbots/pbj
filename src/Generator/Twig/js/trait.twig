@@ -2,7 +2,7 @@
 {% block use_statements %}
 {% for mixin in schema.mixins %}
 {% if not isSameNamespace(schema, mixin) %}
-use {{ mixin.language('js').get('package') }}\{{ schema_as_fq_class_name_with_major(mixin) }}Trait;
+import {{ schema_fq_class_name(mixin, true) }} from '{{ schema_import(mixin, true) }}Trait';
 {% endif %}
 {% endfor %}
 {% if insertionPoints %}
@@ -11,7 +11,7 @@ use {{ mixin.language('js').get('package') }}\{{ schema_as_fq_class_name_with_ma
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default function {{ schema_as_class_name_with_major(schema) }}Trait(m) {
+export default function {{ schema_class_name(schema, true) }}Trait(m) {
 {% endblock class_definition %}
 {% block class_body %}
 {% if insertionPoints %}

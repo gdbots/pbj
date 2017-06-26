@@ -11,7 +11,7 @@ import T from '@gdbots/pbj/Type';
 {% set format_class = true %}
 {% endif %}
 {% if field.language('js').get('instance') %}
-# import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';
+{#import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';#}
 {% endif %}
 {% endfor %}
 {% if format_class %}
@@ -20,7 +20,7 @@ import Format from '@gdbots/pbj/Enum/Format';
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default class {{ schema_as_class_name_with_major(schema) }}Mixin extends Mixin {
+export default class {{ schema_class_name(schema, true) }}Mixin extends Mixin {
 {% endblock class_definition %}
 {% block class_body %}
   /**

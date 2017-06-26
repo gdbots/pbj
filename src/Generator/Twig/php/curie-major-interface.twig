@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ schema.language('php').get('namespace') }};
+namespace {{ schema_psr_namespace(schema) }};
 
 {% block use_statements %}
 {% if hasOtherMajorRev(schema) and schema.extends and not isSameNamespace(schema, schema.extends) %}

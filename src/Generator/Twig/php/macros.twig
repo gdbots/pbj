@@ -83,6 +83,5 @@
 {% if field.language('php').get('assertion') %}
     {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|reduceSpaces }})
 {% endif %}
-    {{ spaces|format('') }}->build(){% if not isLastItem %},{% endif %}
-
+    {{ spaces|format('') }}->build(),
 {% endmacro %}

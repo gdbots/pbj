@@ -83,6 +83,5 @@ Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
 {% if field.language('js').get('assertion') %}
   {{ spaces|format('') }}.assertion({{ field.language('js').get('assertion')|reduceSpaces }})
 {% endif %}
-  {{ spaces|format('') }}.build(){% if not isLastItem %},{% endif %}
-
+  {{ spaces|format('') }}.build(),
 {% endmacro %}

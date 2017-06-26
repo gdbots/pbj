@@ -1,7 +1,7 @@
 {% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
-namespace {{ schema.language('php').get('namespace') }};
+namespace {{ schema_psr_namespace(schema) }};
 
 {% block use_statements %}
 use Gdbots\Pbj\Schema;
