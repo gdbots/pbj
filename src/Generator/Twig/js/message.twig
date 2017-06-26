@@ -19,7 +19,7 @@ import T from '@gdbots/pbj/Type';
 {% endfor %}
 {% endif %}
 {% elseif field.language('js').get('instance') %}
-import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';
+{#import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';#}
 {% endif %}
 {% endfor %}
 {% for mixin in schema.mixins %}

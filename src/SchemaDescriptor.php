@@ -5,7 +5,7 @@ namespace Gdbots\Pbjc;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Util\LanguageBag;
 
-final class SchemaDescriptor
+final class SchemaDescriptor implements \JsonSerializable
 {
     /** @var SchemaId */
     private $id;
@@ -87,6 +87,14 @@ final class SchemaDescriptor
     public function toString()
     {
         return $this->id->toString();
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return $this->toString();
     }
 
     /**
