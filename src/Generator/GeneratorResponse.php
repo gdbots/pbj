@@ -21,7 +21,7 @@ final class GeneratorResponse
     }
 
     /**
-     * @return array
+     * @return OutputFile[]
      */
     public function getFiles()
     {

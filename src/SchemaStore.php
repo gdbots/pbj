@@ -100,7 +100,7 @@ class SchemaStore
     /**
      * Returns an array of schemas.
      *
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public static function getSchemas()
     {
@@ -110,7 +110,7 @@ class SchemaStore
     /**
      * Returns an array of schemas by curie.
      *
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public static function getSchemasByCurie()
     {
@@ -120,9 +120,9 @@ class SchemaStore
     /**
      * Returns an array of schemas by namespaces.
      *
-     * @param array $namespaces
+     * @param string[] $namespaces
      *
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public static function getSchemasByNamespaces(array $namespaces)
     {
@@ -141,7 +141,7 @@ class SchemaStore
     /**
      * Returns an array of schemas by curie major.
      *
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public static function getSchemasByCurieMajor()
     {
@@ -181,7 +181,7 @@ class SchemaStore
             throw new \RuntimeException(sprintf('Schema with id "%s" is invalid.', $schemaId));
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -215,7 +215,7 @@ class SchemaStore
             }
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -223,7 +223,7 @@ class SchemaStore
      *
      * @param SchemaId $schemaId
      *
-     * @return array|bool
+     * @return SchemaDescriptor[]|bool
      */
     public static function getAllSchemaVersions(SchemaId $schemaId)
     {
@@ -270,7 +270,7 @@ class SchemaStore
      *
      * @param SchemaId $schemaId
      *
-     * @return array|bool
+     * @return SchemaDescriptor[]|bool
      */
     public static function getOtherSchemaMajorRev(SchemaId $schemaId)
     {
@@ -295,18 +295,14 @@ class SchemaStore
     }
 
     /**
-     * Adds an enum. An exception will be thrown when attempting to load
-     * the same id multi times.
+     * Adds an enum.
      *
      * @param EnumId         $enumId
      * @param EnumDescriptor $enum
-     *
-     * @throws \RuntimeException on duplicate id
      */
     public static function addEnum(EnumId $enumId, EnumDescriptor $enum)
     {
         self::$enums[$enumId->toString()] = $enum;
-
         ksort(self::$enums);
     }
 
@@ -332,13 +328,13 @@ class SchemaStore
             throw new \RuntimeException(sprintf('Enum with id "%s" is invalid.', $enumId));
         }
 
-        return;
+        return null;
     }
 
     /**
      * Returns an array of enums.
      *
-     * @return array
+     * @return EnumDescriptor[]
      */
     public static function getEnums()
     {

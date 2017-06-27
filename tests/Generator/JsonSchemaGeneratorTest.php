@@ -2,6 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Generator;
 
+use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Generator\JsonSchemaGenerator;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\FieldDescriptor;
@@ -9,20 +10,23 @@ use Gdbots\Pbjc\SchemaDescriptor;
 
 class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Gdbots\Pbjc\Generator\Generator */
+    /** @var Generator */
     private $generator;
 
     public function setUp()
     {
         $this->generator = new JsonSchemaGenerator(new CompileOptions([
-            'namespaces' => ['acme:blog']
+            'namespaces' => ['acme:blog'],
         ]));
     }
 
     /**
      * @dataProvider getSchemas
+     *
+     * @param SchemaDescriptor $schema
+     * @param array            $files
      */
-    public function testGenerateSchema(SchemaDescriptor $schema, array $files)
+    public function testgenerateSchema(SchemaDescriptor $schema, array $files)
     {
         $response = $this->generator->generateSchema($schema);
 
@@ -55,30 +59,30 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
                                 'type' => 'geo-point',
                             ]),
                             new FieldDescriptor('string_with_properties', [
-                                'type' => 'string',
-                                'default' => 'test',
+                                'type'        => 'string',
+                                'default'     => 'test',
                                 'description' => 'this is a short description',
-                                'min' => 10,
-                                'max' => 100,
+                                'min'         => 10,
+                                'max'         => 100,
                             ]),
                             new FieldDescriptor('url', [
-                                'type' => 'string',
+                                'type'   => 'string',
                                 'format' => 'url',
-                                'rule' => 'map',
+                                'rule'   => 'map',
                             ]),
                             new FieldDescriptor('node_refs', [
                                 'type' => 'message-ref',
                                 'rule' => 'set',
                             ]),
                             new FieldDescriptor('set_with_pattern', [
-                                'type' => 'string',
+                                'type'    => 'string',
                                 'pattern' => '^[\w\/\.:-]+$',
-                                'rule' => 'set',
+                                'rule'    => 'set',
                             ]),
                         ],
                     ]
                 ),
-                'files' => [
+                'files'  => [
                     '/acme/blog/entity/article/1-0-0.json' => '{
   "id": "/json-schema/acme/blog/entity/article/1-0-0.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
@@ -228,9 +232,9 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
     "_schema"
   ],
   "additionalProperties": false
-}'
-                ]
-            ]
+}',
+                ],
+            ],
         ];
     }
 }

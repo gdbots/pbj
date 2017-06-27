@@ -2,8 +2,8 @@
 
 namespace Gdbots\Pbjc\Generator\Twig;
 
-use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
@@ -14,12 +14,17 @@ abstract class GeneratorExtension extends \Twig_Extension
     /** @var CompileOptions */
     protected $compileOptions;
 
+    /** @var Generator */
+    protected $generator;
+
     /**
      * @param CompileOptions $compileOptions
+     * @param Generator      $generator
      */
-    public function __construct(CompileOptions $compileOptions)
+    public function __construct(CompileOptions $compileOptions, Generator $generator)
     {
         $this->compileOptions = $compileOptions;
+        $this->generator = $generator;
     }
 
     /**
@@ -37,80 +42,15 @@ abstract class GeneratorExtension extends \Twig_Extension
             new \Twig_SimpleFunction('is_same_namespace', [$this, 'isSameNamespace']),
             new \Twig_SimpleFunction('get_all_versions', [$this, 'getAllVersions']),
 
-            new \Twig_SimpleFunction('schema_class_name', [$this, 'schemaClassName']),
-            new \Twig_SimpleFunction('schema_fq_class_name', [$this, 'schemaFqClassName']),
-            new \Twig_SimpleFunction('schema_package', [$this, 'schemaPackage']),
-            new \Twig_SimpleFunction('schema_import', [$this, 'schemaImport']),
+            new \Twig_SimpleFunction('schema_to_class_name', [$this->generator, 'schemaToClassName']),
+            new \Twig_SimpleFunction('schema_to_fq_class_name', [$this->generator, 'schemaToFqClassName']),
+            new \Twig_SimpleFunction('enum_to_class_name', [$this->generator, 'enumToClassName']),
+            new \Twig_SimpleFunction('schema_to_native_package', [$this->generator, 'schemaToNativePackage']),
+            new \Twig_SimpleFunction('enum_to_native_package', [$this->generator, 'enumToNativePackage']),
+
+            new \Twig_SimpleFunction('schema_to_native_import_path', [$this->generator, 'schemaToNativeImportPath']),
+            new \Twig_SimpleFunction('enum_to_native_import_path', [$this->generator, 'enumToNativeImportPath']),
         ];
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     * @param bool             $withMajor
-     *
-     * @return string
-     */
-    public function schemaClassName(SchemaDescriptor $schema, $withMajor = false)
-    {
-        $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
-        if (!$withMajor) {
-            return $className;
-        }
-
-        return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     * @param bool             $withMajor
-     *
-     * @return string
-     */
-    public function schemaFqClassName(SchemaDescriptor $schema, $withMajor = false)
-    {
-        $id = $schema->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-        $className = "{$vendor}{$package}{$this->schemaClassName($schema)}";
-        if (!$withMajor) {
-            return $className;
-        }
-
-        return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
-     */
-    public function schemaPackage(SchemaDescriptor $schema)
-    {
-        $packages = $this->compileOptions->getPackages();
-        $id = $schema->getId();
-
-        $vendorPackage = "{$id->getVendor()}:{$id->getPackage()}";
-
-        if (isset($packages[$vendorPackage])) {
-            return $packages[$vendorPackage];
-        }
-
-        if (isset($packages[$id->getVendor()])) {
-            return $packages[$id->getVendor()];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     * @param bool             $withMajor
-     *
-     * @return string
-     */
-    public function schemaImport(SchemaDescriptor $schema, $withMajor = false)
-    {
-        return null;
     }
 
     /**

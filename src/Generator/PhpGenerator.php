@@ -8,7 +8,7 @@ use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
-class PhpGenerator extends Generator
+class PhpGenerator extends AbstractGenerator
 {
     const LANGUAGE = 'php';
     const EXTENSION = '.php';

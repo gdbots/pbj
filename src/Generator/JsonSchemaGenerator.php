@@ -4,7 +4,7 @@ namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class JsonSchemaGenerator extends Generator
+class JsonSchemaGenerator extends AbstractGenerator
 {
     const LANGUAGE = 'json-schema';
     const EXTENSION = '.json';
@@ -48,9 +48,9 @@ class JsonSchemaGenerator extends Generator
                 '    ',
                 '\/',
             ], [
-                '  ',
-                '/',
-            ], json_encode(
+            '  ',
+            '/',
+        ], json_encode(
                 json_decode(
                     str_replace(
                         [
@@ -61,7 +61,7 @@ class JsonSchemaGenerator extends Generator
                             ',}',
                             ',]',
                             ': INF',
-                            ': NAN'
+                            ': NAN',
                         ],
                         [
                             '',
@@ -71,7 +71,7 @@ class JsonSchemaGenerator extends Generator
                             '}',
                             ']',
                             ': "INF"',
-                            ': "NAN"'
+                            ': "NAN"',
                         ],
                         parent::render($template, $parameters)
                     )

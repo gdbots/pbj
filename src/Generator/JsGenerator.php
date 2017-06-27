@@ -7,10 +7,24 @@ use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class JsGenerator extends Generator
+class JsGenerator extends AbstractGenerator
 {
     const LANGUAGE = 'js';
     const EXTENSION = '.js';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function generateMessage(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+        $id = $schema->getId();
+        $target = str_replace(['::', ':'], [':', '/'], $id->getCurie());
+        $parameters = [
+            'schema' => $schema
+        ];
+
+        $response->addFile($this->generateOutputFile('message.twig', $target, $parameters));
+    }
 
     /**
      * {@inheritdoc}

@@ -8,18 +8,16 @@ class OutputFile
     protected $file;
 
     /** @var string */
-    protected $content;
+    protected $contents;
 
     /**
-     * Constructor.
-     *
-     * @param string $file    The file name
-     * @param string $content The file content
+     * @param string $file     The file name
+     * @param string $contents The file content
      */
-    public function __construct($file, $content)
+    public function __construct($file, $contents)
     {
         $this->file = $file;
-        $this->content = $content;
+        $this->contents = $contents;
     }
 
     /**
@@ -39,6 +37,6 @@ class OutputFile
      */
     public function getContents()
     {
-        return $this->content;
+        return $this->contents;
     }
 }

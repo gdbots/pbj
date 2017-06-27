@@ -2,6 +2,7 @@
 
 namespace Gdbots\Tests\Pbjc\Generator;
 
+use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Generator\PhpGenerator;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\FieldDescriptor;
@@ -10,7 +11,7 @@ use Gdbots\Pbjc\Util\LanguageBag;
 
 class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Gdbots\Pbjc\Generator\Generator */
+    /** @var Generator */
     private $generator;
 
     public function setUp()
@@ -22,8 +23,11 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getSchemas
+     *
+     * @param SchemaDescriptor $schema
+     * @param array            $files
      */
-    public function testGenerateSchema(SchemaDescriptor $schema, array $files)
+    public function testgenerateSchema(SchemaDescriptor $schema, array $files)
     {
         $response = $this->generator->generateSchema($schema);
 
