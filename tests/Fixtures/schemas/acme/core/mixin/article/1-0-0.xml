@@ -5,15 +5,14 @@
 
   <schema id="pbj:acme:core:mixin:article:1-0-0" mixin="true">
     <php-options>
-      <namespace>Acme\Schemas\Core\Entity</namespace>
       <insertion-points>
         <imports>
-            <![CDATA[
+          <![CDATA[
 use Gdbots\Pbj\MessageRef;
             ]]>
         </imports>
         <methods>
-            <![CDATA[
+          <![CDATA[
 /**
  * @param string $tag
  * @return MessageRef

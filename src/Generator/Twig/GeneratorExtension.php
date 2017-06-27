@@ -33,23 +33,16 @@ abstract class GeneratorExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('getClassName', [$this, 'getClassName']),
-            new \Twig_SimpleFunction('hasOtherMajorRev', [$this, 'hasOtherMajorRev']),
-            new \Twig_SimpleFunction('isSameNamespace', [$this, 'isSameNamespace']),
-            new \Twig_SimpleFunction('getAllVersions', [$this, 'getAllVersions']),
-
             new \Twig_SimpleFunction('has_other_major_rev', [$this, 'hasOtherMajorRev']),
             new \Twig_SimpleFunction('is_same_namespace', [$this, 'isSameNamespace']),
             new \Twig_SimpleFunction('get_all_versions', [$this, 'getAllVersions']),
-
             new \Twig_SimpleFunction('schema_to_class_name', [$this->generator, 'schemaToClassName']),
             new \Twig_SimpleFunction('schema_to_fq_class_name', [$this->generator, 'schemaToFqClassName']),
             new \Twig_SimpleFunction('enum_to_class_name', [$this->generator, 'enumToClassName']),
             new \Twig_SimpleFunction('schema_to_native_package', [$this->generator, 'schemaToNativePackage']),
             new \Twig_SimpleFunction('enum_to_native_package', [$this->generator, 'enumToNativePackage']),
-
-            new \Twig_SimpleFunction('schema_to_native_import_path', [$this->generator, 'schemaToNativeImportPath']),
-            new \Twig_SimpleFunction('enum_to_native_import_path', [$this->generator, 'enumToNativeImportPath']),
+            new \Twig_SimpleFunction('schema_to_native_namespace', [$this->generator, 'schemaToNativeNamespace']),
+            new \Twig_SimpleFunction('enum_to_native_namespace', [$this->generator, 'enumToNativeNamespace']),
         ];
     }
 
@@ -71,20 +64,19 @@ abstract class GeneratorExtension extends \Twig_Extension
      */
     public function isSameNamespace(SchemaDescriptor $a, SchemaDescriptor $b)
     {
-        // fixme: use new strategy from compile options.
-        $ans = $a->getLanguage(static::LANGUAGE)->get('namespace');
-        $bns = $b->getLanguage(static::LANGUAGE)->get('namespace');
+        $ans = $this->generator->schemaToNativeNamespace($a);
+        $bns = $this->generator->schemaToNativeNamespace($b);
         return $ans == $bns;
     }
 
     /**
      * @param SchemaDescriptor $schema
      *
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public function getAllVersions(SchemaDescriptor $schema)
     {
-        return SchemaStore::getAllSchemaVersions($schema->getId());
+        return SchemaStore::getAllSchemaVersions($schema->getId()) ?: [];
     }
 
     /**

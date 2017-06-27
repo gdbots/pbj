@@ -22,13 +22,5 @@
       <option key="TEXT" value="text" />
       <option key="VIDEO" value="video" />
     </enum>
-
-    <php-options>
-      <namespace>Acme\Schemas\Blog\Enum</namespace>
-    </php-options>
-
-    <js-options>
-      <namespace>Acme/Schemas/Blog/Enum</namespace>
-    </js-options>
   </enums>
 </pbj-enums>

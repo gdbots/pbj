@@ -1,23 +1,17 @@
 <?php
 
-namespace {{ enum.language('php').get('namespace') }};
+namespace {{ enum_to_native_namespace(enum) }};
 
-{% block use_statements %}
 use Gdbots\Common\Enum;
-{% endblock use_statements %}
 
-{% block class_definition %}
 /**
 {% for key, value in enum.values %}
- * @method static {{ className }} {{ key}}()
+ * @method static {{ enum_to_class_name(enum) }} {{ key}}()
 {% endfor %}
  */
-final class {{ className }} extends Enum
-{% endblock class_definition %}
+final class {{ enum_to_class_name(enum) }} extends Enum
 {
-{% block class_body %}
 {% for key, value in enum.values %}
-    const {{ key|upper }} = {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %};
+    const {{ key|upper }} = {% if enum.type == 'int' %}{{ value }}{% else %}'{{ value }}'{% endif %};
 {% endfor %}
-{% endblock class_body %}
 }

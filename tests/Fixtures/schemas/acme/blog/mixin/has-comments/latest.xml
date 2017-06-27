@@ -3,9 +3,5 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
 
-  <schema id="pbj:acme:blog:mixin:has-comments:1-0-0" mixin="true">
-    <php-options>
-      <namespace>Acme\Schemas\Blog</namespace>
-    </php-options>
-  </schema>
+  <schema id="pbj:acme:blog:mixin:has-comments:1-0-0" mixin="true"/>
 </pbj-schema>

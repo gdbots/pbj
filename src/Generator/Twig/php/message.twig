@@ -37,16 +37,16 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, tr
 use Gdbots\Pbj\Enum\Format;
 {% endif %}
 {% if insertionPoints %}
-{{ indentString(insertionPoints.imports, 0) }}
+{{ indent_string(insertionPoints.imports, 0) }}
 {% endif %}
 {% endblock use_statements %}
 
 {% block class_definition %}
-final class {{ schema_class_name(schema, true) }} extends AbstractMessage implements
-    {{ schema_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
+final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage implements
+    {{ schema_to_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
 
 {% for mixin in schema.mixins %}
-    {{ schema_fq_class_name(mixin, true) }}{% if not loop.last %},{% endif %}
+    {{ schema_to_fq_class_name(mixin, true) }}{% if not loop.last %},{% endif %}
 
 {% endfor %}
 {% endblock class_definition %}
@@ -54,7 +54,7 @@ final class {{ schema_class_name(schema, true) }} extends AbstractMessage implem
 {% block class_body %}
 {% for mixin in schema.mixins %}
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
-    use {{ schema_fq_class_name(mixin, true) }}Trait;
+    use {{ schema_to_fq_class_name(mixin, true) }}Trait;
 {% endif %}
 {% endfor %}
 
@@ -79,7 +79,7 @@ final class {{ schema_class_name(schema, true) }} extends AbstractMessage implem
 {% if schema.mixins|length %}
             [
 {% for mixin in schema.mixins %}
-                {{ schema_fq_class_name(mixin, true) }}Mixin::create(),
+                {{ schema_to_fq_class_name(mixin, true) }}Mixin::create(),
 {% endfor %}
             ]
 {% endif %}
@@ -90,7 +90,7 @@ final class {{ schema_class_name(schema, true) }} extends AbstractMessage implem
     }
 
 {% if insertionPoints %}
-{{ indentString(insertionPoints.methods, 4) }}
+{{ indent_string(insertionPoints.methods, 4) }}
 {% endif %}
 {% endblock class_body %}
 }

@@ -11,7 +11,7 @@
 {% set lines = field.description|split("\n") %}
   /*
 {% for line in lines %}
-{{ spaces|format('') }} * {{ line|reduceSpaces }}
+{{ spaces|format('') }} * {{ line|reduce_spaces }}
 {% endfor %}
 {{ spaces|format('') }} */
 {{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
@@ -59,7 +59,7 @@
 {% endif %}
 {% if field.language('php').get('default') %}
 {% if not field.language('php').get('hide_default') %}
-    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|reduceSpaces }})
+    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|reduce_spaces }})
 {% endif %}
 {% elseif field.default is not empty %}
     {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
@@ -81,7 +81,7 @@
     {{ spaces|format('') }}->overridable(true)
 {% endif %}
 {% if field.language('php').get('assertion') %}
-    {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|reduceSpaces }})
+    {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|reduce_spaces }})
 {% endif %}
     {{ spaces|format('') }}->build(),
 {% endmacro %}

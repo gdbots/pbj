@@ -4,7 +4,7 @@ namespace Gdbots\Pbjc\Generator;
 
 use Gdbots\Pbjc\SchemaDescriptor;
 
-class JsonSchemaGenerator extends AbstractGenerator
+class JsonSchemaGenerator extends Generator
 {
     const LANGUAGE = 'json-schema';
     const EXTENSION = '.json';

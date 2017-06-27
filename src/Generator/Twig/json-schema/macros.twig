@@ -107,7 +107,7 @@
     {% endif %}
 
     {% if field.description %}
-      "description": "{{ field.description|reduceSpaces|replace({'"': '\\"'}) }}",
+      "description": "{{ field.description|reduce_spaces|replace({'"': '\\"'}) }}",
     {% endif %}
 
     "pbj": {

@@ -18,9 +18,5 @@
     <mixins>
       <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
     </mixins>
-
-    <php-options>
-      <namespace>Acme\Schemas\Blog\Entity</namespace>
-    </php-options>
   </schema>
 </pbj-schema>

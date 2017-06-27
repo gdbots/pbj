@@ -20,7 +20,7 @@ import Format from '@gdbots/pbj/Enum/Format';
 {% endblock use_statements %}
 
 {% block class_definition %}
-export default class {{ schema_class_name(schema, true) }}Mixin extends Mixin {
+export default class {{ schema_to_class_name(schema, true) }}Mixin extends Mixin {
 {% endblock class_definition %}
 {% block class_body %}
   /**

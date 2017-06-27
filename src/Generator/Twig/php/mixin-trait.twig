@@ -11,7 +11,7 @@ use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, tr
 {% endif %}
 {% endfor %}
 {% if insertionPoints %}
-{{ indentString(insertionPoints.imports, 0) }}
+{{ indent_string(insertionPoints.imports, 0) }}
 {% endif %}
 {% endblock use_statements %}
 
@@ -29,7 +29,7 @@ trait {{ getClassName(schema, true) }}Trait
 {% endfor %}
 
 {% if insertionPoints %}
-{{ indentString(insertionPoints.methods, 4) }}
+{{ indent_string(insertionPoints.methods, 4) }}
 {% endif %}
 {% endblock class_body %}
 }

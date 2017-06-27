@@ -14,7 +14,7 @@ class StringExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('className', [$this, 'className']),
-            new \Twig_SimpleFunction('indentString', [$this, 'indentString']),
+            new \Twig_SimpleFunction('indent_string', [$this, 'indentString']),
             new \Twig_SimpleFunction('dump', [$this, 'dump']),
         ];
     }
@@ -25,9 +25,9 @@ class StringExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('reduceSpaces', [$this, 'reduceSpaces']),
-            new \Twig_SimpleFilter('toSlugFromCamel', [$this, 'toSlugFromCamel']),
-            new \Twig_SimpleFilter('toCamelFromSlug', [$this, 'toCamelFromSlug']),
+            new \Twig_SimpleFilter('reduce_spaces', [$this, 'reduceSpaces']),
+            new \Twig_SimpleFilter('to_slug_from_camel', [$this, 'toSlugFromCamel']),
+            new \Twig_SimpleFilter('to_camel_from_slug', [$this, 'toCamelFromSlug']),
             new \Twig_SimpleFilter('slugify', [$this, 'slugify']),
         ];
     }
@@ -61,7 +61,7 @@ class StringExtension extends \Twig_Extension
     public function indentString($str, $spaces)
     {
         if (!$str) {
-            return;
+            return null;
         }
 
         if ($spaces === 0) {

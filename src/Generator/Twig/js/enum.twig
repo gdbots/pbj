@@ -1,16 +1,10 @@
-{% block use_statements %}
 import Enum from '@gdbots/common/Enum';
-{% endblock use_statements %}
 
-{% block class_definition %}
-export default class {{ className }} extends Enum {
+export default class {{ enum_to_class_name(enum) }} extends Enum {
 }
-{% endblock class_definition %}
 
-{% block class_body %}
-{{ className }}.configure({
+{{ enum_to_class_name(enum) }}.configure({
 {% for key, value in enum.values %}
-  {{ key|upper }}: {% if isInt %}{{ value }}{% else %}'{{ value }}'{% endif %},
+  {{ key|upper }}: {% if enum.type == 'int' %}{{ value }}{% else %}'{{ value }}'{% endif %},
 {% endfor %}
 }, '{{ enum.getId() }}');
-{% endblock class_body %}

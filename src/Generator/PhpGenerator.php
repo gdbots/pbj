@@ -8,7 +8,7 @@ use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\SchemaStore;
 
-class PhpGenerator extends AbstractGenerator
+class PhpGenerator extends Generator
 {
     const LANGUAGE = 'php';
     const EXTENSION = '.php';
@@ -100,7 +100,7 @@ class PhpGenerator extends AbstractGenerator
     /**
      * {@inheritdoc}
      */
-    public function generateEnum(EnumDescriptor $enum)
+    public function xxgenerateEnum(EnumDescriptor $enum)
     {
         $namespace = $enum->getLanguage(static::LANGUAGE)->get('namespace');
         if (substr($namespace, 0, 1) == '\\') {
@@ -120,7 +120,7 @@ class PhpGenerator extends AbstractGenerator
 
         $response = new GeneratorResponse();
 
-        $response->addFile($this->renderFile(
+        $response->addFile($this->generateOutputFile(
             'enum.twig',
             $filename,
             [
@@ -136,7 +136,7 @@ class PhpGenerator extends AbstractGenerator
     /**
      * {@inheritdoc}
      */
-    public function generateManifest(array $schemas)
+    public function xxgenerateManifest(array $schemas)
     {
         $messages = [];
 
@@ -196,7 +196,7 @@ class PhpGenerator extends AbstractGenerator
 
         $response = new GeneratorResponse();
 
-        $response->addFile($this->renderFile(
+        $response->addFile($this->generateOutputFile(
             'manifest.twig',
             $filename,
             [

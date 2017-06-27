@@ -16,7 +16,6 @@ class PhpGeneratorExtension extends GeneratorExtension
     {
         return array_merge(parent::getFunctions(), [
             new \Twig_SimpleFunction('getClassName', [$this, 'getClassName']),
-            new \Twig_SimpleFunction('schema_psr_namespace', [$this, 'schemaPsrNamespace']),
         ]);
     }
 
@@ -59,73 +58,5 @@ class PhpGeneratorExtension extends GeneratorExtension
         }
 
         return $className;
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
-     */
-    public function schemaPackage(SchemaDescriptor $schema)
-    {
-        $package = parent::schemaPackage($schema);
-        if (!empty($package)) {
-            return $package;
-        }
-
-        $vendor = StringUtils::toCamelFromSlug($schema->getId()->getVendor());
-        return "{$vendor}\Schemas";
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     * @param bool             $withMajor
-     *
-     * @return string
-     */
-    public function schemaImport(SchemaDescriptor $schema, $withMajor = false)
-    {
-        $ns = $this->schemaPsrNamespace($schema);
-        $className = $this->schemaClassName($schema, $withMajor);
-
-        $id = $schema->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-
-        $import = "{$ns}\\{$package}";
-        if ($id->getCategory()) {
-            $import .= '\\' . StringUtils::toCamelFromSlug($id->getCategory());
-        }
-
-        if ($schema->isMixinSchema()) {
-            $mixinName = $this->schemaClassName($schema);
-            return "{$import}\\{$mixinName}\\{$className}";
-        }
-
-        return "{$import}\\{$className}";
-    }
-
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
-     */
-    public function schemaPsrNamespace(SchemaDescriptor $schema)
-    {
-        $schemaPackage = $this->schemaPackage($schema);
-        $id = $schema->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-
-        $import = "{$schemaPackage}\\{$package}";
-        if ($id->getCategory()) {
-            $import .= '\\' . StringUtils::toCamelFromSlug($id->getCategory());
-        }
-
-        if ($schema->isMixinSchema()) {
-            $mixinName = $this->schemaClassName($schema);
-            return "{$import}\\{$mixinName}";
-        }
-
-        return $import;
     }
 }
