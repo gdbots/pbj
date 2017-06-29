@@ -57,7 +57,7 @@ abstract class Generator
             $this->generateMixin($schema, $response);
             $this->generateMixinInterface($schema, $response);
             $this->generateMixinMajorInterface($schema, $response);
-            $this->generateTrait($schema, $response);
+            $this->generateMixinTrait($schema, $response);
         } else {
             $this->generateMessage($schema, $response);
             $this->generateMessageInterface($schema, $response);
@@ -292,50 +292,6 @@ abstract class Generator
     }
 
     /**
-     * @param SchemaDescriptor $schema
-     * @param string           $filename
-     * @param string           $directory
-     * @param bool             $isLatest
-     *
-     * @return string
-     */
-//    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
-//    {
-//        $filename = str_replace([
-//            '{vendor}',
-//            '{package}',
-//            '{category}',
-//            '{message}',
-//            '{version}',
-//            '{major}',
-//        ], [
-//            $schema->getId()->getVendor(),
-//            $schema->getId()->getPackage(),
-//            $schema->getId()->getCategory(),
-//            $schema->getId()->getMessage(),
-//            $schema->getId()->getVersion(),
-//            $schema->getId()->getVersion()->getMajor(),
-//        ], $filename);
-//
-//        if ($directory === null) {
-//            $directory = sprintf('%s/%s/%s',
-//                StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
-//                StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
-//                StringUtils::toCamelFromSlug($schema->getId()->getCategory())
-//            );
-//        }
-//
-//        $directory = trim($directory, '/') . '/';
-//
-//        return sprintf('%s/%s%s%s',
-//            $this->compileOptions->getOutput(),
-//            $directory,
-//            $filename,
-//            static::EXTENSION
-//        );
-//    }
-
-    /**
      * @param string $template
      * @param string $file
      * @param array  $parameters
@@ -347,7 +303,7 @@ abstract class Generator
         $template = sprintf('%s/%s', static::LANGUAGE, $template);
         $content = $this->render($template, $parameters);
         $ext = static::EXTENSION;
-        return new OutputFile("{$this->compileOptions->getOutput()}/{$file}$ext", $content);
+        return new OutputFile("{$this->compileOptions->getOutput()}/{$file}$ext", trim($content).PHP_EOL);
     }
 
     /**
@@ -373,6 +329,20 @@ abstract class Generator
     }
 
     /**
+     * @param array $imports
+     *
+     * @return string
+     */
+    protected function optimizeImports(array $imports)
+    {
+        $imports = array_map('trim', $imports);
+        $imports = array_filter($imports);
+        $imports = array_unique($imports);
+        asort($imports);
+        return implode(PHP_EOL, $imports);
+    }
+
+    /**
      * @param string $template
      * @param array  $parameters
      *
@@ -381,7 +351,7 @@ abstract class Generator
     protected function render($template, array $parameters)
     {
         $twig = $this->getTwig();
-        $parameters['compileOptions'] = $this->compileOptions;
+        $parameters['compile_options'] = $this->compileOptions;
         return $twig->render($template, $parameters);
     }
 

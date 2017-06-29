@@ -1,5 +1,7 @@
-{{ indent_string(imports, 0) }}
+{{ imports }}
 
 export default function {{ schema_to_class_name(mixin, true) }}Trait(m) {
-{{ indent_string(methods, 2) }}
+  Object.assign(m.prototype, {
+{{ indent_string(methods, 4) }}
+  });
 }

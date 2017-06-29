@@ -122,6 +122,14 @@ final class SchemaDescriptor implements \JsonSerializable
     }
 
     /**
+     * @return bool
+     */
+    public function hasFields()
+    {
+        return !empty($this->fields);
+    }
+
+    /**
      * @param string $name
      *
      * @return FieldDescriptor|null

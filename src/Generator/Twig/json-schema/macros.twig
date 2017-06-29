@@ -2,12 +2,12 @@
     Render schema block
     Parameters:
         schema - a SchemaDescriptor instance
-        compileOptions - a CompileOptions instance
+        compile_options - a compile_options instance
 #}
-{% macro draw_schema(schema, compileOptions) %}
+{% macro draw_schema(schema, compile_options) %}
 {% set fields = schema.inheritedFields|merge(schema.fields) %}
 {
-  "id": "{{ compileOptions.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
+  "id": "{{ compile_options.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -52,7 +52,7 @@
             "type": "object",
             "anyOf": [
               {% for s in getAllVersions(def) %}
-                {"$ref": "{{ compileOptions.domain }}/json-schema/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
+                {"$ref": "{{ compile_options.domain }}/json-schema/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
               {% endfor %}
             ]
           }{% if not loop.last %}, {% endif %}

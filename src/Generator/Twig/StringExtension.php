@@ -13,7 +13,7 @@ class StringExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('className', [$this, 'className']),
+            new \Twig_SimpleFunction('class_name', [$this, 'className']),
             new \Twig_SimpleFunction('indent_string', [$this, 'indentString']),
             new \Twig_SimpleFunction('dump', [$this, 'dump']),
         ];

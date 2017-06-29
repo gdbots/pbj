@@ -1,48 +1,9 @@
-{% set insertionPoints = schema.language('js').get('insertion-points') %}
-{% block use_statements %}
-import Message from '@gdbots/pbj/Message';
-import Schema from '@gdbots/pbj/Schema';
-{% if schema.fields|length %}
-import T from '@gdbots/pbj/Type';
-{% endif %}
-{% set import_format_enum = false %}
-{% set import_message_ref = false %}
-{% for field in schema.fields %}
-{% set import_format_enum = field.format ? true : false %}
-{% set import_message_ref = field.getType().getTypeValue() == 'message-ref' %}
-{% if field.anyOf %}
-{% if field.anyOf|length == 1 %}
-{#import {{ schema_to_fq_class_name(field.anyOf.0, true) }} from '{{ schema_import(field.anyOf.0, true) }}';#}
-{% else %}
-{% for s in field.anyOf %}
-{#import {{ schema_to_fq_class_name(s, true) }} from '{{ schema_import(field.anyOf.0, true) }}';#}
-{% endfor %}
-{% endif %}
-{% elseif field.language('js').get('instance') %}
-{#import {{ field.language('js').get('instance').classname }} from '{{ field.language('js').get('instance') }}';#}
-{% endif %}
-{% endfor %}
-{% for mixin in schema.mixins %}
-import {{ schema_to_fq_class_name(mixin, true) }}Mixin from '{{ schema_import(mixin, true) }}Mixin';
-{% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
-import {{ schema_to_fq_class_name(mixin, true) }}Trait from '{{ schema_import(mixin, true) }}Trait';
-{% endif %}
-{% endfor %}
-{% if import_format_enum %}
-import Format from '@gdbots/pbj/Enum/Format';
-{% endif %}
-{% if import_message_ref %}
-{#import MessageRef from '@gdbots/pbj/MessageRef';#}
-{% endif %}
-{% if insertionPoints %}
-{{ indent_string(insertionPoints.imports, 0) }}
-{% endif %}
-{% endblock use_statements %}
+{% import 'js/macros.twig' as macros %}
+{% set insertion_points = schema.language('js').get('insertion-points') %}
+// @link {{ compile_options.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#
+{{ imports }}
 
-{% block class_definition %}
 export default class {{ schema_to_class_name(schema, true) }} extends Message {
-{% endblock class_definition %}
-{% block class_body %}
   /**
    * @private
    *
@@ -53,9 +14,8 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
     return new Schema('{{ schema.id }}', {{ schema_to_class_name(schema, true) }},
 {% if schema.fields|length %}
       [
-{% import 'js/macros.twig' as macros %}
 {% for field in schema.fields %}
-        {{ macros.draw_field(field, 8, loop.last) }}
+        {{ macros.draw_field(field, 8) }}
 {%- endfor %}
       ]{% if schema.mixins|length %},{% endif %}
 {% else %}
@@ -74,11 +34,10 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
     return new Schema('{{ schema.id }}', {{ schema_to_class_name(schema, true) }});
 {% endif %}
   }
+{% if insertion_points %}
 
-{% if insertionPoints %}
-{{ indent_string(insertionPoints.methods, 2) }}
+{{ indent_string(insertion_points.methods, 2) }}
 {% endif %}
-{% endblock class_body %}
 }
 
 {% for mixin in schema.mixins %}

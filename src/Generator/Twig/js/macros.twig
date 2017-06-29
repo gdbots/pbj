@@ -3,9 +3,8 @@
   Parameters:
     field - a FieldDescriptor instance
     spaces - number of spaces
-    isLastItem - whether or not to add comma at the end of the block
 #}
-{% macro draw_field(field, spaces, isLastItem) %}
+{% macro draw_field(field, spaces) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
 {% set lines = field.description|split("\n") %}
@@ -14,12 +13,9 @@
 {{ spaces|format('') }} * {{ line|reduce_spaces }}
 {% endfor %}
 {{ spaces|format('') }} */
-{{ spaces|format('') }}Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
+{{ spaces|format('') }}Fb.create('{{ field.name }}', T.{{ class_name(field.type) }}.create())
 {% else %}
-Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
-{% endif %}
-{% if field.isASingleValue %}
-  {{ spaces|format('') }}.asASingleValue()
+Fb.create('{{ field.name }}', T.{{ class_name(field.type) }}.create())
 {% endif %}
 {% if field.isASet %}
   {{ spaces|format('') }}.asASet()
@@ -74,8 +70,11 @@ Fb.create('{{ field.name }}', T.{{ className(field.type) }}.create())
 {% endfor %}
   {{ spaces|format('') }}])
 {% endif %}
-{% if field.language('js').get('instance') %}
-  {{ spaces|format('') }}.instance({{ field.language('js').get('instance').classname }})
+{% if field.language('js').has('class-proto') %}
+  {{ spaces|format('') }}.classProto({{ field.language('js').get('class-proto') }})
+{% endif %}
+{% if field.enum %}
+  {{ spaces|format('') }}.classProto({{ enum_to_class_name(field.enum) }})
 {% endif %}
 {% if field.overridable %}
   {{ spaces|format('') }}.overridable(true)
