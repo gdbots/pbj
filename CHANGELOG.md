@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.3.0
+__BREAKING CHANGES__
+
+* Compiler now requires php 7.1 or greater. 
+* PHP namespaces are now handled by the compiler and not customized per message.
+* The `pbjc.yml` allows for root vendor namespace customizations.
+* Adds an es6 compiler (using the `js` language option).
+
+
 ## v0.2.6
 * Use aliasing "use" statements everywhere mixins are use.
 * Ignore adding trait classes to messages if schema doesn't include mixins and no insertion-points was define.

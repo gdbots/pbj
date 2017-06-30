@@ -5,7 +5,7 @@
   "type": "library",
   "license": "Apache-2.0",
   "require": {
-    "php": ">=5.6",
+    "php": ">=7.1",
     "gdbots/pbj": "~1.1",
     "symfony/filesystem": "~3.0",
     "symfony/finder": "~3.0",
@@ -29,10 +29,12 @@
   "scripts": {
     "test": "vendor/bin/phpunit"
   },
-  "bin": ["bin/pbjc"],
+  "bin": [
+    "bin/pbjc"
+  ],
   "extra": {
     "branch-alias": {
-      "dev-master": "0.2.x-dev"
+      "dev-master": "0.3.x-dev"
     }
   }
 }

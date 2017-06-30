@@ -41,10 +41,6 @@ First let's look at a very simple example. Let's say you want to define a **mixi
       <field name="slug" type="string" pattern="/^[A-Za-z0-9_\-]+$/" required="true" />
       <field name="title" type="text" required="true" />
     </fields>
-
-    <php-options>
-      <namespace>Acme\Blog\Entity</namespace>
-    </php-options>
   </schema>
 </pbj-schema>
 ```
@@ -122,10 +118,6 @@ The define the enum in `enums.xml`:
     <option key="EXPIRED" value="expired" />
     <option key="DELETED" value="deleted" />
   </enum>
-
-  <php-options>
-    <namespace>Acme\Schemas\Blog\Enum</namespace>
-  </php-options>
 <enums>
 ```
 
