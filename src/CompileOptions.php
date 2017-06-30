@@ -16,11 +16,8 @@ final class CompileOptions
     /** @var string */
     private $output;
 
-    /** @var string */
-    private $manifest;
-
     /** @var bool */
-    private $include_all;
+    private $include_all = false;
 
     /** @var \Closure */
     private $callback;
@@ -69,14 +66,6 @@ final class CompileOptions
     public function getOutput()
     {
         return $this->output;
-    }
-
-    /**
-     * @return string
-     */
-    public function getManifest()
-    {
-        return $this->manifest;
     }
 
     /**

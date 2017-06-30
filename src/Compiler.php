@@ -175,9 +175,7 @@ final class Compiler
             $outputFiles = array_merge($outputFiles, $generator->generateSchema($schema)->getFiles());
         }
 
-        if ($options->getManifest()) {
-            $outputFiles = array_merge($outputFiles, $generator->generateManifest(SchemaStore::getSchemas())->getFiles());
-        }
+        $outputFiles = array_merge($outputFiles, $generator->generateManifest(SchemaStore::getSchemas())->getFiles());
 
         if ($callback = $options->getCallback()) {
             foreach ($outputFiles as $outputFile) {

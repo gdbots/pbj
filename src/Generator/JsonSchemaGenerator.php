@@ -12,6 +12,14 @@ class JsonSchemaGenerator extends Generator
     /**
      * {@inheritdoc}
      */
+    public function generateManifest(array $schemas)
+    {
+        return new GeneratorResponse();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
     {
         if ($isLatest) {

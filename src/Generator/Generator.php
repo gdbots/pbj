@@ -8,6 +8,7 @@ use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\Generator\Twig\StringExtension;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\OutputFile;
 
 abstract class Generator
@@ -15,6 +16,7 @@ abstract class Generator
     const TEMPLATE_DIR = __DIR__ . '/Twig/';
     const LANGUAGE = 'unknown';
     const EXTENSION = '.unk';
+    const MANIFEST = 'pbj-schemas';
 
     /** @var CompileOptions */
     protected $compileOptions;
@@ -110,7 +112,61 @@ abstract class Generator
      */
     public function generateManifest(array $schemas)
     {
-        return new GeneratorResponse();
+        $response = new GeneratorResponse();
+
+        // extract previous schemas (for what?)
+//        if (file_exists($filename)) {
+//            $content = file_get_contents($filename);
+//
+//            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+:[a-z0-9-]+?:[a-z0-9-]+(:v[0-9]+)?)\' => \'(.*)\'/', $content, $matches) !== false) {
+//                foreach ($matches[1] as $key => $value) {
+//                    $messages[$value] = $matches[3][$key];
+//                }
+//            }
+//        }
+
+        // merge with selected schemas (only non-mixin schema's)
+        $messages = [];
+
+        /** @var SchemaDescriptor $schema */
+        foreach ($schemas as $schema) {
+            if ($schema->isMixinSchema()) {
+                continue;
+            }
+
+            if (isset($messages[$schema->getId()->getCurieWithMajorRev()])) {
+                continue;
+            }
+
+            if (!SchemaStore::hasOtherSchemaMajorRev($schema->getId())) {
+                $messages[$schema->getId()->getCurie()] = $schema;
+                continue;
+            }
+
+            if ($schema->isLatestVersion()) {
+                $messages[$schema->getId()->getCurie()] = $schema;
+            }
+
+            $messages[$schema->getId()->getCurieWithMajorRev()] = $schema;
+
+            /** @var SchemaDescriptor $s */
+            foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
+                $messages[$s->getId()->getCurieWithMajorRev()] = $s;
+            }
+        }
+
+        // delete invalid schemas
+        foreach ($messages as $key => $value) {
+            if (!SchemaStore::getSchemaById($key, true)) {
+                unset($messages[$key]);
+            }
+        }
+
+        ksort($messages);
+        $response->addFile(
+            $this->generateOutputFile('manifest.twig', static::MANIFEST, ['schemas' => $messages])
+        );
+        return $response;
     }
 
     /**
@@ -303,7 +359,7 @@ abstract class Generator
         $template = sprintf('%s/%s', static::LANGUAGE, $template);
         $content = $this->render($template, $parameters);
         $ext = static::EXTENSION;
-        return new OutputFile("{$this->compileOptions->getOutput()}/{$file}$ext", trim($content).PHP_EOL);
+        return new OutputFile("{$this->compileOptions->getOutput()}/{$file}$ext", trim($content) . PHP_EOL);
     }
 
     /**

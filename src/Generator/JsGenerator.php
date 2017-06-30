@@ -11,6 +11,7 @@ class JsGenerator extends Generator
 {
     const LANGUAGE = 'js';
     const EXTENSION = '.js';
+    const MANIFEST = 'index';
 
     /**
      * {@inheritdoc}
