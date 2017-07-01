@@ -212,7 +212,7 @@ class JsGenerator extends Generator
             $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports')));
 
             if ($field->getFormat()) {
-                $imports[] = "import Format from '@gdbots/pbj/Enum/Format'";
+                $imports[] = "import Format from '@gdbots/pbj/Enum/Format';";
             }
 
             switch ($field->getType()->getTypeName()->getValue()) {

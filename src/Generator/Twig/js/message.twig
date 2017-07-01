@@ -17,17 +17,17 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
 {% for field in schema.fields %}
         {{ macros.draw_field(field, 8) }}
 {%- endfor %}
-      ]{% if schema.mixins|length %},{% endif %}
+      ],
 {% else %}
-      []{% if schema.mixins|length %},{% endif %}
+      [],
 {% endif %}
 
-{% if schema.mixins|length %}
+{%- if schema.mixins|length %}
       [
 {% for mixin in schema.mixins %}
         {{ schema_to_fq_class_name(mixin, true) }}Mixin.create(),
 {% endfor %}
-      ]
+      ],
 {% endif %}
     );
 {% else %}
