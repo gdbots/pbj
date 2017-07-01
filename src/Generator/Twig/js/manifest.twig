@@ -8,9 +8,7 @@
 
 import MessageResolver from '@gdbots/pbj/MessageResolver';
 {% for curie, schema in schemas %}
-import {{ schema_to_fq_class_name(schema, true) }} from '{{ schema_to_native_namespace(schema) }}/{{ schema_to_class_name(schema, true) }}';
+import '{{ schema_to_native_namespace(schema) }}/{{ schema_to_class_name(schema, true) }}';
 {% endfor %}
 
-{% for curie, schema in schemas %}
-MessageResolver.register('{{ curie }}', {{ schema_to_fq_class_name(schema, true) }});
-{% endfor %}
+export default MessageResolver;

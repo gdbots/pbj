@@ -95,6 +95,7 @@ class JsGenerator extends Generator
 
         $imports = [
             "import Message from '@gdbots/pbj/Message';",
+            "import MessageResolver from '@gdbots/pbj/MessageResolver';",
             "import Schema from '@gdbots/pbj/Schema';",
         ];
 

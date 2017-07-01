@@ -45,3 +45,11 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
 {{ schema_to_fq_class_name(mixin, true) }}Trait({{ schema_to_class_name(schema, true) }});
 {% endif %}
 {% endfor %}
+
+{%- if schema.isLatestVersion() %}
+MessageResolver.register('{{ schema.id.curie }}', {{ schema_to_class_name(schema, true) }});
+{% endif %}
+
+{%- if has_other_major_rev(schema) %}
+MessageResolver.register('{{ schema.id.getCurieWithMajorRev() }}', {{ schema_to_class_name(schema, true) }});
+{% endif %}
