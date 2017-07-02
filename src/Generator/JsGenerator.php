@@ -101,7 +101,7 @@ class JsGenerator extends Generator
 
         if ($schema->hasFields()) {
             $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
-            $imports[] = "import T from '@gdbots/pbj/Type';";
+            $imports[] = "import T from '@gdbots/pbj/types';";
         }
 
         foreach ($schema->getMixins() as $mixin) {
@@ -158,7 +158,7 @@ class JsGenerator extends Generator
 
         if ($schema->hasFields()) {
             $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
-            $imports[] = "import T from '@gdbots/pbj/Type';";
+            $imports[] = "import T from '@gdbots/pbj/types';";
         }
 
         $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
@@ -212,7 +212,7 @@ class JsGenerator extends Generator
             $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports')));
 
             if ($field->getFormat()) {
-                $imports[] = "import Format from '@gdbots/pbj/Enum/Format';";
+                $imports[] = "import Format from '@gdbots/pbj/enums/Format';";
             }
 
             switch ($field->getType()->getTypeName()->getValue()) {

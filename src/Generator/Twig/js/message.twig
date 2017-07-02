@@ -53,3 +53,5 @@ MessageResolver.register('{{ schema.id.curie }}', {{ schema_to_class_name(schema
 {%- if has_other_major_rev(schema) %}
 MessageResolver.register('{{ schema.id.getCurieWithMajorRev() }}', {{ schema_to_class_name(schema, true) }});
 {% endif %}
+Object.freeze({{ schema_to_class_name(schema, true) }});
+Object.freeze({{ schema_to_class_name(schema, true) }}.prototype);
