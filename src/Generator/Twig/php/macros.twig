@@ -74,8 +74,8 @@
 {% endfor %}
     {{ spaces|format('') }}])
 {% endif %}
-{% if field.language('php').get('classname') %}
-    {{ spaces|format('') }}->className({{ field.language('php').get('classname')|split('\\')|last }}::class)
+{% if field.language('php').get('class-name') %}
+    {{ spaces|format('') }}->className({{ field.language('php').get('class-name') }})
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)

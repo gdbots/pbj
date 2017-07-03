@@ -180,7 +180,14 @@ The `any-of` attribute define the message id that will be used to pull the messa
         </any-of>
 
         <php-options>
-          <classname>{string}</classname>
+          <imports>{string}</imports>
+          <class-name>{string}</class-name>
+          <default>{string}</default>
+        </php-options>
+
+        <js-options>
+          <imports>{string}</imports>
+          <class-proto>{string}</class-proto>
           <default>{string}</default>
         </php-options>
       </field>
@@ -190,10 +197,6 @@ The `any-of` attribute define the message id that will be used to pull the messa
       <curie-major>{pbj:vendor:package:category:vmajor}</curie-major>
       <!-- ... -->
     </mixins>
-
-    <php_options>
-      <namespace>{string}</namespace>
-    </php-options>
   </schema>
 </pbj-schema>
 ```
@@ -209,10 +212,6 @@ The `any-of` attribute define the message id that will be used to pull the messa
       <option key="{string}" value="{string}" />
       <!-- ... -->
     </enum>
-
-    <php-options>
-      <namespace>{string}</namespace>
-    </php-options>
   <enums>
 </enums-mapping>
 ```
@@ -221,7 +220,6 @@ The `any-of` attribute define the message id that will be used to pull the messa
 
 ```xml
 <php-options>
-  <namespace>Acme\Blog\Entity</namespace>
   <insertion-points>
     <imports>
         <![CDATA[

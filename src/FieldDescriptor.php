@@ -6,6 +6,7 @@ use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
+use Gdbots\Pbjc\Type\AbstractStringType;
 use Gdbots\Pbjc\Type\StringType;
 use Gdbots\Pbjc\Type\IntEnumType;
 use Gdbots\Pbjc\Type\Type;
@@ -206,7 +207,7 @@ final class FieldDescriptor
     private function applyStringOptions()
     {
         // use *Length for string type
-        if ($this->type instanceof StringType) {
+        if ($this->type instanceof AbstractStringType) {
             $this->minLength = $this->min;
             $this->maxLength = $this->max;
             $this->min = null;

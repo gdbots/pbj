@@ -1,35 +1,14 @@
-{% set insertionPoints = schema.language('php').get('insertion-points') %}
 <?php
 
-namespace {{ schema_psr_namespace(schema) }};
+namespace {{ schema_to_native_namespace(mixin) }};
 
-{% block use_statements %}
-use Gdbots\Pbj\Schema;
-{% for mixin in schema.mixins %}
-{% if not isSameNamespace(schema, mixin) %}
-use {{ mixin.language('php').get('namespace') }}\{{ getClassName(mixin, true, true, true, 'Trait') }};
-{% endif %}
-{% endfor %}
-{% if insertionPoints %}
-{{ indent_string(insertionPoints.imports, 0) }}
-{% endif %}
-{% endblock use_statements %}
+{{ imports }}
 
-{% block class_definition %}
 /**
  * @method static Schema schema
  * @method mixed get($fieldName, $default = null)
  */
-trait {{ getClassName(schema, true) }}Trait
-{% endblock class_definition %}
+trait {{ schema_to_class_name(mixin, true) }}Trait
 {
-{% block class_body %}
-{% for mixin in schema.mixins %}
-    use {{ getClassName(mixin, true, true, false, 'Trait') }};
-{% endfor %}
-
-{% if insertionPoints %}
-{{ indent_string(insertionPoints.methods, 4) }}
-{% endif %}
-{% endblock class_body %}
+{{ indent_string(methods, 4) }}
 }

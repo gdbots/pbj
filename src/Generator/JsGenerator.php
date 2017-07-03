@@ -67,7 +67,7 @@ class JsGenerator extends Generator
             return "{$import}/{$id->getMessage()}";
         }
 
-        return "{$import}";
+        return $import;
     }
 
     /**

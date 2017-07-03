@@ -66,28 +66,6 @@ abstract class Generator
         }
 
         return $response;
-//
-//        foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-//            $response->addFile($this->renderFile(
-//                $template,
-//                $this->getSchemaTarget($schema, $filename),
-//                $this->getSchemaParameters($schema)
-//            ));
-//        }
-//
-//        if ($schema->isLatestVersion()) {
-//            foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-//                if ($this->getSchemaTarget($schema, $filename) != $this->getSchemaTarget($schema, $filename, null, true)) {
-//                    $response->addFile($this->renderFile(
-//                        $template,
-//                        $this->getSchemaTarget($schema, $filename, null, true),
-//                        $this->getSchemaParameters($schema)
-//                    ));
-//                }
-//            }
-//        }
-//
-//        return $response;
     }
 
     /**
@@ -113,19 +91,6 @@ abstract class Generator
     public function generateManifest(array $schemas)
     {
         $response = new GeneratorResponse();
-
-        // extract previous schemas (for what?)
-//        if (file_exists($filename)) {
-//            $content = file_get_contents($filename);
-//
-//            if (preg_match_all('/\'([a-z0-9-]+:[a-z0-9\.-]+:[a-z0-9-]+?:[a-z0-9-]+(:v[0-9]+)?)\' => \'(.*)\'/', $content, $matches) !== false) {
-//                foreach ($matches[1] as $key => $value) {
-//                    $messages[$value] = $matches[3][$key];
-//                }
-//            }
-//        }
-
-        // merge with selected schemas (only non-mixin schema's)
         $messages = [];
 
         /** @var SchemaDescriptor $schema */

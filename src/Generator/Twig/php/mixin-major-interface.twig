@@ -1,18 +1,7 @@
 <?php
+// @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/{{ mixin.id.version }}.json#
+namespace {{ schema_to_native_namespace(mixin) }};
 
-namespace {{ schema_psr_namespace(schema) }};
-
-{% block use_statements %}
-{% if hasOtherMajorRev(schema) and schema.extends and not isSameNamespace(schema, schema.extends) %}
-use {{ schema.extends.language('php').get('namespace') }}\{{ getClassName(schema.extends, true, true, true) }};
-{% endif %}
-{% endblock use_statements %}
-
-{% block class_definition %}
-interface {{ getClassName(schema, true) }} extends {% if hasOtherMajorRev(schema) and schema.extends %}{{ getClassName(schema) }}, {{ getClassName(schema.extends, true, true) }}{% else %}{{ getClassName(schema) }}{% endif %}
-
-{% endblock class_definition %}
+interface {{ schema_to_class_name(mixin, true) }} extends {{ schema_to_class_name(mixin) }}
 {
-{% block class_body %}
-{% endblock class_body %}
 }
