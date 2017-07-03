@@ -39,9 +39,9 @@ abstract class Generator
      * - message class (the concrete class - curie major)
      * - message interface (curie)
      * - mixin (the schema fields that are "mixed" into the message)
-     * - mixin major interface (curie major for the mixin)
      * - mixin interface (curie)
-     * - trait (any methods provided by insertion points)
+     * - mixin major interface (curie major for the mixin)
+     * - mixin trait (any methods provided by insertion points)
      *
      * @param SchemaDescriptor $schema
      *
@@ -242,7 +242,7 @@ abstract class Generator
     }
 
     /**
-     * Generate a message (concrete class)
+     * Generate a message (the concrete class)
      *
      * @param SchemaDescriptor  $schema
      * @param GeneratorResponse $response
@@ -252,8 +252,7 @@ abstract class Generator
     }
 
     /**
-     * Generate a message interface and add an output file
-     * to the response.
+     * Generates a message interface.
      *
      * @param SchemaDescriptor  $schema
      * @param GeneratorResponse $response
@@ -293,7 +292,7 @@ abstract class Generator
     }
 
     /**
-     * Generates a mixin trait (the functions/behavior provided by a mixin).
+     * Generates a mixin trait (the methods provided by a mixin).
      *
      * @param SchemaDescriptor  $schema
      * @param GeneratorResponse $response
@@ -324,7 +323,11 @@ abstract class Generator
         $template = sprintf('%s/%s', static::LANGUAGE, $template);
         $content = $this->render($template, $parameters);
         $ext = static::EXTENSION;
-        return new OutputFile("{$this->compileOptions->getOutput()}/{$file}$ext", trim($content) . PHP_EOL);
+        $addNewLine = static::LANGUAGE !== 'json-schema';
+        return new OutputFile(
+            "{$this->compileOptions->getOutput()}/{$file}$ext",
+            trim($content) . ($addNewLine ? PHP_EOL : '')
+        );
     }
 
     /**

@@ -1,61 +1,31 @@
+{% import 'php/macros.twig' as macros %}
 <?php
+// @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/{{ mixin.id.version }}.json#
+namespace {{ schema_to_native_namespace(mixin) }};
 
-namespace {{ schema_psr_namespace(schema) }};
+{{ imports }}
 
-{% block use_statements %}
-use Gdbots\Pbj\AbstractMixin;
-{% if schema.fields|length %}
-use Gdbots\Pbj\FieldBuilder as Fb;
-{% endif %}
-use Gdbots\Pbj\SchemaId;
-{% if schema.fields|length %}
-use Gdbots\Pbj\Type as T;
-{% endif %}
-{% set format_class = false %}
-{% for field in schema.fields %}
-{% if field.format %}
-{% set format_class = true %}
-{% endif %}
-{% if field.language('php').get('classname') %}
-use {{ field.language('php').get('classname') }};
-{% endif %}
-{% for anyOf in field.anyOf %}
-use {{ anyOf.language('php').get('namespace') }}\{{ getClassName(anyOf, false, true, true) }};
-{% endfor %}
-{% endfor %}
-{% if format_class %}
-use Gdbots\Pbj\Enum\Format;
-{% endif %}
-{% endblock use_statements %}
-
-{% block class_definition %}
-final class {{ getClassName(schema, true) }}Mixin extends AbstractMixin
-{% endblock class_definition %}
+final class {{ schema_to_class_name(mixin, true) }}Mixin extends AbstractMixin
 {
-{% block class_body %}
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return SchemaId::fromString('{{ schema.id }}');
+        return SchemaId::fromString('{{ mixin.id }}');
     }
+{% if mixin.fields|length %}
 
     /**
      * {@inheritdoc}
      */
     public function getFields()
     {
-{% if schema.fields|length %}
         return [
-{% import 'php/macros.twig' as macros %}
-{% for field in schema.fields %}
+{% for field in mixin.fields %}
           {{ macros.draw_field(field, 12, loop.last) }}
 {%- endfor %}
         ];
-{% else %}
-        return [];
-{% endif %}
     }
-{% endblock class_body %}
+{% endif %}
 }

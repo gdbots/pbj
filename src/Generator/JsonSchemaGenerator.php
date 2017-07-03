@@ -20,30 +20,32 @@ class JsonSchemaGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
+    public function generateSchema(SchemaDescriptor $schema)
     {
-        if ($isLatest) {
-            $filename = str_replace('{version}', 'latest', $filename);
-        }
+        $response = new GeneratorResponse();
 
-        $directory = sprintf('%s/%s/%s/%s',
-            $schema->getId()->getVendor(),
-            $schema->getId()->getPackage(),
-            $schema->getId()->getCategory(),
-            $schema->getId()->getMessage()
+        $id = $schema->getId();
+        $directory = str_replace(['::', ':'], [':', '/'], $id->getCurie());
+
+        $response->addFile(
+            $this->generateOutputFile(
+                'message.twig',
+                "{$directory}/{$id->getVersion()}",
+                ['schema' => $schema]
+            )
         );
 
-        return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
-    }
+        if ($schema->isLatestVersion()) {
+            $response->addFile(
+                $this->generateOutputFile(
+                    'message.twig',
+                    "{$directory}/latest",
+                    ['schema' => $schema]
+                )
+            );
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSchemaTemplates(SchemaDescriptor $schema)
-    {
-        return [
-            'message.twig' => '{version}',
-        ];
+        return $response;
     }
 
     /**

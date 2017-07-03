@@ -1,11 +1,10 @@
 {#
-    Render field block
-    Parameters:
-        field - a FieldDescriptor instance
-        spaces - number of spaces
-        isLastItem - whether or not to add comma at the end of the block
+  Render field block
+  Parameters:
+    field - a FieldDescriptor instance
+    spaces - number of spaces
 #}
-{% macro draw_field(field, spaces, isLastItem) %}
+{% macro draw_field(field, spaces) %}
 {% set spaces = '%' ~ spaces ~ 's' %}
 {% if field.description %}
 {% set lines = field.description|split("\n") %}
@@ -14,12 +13,9 @@
 {{ spaces|format('') }} * {{ line|reduce_spaces }}
 {% endfor %}
 {{ spaces|format('') }} */
-{{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
+{{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
 {% else %}
-  Fb::create('{{ field.name }}', T\{{ className(field.type) }}::create())
-{% endif %}
-{% if field.isASingleValue %}
-    {{ spaces|format('') }}->asASingleValue()
+  Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
 {% endif %}
 {% if field.isASet %}
     {{ spaces|format('') }}->asASet()
@@ -70,12 +66,15 @@
 {% if field.anyOf %}
     {{ spaces|format('') }}->anyOfClassNames([
 {% for anyOf in field.anyOf %}
-    {{ spaces|format('') }}    {{ getClassName(anyOf, false, true) }}::class,
+    {{ spaces|format('') }}    {{ schema_to_fq_class_name(anyOf) }}::class,
 {% endfor %}
     {{ spaces|format('') }}])
 {% endif %}
 {% if field.language('php').get('class-name') %}
     {{ spaces|format('') }}->className({{ field.language('php').get('class-name') }})
+{% endif %}
+{% if field.enum %}
+    {{ spaces|format('') }}->className({{ enum_to_class_name(field.enum) }}::class)
 {% endif %}
 {% if field.overridable %}
     {{ spaces|format('') }}->overridable(true)

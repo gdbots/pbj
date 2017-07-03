@@ -51,7 +51,7 @@
           "{{ def.id.message|lower|slugify }}": {
             "type": "object",
             "anyOf": [
-              {% for s in getAllVersions(def) %}
+              {% for s in get_all_versions(def) %}
                 {"$ref": "{{ compile_options.domain }}/json-schema/{{ s.id.vendor }}/{{ s.id.package }}/{% if s.id.category %}{{ s.id.category }}/{% endif %}{{ s.id.message }}/{{ s.id.version }}.json#" }{% if not loop.last %}, {% endif %}
               {% endfor %}
             ]
