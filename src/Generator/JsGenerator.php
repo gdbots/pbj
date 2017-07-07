@@ -2,26 +2,25 @@
 
 namespace Gdbots\Pbjc\Generator;
 
-use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\SchemaStore;
 
-class PhpGenerator extends Generator
+class JsGenerator extends Generator
 {
-    const LANGUAGE = 'php';
-    const EXTENSION = '.php';
+    const LANGUAGE = 'js';
+    const EXTENSION = '.js';
+    const MANIFEST = 'index';
 
     /**
      * {@inheritdoc}
      */
     public function generateEnum(EnumDescriptor $enum)
     {
+        $id = $enum->getId();
         $className = $this->enumToClassName($enum);
-        $psr = $this->enumToNativeNamespace($enum);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
+        $file = "{$id->getVendor()}/{$id->getPackage()}/enums/{$className}";
 
         $response = new GeneratorResponse();
         $response->addFile($this->generateOutputFile('enum.twig', $file, ['enum' => $enum]));
@@ -31,16 +30,17 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
+    public function generateManifest(array $schemas)
+    {
+        return parent::generateManifest($schemas);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function schemaToNativePackage(SchemaDescriptor $schema)
     {
-        $ns = parent::schemaToNativePackage($schema);
-        if (null !== $ns) {
-            return $ns;
-        }
-
-        $id = $schema->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
-        return "{$vendor}\\Schemas";
+        return parent::schemaToNativePackage($schema) ?: "@{$schema->getId()->getVendor()}/schemas";
     }
 
     /**
@@ -48,14 +48,7 @@ class PhpGenerator extends Generator
      */
     public function enumToNativePackage(EnumDescriptor $enum)
     {
-        $ns = parent::enumToNativePackage($enum);
-        if (null !== $ns) {
-            return $ns;
-        }
-
-        $id = $enum->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
-        return "{$vendor}\\Schemas";
+        return parent::enumToNativePackage($enum) ?: "@{$enum->getId()->getVendor()}/schemas";
     }
 
     /**
@@ -63,21 +56,18 @@ class PhpGenerator extends Generator
      */
     public function schemaToNativeNamespace(SchemaDescriptor $schema)
     {
-        $ns = $this->schemaToNativePackage($schema);
+        $package = $this->schemaToNativePackage($schema);
         $id = $schema->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-        $psr = "{$ns}\\{$package}";
+        $import = "{$package}/{$id->getVendor()}/{$id->getPackage()}";
         if ($id->getCategory()) {
-            $category = StringUtils::toCamelFromSlug($id->getCategory());
-            $psr .= "\\{$category}";
+            $import .= "/{$id->getCategory()}";
         }
 
         if ($schema->isMixinSchema()) {
-            $message = StringUtils::toCamelFromSlug($id->getMessage());
-            return "{$psr}\\{$message}";
+            return "{$import}/{$id->getMessage()}";
         }
 
-        return $psr;
+        return $import;
     }
 
     /**
@@ -85,10 +75,9 @@ class PhpGenerator extends Generator
      */
     public function enumToNativeNamespace(EnumDescriptor $enum)
     {
-        $ns = $this->enumToNativePackage($enum);
+        $package = $this->enumToNativePackage($enum);
         $id = $enum->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
-        return "{$ns}\\{$package}\\Enum";
+        return "{$package}/{$id->getVendor()}/{$id->getPackage()}/enums";
     }
 
     /**
@@ -96,42 +85,40 @@ class PhpGenerator extends Generator
      */
     protected function generateMessage(SchemaDescriptor $schema, GeneratorResponse $response)
     {
+        $id = $schema->getId();
         $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
+        $file = "{$id->getVendor()}/{$id->getPackage()}";
+        if ($id->getCategory()) {
+            $file .= "/{$id->getCategory()}";
+        }
+        $file .= "/{$className}";
 
         $imports = [
-            'use Gdbots\Pbj\AbstractMessage;',
-            'use Gdbots\Pbj\Schema;',
+            "import Message from '@gdbots/pbj/Message';",
+            "import MessageResolver from '@gdbots/pbj/MessageResolver';",
+            "import Schema from '@gdbots/pbj/Schema';",
         ];
 
         if ($schema->hasFields()) {
-            $imports[] = 'use Gdbots\Pbj\FieldBuilder as Fb;';
-            $imports[] = 'use Gdbots\Pbj\Type as T;';
+            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
+            $imports[] = "import T from '@gdbots/pbj/types';";
         }
 
         foreach ($schema->getMixins() as $mixin) {
             $imports[] = sprintf(
-                'use %s\%sMixin as %sMixin;',
+                "import %sMixin from '%s/%sMixin';",
+                $this->schemaToFqClassName($mixin, true),
                 $this->schemaToNativeNamespace($mixin),
-                $this->schemaToClassName($mixin, true),
-                $this->schemaToFqClassName($mixin, true)
-            );
-
-            $imports[] = sprintf(
-                'use %s\%s as %s;',
-                $this->schemaToNativeNamespace($mixin),
-                $this->schemaToClassName($mixin, true),
-                $this->schemaToFqClassName($mixin, true)
+                $this->schemaToClassName($mixin, true)
             );
 
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(
-                    'use %s\%sTrait as %sTrait;',
+                    "import %sTrait from '%s/%sTrait';",
+                    $this->schemaToFqClassName($mixin, true),
                     $this->schemaToNativeNamespace($mixin),
-                    $this->schemaToClassName($mixin, true),
-                    $this->schemaToFqClassName($mixin, true)
+                    $this->schemaToClassName($mixin, true)
                 );
             }
         }
@@ -154,33 +141,24 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function generateMessageInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-        $className = $this->schemaToClassName($schema);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('message-interface.twig', $file, ['schema' => $schema])
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
     {
+        $id = $schema->getId();
         $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}Mixin");
+        $file = "{$id->getVendor()}/{$id->getPackage()}";
+        if ($id->getCategory()) {
+            $file .= "/{$id->getCategory()}";
+        }
+        $file .= "/{$id->getMessage()}/{$className}Mixin";
 
         $imports = [
-            'use Gdbots\Pbj\AbstractMixin;',
-            'use Gdbots\Pbj\SchemaId;',
+            "import Mixin from '@gdbots/pbj/Mixin';",
+            "import SchemaId from '@gdbots/pbj/SchemaId';",
         ];
 
         if ($schema->hasFields()) {
-            $imports[] = 'use Gdbots\Pbj\FieldBuilder as Fb;';
-            $imports[] = 'use Gdbots\Pbj\Type as T;';
+            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
+            $imports[] = "import T from '@gdbots/pbj/types';";
         }
 
         $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
@@ -195,32 +173,6 @@ class PhpGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    protected function generateMixinInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-        $className = $this->schemaToClassName($schema);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('mixin-interface.twig', $file, ['mixin' => $schema])
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMixinMajorInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-        $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('mixin-major-interface.twig', $file, ['mixin' => $schema])
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function generateMixinTrait(SchemaDescriptor $schema, GeneratorResponse $response)
     {
         $options = $schema->getLanguage(static::LANGUAGE);
@@ -229,16 +181,17 @@ class PhpGenerator extends Generator
             return;
         }
 
+        $id = $schema->getId();
         $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}Trait");
-
-        $imports = ['use Gdbots\Pbj\Schema;'];
-        $imports = array_merge($imports, explode(PHP_EOL, $insertionPoints['imports'] ?? ''));
+        $file = "{$id->getVendor()}/{$id->getPackage()}";
+        if ($id->getCategory()) {
+            $file .= "/{$id->getCategory()}";
+        }
+        $file .= "/{$id->getMessage()}/{$className}Trait";
 
         $parameters = [
             'mixin'   => $schema,
-            'imports' => $this->optimizeImports($imports),
+            'imports' => $this->optimizeImports(explode(PHP_EOL, $insertionPoints['imports'] ?? '')),
             'methods' => $insertionPoints['methods'],
         ];
 
@@ -259,7 +212,7 @@ class PhpGenerator extends Generator
             $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports')));
 
             if ($field->getFormat()) {
-                $imports[] = 'use Gdbots\Pbj\Enum\Format;';
+                $imports[] = "import Format from '@gdbots/pbj/enums/Format';";
             }
 
             switch ($field->getType()->getTypeName()->getValue()) {
@@ -267,22 +220,11 @@ class PhpGenerator extends Generator
                 case TypeName::STRING_ENUM;
                     $enum = $field->getEnum();
                     $imports[] = sprintf(
-                        'use %s\%s;',
+                        "import %s from '%s/%s';",
+                        $this->enumToClassName($enum),
                         $this->enumToNativeNamespace($enum),
                         $this->enumToClassName($enum)
                     );
-                    break;
-
-                case TypeName::MESSAGE;
-                    $anyOfs = $field->getAnyOf() ?: [];
-                    foreach ($anyOfs as $anyOf) {
-                        $imports[] = sprintf(
-                            'use %s\%s as %s;',
-                            $this->schemaToNativeNamespace($anyOf),
-                            $this->schemaToClassName($anyOf),
-                            $this->schemaToFqClassName($anyOf)
-                        );
-                    }
                     break;
 
                 default:
@@ -292,7 +234,6 @@ class PhpGenerator extends Generator
 
         return $imports;
     }
-
 
     /**
      * {@inheritdoc}
@@ -313,7 +254,7 @@ class PhpGenerator extends Generator
 
                 $field->getLanguage(static::LANGUAGE)->set(
                     'default',
-                    sprintf('%s::%s()', $this->enumToClassName($enum), strtoupper($enumKey))
+                    sprintf('%s.%s', $this->enumToClassName($enum), strtoupper($enumKey))
                 );
 
                 if (strlen($default) === 0) {

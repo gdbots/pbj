@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
@@ -11,19 +10,15 @@
       <field name="excerpt_html" type="text" />
       <field name="thumbnails" type="string" format="url" rule="map" />
       <field name="private" type="boolean" />
-
       <field name="publish_status" type="string-enum">
         <default>draft</default>
         <enum id="acme:blog:publish-status" />
       </field>
-
       <field name="content_type" type="string-enum">
         <default>unknown</default>
         <enum id="acme:blog:content-type" />
       </field>
-
       <field name="expires_at" type="timestamp" />
-
       <field name="comments" type="message" rule="list">
         <any-of>
           <curie>acme:blog:entity:comment</curie>
@@ -35,9 +30,5 @@
       <curie-major>acme:core:mixin:article:v1</curie-major>
       <curie-major>acme:blog:mixin:has-comments:v1</curie-major>
     </mixins>
-
-    <php-options>
-      <namespace>Acme\Schemas\Blog\Entity</namespace>
-    </php-options>
   </schema>
 </pbj-schema>

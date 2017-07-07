@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-enums xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/enums.xsd">
@@ -23,9 +22,5 @@
       <option key="TEXT" value="text" />
       <option key="VIDEO" value="video" />
     </enum>
-
-    <php-options>
-      <namespace>Acme\Schemas\Blog\Enum</namespace>
-    </php-options>
   </enums>
 </pbj-enums>

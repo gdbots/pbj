@@ -6,26 +6,23 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\Generator\Twig\StringExtension;
 use Gdbots\Pbjc\SchemaDescriptor;
-use Gdbots\Pbjc\Twig\Extension\SchemaExtension;
-use Gdbots\Pbjc\Twig\Extension\StringExtension;
+use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\OutputFile;
 
 abstract class Generator
 {
-    /**
-     * The directory to look for templates.
-     */
-    const SKELETON_DIR = __DIR__.'/templates/';
-
-    /** @var string */
-    protected $language;
-
-    /** @var string */
-    protected $extension;
+    const TEMPLATE_DIR = __DIR__ . '/Twig/';
+    const LANGUAGE = 'unknown';
+    const EXTENSION = '.unk';
+    const MANIFEST = 'pbj-schemas';
 
     /** @var CompileOptions */
     protected $compileOptions;
+
+    /** @var \Twig_Environment */
+    protected $twig;
 
     /**
      * @param CompileOptions $compileOptions
@@ -36,7 +33,15 @@ abstract class Generator
     }
 
     /**
-     * Generates and writes schema related files.
+     * Generates code for the given SchemaDescriptor.
+     *
+     * Produces files for (varies by language):
+     * - message class (the concrete class - curie major)
+     * - message interface (curie)
+     * - mixin (the schema fields that are "mixed" into the message)
+     * - mixin interface (curie)
+     * - mixin major interface (curie major for the mixin)
+     * - mixin trait (any methods provided by insertion points)
      *
      * @param SchemaDescriptor $schema
      *
@@ -50,108 +55,21 @@ abstract class Generator
             $this->updateFieldOptions($schema, $field);
         }
 
-        foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-            $response->addFile($this->renderFile(
-                $template,
-                $this->getSchemaTarget($schema, $filename),
-                $this->getSchemaParameters($schema)
-            ));
-        }
-
-        if ($schema->isLatestVersion()) {
-            foreach ($this->getSchemaTemplates($schema) as $template => $filename) {
-                if ($this->getSchemaTarget($schema, $filename) != $this->getSchemaTarget($schema, $filename, null, true)) {
-                    $response->addFile($this->renderFile(
-                        $template,
-                        $this->getSchemaTarget($schema, $filename, null, true),
-                        $this->getSchemaParameters($schema)
-                    ));
-                }
-            }
+        if ($schema->isMixinSchema()) {
+            $this->generateMixin($schema, $response);
+            $this->generateMixinInterface($schema, $response);
+            $this->generateMixinMajorInterface($schema, $response);
+            $this->generateMixinTrait($schema, $response);
+        } else {
+            $this->generateMessage($schema, $response);
+            $this->generateMessageInterface($schema, $response);
         }
 
         return $response;
     }
 
     /**
-     * Adds and updates field php options.
-     *
-     * @param SchemaDescriptor $schema
-     * @param FieldDescriptor  $field
-     *
-     * @return FieldDescriptor
-     */
-    protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
-    {
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     * @param string           $filename
-     * @param string           $directory
-     * @param bool             $isLatest
-     *
-     * @return string
-     */
-    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
-    {
-        $filename = str_replace([
-            '{vendor}',
-            '{package}',
-            '{category}',
-            '{version}',
-            '{major}',
-        ], [
-            $schema->getId()->getVendor(),
-            $schema->getId()->getPackage(),
-            $schema->getId()->getCategory(),
-            $schema->getId()->getVersion()->toString(),
-            $schema->getId()->getVersion()->getMajor(),
-        ], $filename);
-
-        if ($directory === null) {
-            $directory = sprintf('%s/%s/%s',
-                StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
-                StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
-                StringUtils::toCamelFromSlug($schema->getId()->getCategory())
-            );
-        }
-        if ($directory) {
-            $directory .= '/';
-        }
-
-        return sprintf('%s/%s%s%s',
-            $this->compileOptions->getOutput(),
-            $directory,
-            $filename,
-            $this->extension
-        );
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return array
-     */
-    protected function getSchemaTemplates(SchemaDescriptor $schema)
-    {
-        return [];
-    }
-
-    /**
-     * @param SchemaDescriptor $schema
-     *
-     * @return array
-     */
-    protected function getSchemaParameters(SchemaDescriptor $schema)
-    {
-        return [
-            'schema' => $schema,
-        ];
-    }
-
-    /**
-     * Generates and writes enum files.
+     * Generates code for an Enum.
      *
      * @param EnumDescriptor $enum
      *
@@ -159,10 +77,12 @@ abstract class Generator
      */
     public function generateEnum(EnumDescriptor $enum)
     {
+        return new GeneratorResponse();
     }
 
     /**
-     * Generates and writes manifest files.
+     * Generates a manifest of all messages the store provides.
+     * This is used to configure the MessageResolver.
      *
      * @param SchemaDescriptor[] $schemas
      *
@@ -170,6 +90,280 @@ abstract class Generator
      */
     public function generateManifest(array $schemas)
     {
+        $response = new GeneratorResponse();
+        $messages = [];
+
+        /** @var SchemaDescriptor $schema */
+        foreach ($schemas as $schema) {
+            if ($schema->isMixinSchema()) {
+                continue;
+            }
+
+            if (isset($messages[$schema->getId()->getCurieWithMajorRev()])) {
+                continue;
+            }
+
+            if (!SchemaStore::hasOtherSchemaMajorRev($schema->getId())) {
+                $messages[$schema->getId()->getCurie()] = $schema;
+                continue;
+            }
+
+            if ($schema->isLatestVersion()) {
+                $messages[$schema->getId()->getCurie()] = $schema;
+            }
+
+            $messages[$schema->getId()->getCurieWithMajorRev()] = $schema;
+
+            /** @var SchemaDescriptor $s */
+            foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
+                $messages[$s->getId()->getCurieWithMajorRev()] = $s;
+            }
+        }
+
+        // delete invalid schemas
+        foreach ($messages as $key => $value) {
+            if (!SchemaStore::getSchemaById($key, true)) {
+                unset($messages[$key]);
+            }
+        }
+
+        ksort($messages);
+        $response->addFile(
+            $this->generateOutputFile('manifest.twig', static::MANIFEST, ['schemas' => $messages])
+        );
+        return $response;
+    }
+
+    /**
+     * Returns the class name to be used for the given SchemaDescriptor.
+     *
+     * @param SchemaDescriptor $schema
+     * @param bool             $withMajor
+     *
+     * @return string
+     */
+    public function schemaToClassName(SchemaDescriptor $schema, $withMajor = false)
+    {
+        $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
+        if (!$withMajor) {
+            return $className;
+        }
+
+        return "{$className}V{$schema->getId()->getVersion()->getMajor()}";
+    }
+
+    /**
+     * Returns a fully qualified class name to be used for the given SchemaDescriptor.
+     * Use this in generated code to avoid name collisions.
+     *
+     * @param SchemaDescriptor $schema
+     * @param bool             $withMajor
+     *
+     * @return string
+     */
+    public function schemaToFqClassName(SchemaDescriptor $schema, $withMajor = false)
+    {
+        $id = $schema->getId();
+        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
+        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
+        return "{$vendor}{$package}{$this->schemaToClassName($schema, $withMajor)}";
+    }
+
+    /**
+     * Returns the class name to be used for the given EnumDescriptor.
+     *
+     * @param EnumDescriptor $enum
+     *
+     * @return string
+     */
+    public function enumToClassName(EnumDescriptor $enum)
+    {
+        return StringUtils::toCamelFromSlug($enum->getId()->getName());
+    }
+
+    /**
+     * Returns the native package name for the SchemaDescriptor as
+     * looked up in compile options or created automatically.
+     *
+     * @param SchemaDescriptor $schema
+     *
+     * @return string
+     */
+    public function schemaToNativePackage(SchemaDescriptor $schema)
+    {
+        $id = $schema->getId();
+        return $this->getNativePackage($id->getVendor(), $id->getPackage());
+    }
+
+    /**
+     * Returns the native package name for the EnumDescriptor as
+     * looked up in compile options or created automatically.
+     *
+     * @param EnumDescriptor $enum
+     *
+     * @return string
+     */
+    public function enumToNativePackage(EnumDescriptor $enum)
+    {
+        $id = $enum->getId();
+        return $this->getNativePackage($id->getVendor(), $id->getPackage());
+    }
+
+    /**
+     * Returns the native namespace for the SchemaDescriptor
+     * by combining native package and curie.
+     *
+     * @example
+     *  es6: import Article from '@acme/schemas/acme/blog/node';
+     *  php: use Acme\Schemas\Blog\Node;
+     *
+     * @param SchemaDescriptor $schema
+     *
+     * @return string
+     */
+    public function schemaToNativeNamespace(SchemaDescriptor $schema)
+    {
+    }
+
+    /**
+     * Returns the native namespace for the EnumDescriptor
+     * by combining native package and curie.
+     *
+     * @example
+     *  es6: import SomeEnum from '@acme/schemas/acme/blog/enums';
+     *  php: use Acme\Schemas\Blog\Enum;
+     *
+     * @param EnumDescriptor $enum
+     *
+     * @return string
+     */
+    public function enumToNativeNamespace(EnumDescriptor $enum)
+    {
+    }
+
+    /**
+     * Generate a message (the concrete class)
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMessage(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Generates a message interface.
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMessageInterface(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Generates a mixin (schema fields "mixed" into messages).
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Generates a mixin interface.
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMixinInterface(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Generates a mixin major (as in curie major) interface.
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMixinMajorInterface(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Generates a mixin trait (the methods provided by a mixin).
+     *
+     * @param SchemaDescriptor  $schema
+     * @param GeneratorResponse $response
+     */
+    protected function generateMixinTrait(SchemaDescriptor $schema, GeneratorResponse $response)
+    {
+    }
+
+    /**
+     * Adds and updates field php options.
+     *
+     * @param SchemaDescriptor $schema
+     * @param FieldDescriptor  $field
+     */
+    protected function updateFieldOptions(SchemaDescriptor $schema, FieldDescriptor $field)
+    {
+    }
+
+    /**
+     * @param string $template
+     * @param string $file
+     * @param array  $parameters
+     *
+     * @return OutputFile
+     */
+    protected function generateOutputFile($template, $file, array $parameters)
+    {
+        $template = sprintf('%s/%s', static::LANGUAGE, $template);
+        $content = $this->render($template, $parameters);
+        $ext = static::EXTENSION;
+        $addNewLine = static::LANGUAGE !== 'json-schema';
+        return new OutputFile(
+            "{$this->compileOptions->getOutput()}/{$file}$ext",
+            trim($content) . ($addNewLine ? PHP_EOL : '')
+        );
+    }
+
+    /**
+     * @param string $vendor
+     * @param string $package
+     *
+     * @return ?string
+     */
+    protected function getNativePackage($vendor, $package)
+    {
+        $packages = $this->compileOptions->getPackages();
+        $vendorPackage = "{$vendor}:{$package}";
+
+        if (isset($packages[$vendorPackage])) {
+            return $packages[$vendorPackage];
+        }
+
+        if (isset($packages[$vendor])) {
+            return $packages[$vendor];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array $imports
+     *
+     * @return string
+     */
+    protected function optimizeImports(array $imports)
+    {
+        $imports = array_map('trim', $imports);
+        $imports = array_filter($imports);
+        $imports = array_unique($imports);
+        asort($imports);
+        return implode(PHP_EOL, $imports);
     }
 
     /**
@@ -180,10 +374,8 @@ abstract class Generator
      */
     protected function render($template, array $parameters)
     {
-        $twig = $this->getTwigEnvironment();
-
-        $parameters['compileOptions'] = $this->compileOptions;
-
+        $twig = $this->getTwig();
+        $parameters['compile_options'] = $this->compileOptions;
         return $twig->render($template, $parameters);
     }
 
@@ -192,34 +384,26 @@ abstract class Generator
      *
      * @return \Twig_Environment
      */
-    protected function getTwigEnvironment()
+    protected function getTwig()
     {
-        $twig = new \Twig_Environment(new \Twig_Loader_Filesystem(self::SKELETON_DIR), array(
-            'debug' => true,
-            'cache' => false,
-            'strict_variables' => true,
-            'autoescape' => false,
-        ));
+        if (null === $this->twig) {
+            $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem(self::TEMPLATE_DIR), [
+                'debug'            => true,
+                'cache'            => false,
+                'strict_variables' => true,
+                'autoescape'       => false,
+            ]);
 
-        $twig->addExtension(new SchemaExtension());
-        $twig->addExtension(new StringExtension());
+            $this->twig->addExtension(new StringExtension());
 
-        return $twig;
-    }
+            $class = sprintf(
+                '\Gdbots\Pbjc\Generator\Twig\%sGeneratorExtension',
+                StringUtils::toCamelFromSlug(static::LANGUAGE)
+            );
 
-    /**
-     * @param string $template
-     * @param string $target
-     * @param array  $parameters
-     *
-     * @return OutputFile
-     */
-    protected function renderFile($template, $target, array $parameters)
-    {
-        $template = sprintf('%s/%s', $this->language, $template);
+            $this->twig->addExtension(new $class($this->compileOptions, $this));
+        }
 
-        $content = $this->render($template, $parameters);
-
-        return new OutputFile($target, $content);
+        return $this->twig;
     }
 }

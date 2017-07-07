@@ -1,0 +1,17 @@
+<?php
+
+namespace {{ enum_to_native_namespace(enum) }};
+
+use Gdbots\Common\Enum;
+
+/**
+{% for key, value in enum.values %}
+ * @method static {{ enum_to_class_name(enum) }} {{ key|upper }}()
+{% endfor %}
+ */
+final class {{ enum_to_class_name(enum) }} extends Enum
+{
+{% for key, value in enum.values %}
+    const {{ key|upper }} = {% if enum.type == 'int' %}{{ value }}{% else %}'{{ value }}'{% endif %};
+{% endfor %}
+}

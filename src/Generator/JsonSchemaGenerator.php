@@ -6,39 +6,46 @@ use Gdbots\Pbjc\SchemaDescriptor;
 
 class JsonSchemaGenerator extends Generator
 {
-    /** @var string */
-    protected $language = 'json-schema';
-
-    /** @var string */
-    protected $extension = '.json';
+    const LANGUAGE = 'json-schema';
+    const EXTENSION = '.json';
 
     /**
      * {@inheritdoc}
      */
-    protected function getSchemaTarget(SchemaDescriptor $schema, $filename, $directory = null, $isLatest = false)
+    public function generateManifest(array $schemas)
     {
-        if ($isLatest) {
-            $filename = str_replace('{version}', 'latest', $filename);
-        }
-
-        $directory = sprintf('%s/%s/%s/%s',
-            $schema->getId()->getVendor(),
-            $schema->getId()->getPackage(),
-            $schema->getId()->getCategory(),
-            $schema->getId()->getMessage()
-        );
-
-        return parent::getSchemaTarget($schema, $filename, $directory, $isLatest);
+        return new GeneratorResponse();
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getSchemaTemplates(SchemaDescriptor $schema)
+    public function generateSchema(SchemaDescriptor $schema)
     {
-        return [
-            'message.twig' => '{version}',
-        ];
+        $response = new GeneratorResponse();
+
+        $id = $schema->getId();
+        $directory = str_replace(['::', ':'], [':', '/'], $id->getCurie());
+
+        $response->addFile(
+            $this->generateOutputFile(
+                'message.twig',
+                "{$directory}/{$id->getVersion()}",
+                ['schema' => $schema]
+            )
+        );
+
+        if ($schema->isLatestVersion()) {
+            $response->addFile(
+                $this->generateOutputFile(
+                    'message.twig',
+                    "{$directory}/latest",
+                    ['schema' => $schema]
+                )
+            );
+        }
+
+        return $response;
     }
 
     /**
@@ -51,9 +58,9 @@ class JsonSchemaGenerator extends Generator
                 '    ',
                 '\/',
             ], [
-                '  ',
-                '/',
-            ], json_encode(
+            '  ',
+            '/',
+        ], json_encode(
                 json_decode(
                     str_replace(
                         [
@@ -64,7 +71,7 @@ class JsonSchemaGenerator extends Generator
                             ',}',
                             ',]',
                             ': INF',
-                            ': NAN'
+                            ': NAN',
                         ],
                         [
                             '',
@@ -74,7 +81,7 @@ class JsonSchemaGenerator extends Generator
                             '}',
                             ']',
                             ': "INF"',
-                            ': "NAN"'
+                            ': "NAN"',
                         ],
                         parent::render($template, $parameters)
                     )

@@ -1,0 +1,86 @@
+{#
+  Render field block
+  Parameters:
+    field - a FieldDescriptor instance
+    spaces - number of spaces
+#}
+{% macro draw_field(field, spaces) %}
+{% set spaces = '%' ~ spaces ~ 's' %}
+{% if field.description %}
+{% set lines = field.description|split("\n") %}
+/*
+{% for line in lines %}
+{{ spaces|format('') }} * {{ line|reduce_spaces }}
+{% endfor %}
+{{ spaces|format('') }} */
+{{ spaces|format('') }}Fb.create('{{ field.name }}', T.{{ class_name(field.type) }}.create())
+{% else %}
+Fb.create('{{ field.name }}', T.{{ class_name(field.type) }}.create())
+{% endif %}
+{% if field.isASet %}
+  {{ spaces|format('') }}.asASet()
+{% endif %}
+{% if field.isAList %}
+  {{ spaces|format('') }}.asAList()
+{% endif %}
+{% if field.isAMap %}
+  {{ spaces|format('') }}.asAMap()
+{% endif %}
+{% if field.required %}
+  {{ spaces|format('') }}.required()
+{% endif %}
+{% if field.minLength %}
+  {{ spaces|format('') }}.minLength({{ field.minLength }})
+{% endif %}
+{% if field.maxLength %}
+  {{ spaces|format('') }}.maxLength({{ field.maxLength }})
+{% endif %}
+{% if field.pattern %}
+  {{ spaces|format('') }}.pattern('{{ field.pattern|replace({'\\': '\\\\'}) }}')
+{% endif %}
+{% if field.format %}
+  {{ spaces|format('') }}.format(Format.{{ field.format|upper }})
+{% endif %}
+{% if field.min %}
+  {{ spaces|format('') }}.min({{ field.min }})
+{% endif %}
+{% if field.max %}
+  {{ spaces|format('') }}.max({{ field.max }})
+{% endif %}
+{% if field.precision %}
+  {{ spaces|format('') }}.precision({{ field.precision }})
+{% endif %}
+{% if field.scale %}
+  {{ spaces|format('') }}.scale({{ field.scale }})
+{% endif %}
+{% if field.language('js').get('default') %}
+{% if not field.language('js').get('hide_default') %}
+  {{ spaces|format('') }}.withDefault({{ field.language('js').get('default')|reduce_spaces }})
+{% endif %}
+{% elseif field.default is not empty %}
+  {{ spaces|format('') }}.withDefault({{ field.default|json_encode }})
+{% endif %}
+{% if not field.useTypeDefault %}
+  {{ spaces|format('') }}.useTypeDefault(false)
+{% endif %}
+{% if field.anyOf %}
+  {{ spaces|format('') }}.anyOfCuries([
+{% for schema in field.anyOf %}
+  {{ spaces|format('') }}  '{{ schema.getId().getCurie() }}',
+{% endfor %}
+  {{ spaces|format('') }}])
+{% endif %}
+{% if field.language('js').has('class-proto') %}
+  {{ spaces|format('') }}.classProto({{ field.language('js').get('class-proto') }})
+{% endif %}
+{% if field.enum %}
+  {{ spaces|format('') }}.classProto({{ enum_to_class_name(field.enum) }})
+{% endif %}
+{% if field.overridable %}
+  {{ spaces|format('') }}.overridable(true)
+{% endif %}
+{% if field.language('js').get('assertion') %}
+  {{ spaces|format('') }}.assertion({{ field.language('js').get('assertion')|reduce_spaces }})
+{% endif %}
+  {{ spaces|format('') }}.build(),
+{% endmacro %}

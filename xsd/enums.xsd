@@ -23,7 +23,6 @@
   <xsd:complexType name="enums">
     <xsd:sequence>
       <xsd:element name="enum" type="enumItem" minOccurs="1" maxOccurs="unbounded" />
-      <xsd:element name="php-options" type="enumPhpOptions" minOccurs="0" maxOccurs="1" />
       <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
     </xsd:sequence>
     <xsd:attribute name="namespace" type="namespaceRegex" use="required" />
@@ -57,15 +56,6 @@
   <xsd:complexType name="enumOption">
     <xsd:attribute name="key" type="xsd:string" use="required" />
     <xsd:attribute name="value" type="xsd:string" use="required" />
-    <xsd:anyAttribute namespace="##other" />
-  </xsd:complexType>
-
-  <xsd:complexType name="enumPhpOptions">
-    <xsd:sequence>
-      <xsd:element name="namespace" type="xsd:string" minOccurs="1" maxOccurs="1" />
-      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
-      <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" />
-    </xsd:sequence>
     <xsd:anyAttribute namespace="##other" />
   </xsd:complexType>
 </xsd:schema>

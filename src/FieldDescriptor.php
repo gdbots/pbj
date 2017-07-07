@@ -6,8 +6,10 @@ use Gdbots\Common\Util\NumberUtils;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
+use Gdbots\Pbjc\Type\AbstractStringType;
 use Gdbots\Pbjc\Type\StringType;
 use Gdbots\Pbjc\Type\IntEnumType;
+use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\Util\LanguageBag;
 
 final class FieldDescriptor
@@ -26,7 +28,7 @@ final class FieldDescriptor
     /** @var string */
     private $description;
 
-    /** @var \Gdbots\Pbjc\Type\Type */
+    /** @var Type */
     private $type;
 
     /** @var FieldRule */
@@ -75,7 +77,7 @@ final class FieldDescriptor
     /** @var bool */
     private $useTypeDefault = true;
 
-    /** @var array */
+    /** @var SchemaDescriptor[] */
     private $anyOf;
 
     /** @var bool */
@@ -205,7 +207,7 @@ final class FieldDescriptor
     private function applyStringOptions()
     {
         // use *Length for string type
-        if ($this->type instanceof StringType) {
+        if ($this->type instanceof AbstractStringType) {
             $this->minLength = $this->min;
             $this->maxLength = $this->max;
             $this->min = null;
@@ -404,7 +406,7 @@ final class FieldDescriptor
     }
 
     /**
-     * @return array
+     * @return SchemaDescriptor[]
      */
     public function getAnyOf()
     {

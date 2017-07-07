@@ -1,0 +1,15 @@
+<?php
+// @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/latest.json#
+namespace {{ schema_to_native_namespace(mixin) }};
+
+{% if mixin.extends %}
+use {{ schema_to_native_namespace(mixin.extends) }}\{{ schema_to_class_name(mixin.extends) }};
+{% set extend_interface = schema_to_class_name(mixin.extends) %}
+{% else %}
+use Gdbots\Pbj\Message;
+{% set extend_interface = 'Message' %}
+{% endif %}
+
+interface {{ schema_to_class_name(mixin) }} extends {{ extend_interface }}
+{
+}

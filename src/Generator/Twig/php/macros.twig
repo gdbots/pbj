@@ -1,0 +1,86 @@
+{#
+  Render field block
+  Parameters:
+    field - a FieldDescriptor instance
+    spaces - number of spaces
+#}
+{% macro draw_field(field, spaces) %}
+{% set spaces = '%' ~ spaces ~ 's' %}
+{% if field.description %}
+{% set lines = field.description|split("\n") %}
+  /*
+{% for line in lines %}
+{{ spaces|format('') }} * {{ line|reduce_spaces }}
+{% endfor %}
+{{ spaces|format('') }} */
+{{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
+{% else %}
+  Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
+{% endif %}
+{% if field.isASet %}
+    {{ spaces|format('') }}->asASet()
+{% endif %}
+{% if field.isAList %}
+    {{ spaces|format('') }}->asAList()
+{% endif %}
+{% if field.isAMap %}
+    {{ spaces|format('') }}->asAMap()
+{% endif %}
+{% if field.required %}
+    {{ spaces|format('') }}->required()
+{% endif %}
+{% if field.minLength %}
+    {{ spaces|format('') }}->minLength({{ field.minLength }})
+{% endif %}
+{% if field.maxLength %}
+    {{ spaces|format('') }}->maxLength({{ field.maxLength }})
+{% endif %}
+{% if field.pattern %}
+    {{ spaces|format('') }}->pattern('{{ field.pattern }}')
+{% endif %}
+{% if field.format %}
+    {{ spaces|format('') }}->format(Format::{{ field.format|upper }}())
+{% endif %}
+{% if field.min %}
+    {{ spaces|format('') }}->min({{ field.min }})
+{% endif %}
+{% if field.max %}
+    {{ spaces|format('') }}->max({{ field.max }})
+{% endif %}
+{% if field.precision %}
+    {{ spaces|format('') }}->precision({{ field.precision }})
+{% endif %}
+{% if field.scale %}
+    {{ spaces|format('') }}->scale({{ field.scale }})
+{% endif %}
+{% if field.language('php').get('default') %}
+{% if not field.language('php').get('hide_default') %}
+    {{ spaces|format('') }}->withDefault({{ field.language('php').get('default')|reduce_spaces }})
+{% endif %}
+{% elseif field.default is not empty %}
+    {{ spaces|format('') }}->withDefault({{ field.default|json_encode }})
+{% endif %}
+{% if not field.useTypeDefault %}
+    {{ spaces|format('') }}->useTypeDefault(false)
+{% endif %}
+{% if field.anyOf %}
+    {{ spaces|format('') }}->anyOfClassNames([
+{% for anyOf in field.anyOf %}
+    {{ spaces|format('') }}    {{ schema_to_fq_class_name(anyOf) }}::class,
+{% endfor %}
+    {{ spaces|format('') }}])
+{% endif %}
+{% if field.language('php').get('class-name') %}
+    {{ spaces|format('') }}->className({{ field.language('php').get('class-name') }})
+{% endif %}
+{% if field.enum %}
+    {{ spaces|format('') }}->className({{ enum_to_class_name(field.enum) }}::class)
+{% endif %}
+{% if field.overridable %}
+    {{ spaces|format('') }}->overridable(true)
+{% endif %}
+{% if field.language('php').get('assertion') %}
+    {{ spaces|format('') }}->assertion({{ field.language('php').get('assertion')|reduce_spaces }})
+{% endif %}
+    {{ spaces|format('') }}->build(),
+{% endmacro %}

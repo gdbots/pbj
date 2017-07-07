@@ -7,17 +7,17 @@ final class CompileOptions
     /** @var array */
     private $namespaces = [];
 
+    /** @var array */
+    private $packages = [];
+
     /** @var string */
     private $domain;
 
     /** @var string */
     private $output;
 
-    /** @var string */
-    private $manifest;
-
     /** @var bool */
-    private $include_all;
+    private $include_all = false;
 
     /** @var \Closure */
     private $callback;
@@ -45,6 +45,14 @@ final class CompileOptions
     }
 
     /**
+     * @return array
+     */
+    public function getPackages()
+    {
+        return $this->packages;
+    }
+
+    /**
      * @return string
      */
     public function getDomain()
@@ -58,14 +66,6 @@ final class CompileOptions
     public function getOutput()
     {
         return $this->output;
-    }
-
-    /**
-     * @return string
-     */
-    public function getManifest()
-    {
-        return $this->manifest;
     }
 
     /**

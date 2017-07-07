@@ -4,6 +4,7 @@ namespace Gdbots\Pbjc;
 
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\MissingSchema;
+use Gdbots\Pbjc\Generator\Generator;
 use Symfony\Component\Finder\Finder;
 
 final class Compiler
@@ -154,41 +155,27 @@ final class Compiler
 
         $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
 
-        /** @var \Gdbots\Pbjc\Generator\Generator $generator */
+        /** @var Generator $generator */
         $generator = new $class($options);
-
         $outputFiles = [];
 
-        /** @var EnumDescriptor $enum */
         foreach (SchemaStore::getEnums() as $enum) {
             if (!$options->getIncludeAll() && !in_array($enum->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
-            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateEnum($enum)) {
-                $outputFiles = array_merge($outputFiles, $response->getFiles());
-            }
+            $outputFiles = array_merge($outputFiles, $generator->generateEnum($enum)->getFiles());
         }
 
-        /** @var SchemaDescriptor $schema */
         foreach (SchemaStore::getSchemas() as $schema) {
             if (!$options->getIncludeAll() && !in_array($schema->getId()->getNamespace(), $namespaces)) {
                 continue;
             }
 
-            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateSchema($schema)) {
-                $outputFiles = array_merge($outputFiles, $response->getFiles());
-            }
+            $outputFiles = array_merge($outputFiles, $generator->generateSchema($schema)->getFiles());
         }
 
-        if ($options->getManifest()) {
-            /** @var $response \Gdbots\Pbjc\Generator\GeneratorResponse */
-            if ($response = $generator->generateManifest(SchemaStore::getSchemas())) {
-                $outputFiles = array_merge($outputFiles, $response->getFiles());
-            }
-        }
+        $outputFiles = array_merge($outputFiles, $generator->generateManifest(SchemaStore::getSchemas())->getFiles());
 
         if ($callback = $options->getCallback()) {
             foreach ($outputFiles as $outputFile) {

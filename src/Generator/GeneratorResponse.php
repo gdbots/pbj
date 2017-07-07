@@ -17,12 +17,11 @@ final class GeneratorResponse
     public function addFile(OutputFile $file)
     {
         $this->files[$file->getFile()] = $file;
-
         return $this;
     }
 
     /**
-     * @return array
+     * @return OutputFile[]
      */
     public function getFiles()
     {

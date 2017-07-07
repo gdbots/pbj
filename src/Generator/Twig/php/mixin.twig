@@ -1,0 +1,31 @@
+{% import 'php/macros.twig' as macros %}
+<?php
+// @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/{{ mixin.id.version }}.json#
+namespace {{ schema_to_native_namespace(mixin) }};
+
+{{ imports }}
+
+final class {{ schema_to_class_name(mixin, true) }}Mixin extends AbstractMixin
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return SchemaId::fromString('{{ mixin.id }}');
+    }
+{% if mixin.fields|length %}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFields()
+    {
+        return [
+{% for field in mixin.fields %}
+          {{ macros.draw_field(field, 12, loop.last) }}
+{%- endfor %}
+        ];
+    }
+{% endif %}
+}

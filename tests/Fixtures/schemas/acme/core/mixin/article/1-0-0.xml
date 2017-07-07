@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <pbj-schema xmlns="http://gdbots.io/pbj/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://gdbots.io/pbj/xsd http://gdbots.io/pbj/xsd/schema.xsd">
 
   <schema id="pbj:acme:core:mixin:article:1-0-0" mixin="true">
     <php-options>
-      <namespace>Acme\Schemas\Core\Entity</namespace>
       <insertion-points>
         <imports>
-            <![CDATA[
+          <![CDATA[
 use Gdbots\Pbj\MessageRef;
             ]]>
         </imports>
         <methods>
-            <![CDATA[
+          <![CDATA[
 /**
  * @param string $tag
  * @return MessageRef
