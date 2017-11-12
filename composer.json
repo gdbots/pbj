@@ -6,10 +6,10 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">=7.1",
-    "gdbots/pbj": "~1.1",
-    "symfony/filesystem": "~3.0",
-    "symfony/finder": "~3.0",
-    "twig/twig": "~1.2"
+    "gdbots/pbj": "~1.1|~2.0",
+    "symfony/filesystem": "~3.3|~4.0",
+    "symfony/finder": "~3.3|~4.0",
+    "twig/twig": "~1.35"
   },
   "require-dev": {
     "composer/composer": "1.0.*@dev",

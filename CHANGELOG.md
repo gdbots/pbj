@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## v0.3.1
+* Fix bug with `FieldMustContainsAnyOfClasses` constraint that fails when `anyOf` returns null.
+  Resolve by adding default empty array to `FieldDescriptor::anyOf`.
+
+
 ## v0.3.0
 __BREAKING CHANGES__
 

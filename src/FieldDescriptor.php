@@ -7,7 +7,6 @@ use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\AbstractStringType;
-use Gdbots\Pbjc\Type\StringType;
 use Gdbots\Pbjc\Type\IntEnumType;
 use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\Util\LanguageBag;
@@ -78,7 +77,7 @@ final class FieldDescriptor
     private $useTypeDefault = true;
 
     /** @var SchemaDescriptor[] */
-    private $anyOf;
+    private $anyOf = [];
 
     /** @var bool */
     private $overridable = false;
@@ -146,7 +145,7 @@ final class FieldDescriptor
                     case 'useTypeDefault':
                     case 'overridable':
                     case 'deprecated':
-                        $value = (bool) $value;
+                        $value = (bool)$value;
                         break;
 
                     case 'min':
@@ -155,14 +154,12 @@ final class FieldDescriptor
                     case 'maxLength':
                     case 'precision':
                     case 'scale':
-                        $value = (int) $value;
+                        $value = (int)$value;
                         break;
                 }
 
                 $this->$classProperty = $value;
-            }
-
-            // language options
+            } // language options
             elseif (substr($key, -8) == '-options') {
                 $language = substr($key, 0, -8); // remove "-options"
 
@@ -391,7 +388,7 @@ final class FieldDescriptor
         }
 
         if ($this->type instanceof IntEnumType) {
-            return (int) $this->default;
+            return (int)$this->default;
         }
 
         return $this->default;
