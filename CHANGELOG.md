@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.3.2
+* Fix bug on `Compiler` that fails to compile a message that starts with the letter v.
+
+
 ## v0.3.1
 * Fix bug with `FieldMustContainsAnyOfClasses` constraint that fails when `anyOf` returns null.
   Resolve by adding default empty array to `FieldDescriptor::anyOf`.

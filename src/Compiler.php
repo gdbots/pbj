@@ -77,10 +77,10 @@ final class Compiler
             } catch (MissingSchema $e) {
                 // remove "v" (version) from schemaId,
                 // and replace colons with slashes (convert to path format)
+                $str = preg_replace('/(:v\d+)$/', ':', $e->getMessage());
                 $pattern = sprintf(
-                    '/%s%s(.*)/',
-                    str_replace([':v', ':'], [':', '\/'], $e->getMessage()),
-                    strpos($e->getMessage(), ':v') === false ? '\/' : null
+                    '/%s\/(.*)/',
+                    str_replace(':', '\/', $str)
                 );
 
                 // remove duplicate slashes
