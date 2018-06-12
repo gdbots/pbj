@@ -2,7 +2,7 @@
 
 
 ## v0.3.3
-* Fix bug with with descriptors not always referencing latest schemas as they had their own references to objects that were changing during the parse phase. The fix is to always go back to the SchemaStore whenever a schema is needed.
+* issue #46: Fix bug with with descriptors not always referencing latest schemas as they had their own references to objects that were changing during the parse phase. The fix is to always go back to the SchemaStore whenever a schema is needed.
 
 
 ## v0.3.2
