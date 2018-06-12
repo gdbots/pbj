@@ -4,6 +4,8 @@ namespace Gdbots\Tests\Pbjc;
 
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\SchemaId;
+use Gdbots\Pbjc\SchemaStore;
 
 class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,11 +14,25 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SchemaStore::addSchema(
+            SchemaId::fromString('pbj:vendor2:package2:category2:message2:1-0-0'),
+            new SchemaDescriptor(
+                'pbj:vendor2:package2:category2:message2:1-0-0',
+                [
+                    'fields' => [
+                        'created_at' => new FieldDescriptor('created_at', [
+                            'type' => 'microtime',
+                        ]),
+                    ],
+                ]
+            )
+        );
+
         $this->schema = new SchemaDescriptor(
             'pbj:vendor:package:category:message:1-0-0',
             [
                 'extends' => new SchemaDescriptor('pbj:vendor2:package2:category2:message2:1-0-0'),
-                'fields' => [
+                'fields'  => [
                     new FieldDescriptor('first_name', [
                         'type' => 'string',
                     ]),
@@ -24,7 +40,7 @@ class SchemaDescriptorTest extends \PHPUnit_Framework_TestCase
                         'type' => 'string',
                     ]),
                 ],
-                'mixins' => [
+                'mixins'  => [
                     new SchemaDescriptor(
                         'pbj:vendor2:package2:category2:message2:1-0-0',
                         [

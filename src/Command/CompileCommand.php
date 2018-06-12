@@ -2,12 +2,12 @@
 
 namespace Gdbots\Pbjc\Command;
 
-use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\Util\OutputFile;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Yaml\Parser;
@@ -27,13 +27,13 @@ class CompileCommand extends Command
             ->addOption(
                 'language',
                 'l',
-                 InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_OPTIONAL,
                 'The generated language'
             )
             ->addOption(
                 'config',
                 'c',
-                 InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_OPTIONAL,
                 'The pbjc config yaml file'
             )
             ->setDescription('Generate compiled files')
@@ -48,8 +48,7 @@ By default no option is required when running from the same folder contains the
 <comment>pbjc.yml</comment> configuration file.
 
 EOF
-            )
-        ;
+            );
     }
 
     /**

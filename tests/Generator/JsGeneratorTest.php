@@ -2,10 +2,10 @@
 
 namespace Gdbots\Tests\Pbjc\Generator;
 
+use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Generator\JsGenerator;
-use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class JsGeneratorTest extends \PHPUnit_Framework_TestCase

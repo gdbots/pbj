@@ -2,8 +2,8 @@
 
 namespace Gdbots\Tests\Pbjc;
 
-use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\Compiler;
 use Gdbots\Pbjc\SchemaStore;
 use Gdbots\Pbjc\Util\OutputFile;
 

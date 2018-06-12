@@ -5,8 +5,8 @@ namespace Gdbots\Pbjc\Validator;
 use Gdbots\Common\Enum;
 use Gdbots\Common\Util\StringUtils;
 use Gdbots\Pbjc\Exception\ValidatorException;
-use Gdbots\Pbjc\Type\Type;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Type\Type;
 
 class FieldAttributeEqualTo implements Constraint
 {
@@ -36,9 +36,9 @@ class FieldAttributeEqualTo implements Constraint
                 continue;
             }
 
-            $method = 'get'.StringUtils::toCamelFromSnake($this->attribute);
+            $method = 'get' . StringUtils::toCamelFromSnake($this->attribute);
             if (!method_exists($field, $method)) {
-                $method = 'is'.StringUtils::toCamelFromSnake($this->attribute);
+                $method = 'is' . StringUtils::toCamelFromSnake($this->attribute);
                 if (!method_exists($field, $method)) {
                     throw new \RuntimeException(sprintf('Invalid FieldDescriptor attribute "%s"', $this->attribute));
                 }

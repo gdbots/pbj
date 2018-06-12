@@ -2,9 +2,8 @@
 
 namespace Gdbots\Tests\Pbjc\Compiler;
 
-use Gdbots\Pbj\Serializer\JsonSerializer;
-use JsonSchema\Uri\UriRetriever;
 use JsonSchema\RefResolver;
+use JsonSchema\Uri\UriRetriever;
 use JsonSchema\Validator;
 
 class JsonValidatorTest extends \PHPUnit_Framework_TestCase
@@ -24,7 +23,7 @@ class JsonValidatorTest extends \PHPUnit_Framework_TestCase
 
         // resolve $ref's
         $refResolver = new RefResolver($retriever);
-        $refResolver->resolve($schema, __DIR__.'/Fixtures');
+        $refResolver->resolve($schema, __DIR__ . '/Fixtures');
 
         // validate
         $validator = new Validator();
@@ -40,46 +39,46 @@ class JsonValidatorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'data' => __DIR__.'/Fixtures/json-schema/article.json'
+                'data' => __DIR__ . '/Fixtures/json-schema/article.json',
             ],
             [
-                'data' => __DIR__.'/Fixtures/json-schema/comment.json'
+                'data' => __DIR__ . '/Fixtures/json-schema/comment.json',
             ],
             [
                 'data' => (object)[
-                    'id' => 'file://schame.json#',
-                    '$schema' => 'http://json-schema.org/draft-04/schema#',
-                    'type' => 'object',
-                    'properties' => (object)[
+                    'id'                   => 'file://schame.json#',
+                    '$schema'              => 'http://json-schema.org/draft-04/schema#',
+                    'type'                 => 'object',
+                    'properties'           => (object)[
                         '_schema' => (object)[
-                            'type' => 'string',
+                            'type'    => 'string',
                             'pattern' => '^pbj:([a-z0-9-]+):([a-z0-9\\.-]+):([a-z0-9-]+)?:([a-z0-9-]+):([0-9]+-[0-9]+-[0-9]+)$',
-                            'default' => 'pbj:acme:blog:entity:manual-schema:1-0-0'
-                        ]
+                            'default' => 'pbj:acme:blog:entity:manual-schema:1-0-0',
+                        ],
                     ],
-                    'additionalProperties' => false
-                ]
+                    'additionalProperties' => false,
+                ],
             ],
             [
                 'data' => (object)[
-                    'id' => 'file://schame.json#',
-                    '$schema' => 'http://json-schema.org/draft-04/schema#',
-                    'type' => 'object',
-                    'properties' => (object)[
+                    'id'                   => 'file://schame.json#',
+                    '$schema'              => 'http://json-schema.org/draft-04/schema#',
+                    'type'                 => 'object',
+                    'properties'           => (object)[
                         'tags' => (object)[
-                            'type' => 'array',
-                            'items' => (object)[
+                            'type'        => 'array',
+                            'items'       => (object)[
                                 (object)[
                                     'type' => 'string',
-                                ]
+                                ],
                             ],
-                            'minItems' => 1,
-                            'uniqueItems' => true
-                        ]
+                            'minItems'    => 1,
+                            'uniqueItems' => true,
+                        ],
                     ],
-                    'additionalProperties' => false
-                ]
-            ]
+                    'additionalProperties' => false,
+                ],
+            ],
         ];
     }
 }

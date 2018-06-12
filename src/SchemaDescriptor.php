@@ -118,7 +118,11 @@ final class SchemaDescriptor implements \JsonSerializable
      */
     public function getExtends()
     {
-        return $this->extends;
+        if (null === $this->extends) {
+            return null;
+        }
+
+        return SchemaStore::getSchemaById($this->extends->getId()->getCurieWithMajorRev());
     }
 
     /**
@@ -197,8 +201,8 @@ final class SchemaDescriptor implements \JsonSerializable
     public function getMixins()
     {
         return array_map(function ($id) {
-                return SchemaStore::getSchemaById($id);
-            },
+            return SchemaStore::getSchemaById($id);
+        },
             array_keys($this->mixins)
         );
     }

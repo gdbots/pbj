@@ -1,10 +1,10 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\SchemaMustContainsField;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\SchemaMustContainsField;
 
 class SchemaMustContainsFieldTest extends \PHPUnit_Framework_TestCase
 {

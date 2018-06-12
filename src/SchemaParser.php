@@ -3,9 +3,9 @@
 namespace Gdbots\Pbjc;
 
 use Gdbots\Pbjc\Enum\TypeName;
+use Gdbots\Pbjc\Exception\MissingSchema;
 use Gdbots\Pbjc\Util\LanguageBag;
 use Gdbots\Pbjc\Util\XmlUtils;
-use Gdbots\Pbjc\Exception\MissingSchema;
 
 /**
  * The SchemaParser is a tool to create/update schemas class descriptors.
@@ -25,7 +25,7 @@ class SchemaParser
     private function getXmlData($file)
     {
         /** @var \DOMDocument $xmlDomDocument */
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/schema.xsd')) {
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../xsd/schema.xsd')) {
             throw new \RuntimeException(sprintf(
                 'Invalid schema xml file "%s".',
                 $file

@@ -1,10 +1,10 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\FieldGreaterOrEqualThan;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\FieldGreaterOrEqualThan;
 
 class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,14 +33,14 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 100,
+                'max'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 100,
+                'max'  => 100,
             ]),
         ]]);
 
@@ -55,14 +55,14 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 100,
+                'max'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 1000,
+                'max'  => 1000,
             ]),
         ]]);
 
@@ -80,14 +80,14 @@ class FieldGreaterOrEqualThanTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 100,
+                'max'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'int',
-                'max' => 10,
+                'max'  => 10,
             ]),
         ]]);
 

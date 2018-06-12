@@ -1,10 +1,10 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\FieldAttributeEqualTo;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\FieldAttributeEqualTo;
 
 class FieldAttributeEqualToTest extends \PHPUnit_Framework_TestCase
 {

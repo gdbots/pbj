@@ -5,13 +5,13 @@
 
   <schema id="pbj:acme:blog:entity:article:1-0-0">
     <fields>
-      <field name="title" type="string" />
-      <field name="excerpt" type="text" />
-      <field name="excerpt_html" type="text" />
-      <field name="thumbnails" type="string" format="url" rule="map" />
+      <field name="title" type="string"/>
+      <field name="excerpt" type="text"/>
+      <field name="excerpt_html" type="text"/>
+      <field name="thumbnails" type="string" format="url" rule="map"/>
       <field name="publish_status" type="string-enum">
         <default>draft</default>
-        <enum id="acme:blog:publish-status" />
+        <enum id="acme:blog:publish-status"/>
       </field>
     </fields>
 

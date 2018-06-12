@@ -98,12 +98,13 @@ abstract class Generator
             $id = $schema->getId();
             $curie = $id->getCurie();
             $pkg = "{$id->getVendor()}-{$id->getPackage()}";
-            if (!isset($manifests[$pkg][$pkg])) {
+            $category = $id->getCategory() ? "category-{$id->getCategory()}" : '';
+            if (!isset($manifests[$pkg])) {
                 $manifests[$pkg] = [];
             }
 
-            if (!isset($manifests[$id->getCategory()])) {
-                $manifests[$id->getCategory()] = [];
+            if (!isset($manifests[$category])) {
+                $manifests[$category] = [];
             }
 
             if ($schema->isMixinSchema()) {
@@ -117,41 +118,46 @@ abstract class Generator
             if (!SchemaStore::hasOtherSchemaMajorRev($id)) {
                 $manifests['all'][$curie] = $schema;
                 $manifests[$pkg][$curie] = $schema;
-                $manifests[$id->getCategory()][$curie] = $schema;
+                $manifests[$category][$curie] = $schema;
                 continue;
             }
 
             if ($schema->isLatestVersion()) {
                 $manifests['all'][$curie] = $schema;
                 $manifests[$pkg][$curie] = $schema;
-                $manifests[$id->getCategory()][$curie] = $schema;
+                $manifests[$category][$curie] = $schema;
             }
 
             $manifests['all'][$id->getCurieWithMajorRev()] = $schema;
             $manifests[$pkg][$id->getCurieWithMajorRev()] = $schema;
-            $manifests[$id->getCategory()][$id->getCurieWithMajorRev()] = $schema;
+            $manifests[$category][$id->getCurieWithMajorRev()] = $schema;
 
             /** @var SchemaDescriptor $s */
             foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
                 $spkg = "{$s->getId()->getVendor()}-{$s->getId()->getPackage()}";
-                $manifests[$s->getId()->getCurieWithMajorRev()] = $s;
+                $scategory = "category-{$s->getId()->getCategory()}";
                 $manifests['all'][$s->getId()->getCurieWithMajorRev()] = $s;
                 $manifests[$spkg][$s->getId()->getCurieWithMajorRev()] = $s;
-                $manifests[$s->getId()->getCategory()][$s->getId()->getCurieWithMajorRev()] = $s;
+                $manifests[$scategory][$s->getId()->getCurieWithMajorRev()] = $s;
             }
         }
 
         foreach ($manifests as $group => $schemas) {
-            $filename = static::MANIFEST;
-            if ('all' !== $group) {
-                $filename .= "-{$group}";
+            if (empty($group)) {
+                continue;
             }
 
+            $filename = 'all' === $group ? static::MANIFEST : $group;
+
             // delete invalid schemas
-            foreach ($schemas as $key => $value) {
-                if (!SchemaStore::getSchemaById($key, true)) {
+            foreach ($schemas as $key => $schema) {
+                if (!SchemaStore::getSchemaById($schema->getId(), true)) {
                     unset($schemas[$key]);
                 }
+            }
+
+            if (empty($schemas)) {
+                continue;
             }
 
             ksort($schemas);

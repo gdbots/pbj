@@ -15,16 +15,16 @@ class FieldDescriptorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->field = new FieldDescriptor('name', [
-            'type' => 'string',
-            'required' => true,
-            'min' => 10,
-            'max' => 100,
-            'pattern' => '^[A-Za-z0-9_\-]+$',
-            'default' => 'jonny',
-            'any-of' => [
+            'type'        => 'string',
+            'required'    => true,
+            'min'         => 10,
+            'max'         => 100,
+            'pattern'     => '^[A-Za-z0-9_\-]+$',
+            'default'     => 'jonny',
+            'any-of'      => [
                 new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0'),
             ],
-            'enum' => new EnumDescriptor('vendor:package:number', 'int', [1, 2, 3, 4]),
+            'enum'        => new EnumDescriptor('vendor:package:number', 'int', [1, 2, 3, 4]),
             'php-options' => [
                 'namespace' => 'Acme\Blog\Entity',
             ],
