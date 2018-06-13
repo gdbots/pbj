@@ -10,8 +10,8 @@
           <default>function() { return UuidIdentifier::generate(); }</default>
         </php-options>
       </field>
-      <field name="comment" type="text" />
-      <field name="published_at" type="microtime" />
+      <field name="comment" type="text"/>
+      <field name="published_at" type="microtime"/>
     </fields>
 
     <php-options>

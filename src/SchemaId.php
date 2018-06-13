@@ -45,7 +45,7 @@ use Gdbots\Pbjc\Exception\InvalidSchemaId;
  * messages with payloads that validate using the json schema.  The target class is ideally
  * major revision specific.  As in GetVideoV1, GetVideoV2, etc.  Only "major" revisions
  * should require a unique class since all other schema changes should not break anything.
- * @see SchemaVersion
+ * @see  SchemaVersion
  */
 final class SchemaId
 {

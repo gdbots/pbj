@@ -1,10 +1,10 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\FieldMinLength;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\FieldMinLength;
 
 class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,14 +33,14 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 100,
+                'min'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 100,
+                'min'  => 100,
             ]),
         ]]);
 
@@ -55,14 +55,14 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 100,
+                'min'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 10,
+                'min'  => 10,
             ]),
         ]]);
 
@@ -80,14 +80,14 @@ class FieldMinLengthTest extends \PHPUnit_Framework_TestCase
         $a = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-0', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 100,
+                'min'  => 100,
             ]),
         ]]);
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
                 'type' => 'string',
-                'min' => 1000,
+                'min'  => 1000,
             ]),
         ]]);
 

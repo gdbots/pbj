@@ -2,11 +2,11 @@
 
 namespace Gdbots\Tests\Pbjc\Generator;
 
+use Gdbots\Pbjc\CompileOptions;
+use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\Generator\Generator;
 use Gdbots\Pbjc\Generator\GeneratorResponse;
 use Gdbots\Pbjc\Generator\PhpGenerator;
-use Gdbots\Pbjc\CompileOptions;
-use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\Util\LanguageBag;
 
@@ -18,7 +18,7 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->generator = new PhpGenerator(new CompileOptions([
-            'namespaces' => ['acme:blog']
+            'namespaces' => ['acme:blog'],
         ]));
     }
 
@@ -52,7 +52,7 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
                 'schema' => new SchemaDescriptor(
                     'pbj:acme:blog:entity:article:1-0-0',
                     [
-                        'fields' => [
+                        'fields'    => [
                             new FieldDescriptor('string', [
                                 'type' => 'string',
                             ]),
@@ -63,35 +63,35 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
                                 'type' => 'geo-point',
                             ]),
                             new FieldDescriptor('string_with_properties', [
-                                'type' => 'string',
-                                'default' => 'test',
+                                'type'        => 'string',
+                                'default'     => 'test',
                                 'description' => 'this is a short description',
-                                'min' => 10,
-                                'max' => 100,
+                                'min'         => 10,
+                                'max'         => 100,
                             ]),
                             new FieldDescriptor('url', [
-                                'type' => 'string',
+                                'type'   => 'string',
                                 'format' => 'url',
-                                'rule' => 'map',
+                                'rule'   => 'map',
                             ]),
                             new FieldDescriptor('node_refs', [
                                 'type' => 'message-ref',
                                 'rule' => 'set',
                             ]),
                             new FieldDescriptor('set_with_pattern', [
-                                'type' => 'string',
+                                'type'    => 'string',
                                 'pattern' => '^[\w\/\.:-]+$',
-                                'rule' => 'set',
+                                'rule'    => 'set',
                             ]),
                         ],
                         'languages' => new LanguageBag([
                             'php' => new LanguageBag([
-                                'namespace' => 'Acme\Blog\Entity'
-                            ])
-                        ])
+                                'namespace' => 'Acme\Blog\Entity',
+                            ]),
+                        ]),
                     ]
                 ),
-                'files' => [
+                'files'  => [
                     '/Acme/Blog/Entity/Article.php' => "<?php
 
 namespace Acme\Blog\Entity;
@@ -152,9 +152,9 @@ final class ArticleV1 extends AbstractMessage implements
         );
     }
 }
-"
-                ]
-            ]
+",
+                ],
+            ],
         ];
     }
 }

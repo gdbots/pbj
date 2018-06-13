@@ -22,7 +22,7 @@ class EnumParser
     public function fromFile($file)
     {
         /** @var \DOMDocument $xmlDomDocument */
-        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__.'/../xsd/enums.xsd')) {
+        if (!$xmlDomDocument = XmlUtils::loadFile($file, __DIR__ . '/../xsd/enums.xsd')) {
             throw new \RuntimeException(sprintf(
                 'Invalid enums xml file "%s".',
                 $file
@@ -104,8 +104,7 @@ class EnumParser
         foreach ($keys as $key) {
             $values[strtoupper($key['key'])] = $data['type'] == 'int'
                 ? intval($key['value'])
-                : (string) $key['value']
-            ;
+                : (string)$key['value'];
         }
 
         if (count($values) === 0) {

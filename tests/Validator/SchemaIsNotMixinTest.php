@@ -1,9 +1,9 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\SchemaIsNotMixin;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\SchemaIsNotMixin;
 
 class SchemaIsNotMixinTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,8 +3,8 @@
 namespace Gdbots\Pbjc\Validator;
 
 use Gdbots\Common\Util\StringUtils;
-use Gdbots\Pbjc\SchemaDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\SchemaDescriptor;
 
 class SchemaInheritanceFields implements Constraint
 {
@@ -27,15 +27,15 @@ class SchemaInheritanceFields implements Constraint
             $ref = new \ReflectionClass(new FieldDescriptor('reflection', ['type' => 'string']));
 
             foreach ($diff as $name) {
-                foreach($ref->getProperties() as $property) {
+                foreach ($ref->getProperties() as $property) {
                     // skip
                     if (in_array($property->getName(), ['default', 'overridable', 'description', 'languages', 'deprecated'])) {
                         continue;
                     }
 
-                    $method = 'get'.ucfirst($property->getName());
+                    $method = 'get' . ucfirst($property->getName());
                     if (!$ref->hasMethod($method)) {
-                        $method = 'is'.ucfirst($property->getName());
+                        $method = 'is' . ucfirst($property->getName());
                         if (!$ref->hasMethod($method)) {
                             continue;
                         }
@@ -56,29 +56,29 @@ class SchemaInheritanceFields implements Constraint
                                 }
 
                                 $ea = [];
-                                foreach ((array) $fa->$method() as $schema) {
-                                    $ea[(string) $schema] = [$this->getClassName($schema)];
+                                foreach ((array)$fa->$method() as $schema) {
+                                    $ea[(string)$schema] = [$this->getClassName($schema)];
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $ea[(string) $schema][] = $this->getClassName($extends);
+                                            $ea[(string)$schema][] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
 
-                                    $ea[(string) $schema] = array_reverse($ea[(string) $schema]);
+                                    $ea[(string)$schema] = array_reverse($ea[(string)$schema]);
                                 }
 
                                 $eb = [];
-                                foreach ((array) $fb->$method() as $schema) {
-                                    $eb[(string) $schema] = [$this->getClassName($schema)];
+                                foreach ((array)$fb->$method() as $schema) {
+                                    $eb[(string)$schema] = [$this->getClassName($schema)];
 
                                     if ($extends = $schema->getExtends()) {
                                         do {
-                                            $eb[(string) $schema][] = $this->getClassName($extends);
+                                            $eb[(string)$schema][] = $this->getClassName($extends);
                                         } while ($extends = $extends->getExtends());
                                     }
 
-                                    $eb[(string) $schema] = array_reverse($eb[(string) $schema]);
+                                    $eb[(string)$schema] = array_reverse($eb[(string)$schema]);
                                 }
 
                                 if (0 === count($ea)) {
@@ -112,7 +112,7 @@ class SchemaInheritanceFields implements Constraint
                                             if ($baseClass === $class) {
                                                 eval(sprintf('class %s {};', $class));
                                             } else {
-                                                eval(sprintf('class %s extends %s {};', $class, array_values($classes)[$i-1]));
+                                                eval(sprintf('class %s extends %s {};', $class, array_values($classes)[$i - 1]));
                                             }
                                         }
                                     }

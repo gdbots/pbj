@@ -54,9 +54,9 @@ final class SchemaVersion
      */
     private function __construct($major = 1, $minor = 0, $patch = 0)
     {
-        $this->major = (int) $major;
-        $this->minor = (int) $minor;
-        $this->patch = (int) $patch;
+        $this->major = (int)$major;
+        $this->minor = (int)$minor;
+        $this->patch = (int)$patch;
         $this->version = sprintf('%d-%d-%d', $this->major, $this->minor, $this->patch);
     }
 

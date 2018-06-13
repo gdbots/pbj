@@ -2,10 +2,10 @@
 
 namespace Gdbots\Tests\Pbjc\Generator;
 
-use Gdbots\Pbjc\Generator\Generator;
-use Gdbots\Pbjc\Generator\JsonSchemaGenerator;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\FieldDescriptor;
+use Gdbots\Pbjc\Generator\Generator;
+use Gdbots\Pbjc\Generator\JsonSchemaGenerator;
 use Gdbots\Pbjc\SchemaDescriptor;
 
 class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase

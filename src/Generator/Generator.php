@@ -91,46 +91,81 @@ abstract class Generator
     public function generateManifest(array $schemas)
     {
         $response = new GeneratorResponse();
-        $messages = [];
+        $manifests = ['all' => []];
 
         /** @var SchemaDescriptor $schema */
         foreach ($schemas as $schema) {
+            $id = $schema->getId();
+            $curie = $id->getCurie();
+            $pkg = "{$id->getVendor()}-{$id->getPackage()}";
+            $category = $id->getCategory() ? "category-{$id->getCategory()}" : '';
+            if (!isset($manifests[$pkg])) {
+                $manifests[$pkg] = [];
+            }
+
+            if (!isset($manifests[$category])) {
+                $manifests[$category] = [];
+            }
+
             if ($schema->isMixinSchema()) {
                 continue;
             }
 
-            if (isset($messages[$schema->getId()->getCurieWithMajorRev()])) {
+            if (isset($manifests['all'][$id->getCurieWithMajorRev()])) {
                 continue;
             }
 
-            if (!SchemaStore::hasOtherSchemaMajorRev($schema->getId())) {
-                $messages[$schema->getId()->getCurie()] = $schema;
+            if (!SchemaStore::hasOtherSchemaMajorRev($id)) {
+                $manifests['all'][$curie] = $schema;
+                $manifests[$pkg][$curie] = $schema;
+                $manifests[$category][$curie] = $schema;
                 continue;
             }
 
             if ($schema->isLatestVersion()) {
-                $messages[$schema->getId()->getCurie()] = $schema;
+                $manifests['all'][$curie] = $schema;
+                $manifests[$pkg][$curie] = $schema;
+                $manifests[$category][$curie] = $schema;
             }
 
-            $messages[$schema->getId()->getCurieWithMajorRev()] = $schema;
+            $manifests['all'][$id->getCurieWithMajorRev()] = $schema;
+            $manifests[$pkg][$id->getCurieWithMajorRev()] = $schema;
+            $manifests[$category][$id->getCurieWithMajorRev()] = $schema;
 
             /** @var SchemaDescriptor $s */
             foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
-                $messages[$s->getId()->getCurieWithMajorRev()] = $s;
+                $spkg = "{$s->getId()->getVendor()}-{$s->getId()->getPackage()}";
+                $scategory = "category-{$s->getId()->getCategory()}";
+                $manifests['all'][$s->getId()->getCurieWithMajorRev()] = $s;
+                $manifests[$spkg][$s->getId()->getCurieWithMajorRev()] = $s;
+                $manifests[$scategory][$s->getId()->getCurieWithMajorRev()] = $s;
             }
         }
 
-        // delete invalid schemas
-        foreach ($messages as $key => $value) {
-            if (!SchemaStore::getSchemaById($key, true)) {
-                unset($messages[$key]);
+        foreach ($manifests as $group => $schemas) {
+            if (empty($group)) {
+                continue;
             }
+
+            $filename = 'all' === $group ? static::MANIFEST : $group;
+
+            // delete invalid schemas
+            foreach ($schemas as $key => $schema) {
+                if (!SchemaStore::getSchemaById($schema->getId(), true)) {
+                    unset($schemas[$key]);
+                }
+            }
+
+            if (empty($schemas)) {
+                continue;
+            }
+
+            ksort($schemas);
+            $response->addFile(
+                $this->generateOutputFile('manifest.twig', $filename, ['schemas' => $schemas])
+            );
         }
 
-        ksort($messages);
-        $response->addFile(
-            $this->generateOutputFile('manifest.twig', static::MANIFEST, ['schemas' => $messages])
-        );
         return $response;
     }
 

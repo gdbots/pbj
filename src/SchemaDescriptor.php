@@ -48,7 +48,7 @@ final class SchemaDescriptor implements \JsonSerializable
                     case 'isMixin':
                     case 'isLatestVersion':
                     case 'deprecated':
-                        $value = (bool) $value;
+                        $value = (bool)$value;
                         break;
 
                     case 'fields':
@@ -118,7 +118,11 @@ final class SchemaDescriptor implements \JsonSerializable
      */
     public function getExtends()
     {
-        return $this->extends;
+        if (null === $this->extends) {
+            return null;
+        }
+
+        return SchemaStore::getSchemaById($this->extends->getId()->getCurieWithMajorRev());
     }
 
     /**
@@ -185,7 +189,7 @@ final class SchemaDescriptor implements \JsonSerializable
     public function getMixin($curieWithMajorRev)
     {
         if (isset($this->mixins[$curieWithMajorRev])) {
-            return $this->mixins[$curieWithMajorRev];
+            return SchemaStore::getSchemaById($curieWithMajorRev);
         }
 
         return;
@@ -196,7 +200,11 @@ final class SchemaDescriptor implements \JsonSerializable
      */
     public function getMixins()
     {
-        return $this->mixins ?: $this->mixins = [];
+        return array_map(function ($id) {
+            return SchemaStore::getSchemaById($id);
+        },
+            array_keys($this->mixins)
+        );
     }
 
     /**
@@ -214,7 +222,7 @@ final class SchemaDescriptor implements \JsonSerializable
      */
     public function setIsLatestVersion($bool)
     {
-        $this->isLatestVersion = (bool) $bool;
+        $this->isLatestVersion = (bool)$bool;
 
         return $this;
     }

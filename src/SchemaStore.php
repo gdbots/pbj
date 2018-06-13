@@ -197,6 +197,7 @@ class SchemaStore
 
         if (isset(self::$schemas[$id])) {
             $ids = array_keys(self::$schemas);
+            sort($ids);
 
             if (0 < $key = array_search($id, $ids)) {
                 --$key;

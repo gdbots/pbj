@@ -1,10 +1,10 @@
 <?php
 
-namespace Gdbots\Tests\Pbjc\Asset;
+namespace Gdbots\Tests\Pbjc\Validator;
 
-use Gdbots\Pbjc\Validator\FieldIsNotRequired;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
+use Gdbots\Pbjc\Validator\FieldIsNotRequired;
 
 class FieldIsNotRequiredTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +41,7 @@ class FieldIsNotRequiredTest extends \PHPUnit_Framework_TestCase
 
         $b = new SchemaDescriptor('pbj:vendor:package:category:message:1-0-1', ['fields' => [
             new FieldDescriptor('f1', [
-                'type' => 'string',
+                'type'     => 'string',
                 'required' => true,
             ]),
         ]]);

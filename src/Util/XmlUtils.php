@@ -69,8 +69,8 @@ class XmlUtils
                 } catch (\Exception $e) {
                     $valid = false;
                 }
-            } elseif (!is_array($schemaOrCallable) && is_file((string) $schemaOrCallable)) {
-                $schemaSource = file_get_contents((string) $schemaOrCallable);
+            } elseif (!is_array($schemaOrCallable) && is_file((string)$schemaOrCallable)) {
+                $schemaSource = file_get_contents((string)$schemaOrCallable);
                 $valid = @$dom->schemaValidateSource($schemaSource);
             } else {
                 libxml_use_internal_errors($internalErrors);
@@ -81,7 +81,7 @@ class XmlUtils
             if (!$valid) {
                 $messages = static::getXmlErrors($internalErrors);
                 if (empty($messages)) {
-                    $messages = array(sprintf('The XML file "%s" is not valid.', $file));
+                    $messages = [sprintf('The XML file "%s" is not valid.', $file)];
                 }
                 throw new \InvalidArgumentException(implode("\n", $messages), 0, $e);
             }
@@ -115,11 +115,11 @@ class XmlUtils
      */
     public static function convertDomElementToArray(\DomElement $element, $checkPrefix = true)
     {
-        $prefix = (string) $element->prefix;
+        $prefix = (string)$element->prefix;
         $empty = true;
-        $config = array();
+        $config = [];
         foreach ($element->attributes as $name => $node) {
-            if ($checkPrefix && !in_array((string) $node->prefix, array('', $prefix), true)) {
+            if ($checkPrefix && !in_array((string)$node->prefix, ['', $prefix], true)) {
                 continue;
             }
             $config[$name] = static::phpize($node->value);
@@ -133,7 +133,7 @@ class XmlUtils
                     $nodeValue = trim($node->nodeValue);
                     $empty = false;
                 }
-            } elseif ($checkPrefix && $prefix != (string) $node->prefix) {
+            } elseif ($checkPrefix && $prefix != (string)$node->prefix) {
                 continue;
             } elseif (!$node instanceof \DOMComment) {
                 $value = static::convertDomElementToArray($node, $checkPrefix);
@@ -141,7 +141,7 @@ class XmlUtils
                 $key = $node->localName;
                 if (isset($config[$key])) {
                     if (!is_array($config[$key]) || !is_int(key($config[$key]))) {
-                        $config[$key] = array($config[$key]);
+                        $config[$key] = [$config[$key]];
                     }
                     $config[$key][] = $value;
                 } else {
@@ -173,7 +173,7 @@ class XmlUtils
      */
     public static function phpize($value)
     {
-        $value = (string) $value;
+        $value = (string)$value;
         $lowercaseValue = strtolower($value);
 
         switch (true) {
@@ -181,26 +181,26 @@ class XmlUtils
                 return;
             case ctype_digit($value):
                 $raw = $value;
-                $cast = (int) $value;
+                $cast = (int)$value;
 
-                return '0' == $value[0] ? octdec($value) : (((string) $raw === (string) $cast) ? $cast : $raw);
+                return '0' == $value[0] ? octdec($value) : (((string)$raw === (string)$cast) ? $cast : $raw);
             case isset($value[1]) && '-' === $value[0] && ctype_digit(substr($value, 1)):
                 $raw = $value;
-                $cast = (int) $value;
+                $cast = (int)$value;
 
-                return '0' == $value[1] ? octdec($value) : (((string) $raw === (string) $cast) ? $cast : $raw);
+                return '0' == $value[1] ? octdec($value) : (((string)$raw === (string)$cast) ? $cast : $raw);
             case 'true' === $lowercaseValue:
                 return true;
             case 'false' === $lowercaseValue:
                 return false;
-            case isset($value[1]) && '0b' == $value[0].$value[1]:
+            case isset($value[1]) && '0b' == $value[0] . $value[1]:
                 return bindec($value);
             case is_numeric($value):
-                return '0x' === $value[0].$value[1] ? hexdec($value) : (float) $value;
+                return '0x' === $value[0] . $value[1] ? hexdec($value) : (float)$value;
             case preg_match('/^0x[0-9a-f]++$/i', $value):
                 return hexdec($value);
             case preg_match('/^(-|\+)?[0-9]+(\.[0-9]+)?$/', $value):
-                return (float) $value;
+                return (float)$value;
             default:
                 return $value;
         }
@@ -208,7 +208,7 @@ class XmlUtils
 
     protected static function getXmlErrors($internalErrors)
     {
-        $errors = array();
+        $errors = [];
         foreach (libxml_get_errors() as $error) {
             $errors[] = sprintf('[%s %s] %s (in %s - line %d, column %d)',
                 LIBXML_ERR_WARNING == $error->level ? 'WARNING' : 'ERROR',
