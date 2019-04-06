@@ -8,8 +8,20 @@
  * @link {{ compile_options.domain }}/
  */
 
-\Gdbots\Pbj\MessageResolver::registerMap([
-{% for curie, schema in schemas %}
-    '{{ curie }}' => '{{ schema_to_native_namespace(schema) }}\{{ schema_to_class_name(schema, true) }}',
+\Gdbots\Pbj\MessageResolver::registerManifest([
+    'curies' => [
+{% for curie, id in manifest['curies'] %}
+        '{{ curie }}' => {{ id }},
 {% endfor %}
+    ],
+    'classes' => [
+{% for id, class in manifest['classes'] %}
+        {{ id }} => '{{ class }}',
+{% endfor %}
+    ],
+    'mixins' => [
+{% for curie, ids in manifest['mixins'] %}
+        '{{ curie }}' => [{{ ids|join(',') }}],
+{% endfor %}
+    ],
 ]);
