@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## v0.4.0
+* Generate one manifest instead of using manifest groups as they don't align with the strategy of one manifest to rule them all for optimal resolution at runtime.
+
+
 ## v0.3.3
 * issue #46: Fix bug with with descriptors not always referencing latest schemas as they had their own references to objects that were changing during the parse phase. The fix is to always go back to the SchemaStore whenever a schema is needed.
 
@@ -41,7 +45,7 @@ __BREAKING CHANGES__
 
 
 ## v0.2.2
-* issue #38: Fixed identifier type json schema pattern to allow for "^[\w\/\.:-]+$".
+* issue #38: Fixed identifier type json schema pattern to allow for `^[\w\/\.:-]+$`.
 
 
 ## v0.2.1
