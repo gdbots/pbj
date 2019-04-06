@@ -143,7 +143,9 @@ abstract class Generator
         }
 
         foreach ($manifests as $group => $schemas) {
-            if (empty($group)) {
+            if ('all' !== $group) {
+                // we are getting rid of manifest groups... quick n dirty removal here.
+                // more complete refactor to come later
                 continue;
             }
 
@@ -161,8 +163,38 @@ abstract class Generator
             }
 
             ksort($schemas);
+
+            $manifest = [
+                'version' => '0.1',
+                'curies'  => [],
+                'classes' => [],
+                'mixins'  => [],
+            ];
+
+            $id = 0;
+
+            /** @var SchemaDescriptor $schema */
+            foreach ($schemas as $curie => $schema) {
+                $manifest['curies'][$curie] = $id;
+                $manifest['classes'][$id] = $this->schemaToNativeClassPath($schema);
+                foreach ($schema->getMixins() as $mixin) {
+                    $mixinId = $mixin->getId()->getCurieWithMajorRev();
+                    if (!isset($manifest['mixins'][$mixinId])) {
+                        $manifest['mixins'][$mixinId] = [];
+                    }
+
+                    $manifest['mixins'][$mixinId][] = $id;
+                }
+                ++$id;
+            }
+
+            ksort($manifest['mixins']);
+
             $response->addFile(
-                $this->generateOutputFile('manifest.twig', $filename, ['schemas' => $schemas])
+                $this->generateOutputFile('manifest.twig', $filename, [
+                    'schemas' => $schemas,
+                    'manifest' => $manifest,
+                ])
             );
         }
 
@@ -258,6 +290,26 @@ abstract class Generator
      */
     public function schemaToNativeNamespace(SchemaDescriptor $schema)
     {
+    }
+
+    /**
+     * Returns the native class path for the SchemaDescriptor
+     * by combining native namespace and class name with major.
+     *
+     * @example
+     *  es6: @acme/schemas/acme/blog/node/ArticleV1
+     *  php: Acme\Schemas\Blog\Node\ArticleV1
+     *
+     * @param SchemaDescriptor $schema
+     *
+     * @return string
+     */
+    public function schemaToNativeClassPath(SchemaDescriptor $schema)
+    {
+        $path = $this->schemaToNativeNamespace($schema);
+        $class = $this->schemaToClassName($schema, true);
+        $delim = 'php' === static::LANGUAGE ? '\\' : '/';
+        return "{$path}{$delim}{$class}";
     }
 
     /**
