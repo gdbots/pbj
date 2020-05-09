@@ -6,13 +6,7 @@ namespace {{ schema_to_native_namespace(schema) }};
 
 {{ imports }}
 
-final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage implements
-    {{ schema_to_class_name(schema) }}{% if schema.mixins|length %},{% endif %}
-
-{% for mixin in schema.mixins %}
-    {{ schema_to_fq_class_name(mixin, true) }}{% if not loop.last %},{% endif %}
-
-{% endfor %}
+final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage
 {
 {% for mixin in schema.mixins %}
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
@@ -25,26 +19,19 @@ final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage imp
      */
     protected static function defineSchema()
     {
-{% if schema.fields|length or schema.mixins|length %}
+{% if fields|length or schema.mixins|length %}
         return new Schema('{{ schema.id }}', __CLASS__,
-{% if schema.fields|length %}
             [
-{% import 'php/macros.twig' as macros %}
-{% for field in schema.fields %}
+{% for field in fields %}
               {{ macros.draw_field(field, 16, loop.last) }}
 {%- endfor %}
-            ]{% if schema.mixins|length %},{% endif %}
-{% else %}
-            []{% if schema.mixins|length %},{% endif %}
-{% endif %}
-
-{% if schema.mixins|length %}
+            ]{% if schema.mixins|length %},
             [
 {% for mixin in schema.mixins %}
-                {{ schema_to_fq_class_name(mixin, true) }}Mixin::create(),
+                '{{ mixin.id.curie }}' => true,
 {% endfor %}
             ]
-{% endif %}
+            {% endif %}
         );
 {% else %}
         return new Schema('{{ schema.id }}', __CLASS__);

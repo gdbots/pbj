@@ -57,12 +57,12 @@ abstract class Generator
 
         if ($schema->isMixinSchema()) {
             $this->generateMixin($schema, $response);
-            $this->generateMixinInterface($schema, $response);
-            $this->generateMixinMajorInterface($schema, $response);
+            //$this->generateMixinInterface($schema, $response);
+            //$this->generateMixinMajorInterface($schema, $response);
             $this->generateMixinTrait($schema, $response);
         } else {
             $this->generateMessage($schema, $response);
-            $this->generateMessageInterface($schema, $response);
+            //$this->generateMessageInterface($schema, $response);
         }
 
         return $response;

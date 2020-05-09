@@ -1,9 +1,0 @@
-<?php
-// @link {{ compile_options.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/latest.json#
-namespace {{ schema_to_native_namespace(schema) }};
-
-use Gdbots\Pbj\Message;
-
-interface {{ schema_to_class_name(schema) }} extends Message
-{
-}

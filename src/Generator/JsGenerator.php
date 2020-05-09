@@ -105,13 +105,6 @@ class JsGenerator extends Generator
         }
 
         foreach ($schema->getMixins() as $mixin) {
-            $imports[] = sprintf(
-                "import %sMixin from '%s/%sMixin';",
-                $this->schemaToFqClassName($mixin, true),
-                $this->schemaToNativeNamespace($mixin),
-                $this->schemaToClassName($mixin, true)
-            );
-
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(

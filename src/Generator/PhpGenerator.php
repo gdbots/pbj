@@ -110,20 +110,6 @@ class PhpGenerator extends Generator
         }
 
         foreach ($schema->getMixins() as $mixin) {
-            $imports[] = sprintf(
-                'use %s\%sMixin as %sMixin;',
-                $this->schemaToNativeNamespace($mixin),
-                $this->schemaToClassName($mixin, true),
-                $this->schemaToFqClassName($mixin, true)
-            );
-
-            $imports[] = sprintf(
-                'use %s\%s as %s;',
-                $this->schemaToNativeNamespace($mixin),
-                $this->schemaToClassName($mixin, true),
-                $this->schemaToFqClassName($mixin, true)
-            );
-
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(
@@ -138,11 +124,13 @@ class PhpGenerator extends Generator
         $options = $schema->getLanguage(static::LANGUAGE);
         $insertionPoints = $options->get('insertion-points', []);
 
-        $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
+        $fields = $this->resolveFields($schema);
+        $imports = array_merge($imports, $this->extractImportsFromFields($fields));
         $imports = array_merge($imports, explode(PHP_EOL, $insertionPoints['imports'] ?? ''));
 
         $parameters = [
             'schema'  => $schema,
+            'fields'  => $fields,
             'imports' => $this->optimizeImports($imports),
             'methods' => $insertionPoints['methods'] ?? '',
         ];
@@ -150,17 +138,21 @@ class PhpGenerator extends Generator
         $response->addFile($this->generateOutputFile('message.twig', $file, $parameters));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMessageInterface(SchemaDescriptor $schema, GeneratorResponse $response)
+    protected function resolveFields(SchemaDescriptor $schema): array
     {
-        $className = $this->schemaToClassName($schema);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('message-interface.twig', $file, ['schema' => $schema])
-        );
+        $fields = [];
+
+        foreach ($schema->getMixins() as $mixin) {
+            foreach ($mixin->getFields() as $field) {
+                $fields[$field->getName()] = $field;
+            }
+        }
+
+        foreach ($schema->getFields() as $field) {
+            $fields[$field->getName()] = $field;
+        }
+
+        return $fields;
     }
 
     /**
@@ -189,32 +181,6 @@ class PhpGenerator extends Generator
         ];
 
         $response->addFile($this->generateOutputFile('mixin.twig', $file, $parameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMixinInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-        $className = $this->schemaToClassName($schema);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('mixin-interface.twig', $file, ['mixin' => $schema])
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMixinMajorInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-        $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}");
-        $response->addFile(
-            $this->generateOutputFile('mixin-major-interface.twig', $file, ['mixin' => $schema])
-        );
     }
 
     /**
