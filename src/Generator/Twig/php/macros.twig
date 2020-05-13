@@ -13,9 +13,9 @@
 {{ spaces|format('') }} * {{ line|reduce_spaces }}
 {% endfor %}
 {{ spaces|format('') }} */
-{{ spaces|format('') }}'{{ field.name }}' => Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
+{{ spaces|format('') }}Fb::create(self::{{ field.name|upper }}_FIELD, T\{{ class_name(field.type) }}::create())
 {% else %}
-  '{{ field.name }}' => Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
+  Fb::create(self::{{ field.name|upper }}_FIELD, T\{{ class_name(field.type) }}::create())
 {% endif %}
 {% if field.isASet %}
     {{ spaces|format('') }}->asASet()
@@ -64,9 +64,9 @@
     {{ spaces|format('') }}->useTypeDefault(false)
 {% endif %}
 {% if field.anyOf %}
-    {{ spaces|format('') }}->anyOfClassNames([
+    {{ spaces|format('') }}->anyOfCuries([
 {% for anyOf in field.anyOf %}
-    {{ spaces|format('') }}    {{ schema_to_fq_class_name(anyOf) }}::class,
+    {{ spaces|format('') }}    '{{ anyOf.id.curie }}',
 {% endfor %}
     {{ spaces|format('') }}])
 {% endif %}

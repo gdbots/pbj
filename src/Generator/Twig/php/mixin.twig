@@ -1,31 +1,58 @@
 {% import 'php/macros.twig' as macros %}
 <?php
+declare(strict_types=1);
+
 // @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/{{ mixin.id.version }}.json#
 namespace {{ schema_to_native_namespace(mixin) }};
 
 {{ imports }}
 
-final class {{ schema_to_class_name(mixin, true) }}Mixin extends AbstractMixin
+final class {{ schema_to_class_name(mixin, true) }}Mixin
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return SchemaId::fromString('{{ mixin.id }}');
-    }
+    const SCHEMA_ID = '{{ mixin.id }}';
+    const SCHEMA_CURIE = '{{ mixin.id.curie }}';
+    const SCHEMA_CURIE_MAJOR = '{{ mixin.id.getCurieWithMajorRev() }}';
 {% if mixin.fields|length %}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFields()
+{% for field in mixin.fields %}
+    const {{ field.name|upper }}_FIELD = '{{ field.name }}';
+{% endfor %}
+
+    const FIELDS = [
+{% for field in mixin.fields %}
+      self::{{ field.name|upper }}_FIELD,
+{% endfor %}
+    ];
+{% else %}
+
+    const FIELDS = [];
+{% endif %}
+
+    final private function __construct() {}
+
+    public static function getId(): SchemaId
     {
+        return SchemaId::fromString(self::SCHEMA_ID);
+    }
+
+    public static function hasField(string $name): bool
+    {
+        return in_array($name, self::FIELDS, true);
+    }
+
+    /**
+     * @return Field[]
+     */
+    public static function getFields(): array
+    {
+{% if mixin.fields|length %}
         return [
 {% for field in mixin.fields %}
           {{ macros.draw_field(field, 12, loop.last) }}
 {%- endfor %}
         ];
-    }
+{% else %}
+        return [];
 {% endif %}
+    }
 }

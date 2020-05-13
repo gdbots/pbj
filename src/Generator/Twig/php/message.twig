@@ -1,6 +1,8 @@
 {% import 'php/macros.twig' as macros %}
 {% set insertion_points = schema.language('php').get('insertion-points') %}
 <?php
+declare(strict_types=1);
+
 // @link {{ compile_options.domain }}/json-schema/{{ schema.id.vendor }}/{{ schema.id.package }}/{% if schema.id.category %}{{ schema.id.category }}/{% endif %}{{ schema.id.message }}/{{ schema.id.version }}.json#
 namespace {{ schema_to_native_namespace(schema) }};
 
@@ -8,33 +10,54 @@ namespace {{ schema_to_native_namespace(schema) }};
 
 final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage
 {
+    const SCHEMA_ID = '{{ schema.id }}';
+    const SCHEMA_CURIE = '{{ schema.id.curie }}';
+    const SCHEMA_CURIE_MAJOR = '{{ schema.id.getCurieWithMajorRev() }}';
+{% if schema.mixins|length %}
+
+    const MIXINS = [
 {% for mixin in schema.mixins %}
+      '{{ mixin.id.curie }}',
+{% endfor %}
+    ];
+{% else %}
+
+    const MIXINS = [];
+{% endif %}
+
+{% for field in fields %}
+    const {{ field.name|upper }}_FIELD = '{{ field.name }}';
+{% endfor %}
+
+{% if fields|length %}
+    const FIELDS = [
+{% for field in fields %}
+      self::{{ field.name|upper }}_FIELD,
+{% endfor %}
+    ];
+{% else %}
+    const FIELDS = [];
+{% endif %}
+{% for mixin in schema.mixins %}
+
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
     use {{ schema_to_fq_class_name(mixin, true) }}Trait;
 {% endif %}
 {% endfor %}
 
-    /**
-     * @return Schema
-     */
-    protected static function defineSchema()
+    protected static function defineSchema(): Schema
     {
 {% if fields|length or schema.mixins|length %}
-        return new Schema('{{ schema.id }}', __CLASS__,
+        return new Schema(self::SCHEMA_ID, __CLASS__,
             [
 {% for field in fields %}
               {{ macros.draw_field(field, 16, loop.last) }}
 {%- endfor %}
-            ]{% if schema.mixins|length %},
-            [
-{% for mixin in schema.mixins %}
-                '{{ mixin.id.curie }}' => true,
-{% endfor %}
-            ]
-            {% endif %}
+            ],
+            self::MIXINS
         );
 {% else %}
-        return new Schema('{{ schema.id }}', __CLASS__);
+        return new Schema(self::SCHEMA_ID, __CLASS__);
 {% endif %}
     }
 {% if insertion_points %}

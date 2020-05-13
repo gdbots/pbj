@@ -165,7 +165,7 @@ class PhpGenerator extends Generator
         $file = str_replace('\\', '/', "{$psr}\\{$className}Mixin");
 
         $imports = [
-            'use Gdbots\Pbj\AbstractMixin;',
+            'use Gdbots\Pbj\Field;',
             'use Gdbots\Pbj\SchemaId;',
         ];
 
@@ -240,6 +240,7 @@ class PhpGenerator extends Generator
 
                 case TypeName::MESSAGE;
                     $anyOfs = $field->getAnyOf() ?: [];
+                    /*
                     foreach ($anyOfs as $anyOf) {
                         $imports[] = sprintf(
                             'use %s\%s as %s;',
@@ -248,6 +249,7 @@ class PhpGenerator extends Generator
                             $this->schemaToFqClassName($anyOf)
                         );
                     }
+                    */
                     break;
 
                 default:
