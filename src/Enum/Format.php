@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Enum;
 
-use Gdbots\Common\Enum;
+use Gdbots\Pbj\Enum;
 
 /**
  * @link http://spacetelescope.github.io/understanding-json-schema/reference/string.html#format

@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Enum;
 
-use Gdbots\Common\Enum;
+use Gdbots\Pbj\Enum;
 
 /**
  * @method static FieldRule A_SINGLE_VALUE()
