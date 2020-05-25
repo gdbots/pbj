@@ -238,20 +238,6 @@ class PhpGenerator extends Generator
                     );
                     break;
 
-                case TypeName::MESSAGE;
-                    $anyOfs = $field->getAnyOf() ?: [];
-                    /*
-                    foreach ($anyOfs as $anyOf) {
-                        $imports[] = sprintf(
-                            'use %s\%s as %s;',
-                            $this->schemaToNativeNamespace($anyOf),
-                            $this->schemaToClassName($anyOf),
-                            $this->schemaToFqClassName($anyOf)
-                        );
-                    }
-                    */
-                    break;
-
                 default:
                     break;
             }
@@ -259,7 +245,6 @@ class PhpGenerator extends Generator
 
         return $imports;
     }
-
 
     /**
      * {@inheritdoc}

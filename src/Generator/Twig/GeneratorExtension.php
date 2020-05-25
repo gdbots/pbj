@@ -40,6 +40,7 @@ abstract class GeneratorExtension extends \Twig_Extension
             new \Twig_SimpleFunction('schema_to_fq_class_name', [$this->generator, 'schemaToFqClassName']),
             new \Twig_SimpleFunction('enum_to_class_name', [$this->generator, 'enumToClassName']),
             new \Twig_SimpleFunction('schema_to_native_package', [$this->generator, 'schemaToNativePackage']),
+            new \Twig_SimpleFunction('schema_to_native_class_path', [$this->generator, 'schemaToNativeClassPath']),
             new \Twig_SimpleFunction('enum_to_native_package', [$this->generator, 'enumToNativePackage']),
             new \Twig_SimpleFunction('schema_to_native_namespace', [$this->generator, 'schemaToNativeNamespace']),
             new \Twig_SimpleFunction('enum_to_native_namespace', [$this->generator, 'enumToNativeNamespace']),

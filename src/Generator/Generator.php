@@ -37,10 +37,7 @@ abstract class Generator
      *
      * Produces files for (varies by language):
      * - message class (the concrete class - curie major)
-     * - message interface (curie)
      * - mixin (the schema fields that are "mixed" into the message)
-     * - mixin interface (curie)
-     * - mixin major interface (curie major for the mixin)
      * - mixin trait (any methods provided by insertion points)
      *
      * @param SchemaDescriptor $schema
@@ -57,12 +54,9 @@ abstract class Generator
 
         if ($schema->isMixinSchema()) {
             $this->generateMixin($schema, $response);
-            //$this->generateMixinInterface($schema, $response);
-            //$this->generateMixinMajorInterface($schema, $response);
             $this->generateMixinTrait($schema, $response);
         } else {
             $this->generateMessage($schema, $response);
-            //$this->generateMessageInterface($schema, $response);
         }
 
         return $response;
@@ -81,7 +75,7 @@ abstract class Generator
     }
 
     /**
-     * Generates a manifest of all messages the store provides.
+     * Generates a manifest of all messages and mixins the store provides.
      * This is used to configure the MessageResolver.
      *
      * @param SchemaDescriptor[] $schemas
@@ -91,112 +85,66 @@ abstract class Generator
     public function generateManifest(array $schemas)
     {
         $response = new GeneratorResponse();
-        $manifests = ['all' => []];
+        $manifests = ['messages' => [], 'mixins' => [], 'files' => []];
 
-        /** @var SchemaDescriptor $schema */
         foreach ($schemas as $schema) {
             $id = $schema->getId();
-            $curie = $id->getCurie();
-            $pkg = "{$id->getVendor()}-{$id->getPackage()}";
-            $category = $id->getCategory() ? "category-{$id->getCategory()}" : '';
-            if (!isset($manifests[$pkg])) {
-                $manifests[$pkg] = [];
-            }
-
-            if (!isset($manifests[$category])) {
-                $manifests[$category] = [];
-            }
-
             if ($schema->isMixinSchema()) {
+                if (!isset($manifests['mixins'][$id->getCurieWithMajorRev()])) {
+                    $manifests['mixins'][$id->getCurieWithMajorRev()] = [];
+                }
                 continue;
             }
 
-            if (isset($manifests['all'][$id->getCurieWithMajorRev()])) {
+            if (isset($manifests['messages'][$id->getCurieWithMajorRev()])) {
                 continue;
             }
 
-            if (!SchemaStore::hasOtherSchemaMajorRev($id)) {
-                $manifests['all'][$curie] = $schema;
-                $manifests[$pkg][$curie] = $schema;
-                $manifests[$category][$curie] = $schema;
-                continue;
-            }
+            $manifests['messages'][$id->getCurieWithMajorRev()] = $schema;
+            foreach ($schema->getMixins() as $mixin) {
+                $mixinId = $mixin->getId()->getCurieWithMajorRev();
+                if (!isset($manifests['mixins'][$mixinId])) {
+                    $manifests['mixins'][$mixinId] = [];
+                }
 
-            if ($schema->isLatestVersion()) {
-                $manifests['all'][$curie] = $schema;
-                $manifests[$pkg][$curie] = $schema;
-                $manifests[$category][$curie] = $schema;
-            }
-
-            $manifests['all'][$id->getCurieWithMajorRev()] = $schema;
-            $manifests[$pkg][$id->getCurieWithMajorRev()] = $schema;
-            $manifests[$category][$id->getCurieWithMajorRev()] = $schema;
-
-            /** @var SchemaDescriptor $s */
-            foreach (SchemaStore::getOtherSchemaMajorRev($schema->getId()) as $s) {
-                $spkg = "{$s->getId()->getVendor()}-{$s->getId()->getPackage()}";
-                $scategory = "category-{$s->getId()->getCategory()}";
-                $manifests['all'][$s->getId()->getCurieWithMajorRev()] = $s;
-                $manifests[$spkg][$s->getId()->getCurieWithMajorRev()] = $s;
-                $manifests[$scategory][$s->getId()->getCurieWithMajorRev()] = $s;
+                $manifests['mixins'][$mixinId][] = $schema;
             }
         }
 
-        foreach ($manifests as $group => $schemas) {
-            if ('all' !== $group) {
-                // we are getting rid of manifest groups... quick n dirty removal here.
-                // more complete refactor to come later
-                continue;
-            }
-
-            $filename = 'all' === $group ? static::MANIFEST : $group;
-
-            // delete invalid schemas
-            foreach ($schemas as $key => $schema) {
-                if (!SchemaStore::getSchemaById($schema->getId(), true)) {
-                    unset($schemas[$key]);
-                }
-            }
-
-            if (empty($schemas)) {
-                continue;
-            }
-
-            ksort($schemas);
-
-            $manifest = [
-                'version' => '0.1',
-                'curies'  => [],
-                'classes' => [],
-                'mixins'  => [],
-            ];
-
-            $id = 0;
-
-            /** @var SchemaDescriptor $schema */
-            foreach ($schemas as $curie => $schema) {
-                $manifest['curies'][$curie] = $id;
-                $manifest['classes'][$id] = $this->schemaToNativeClassPath($schema);
-                foreach ($schema->getMixins() as $mixin) {
-                    $mixinId = $mixin->getId()->getCurieWithMajorRev();
-                    if (!isset($manifest['mixins'][$mixinId])) {
-                        $manifest['mixins'][$mixinId] = [];
-                    }
-
-                    $manifest['mixins'][$mixinId][] = $id;
-                }
-                ++$id;
-            }
-
-            ksort($manifest['mixins']);
-
+        foreach ($manifests['mixins'] as $curie => $mschemas) {
+            $schema = SchemaStore::getSchemaById($curie);
+            $filename = 'manifests/' . str_replace(':', '/', $curie);
             $response->addFile(
-                $this->generateOutputFile('manifest.twig', $filename, [
-                    'schemas' => $schemas,
-                    'manifest' => $manifest,
+                $this->generateOutputFile('mixin-manifest.twig', $filename, [
+                    'mixin'   => $schema,
+                    'schemas' => $mschemas,
                 ])
             );
         }
+
+        $response->addFile(
+            $this->generateOutputFile('message-manifest.twig', 'manifests/messages', [
+                'schemas' => $manifests['messages'],
+            ])
+        );
+
+        return $this->generateResolver($manifests, $response);
+    }
+
+    /**
+     * Generates a file that configures the MessageResolver.
+     *
+     * @param SchemaDescriptor[] $schemas
+     *
+     * @return GeneratorResponse
+     */
+    public function generateResolver(array $manifests, GeneratorResponse $response)
+    {
+        $response->addFile(
+            $this->generateOutputFile('resolver.twig', static::MANIFEST, [
+                'manifests' => $manifests,
+            ])
+        );
 
         return $response;
     }
@@ -280,13 +228,13 @@ abstract class Generator
      * Returns the native namespace for the SchemaDescriptor
      * by combining native package and curie.
      *
+     * @param SchemaDescriptor $schema
+     *
+     * @return string
      * @example
      *  es6: import Article from '@acme/schemas/acme/blog/node';
      *  php: use Acme\Schemas\Blog\Node;
      *
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
      */
     public function schemaToNativeNamespace(SchemaDescriptor $schema)
     {
@@ -296,13 +244,13 @@ abstract class Generator
      * Returns the native class path for the SchemaDescriptor
      * by combining native namespace and class name with major.
      *
+     * @param SchemaDescriptor $schema
+     *
+     * @return string
      * @example
      *  es6: @acme/schemas/acme/blog/node/ArticleV1
      *  php: Acme\Schemas\Blog\Node\ArticleV1
      *
-     * @param SchemaDescriptor $schema
-     *
-     * @return string
      */
     public function schemaToNativeClassPath(SchemaDescriptor $schema)
     {
@@ -316,13 +264,13 @@ abstract class Generator
      * Returns the native namespace for the EnumDescriptor
      * by combining native package and curie.
      *
+     * @param EnumDescriptor $enum
+     *
+     * @return string
      * @example
      *  es6: import SomeEnum from '@acme/schemas/acme/blog/enums';
      *  php: use Acme\Schemas\Blog\Enum;
      *
-     * @param EnumDescriptor $enum
-     *
-     * @return string
      */
     public function enumToNativeNamespace(EnumDescriptor $enum)
     {
@@ -339,42 +287,12 @@ abstract class Generator
     }
 
     /**
-     * Generates a message interface.
-     *
-     * @param SchemaDescriptor  $schema
-     * @param GeneratorResponse $response
-     */
-    protected function generateMessageInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-    }
-
-    /**
      * Generates a mixin (schema fields "mixed" into messages).
      *
      * @param SchemaDescriptor  $schema
      * @param GeneratorResponse $response
      */
     protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-    }
-
-    /**
-     * Generates a mixin interface.
-     *
-     * @param SchemaDescriptor  $schema
-     * @param GeneratorResponse $response
-     */
-    protected function generateMixinInterface(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-    }
-
-    /**
-     * Generates a mixin major (as in curie major) interface.
-     *
-     * @param SchemaDescriptor  $schema
-     * @param GeneratorResponse $response
-     */
-    protected function generateMixinMajorInterface(SchemaDescriptor $schema, GeneratorResponse $response)
     {
     }
 

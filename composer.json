@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "require": {
     "php": ">=7.1",
-    "gdbots/pbj": "^1.1 || ^2.0",
+    "gdbots/pbj": "dev-v3",
     "symfony/console": "^3.3 || ^4.0",
     "symfony/filesystem": "^3.3 || ^4.0",
     "symfony/finder": "^3.3 || ^4.0",

@@ -30,14 +30,6 @@ class JsGenerator extends Generator
     /**
      * {@inheritdoc}
      */
-    public function generateManifest(array $schemas)
-    {
-        return parent::generateManifest($schemas);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function schemaToNativePackage(SchemaDescriptor $schema)
     {
         return parent::schemaToNativePackage($schema) ?: "@{$schema->getId()->getVendor()}/schemas";
