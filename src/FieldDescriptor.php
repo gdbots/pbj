@@ -212,10 +212,10 @@ final class FieldDescriptor
         }
 
         if ($this->maxLength > 0) {
-            $this->minLength = NumberUtil::bound($this->minLength, 0, $this->maxLength);
+            $this->minLength = NumberUtil::bound((int)$this->minLength, 0, (int)$this->maxLength);
         } else {
             // arbitrary string minimum range
-            $this->minLength = NumberUtil::bound($this->minLength, 0, $this->type->getMaxBytes());
+            $this->minLength = NumberUtil::bound((int)$this->minLength, 0, $this->type->getMaxBytes());
         }
     }
 
@@ -229,8 +229,8 @@ final class FieldDescriptor
             }
         }
 
-        $this->precision = NumberUtil::bound($this->precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
-        $this->scale = NumberUtil::bound($this->scale, 0, $this->precision);
+        $this->precision = NumberUtil::bound((int)$this->precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
+        $this->scale = NumberUtil::bound((int)$this->scale, 0, (int)$this->precision);
     }
 
     /**
