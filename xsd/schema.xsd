@@ -205,6 +205,7 @@
       <xsd:enumeration value="message" />
       <xsd:enumeration value="message-ref" />
       <xsd:enumeration value="microtime" />
+      <xsd:enumeration value="node-ref" />
       <xsd:enumeration value="signed-big-int" />
       <xsd:enumeration value="signed-int" />
       <xsd:enumeration value="signed-medium-int" />

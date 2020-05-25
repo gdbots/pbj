@@ -74,8 +74,12 @@ class PhpGeneratorTest extends \PHPUnit_Framework_TestCase
                                 'format' => 'url',
                                 'rule'   => 'map',
                             ]),
-                            new FieldDescriptor('node_refs', [
+                            new FieldDescriptor('message_refs', [
                                 'type' => 'message-ref',
+                                'rule' => 'list',
+                            ]),
+                            new FieldDescriptor('node_refs', [
+                                'type' => 'node-ref',
                                 'rule' => 'set',
                             ]),
                             new FieldDescriptor('set_with_pattern', [

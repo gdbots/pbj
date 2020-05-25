@@ -107,30 +107,8 @@
     {% endif %}
 
     {% if field.description %}
-      "description": "{{ field.description|reduce_spaces|replace({'"': '\\"'}) }}",
+      "description": "{{ field.description|reduce_spaces|replace({'"': '\\"'}) }}"
     {% endif %}
-
-    "pbj": {
-      "type": "{{ field.type.typeName }}",
-      {% if field.rule %}
-        "rule": "{{ field.rule }}",
-      {% endif %}
-      {% if field.format %}
-        "format": "{{ field.format }}",
-      {% endif %}
-      {% if field.precision %}
-        "precision": {{ field.precision }},
-      {% endif %}
-      {% if field.scale %}
-        "scale": {{ field.scale }},
-      {% endif %}
-      {% if not field.useTypeDefault %}
-        "useTypeDefault": false,
-      {% endif %}
-      {% if field.overridable %}
-        "overridable": true,
-      {% endif %}
-    }
   }
 {% endmacro %}
 
@@ -178,7 +156,7 @@
 
   {% set hasPattern =
     field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri']
-    or field.type.typeName ~ '' in ['date-time', 'message-ref', 'geo-point']
+    or field.type.typeName ~ '' in ['date-time', 'geo-point', 'message-ref', 'node-ref']
   %}
   {% if field.pattern %}
     {% set hasPattern = true %}
@@ -192,6 +170,9 @@
   {% elseif field.type.typeName ~ '' == 'microtime' %}
     {% set hasPattern = true %}
     "pattern": "^[1-9]{1}[0-9]{12,15}$",
+  {% elseif field.type.typeName ~ '' == 'node-ref' %}
+    {% set hasPattern = true %}
+    "pattern": "^[\\w\\/\\.:-]+$",
   {% elseif field.type.typeName ~ '' == 'date' %}
     {% set hasPattern = true %}
     "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
@@ -225,7 +206,7 @@
       {% if '' ~ maxLength not in ['INF', 'NAN'] %}
         "maxLength": {{ maxLength }},
       {% endif %}
-    {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'decimal', 'dynamic-field', 'float', 'geo-point', 'message-ref', 'message'] %}
+    {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'decimal', 'dynamic-field', 'float', 'geo-point', 'message-ref', 'message', 'node-ref'] %}
       {% set min = field.min|default(field.type.min) %}
       {% if '' ~ min not in ['INF', 'NAN'] %}
         "minimum": {{ min }},

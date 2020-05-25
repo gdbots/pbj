@@ -98,21 +98,13 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
     "string": {
       "type": "string",
       "minLength": 0,
-      "maxLength": 255,
-      "pbj": {
-        "type": "string",
-        "rule": "single"
-      }
+      "maxLength": 255
     },
     "int": {
       "type": "integer",
       "default": 0,
       "minimum": 0,
-      "maximum": 4294967295,
-      "pbj": {
-        "type": "int",
-        "rule": "single"
-      }
+      "maximum": 4294967295
     },
     "geo_point": {
       "type": "object",
@@ -143,22 +135,14 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
         "type",
         "coordinates"
       ],
-      "additionalProperties": false,
-      "pbj": {
-        "type": "geo-point",
-        "rule": "single"
-      }
+      "additionalProperties": false
     },
     "string_with_properties": {
       "type": "string",
       "default": "test",
       "minLength": 10,
       "maxLength": 100,
-      "description": "this is a short description",
-      "pbj": {
-        "type": "string",
-        "rule": "single"
-      }
+      "description": "this is a short description"
     },
     "url": {
       "type": "object",
@@ -168,14 +152,9 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
           "pattern": "^(https?:\\\\/\\\\/)?([\\\\da-z\\\\.-]+)\\\\.([a-z\\\\.]{2,6})([\\\\/\\\\w \\\\.-]*)*\\\\/?$"
         }
       },
-      "additionalProperties": false,
-      "pbj": {
-        "type": "string",
-        "rule": "map",
-        "format": "url"
-      }
+      "additionalProperties": false
     },
-    "node_refs": {
+    "message_refs": {
       "type": "array",
       "items": [
         {
@@ -207,13 +186,19 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
           "additionalProperties": false
         }
       ],
-      "uniqueItems": true,
-      "additionalProperties": false,
-      "pbj": {
-        "type": "message-ref",
-        "rule": "set"
-      }
+      "additionalProperties": false
     },
+    "node_refs": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string",
+          "pattern": "^[\\\\w\\\\/\\\\.:-]+$"
+        }
+      ],
+      "uniqueItems": true,
+      "additionalProperties": false
+    }
     "set_with_pattern": {
       "type": "array",
       "items": [
@@ -223,11 +208,7 @@ class JsonSchemaGeneratorTest extends \PHPUnit_Framework_TestCase
         }
       ],
       "uniqueItems": true,
-      "additionalProperties": false,
-      "pbj": {
-        "type": "string",
-        "rule": "set"
-      }
+      "additionalProperties": false
     }
   },
   "required": [
