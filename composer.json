@@ -5,7 +5,7 @@
   "type": "library",
   "license": "Apache-2.0",
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.4",
     "gdbots/pbj": "v3.x-dev",
     "symfony/console": "^3.3 || ^4.0",
     "symfony/filesystem": "^3.3 || ^4.0",

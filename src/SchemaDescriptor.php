@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\Util\LanguageBag;
 
 final class SchemaDescriptor implements \JsonSerializable
@@ -40,7 +40,7 @@ final class SchemaDescriptor implements \JsonSerializable
         $this->id = $id instanceof SchemaId ? $id : SchemaId::fromString($id);
 
         foreach ($parameters as $key => $value) {
-            $classProperty = lcfirst(StringUtils::toCamelFromSlug($key));
+            $classProperty = lcfirst(StringUtil::toCamelFromSlug($key));
 
             // existing properties
             if (property_exists(get_called_class(), $classProperty)) {

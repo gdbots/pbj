@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Generator;
 
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\CompileOptions;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
@@ -159,7 +159,7 @@ abstract class Generator
      */
     public function schemaToClassName(SchemaDescriptor $schema, $withMajor = false)
     {
-        $className = StringUtils::toCamelFromSlug($schema->getId()->getMessage());
+        $className = StringUtil::toCamelFromSlug($schema->getId()->getMessage());
         if (!$withMajor) {
             return $className;
         }
@@ -179,8 +179,8 @@ abstract class Generator
     public function schemaToFqClassName(SchemaDescriptor $schema, $withMajor = false)
     {
         $id = $schema->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
+        $vendor = StringUtil::toCamelFromSlug($id->getVendor());
+        $package = StringUtil::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
         return "{$vendor}{$package}{$this->schemaToClassName($schema, $withMajor)}";
     }
 
@@ -193,7 +193,7 @@ abstract class Generator
      */
     public function enumToClassName(EnumDescriptor $enum)
     {
-        return StringUtils::toCamelFromSlug($enum->getId()->getName());
+        return StringUtil::toCamelFromSlug($enum->getId()->getName());
     }
 
     /**
@@ -403,7 +403,7 @@ abstract class Generator
 
             $class = sprintf(
                 '\Gdbots\Pbjc\Generator\Twig\%sGeneratorExtension',
-                StringUtils::toCamelFromSlug(static::LANGUAGE)
+                StringUtil::toCamelFromSlug(static::LANGUAGE)
             );
 
             $this->twig->addExtension(new $class($this->compileOptions, $this));

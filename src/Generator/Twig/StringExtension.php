@@ -2,8 +2,8 @@
 
 namespace Gdbots\Pbjc\Generator\Twig;
 
-use Gdbots\Common\Util\SlugUtils;
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\SlugUtil;
+use Gdbots\Pbj\Util\StringUtil;
 
 class StringExtension extends \Twig_Extension
 {
@@ -94,7 +94,7 @@ class StringExtension extends \Twig_Extension
      */
     public function toSlugFromCamel($camel)
     {
-        return StringUtils::toSlugFromCamel($camel);
+        return StringUtil::toSlugFromCamel($camel);
     }
 
     /**
@@ -104,7 +104,7 @@ class StringExtension extends \Twig_Extension
      */
     public function toCamelFromSlug($slug)
     {
-        return StringUtils::toCamelFromSlug($slug);
+        return StringUtil::toCamelFromSlug($slug);
     }
 
     /**
@@ -114,7 +114,7 @@ class StringExtension extends \Twig_Extension
      */
     public function slugify($string)
     {
-        return SlugUtils::create($string);
+        return SlugUtil::create($string);
     }
 
     /**

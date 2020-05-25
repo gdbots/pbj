@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Generator;
 
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\Enum\TypeName;
 use Gdbots\Pbjc\EnumDescriptor;
 use Gdbots\Pbjc\FieldDescriptor;
@@ -38,7 +38,7 @@ class PhpGenerator extends Generator
         }
 
         $id = $schema->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
+        $vendor = StringUtil::toCamelFromSlug($id->getVendor());
         return "{$vendor}\\Schemas";
     }
 
@@ -53,7 +53,7 @@ class PhpGenerator extends Generator
         }
 
         $id = $enum->getId();
-        $vendor = StringUtils::toCamelFromSlug($id->getVendor());
+        $vendor = StringUtil::toCamelFromSlug($id->getVendor());
         return "{$vendor}\\Schemas";
     }
 
@@ -64,15 +64,15 @@ class PhpGenerator extends Generator
     {
         $ns = $this->schemaToNativePackage($schema);
         $id = $schema->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
+        $package = StringUtil::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
         $psr = "{$ns}\\{$package}";
         if ($id->getCategory()) {
-            $category = StringUtils::toCamelFromSlug($id->getCategory());
+            $category = StringUtil::toCamelFromSlug($id->getCategory());
             $psr .= "\\{$category}";
         }
 
         if ($schema->isMixinSchema()) {
-            $message = StringUtils::toCamelFromSlug($id->getMessage());
+            $message = StringUtil::toCamelFromSlug($id->getMessage());
             return "{$psr}\\{$message}";
         }
 
@@ -86,7 +86,7 @@ class PhpGenerator extends Generator
     {
         $ns = $this->enumToNativePackage($enum);
         $id = $enum->getId();
-        $package = StringUtils::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
+        $package = StringUtil::toCamelFromSlug(str_replace('.', '-', $id->getPackage()));
         return "{$ns}\\{$package}\\Enum";
     }
 

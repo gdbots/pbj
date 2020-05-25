@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\Exception\MissingSchema;
 use Gdbots\Pbjc\Generator\Generator;
 use Symfony\Component\Finder\Finder;
@@ -153,7 +153,7 @@ final class Compiler
             throw new \InvalidArgumentException('Missing "output" directory options.');
         }
 
-        $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtils::toCamelFromSlug($language));
+        $class = sprintf('\Gdbots\Pbjc\Generator\%sGenerator', StringUtil::toCamelFromSlug($language));
 
         /** @var Generator $generator */
         $generator = new $class($options);

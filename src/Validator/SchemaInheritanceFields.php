@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Validator;
 
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\FieldDescriptor;
 use Gdbots\Pbjc\SchemaDescriptor;
 
@@ -175,9 +175,9 @@ class SchemaInheritanceFields implements Constraint
     {
         return sprintf(
             '%s%s%sV%s',
-            StringUtils::toCamelFromSlug($schema->getId()->getVendor()),
-            StringUtils::toCamelFromSlug($schema->getId()->getPackage()),
-            StringUtils::toCamelFromSlug($schema->getId()->getMessage()),
+            StringUtil::toCamelFromSlug($schema->getId()->getVendor()),
+            StringUtil::toCamelFromSlug($schema->getId()->getPackage()),
+            StringUtil::toCamelFromSlug($schema->getId()->getMessage()),
             preg_replace('/-/', '', $schema->getId()->getVersion())
         );
     }

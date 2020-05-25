@@ -2,8 +2,8 @@
 
 namespace Gdbots\Pbjc;
 
-use Gdbots\Common\Util\NumberUtils;
-use Gdbots\Common\Util\StringUtils;
+use Gdbots\Pbj\Util\NumberUtil;
+use Gdbots\Pbj\Util\StringUtil;
 use Gdbots\Pbjc\Enum\FieldRule;
 use Gdbots\Pbjc\Enum\Format;
 use Gdbots\Pbjc\Type\AbstractStringType;
@@ -110,7 +110,7 @@ final class FieldDescriptor
         }
 
         foreach ($parameters as $key => $value) {
-            $classProperty = lcfirst(StringUtils::toCamelFromSlug($key));
+            $classProperty = lcfirst(StringUtil::toCamelFromSlug($key));
 
             // existing properties
             if (property_exists(get_called_class(), $classProperty)) {
@@ -123,7 +123,7 @@ final class FieldDescriptor
                         /** @var \Gdbots\Pbjc\Type\Type $class */
                         $class = sprintf(
                             '\\Gdbots\\Pbjc\\Type\\%sType',
-                            StringUtils::toCamelFromSlug($parameters['type'])
+                            StringUtil::toCamelFromSlug($parameters['type'])
                         );
 
                         $value = $class::create();
@@ -212,10 +212,10 @@ final class FieldDescriptor
         }
 
         if ($this->maxLength > 0) {
-            $this->minLength = NumberUtils::bound($this->minLength, 0, $this->maxLength);
+            $this->minLength = NumberUtil::bound($this->minLength, 0, $this->maxLength);
         } else {
             // arbitrary string minimum range
-            $this->minLength = NumberUtils::bound($this->minLength, 0, $this->type->getMaxBytes());
+            $this->minLength = NumberUtil::bound($this->minLength, 0, $this->type->getMaxBytes());
         }
     }
 
@@ -229,8 +229,8 @@ final class FieldDescriptor
             }
         }
 
-        $this->precision = NumberUtils::bound($this->precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
-        $this->scale = NumberUtils::bound($this->scale, 0, $this->precision);
+        $this->precision = NumberUtil::bound($this->precision, 0, 65); // range 1-65 (we use 0 to ignore when generating class)
+        $this->scale = NumberUtil::bound($this->scale, 0, $this->precision);
     }
 
     /**
