@@ -24,6 +24,7 @@ use Gdbots\Pbj\Enum;
  * @method static TypeName MESSAGE()
  * @method static TypeName MESSAGE_REF()
  * @method static TypeName MICROTIME()
+ * @method static TypeName NODE_REF()
  * @method static TypeName SIGNED_BIG_INT()
  * @method static TypeName SIGNED_INT()
  * @method static TypeName SIGNED_MEDIUM_INT()
@@ -60,6 +61,7 @@ final class TypeName extends Enum
     const MESSAGE = 'message';
     const MESSAGE_REF = 'message-ref';
     const MICROTIME = 'microtime';
+    const NODE_REF = 'node-ref';
     const SIGNED_BIG_INT = 'signed-big-int';
     const SIGNED_INT = 'signed-int';
     const SIGNED_MEDIUM_INT = 'signed-medium-int';
