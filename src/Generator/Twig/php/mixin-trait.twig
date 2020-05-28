@@ -7,7 +7,7 @@ namespace {{ schema_to_native_namespace(mixin) }};
 
 /**
  * @method static Schema schema
- * @method mixed get($fieldName, $default = null)
+ * @method mixed fget($fieldName, $default = null)
  */
 trait {{ schema_to_class_name(mixin, true) }}Trait
 {

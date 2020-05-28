@@ -10,5 +10,5 @@ declare(strict_types=1);
  * @link {{ compile_options.domain }}/
  */
 
-//\Gdbots\Pbj\MessageResolver::setManifestDir(__DIR__.'/manifests');
-\Gdbots\Pbj\MessageResolver::registerMap(require __DIR__.'/manifests/messages.php');
+\Gdbots\Pbj\MessageResolver::setManifestDir(__DIR__.'/manifests');
+\Gdbots\Pbj\MessageResolver::register(require __DIR__.'/manifests/messages.php');

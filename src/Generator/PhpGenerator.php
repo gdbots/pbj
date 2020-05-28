@@ -104,11 +104,6 @@ class PhpGenerator extends Generator
             'use Gdbots\Pbj\Schema;',
         ];
 
-        if ($schema->hasFields()) {
-            $imports[] = 'use Gdbots\Pbj\FieldBuilder as Fb;';
-            $imports[] = 'use Gdbots\Pbj\Type as T;';
-        }
-
         foreach ($schema->getMixins() as $mixin) {
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
@@ -125,6 +120,11 @@ class PhpGenerator extends Generator
         $insertionPoints = $options->get('insertion-points', []);
 
         $fields = $this->resolveFields($schema);
+        if (!empty($fields)) {
+            $imports[] = 'use Gdbots\Pbj\FieldBuilder as Fb;';
+            $imports[] = 'use Gdbots\Pbj\Type as T;';
+        }
+
         $imports = array_merge($imports, $this->extractImportsFromFields($fields));
         $imports = array_merge($imports, explode(PHP_EOL, $insertionPoints['imports'] ?? ''));
 

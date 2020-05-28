@@ -40,8 +40,8 @@ final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage
     const FIELDS = [];
 {% endif %}
 {% for mixin in schema.mixins %}
-
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
+
     use {{ schema_to_fq_class_name(mixin, true) }}Trait;
 {% endif %}
 {% endfor %}
