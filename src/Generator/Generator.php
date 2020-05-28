@@ -96,10 +96,6 @@ abstract class Generator
                 continue;
             }
 
-            if (isset($manifests['messages'][$id->getCurieWithMajorRev()])) {
-                continue;
-            }
-
             $manifests['messages'][$id->getCurieWithMajorRev()] = $schema;
             foreach ($schema->getMixins() as $mixin) {
                 $mixinId = $mixin->getId()->getCurieWithMajorRev();
@@ -107,7 +103,7 @@ abstract class Generator
                     $manifests['mixins'][$mixinId] = [];
                 }
 
-                $manifests['mixins'][$mixinId][] = $schema;
+                $manifests['mixins'][$mixinId][$id->getCurieWithMajorRev()] = $schema;
             }
         }
 
