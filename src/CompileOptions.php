@@ -37,6 +37,14 @@ final class CompileOptions
     }
 
     /**
+     * @return string
+     */
+    public function getDefaultVendor()
+    {
+        return explode(':', $this->namespaces[0])[0];
+    }
+
+    /**
      * @return array
      */
     public function getNamespaces()

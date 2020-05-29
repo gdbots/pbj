@@ -85,7 +85,7 @@ abstract class Generator
     public function generateManifest(array $schemas)
     {
         $response = new GeneratorResponse();
-        $manifests = ['messages' => [], 'mixins' => [], 'files' => []];
+        $manifests = ['messages' => [], 'mixins' => []];
 
         foreach ($schemas as $schema) {
             $id = $schema->getId();
