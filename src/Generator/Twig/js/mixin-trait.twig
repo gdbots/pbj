@@ -1,7 +1,7 @@
 {{ imports }}
 
-export default function {{ schema_to_class_name(mixin, true) }}Trait(m) {
-  Object.assign(m.prototype, {
+export default function {{ schema_to_class_name(mixin, true) }}Trait(M) {
+  Object.assign(M.prototype, {
 {{ indent_string(methods, 4) }}
   });
 }

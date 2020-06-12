@@ -24,7 +24,7 @@ class JsGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $enum = new EnumDescriptor('gdbots:tests:some-enum', 'int', ['K1' => 1, 'K2' => 2, 'K3' => 3]);
         $expected = <<<OUTPUT
-import Enum from '@gdbots/common/Enum';
+import Enum from '@gdbots/pbj/Enum';
 
 export default class SomeEnum extends Enum {
 }
@@ -43,7 +43,7 @@ OUTPUT;
 
         $enum = new EnumDescriptor('gdbots:tests:some-enum', 'string', ['K1' => 'v1', 'K2' => 'v2', 'K3' => 'v3']);
         $expected = <<<OUTPUT
-import Enum from '@gdbots/common/Enum';
+import Enum from '@gdbots/pbj/Enum';
 
 export default class SomeEnum extends Enum {
 }

@@ -10,28 +10,17 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
    * @returns {Schema}
    */
   static defineSchema() {
-{% if schema.fields|length or schema.mixins|length %}
-    return new Schema('{{ schema.id }}', {{ schema_to_class_name(schema, true) }},
-{% if schema.fields|length %}
+{% if fields|length or schema.mixins|length %}
+    return new Schema(this.SCHEMA_ID, this,
       [
-{% for field in schema.fields %}
+{% for field in fields %}
         {{ macros.draw_field(field, 8) }}
 {%- endfor %}
       ],
-{% else %}
-      [],
-{% endif %}
-
-{%- if schema.mixins|length %}
-      [
-{% for mixin in schema.mixins %}
-        {{ schema_to_fq_class_name(mixin, true) }}Mixin.create(),
-{% endfor %}
-      ],
-{% endif %}
+      this.MIXINS,
     );
 {% else %}
-    return new Schema('{{ schema.id }}', {{ schema_to_class_name(schema, true) }});
+    return new Schema(this.SCHEMA_ID, this);
 {% endif %}
   }
 {% if insertion_points %}
@@ -40,18 +29,41 @@ export default class {{ schema_to_class_name(schema, true) }} extends Message {
 {% endif %}
 }
 
+const M = {{ schema_to_class_name(schema, true) }};
+M.prototype.SCHEMA_ID = M.SCHEMA_ID = '{{ schema.id }}';
+M.prototype.SCHEMA_CURIE = M.SCHEMA_CURIE = '{{ schema.id.curie }}';
+M.prototype.SCHEMA_CURIE_MAJOR = M.SCHEMA_CURIE_MAJOR = '{{ schema.id.getCurieWithMajorRev() }}';
+
+{% if schema.mixins|length %}
+M.prototype.MIXINS = M.MIXINS = [
 {% for mixin in schema.mixins %}
-{% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
-{{ schema_to_fq_class_name(mixin, true) }}Trait({{ schema_to_class_name(schema, true) }});
+  '{{ mixin.id.getCurieWithMajorRev() }}',
+  '{{ mixin.id.curie }}',
+{% endfor %}
+];
+{% else %}
+M.prototype.MIXINS = M.MIXINS = [];
 {% endif %}
+
+{% for field in fields %}
+M.prototype.{{ field.name|upper }}_FIELD = M.{{ field.name|upper }}_FIELD = '{{ field.name }}';
 {% endfor %}
 
-{%- if schema.isLatestVersion() %}
-MessageResolver.register('{{ schema.id.curie }}', {{ schema_to_class_name(schema, true) }});
+{% if fields|length %}
+M.prototype.FIELDS = M.FIELDS = [
+{% for field in fields %}
+  M.{{ field.name|upper }}_FIELD,
+{% endfor %}
+];
+{% else %}
+M.prototype.FIELDS = M.FIELDS = [];
 {% endif %}
+{% for mixin in schema.mixins %}
+{% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
 
-{%- if has_other_major_rev(schema) %}
-MessageResolver.register('{{ schema.id.getCurieWithMajorRev() }}', {{ schema_to_class_name(schema, true) }});
+{{ schema_to_fq_class_name(mixin, true) }}Trait(M);
 {% endif %}
-Object.freeze({{ schema_to_class_name(schema, true) }});
-Object.freeze({{ schema_to_class_name(schema, true) }}.prototype);
+{%- endfor %}
+
+Object.freeze(M);
+Object.freeze(M.prototype);

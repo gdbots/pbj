@@ -87,14 +87,8 @@ class JsGenerator extends Generator
 
         $imports = [
             "import Message from '@gdbots/pbj/Message';",
-            "import MessageResolver from '@gdbots/pbj/MessageResolver';",
             "import Schema from '@gdbots/pbj/Schema';",
         ];
-
-        if ($schema->hasFields()) {
-            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
-            $imports[] = "import T from '@gdbots/pbj/types';";
-        }
 
         foreach ($schema->getMixins() as $mixin) {
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
@@ -111,16 +105,40 @@ class JsGenerator extends Generator
         $options = $schema->getLanguage(static::LANGUAGE);
         $insertionPoints = $options->get('insertion-points', []);
 
-        $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
+        $fields = $this->resolveFields($schema);
+        if (!empty($fields)) {
+            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
+            $imports[] = "import T from '@gdbots/pbj/types';";
+        }
+
+        $imports = array_merge($imports, $this->extractImportsFromFields($fields));
         $imports = array_merge($imports, explode(PHP_EOL, $insertionPoints['imports'] ?? ''));
 
         $parameters = [
             'schema'  => $schema,
+            'fields'  => $fields,
             'imports' => $this->optimizeImports($imports),
             'methods' => $insertionPoints['methods'] ?? '',
         ];
 
         $response->addFile($this->generateOutputFile('message.twig', $file, $parameters));
+    }
+
+    protected function resolveFields(SchemaDescriptor $schema): array
+    {
+        $fields = [];
+
+        foreach ($schema->getMixins() as $mixin) {
+            foreach ($mixin->getFields() as $field) {
+                $fields[$field->getName()] = $field;
+            }
+        }
+
+        foreach ($schema->getFields() as $field) {
+            $fields[$field->getName()] = $field;
+        }
+
+        return $fields;
     }
 
     /**
@@ -137,7 +155,6 @@ class JsGenerator extends Generator
         $file .= "/{$id->getMessage()}/{$className}Mixin";
 
         $imports = [
-            "import Mixin from '@gdbots/pbj/Mixin';",
             "import SchemaId from '@gdbots/pbj/SchemaId';",
         ];
 
