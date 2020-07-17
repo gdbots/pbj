@@ -14,4 +14,8 @@ use Gdbots\Pbj\MessageResolver;
 
 MessageResolver::setDefaultVendor('{{ compile_options.getDefaultVendor() }}');
 MessageResolver::setManifestDir(__DIR__.'/manifests');
-MessageResolver::register(require __DIR__.'/manifests/messages.php');
+MessageResolver::register([
+{% for curie, schema in manifests['messages'] %}
+    '{{ curie }}' => '{{ schema_to_native_class_path(schema) }}',
+{% endfor %}
+]);
