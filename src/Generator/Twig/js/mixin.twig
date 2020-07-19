@@ -1,55 +1,7 @@
-{% import 'js/macros.twig' as macros %}
-// @link {{ compile_options.domain }}/json-schema/{{ mixin.id.vendor }}/{{ mixin.id.package }}/{% if mixin.id.category %}{{ mixin.id.category }}/{% endif %}{{ mixin.id.message }}/{{ mixin.id.version }}.json#
 {{ imports }}
 
-export default class {{ schema_to_class_name(mixin, true) }}Mixin {
-  /**
-   * @returns {SchemaId}
-   */
-  static getId() {
-    return SchemaId.fromString(this.SCHEMA_ID);
-  }
-
-  /**
-   * @param {string} name
-   * @returns {boolean}
-   */
-  static hasField(name) {
-    return this.FIELDS.includes(name);
-  }
-
-  /**
-   * @returns {Field[]}
-   */
-  static getFields() {
-{% if mixin.fields|length %}
-    return [
-{% for field in mixin.fields %}
-      {{ macros.draw_field(field, 6) }}
-{%- endfor %}
-    ];
-{% else %}
-    return [];
-{% endif %}
-  }
+export default function {{ schema_to_class_name(mixin, true) }}Mixin(M) {
+  Object.assign(M.prototype, {
+{{ indent_string(methods, 4) }}
+  });
 }
-
-const M = {{ schema_to_class_name(mixin, true) }}Mixin;
-M.SCHEMA_ID = '{{ mixin.id }}';
-M.SCHEMA_CURIE = '{{ mixin.id.curie }}';
-M.SCHEMA_CURIE_MAJOR = '{{ mixin.id.getCurieWithMajorRev() }}';
-{% if mixin.fields|length %}
-
-{% for field in mixin.fields %}
-M.{{ field.name|upper }}_FIELD = '{{ field.name }}';
-{% endfor %}
-
-M.FIELDS = [
-{% for field in mixin.fields %}
-  M.{{ field.name|upper }}_FIELD,
-{% endfor %}
-];
-{% else %}
-
-M.FIELDS = [];
-{% endif %}

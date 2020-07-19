@@ -1,4 +1,3 @@
-{% import 'php/macros.twig' as macros %}
 <?php
 declare(strict_types=1);
 
@@ -7,52 +6,11 @@ namespace {{ schema_to_native_namespace(mixin) }};
 
 {{ imports }}
 
-final class {{ schema_to_class_name(mixin, true) }}Mixin
+/**
+ * @method static Schema schema
+ * @method mixed fget($fieldName, $default = null)
+ */
+trait {{ schema_to_class_name(mixin, true) }}Mixin
 {
-    const SCHEMA_ID = '{{ mixin.id }}';
-    const SCHEMA_CURIE = '{{ mixin.id.curie }}';
-    const SCHEMA_CURIE_MAJOR = '{{ mixin.id.getCurieWithMajorRev() }}';
-{% if mixin.fields|length %}
-
-{% for field in mixin.fields %}
-    const {{ field.name|upper }}_FIELD = '{{ field.name }}';
-{% endfor %}
-
-    const FIELDS = [
-{% for field in mixin.fields %}
-      self::{{ field.name|upper }}_FIELD,
-{% endfor %}
-    ];
-{% else %}
-
-    const FIELDS = [];
-{% endif %}
-
-    final private function __construct() {}
-
-    public static function getId(): SchemaId
-    {
-        return SchemaId::fromString(self::SCHEMA_ID);
-    }
-
-    public static function hasField(string $name): bool
-    {
-        return in_array($name, self::FIELDS, true);
-    }
-
-    /**
-     * @return Field[]
-     */
-    public static function getFields(): array
-    {
-{% if mixin.fields|length %}
-        return [
-{% for field in mixin.fields %}
-          {{ macros.draw_field(field, 12, loop.last) }}
-{%- endfor %}
-        ];
-{% else %}
-        return [];
-{% endif %}
-    }
+{{ indent_string(methods, 4) }}
 }

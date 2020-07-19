@@ -33,7 +33,6 @@ const M = {{ schema_to_class_name(schema, true) }};
 M.prototype.SCHEMA_ID = M.SCHEMA_ID = '{{ schema.id }}';
 M.prototype.SCHEMA_CURIE = M.SCHEMA_CURIE = '{{ schema.id.curie }}';
 M.prototype.SCHEMA_CURIE_MAJOR = M.SCHEMA_CURIE_MAJOR = '{{ schema.id.getCurieWithMajorRev() }}';
-
 {% if schema.mixins|length %}
 M.prototype.MIXINS = M.MIXINS = [
 {% for mixin in schema.mixins %}
@@ -44,24 +43,10 @@ M.prototype.MIXINS = M.MIXINS = [
 {% else %}
 M.prototype.MIXINS = M.MIXINS = [];
 {% endif %}
-
-{% for field in fields %}
-M.prototype.{{ field.name|upper }}_FIELD = M.{{ field.name|upper }}_FIELD = '{{ field.name }}';
-{% endfor %}
-
-{% if fields|length %}
-M.prototype.FIELDS = M.FIELDS = [
-{% for field in fields %}
-  M.{{ field.name|upper }}_FIELD,
-{% endfor %}
-];
-{% else %}
-M.prototype.FIELDS = M.FIELDS = [];
-{% endif %}
 {% for mixin in schema.mixins %}
 {% if mixin.mixins|length or mixin.language('js').get('insertion-points') %}
 
-{{ schema_to_fq_class_name(mixin, true) }}Trait(M);
+{{ schema_to_fq_class_name(mixin, true) }}Mixin(M);
 {% endif %}
 {%- endfor %}
 

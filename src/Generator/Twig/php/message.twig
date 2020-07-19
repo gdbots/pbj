@@ -14,7 +14,6 @@ final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage
     const SCHEMA_CURIE = '{{ schema.id.curie }}';
     const SCHEMA_CURIE_MAJOR = '{{ schema.id.getCurieWithMajorRev() }}';
 {% if schema.mixins|length %}
-
     const MIXINS = [
 {% for mixin in schema.mixins %}
       '{{ mixin.id.getCurieWithMajorRev() }}',
@@ -22,27 +21,12 @@ final class {{ schema_to_class_name(schema, true) }} extends AbstractMessage
 {% endfor %}
     ];
 {% else %}
-
     const MIXINS = [];
-{% endif %}
-
-{% for field in fields %}
-    const {{ field.name|upper }}_FIELD = '{{ field.name }}';
-{% endfor %}
-
-{% if fields|length %}
-    const FIELDS = [
-{% for field in fields %}
-      self::{{ field.name|upper }}_FIELD,
-{% endfor %}
-    ];
-{% else %}
-    const FIELDS = [];
 {% endif %}
 {% for mixin in schema.mixins %}
 {% if mixin.mixins|length or mixin.language('php').get('insertion-points') %}
 
-    use {{ schema_to_fq_class_name(mixin, true) }}Trait;
+    use {{ schema_to_fq_class_name(mixin, true) }}Mixin;
 {% endif %}
 {% endfor %}
 

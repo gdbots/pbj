@@ -108,7 +108,7 @@ class PhpGenerator extends Generator
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(
-                    'use %s\%sTrait as %sTrait;',
+                    'use %s\%sMixin as %sMixin;',
                     $this->schemaToNativeNamespace($mixin),
                     $this->schemaToClassName($mixin, true),
                     $this->schemaToFqClassName($mixin, true)
@@ -160,34 +160,6 @@ class PhpGenerator extends Generator
      */
     protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
     {
-        $className = $this->schemaToClassName($schema, true);
-        $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}Mixin");
-
-        $imports = [
-            'use Gdbots\Pbj\Field;',
-            'use Gdbots\Pbj\SchemaId;',
-        ];
-
-        if ($schema->hasFields()) {
-            $imports[] = 'use Gdbots\Pbj\FieldBuilder as Fb;';
-            $imports[] = 'use Gdbots\Pbj\Type as T;';
-        }
-
-        $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
-        $parameters = [
-            'mixin'   => $schema,
-            'imports' => $this->optimizeImports($imports),
-        ];
-
-        $response->addFile($this->generateOutputFile('mixin.twig', $file, $parameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMixinTrait(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
         $options = $schema->getLanguage(static::LANGUAGE);
         $insertionPoints = $options->get('insertion-points', []);
         if (!isset($insertionPoints['methods'])) {
@@ -196,7 +168,7 @@ class PhpGenerator extends Generator
 
         $className = $this->schemaToClassName($schema, true);
         $psr = $this->schemaToNativeNamespace($schema);
-        $file = str_replace('\\', '/', "{$psr}\\{$className}Trait");
+        $file = str_replace('\\', '/', "{$psr}\\{$className}Mixin");
 
         $imports = ['use Gdbots\Pbj\Schema;'];
         $imports = array_merge($imports, explode(PHP_EOL, $insertionPoints['imports'] ?? ''));
@@ -207,7 +179,7 @@ class PhpGenerator extends Generator
             'methods' => $insertionPoints['methods'],
         ];
 
-        $response->addFile($this->generateOutputFile('mixin-trait.twig', $file, $parameters));
+        $response->addFile($this->generateOutputFile('mixin.twig', $file, $parameters));
     }
 
     /**

@@ -13,9 +13,9 @@
 {{ spaces|format('') }} * {{ line|reduce_spaces }}
 {% endfor %}
 {{ spaces|format('') }} */
-{{ spaces|format('') }}Fb::create(self::{{ field.name|upper }}_FIELD, T\{{ class_name(field.type) }}::create())
+{{ spaces|format('') }}Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
 {% else %}
-  Fb::create(self::{{ field.name|upper }}_FIELD, T\{{ class_name(field.type) }}::create())
+  Fb::create('{{ field.name }}', T\{{ class_name(field.type) }}::create())
 {% endif %}
 {% if field.isASet %}
     {{ spaces|format('') }}->asASet()

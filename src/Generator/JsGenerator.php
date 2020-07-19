@@ -94,7 +94,7 @@ class JsGenerator extends Generator
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(
-                    "import %sTrait from '%s/%sTrait';",
+                    "import %sMixin from '%s/%sMixin';",
                     $this->schemaToFqClassName($mixin, true),
                     $this->schemaToNativeNamespace($mixin),
                     $this->schemaToClassName($mixin, true)
@@ -146,37 +146,6 @@ class JsGenerator extends Generator
      */
     protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
     {
-        $id = $schema->getId();
-        $className = $this->schemaToClassName($schema, true);
-        $file = "{$id->getVendor()}/{$id->getPackage()}";
-        if ($id->getCategory()) {
-            $file .= "/{$id->getCategory()}";
-        }
-        $file .= "/{$id->getMessage()}/{$className}Mixin";
-
-        $imports = [
-            "import SchemaId from '@gdbots/pbj/SchemaId';",
-        ];
-
-        if ($schema->hasFields()) {
-            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
-            $imports[] = "import T from '@gdbots/pbj/types';";
-        }
-
-        $imports = array_merge($imports, $this->extractImportsFromFields($schema->getFields()));
-        $parameters = [
-            'mixin'   => $schema,
-            'imports' => $this->optimizeImports($imports),
-        ];
-
-        $response->addFile($this->generateOutputFile('mixin.twig', $file, $parameters));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateMixinTrait(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
         $options = $schema->getLanguage(static::LANGUAGE);
         $insertionPoints = $options->get('insertion-points', []);
         if (!isset($insertionPoints['methods'])) {
@@ -189,7 +158,7 @@ class JsGenerator extends Generator
         if ($id->getCategory()) {
             $file .= "/{$id->getCategory()}";
         }
-        $file .= "/{$id->getMessage()}/{$className}Trait";
+        $file .= "/{$id->getMessage()}/{$className}Mixin";
 
         $parameters = [
             'mixin'   => $schema,
@@ -197,7 +166,7 @@ class JsGenerator extends Generator
             'methods' => $insertionPoints['methods'],
         ];
 
-        $response->addFile($this->generateOutputFile('mixin-trait.twig', $file, $parameters));
+        $response->addFile($this->generateOutputFile('mixin.twig', $file, $parameters));
     }
 
     /**

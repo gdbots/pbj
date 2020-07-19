@@ -37,8 +37,7 @@ abstract class Generator
      *
      * Produces files for (varies by language):
      * - message class (the concrete class - curie major)
-     * - mixin (the schema fields that are "mixed" into the message)
-     * - mixin trait (any methods provided by insertion points)
+     * - mixin (any methods provided by insertion points)
      *
      * @param SchemaDescriptor $schema
      *
@@ -54,7 +53,6 @@ abstract class Generator
 
         if ($schema->isMixinSchema()) {
             $this->generateMixin($schema, $response);
-            $this->generateMixinTrait($schema, $response);
         } else {
             $this->generateMessage($schema, $response);
         }
@@ -289,16 +287,6 @@ abstract class Generator
      * @param GeneratorResponse $response
      */
     protected function generateMixin(SchemaDescriptor $schema, GeneratorResponse $response)
-    {
-    }
-
-    /**
-     * Generates a mixin trait (the methods provided by a mixin).
-     *
-     * @param SchemaDescriptor  $schema
-     * @param GeneratorResponse $response
-     */
-    protected function generateMixinTrait(SchemaDescriptor $schema, GeneratorResponse $response)
     {
     }
 
