@@ -2,7 +2,7 @@
 
 namespace Gdbots\Pbjc\Type;
 
-use Gdbots\Pbj\WellKnown\BigNumber;
+use Brick\Math\BigInteger;
 
 final class BigIntType extends AbstractType
 {
@@ -11,7 +11,7 @@ final class BigIntType extends AbstractType
      */
     public function getDefault()
     {
-        return new BigNumber(0);
+        return BigInteger::zero();
     }
 
     /**
