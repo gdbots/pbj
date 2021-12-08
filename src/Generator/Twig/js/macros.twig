@@ -39,7 +39,7 @@ Fb.create('{{ field.name }}', T.{{ class_name(field.type) }}.create())
   {{ spaces|format('') }}.pattern('{{ field.pattern|replace({'\\': '\\\\'}) }}')
 {% endif %}
 {% if field.format %}
-  {{ spaces|format('') }}.format(Format.{{ field.format|upper }})
+  {{ spaces|format('') }}.format(Format.{{ field.format.name|upper }})
 {% endif %}
 {% if field.min %}
   {{ spaces|format('') }}.min({{ field.min }})

@@ -24,7 +24,7 @@ class FieldValidPattern implements Constraint
 
             try {
                 if ($field->getPattern() != $fb[$name]->getPattern()
-                    && preg_match(sprintf('/%s/', $fb[$name]->getPattern()), null) !== false
+                    && preg_match(sprintf('/%s/', $fb[$name]->getPattern()), '') !== false
                 ) {
                     // do nothing
                 }

@@ -268,9 +268,9 @@ class SchemaParser
 
         if (isset($field['any-of']) &&
             in_array($field['type'], [
-                TypeName::GEO_POINT(),
-                TypeName::IDENTIFIER(),
-                TypeName::MESSAGE_REF(),
+                TypeName::GEO_POINT,
+                TypeName::IDENTIFIER,
+                TypeName::MESSAGE_REF,
             ])
         ) {
             unset($field['any-of']);

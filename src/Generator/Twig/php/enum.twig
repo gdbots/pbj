@@ -3,16 +3,9 @@ declare(strict_types=1);
 
 namespace {{ enum_to_native_namespace(enum) }};
 
-use Gdbots\Pbj\Enum;
-
-/**
-{% for key, value in enum.values %}
- * @method static {{ enum_to_class_name(enum) }} {{ key|upper }}()
-{% endfor %}
- */
-final class {{ enum_to_class_name(enum) }} extends Enum
+enum {{ enum_to_class_name(enum) }}: {{ enum.type }}
 {
 {% for key, value in enum.values %}
-    const {{ key|upper }} = {% if enum.type == 'int' %}{{ value }}{% else %}'{{ value }}'{% endif %};
+    case {{ key|upper }} = {% if enum.type == 'int' %}{{ value }}{% else %}'{{ value }}'{% endif %};
 {% endfor %}
 }

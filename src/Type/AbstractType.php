@@ -50,7 +50,7 @@ abstract class AbstractType implements Type
      */
     final public function getTypeValue()
     {
-        return $this->typeName->getValue();
+        return $this->typeName->value;
     }
 
     /**

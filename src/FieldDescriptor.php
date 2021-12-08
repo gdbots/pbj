@@ -181,7 +181,7 @@ final class FieldDescriptor
 
     private function applyDefaults()
     {
-        $this->format = $this->format ?: Format::UNKNOWN();
+        $this->format = $this->format ?: Format::UNKNOWN;
     }
 
     /**
@@ -189,7 +189,7 @@ final class FieldDescriptor
      */
     private function applyFieldRule()
     {
-        $this->rule = $this->rule ?: FieldRule::A_SINGLE_VALUE();
+        $this->rule = $this->rule ?: FieldRule::A_SINGLE_VALUE;
         if ($this->isASet() && !$this->type->allowedInSet()) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -270,7 +270,7 @@ final class FieldDescriptor
      */
     public function isASingleValue()
     {
-        //return FieldRule::A_SINGLE_VALUE === $this->rule->getValue();
+        //return FieldRule::A_SINGLE_VALUE === $this->rule;
         return false;
     }
 
@@ -279,7 +279,7 @@ final class FieldDescriptor
      */
     public function isASet()
     {
-        return FieldRule::A_SET === $this->rule->getValue();
+        return FieldRule::A_SET === $this->rule;
     }
 
     /**
@@ -287,7 +287,7 @@ final class FieldDescriptor
      */
     public function isAList()
     {
-        return FieldRule::A_LIST === $this->rule->getValue();
+        return FieldRule::A_LIST === $this->rule;
     }
 
     /**
@@ -295,7 +295,7 @@ final class FieldDescriptor
      */
     public function isAMap()
     {
-        return FieldRule::A_MAP === $this->rule->getValue();
+        return FieldRule::A_MAP === $this->rule;
     }
 
     /**
@@ -319,7 +319,7 @@ final class FieldDescriptor
      */
     public function getFormat()
     {
-        if ($this->format === Format::UNKNOWN()) {
+        if ($this->format === Format::UNKNOWN) {
             return;
         }
 

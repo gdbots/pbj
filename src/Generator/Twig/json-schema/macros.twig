@@ -73,7 +73,7 @@
 #}
 {% macro draw_field(field) %}
   "{{ field.name }}": {
-    {% if field.rule ~ '' == 'map' %}
+    {% if field.rule.value ~ '' == 'map' %}
       "type": "object",
       "patternProperties": {
         "^[a-zA-Z_]{1}[\\w\\.:-]+$": {
@@ -84,7 +84,7 @@
         "minProperties": 1,
       {% endif %}
       "additionalProperties": false,
-    {% elseif field.rule ~ '' in ['list', 'set'] %}
+    {% elseif field.rule.value ~ '' in ['list', 'set'] %}
       "type": "array",
       "items": [
         {% if field.anyOf %}
@@ -95,7 +95,7 @@
           { {{ _self.draw_field_properties(field) }} }
         {% endif %}
       ],
-      {% if field.rule ~ '' == 'set' %}
+      {% if field.rule.value ~ '' == 'set' %}
         "uniqueItems": true,
       {% endif %}
       {% if field.required %}
@@ -118,24 +118,24 @@
         field - a FieldDescriptor instance
 #}
 {% macro draw_field_properties(field) %}
-  {% if field.type.typeName ~ '' == 'message-ref' %}
+  {% if field.type.typeName.value ~ '' == 'message-ref' %}
     {{ _self.draw_message_ref_properties() }}
-  {% elseif field.type.typeName ~ '' == 'geo-point' %}
+  {% elseif field.type.typeName.value ~ '' == 'geo-point' %}
     {{ _self.draw_geo_point_properties() }}
-  {% elseif field.type.typeName ~ '' == 'dynamic-field' %}
+  {% elseif field.type.typeName.value ~ '' == 'dynamic-field' %}
     {{ _self.draw_dynamic_field_properties() }}
-  {% elseif field.type.typeName ~ '' in ['decimal', 'float'] %}
+  {% elseif field.type.typeName.value ~ '' in ['decimal', 'float'] %}
     "type": "number",
-  {% elseif field.type.typeName ~ '' in [
+  {% elseif field.type.typeName.value ~ '' in [
     'big-int', 'int-enum', 'int', 'medium-int',
     'signed-big-int', 'signed-big-int', 'signed-medium-int',
     'signed-small-int', 'signed-tiny-int', 'small-int',
     'timestamp', 'tiny-int', 'trinary'
   ] %}
     "type": "integer",
-  {% elseif field.type.typeName ~ '' in ['boolean'] %}
+  {% elseif field.type.typeName.value ~ '' in ['boolean'] %}
     "type": "boolean",
-  {% elseif field.type.typeName ~ '' in ['date', 'message'] %}
+  {% elseif field.type.typeName.value ~ '' in ['date', 'message'] %}
     "type": "object",
   {% else %}
     "type": "string",
@@ -143,43 +143,43 @@
 
   {% if
     field.default|default(field.type.default) is not empty
-    and field.type.typeName ~ '' not in ['microtime', 'timestamp', 'uuid', 'time-uuid']
+    and field.type.typeName.value ~ '' not in ['microtime', 'timestamp', 'uuid', 'time-uuid']
   %}
     "default": {{ field.default|default(field.type.default)|json_encode }},
   {% endif %}
 
-  {% if field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
-    "format": "{{ field.format ~ '' }}",
-  {% elseif field.type.typeName ~ '' == 'date-time' %}
+  {% if field.format and field.format.value ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'] %}
+    "format": "{{ field.format.value ~ '' }}",
+  {% elseif field.type.typeName.value ~ '' == 'date-time' %}
     "format": "date-time",
   {% endif %}
 
   {% set hasPattern =
-    field.format ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri']
-    or field.type.typeName ~ '' in ['date-time', 'geo-point', 'message-ref', 'node-ref']
+    (field.format and field.format.value ~ '' in ['date-time', 'email', 'hostname', 'ipv4', 'ipv6', 'uri'])
+    or field.type.typeName.value ~ '' in ['date-time', 'geo-point', 'message-ref', 'node-ref']
   %}
   {% if field.pattern %}
     {% set hasPattern = true %}
     "pattern": "{{ field.pattern|replace({'\\': '\\\\'}) }}",
-  {% elseif field.type.typeName ~ '' in ['uuid', 'time-uuid'] %}
+  {% elseif field.type.typeName.value ~ '' in ['uuid', 'time-uuid'] %}
     {% set hasPattern = true %}
     "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
-  {% elseif field.type.typeName ~ '' == 'identifier' %}
+  {% elseif field.type.typeName.value ~ '' == 'identifier' %}
     {% set hasPattern = true %}
     "pattern": "^[\\w\\/\\.:-]+$",
-  {% elseif field.type.typeName ~ '' == 'microtime' %}
+  {% elseif field.type.typeName.value ~ '' == 'microtime' %}
     {% set hasPattern = true %}
     "pattern": "^[1-9]{1}[0-9]{12,15}$",
-  {% elseif field.type.typeName ~ '' == 'node-ref' %}
+  {% elseif field.type.typeName.value ~ '' == 'node-ref' %}
     {% set hasPattern = true %}
     "pattern": "^[\\w\\/\\.:-]+$",
-  {% elseif field.type.typeName ~ '' == 'date' %}
+  {% elseif field.type.typeName.value ~ '' == 'date' %}
     {% set hasPattern = true %}
     "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-  {% elseif field.format ~ '' == 'url' %}
+  {% elseif field.format and field.format.value ~ '' == 'url' %}
     {% set hasPattern = true %}
     "pattern": "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$",
-  {% elseif field.format ~ '' == 'slug' %}
+  {% elseif field.format and field.format.value ~ '' == 'slug' %}
     "pattern": "^([\\w\\/-]|[\\w-][\\w\\/-]*[\\w-])$",
   {% endif %}
 
@@ -196,7 +196,7 @@
   {% endif %}
 
   {% if not field.enum and not hasPattern %}
-    {% if field.type.typeName ~ '' in ['string', 'text', 'medium-text'] %}
+    {% if field.type.typeName.value ~ '' in ['string', 'text', 'medium-text'] %}
       {% set minLength = field.minLength|default(0) %}
       {% if '' ~ minLength not in ['INF', 'NAN'] %}
         "minLength": {{ minLength }},
@@ -206,7 +206,7 @@
       {% if '' ~ maxLength not in ['INF', 'NAN'] %}
         "maxLength": {{ maxLength }},
       {% endif %}
-    {% elseif field.type.typeName ~ '' not in ['boolean', 'date', 'decimal', 'dynamic-field', 'float', 'geo-point', 'message-ref', 'message', 'node-ref'] %}
+    {% elseif field.type.typeName.value ~ '' not in ['boolean', 'date', 'decimal', 'dynamic-field', 'float', 'geo-point', 'message-ref', 'message', 'node-ref'] %}
       {% set min = field.min|default(field.type.min) %}
       {% if '' ~ min not in ['INF', 'NAN'] %}
         "minimum": {{ min }},

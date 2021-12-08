@@ -2,78 +2,54 @@
 
 namespace Gdbots\Pbjc\Enum;
 
-use Gdbots\Pbj\Enum;
-
-/**
- * @method static TypeName BIG_INT()
- * @method static TypeName BINARY()
- * @method static TypeName BLOB()
- * @method static TypeName BOOLEAN()
- * @method static TypeName DATE()
- * @method static TypeName DATE_TIME()
- * @method static TypeName DECIMAL()
- * @method static TypeName DYNAMIC_FIELD()
- * @method static TypeName FLOAT()
- * @method static TypeName GEO_POINT()
- * @method static TypeName IDENTIFIER()
- * @method static TypeName INT()
- * @method static TypeName INT_ENUM()
- * @method static TypeName MEDIUM_BLOB()
- * @method static TypeName MEDIUM_INT()
- * @method static TypeName MEDIUM_TEXT()
- * @method static TypeName MESSAGE()
- * @method static TypeName MESSAGE_REF()
- * @method static TypeName MICROTIME()
- * @method static TypeName NODE_REF()
- * @method static TypeName SIGNED_BIG_INT()
- * @method static TypeName SIGNED_INT()
- * @method static TypeName SIGNED_MEDIUM_INT()
- * @method static TypeName SIGNED_SMALL_INT()
- * @method static TypeName SIGNED_TINY_INT()
- * @method static TypeName SMALL_INT()
- * @method static TypeName STRING()
- * @method static TypeName STRING_ENUM()
- * @method static TypeName TEXT()
- * @method static TypeName TIME_UUID()
- * @method static TypeName TIMESTAMP()
- * @method static TypeName TINY_INT()
- * @method static TypeName TRINARY()
- * @method static TypeName UUID()
- */
-final class TypeName extends Enum
+enum TypeName: string
 {
-    const BIG_INT = 'big-int';
-    const BINARY = 'binary';
-    const BLOB = 'blob';
-    const BOOLEAN = 'boolean';
-    const DATE = 'date';
-    const DATE_TIME = 'date-time';
-    const DECIMAL = 'decimal';
-    const DYNAMIC_FIELD = 'dynamic-field';
-    const FLOAT = 'float';
-    const GEO_POINT = 'geo-point';
-    const IDENTIFIER = 'identifier';
-    const INT = 'int';
-    const INT_ENUM = 'int-enum';
-    const MEDIUM_BLOB = 'medium-blob';
-    const MEDIUM_INT = 'medium-int';
-    const MEDIUM_TEXT = 'medium-text';
-    const MESSAGE = 'message';
-    const MESSAGE_REF = 'message-ref';
-    const MICROTIME = 'microtime';
-    const NODE_REF = 'node-ref';
-    const SIGNED_BIG_INT = 'signed-big-int';
-    const SIGNED_INT = 'signed-int';
-    const SIGNED_MEDIUM_INT = 'signed-medium-int';
-    const SIGNED_SMALL_INT = 'signed-small-int';
-    const SIGNED_TINY_INT = 'signed-tiny-int';
-    const SMALL_INT = 'small-int';
-    const STRING = 'string';
-    const STRING_ENUM = 'string-enum';
-    const TEXT = 'text';
-    const TIME_UUID = 'time-uuid';
-    const TIMESTAMP = 'timestamp';
-    const TINY_INT = 'tiny-int';
-    const TRINARY = 'trinary';
-    const UUID = 'uuid';
+    case BIG_INT = 'big-int';
+    case BINARY = 'binary';
+    case BLOB = 'blob';
+    case BOOLEAN = 'boolean';
+    case DATE = 'date';
+    case DATE_TIME = 'date-time';
+    case DECIMAL = 'decimal';
+    case DYNAMIC_FIELD = 'dynamic-field';
+    case FLOAT = 'float';
+    case GEO_POINT = 'geo-point';
+    case IDENTIFIER = 'identifier';
+    case INT = 'int';
+    case INT_ENUM = 'int-enum';
+    case MEDIUM_BLOB = 'medium-blob';
+    case MEDIUM_INT = 'medium-int';
+    case MEDIUM_TEXT = 'medium-text';
+    case MESSAGE = 'message';
+    case MESSAGE_REF = 'message-ref';
+    case MICROTIME = 'microtime';
+    case NODE_REF = 'node-ref';
+    case SIGNED_BIG_INT = 'signed-big-int';
+    case SIGNED_INT = 'signed-int';
+    case SIGNED_MEDIUM_INT = 'signed-medium-int';
+    case SIGNED_SMALL_INT = 'signed-small-int';
+    case SIGNED_TINY_INT = 'signed-tiny-int';
+    case SMALL_INT = 'small-int';
+    case STRING = 'string';
+    case STRING_ENUM = 'string-enum';
+    case TEXT = 'text';
+    case TIME_UUID = 'time-uuid';
+    case TIMESTAMP = 'timestamp';
+    case TINY_INT = 'tiny-int';
+    case TRINARY = 'trinary';
+    case UUID = 'uuid';
+
+    public static function create(string $value): self
+    {
+        return self::from($value);
+    }
+
+    public static function values(): array
+    {
+        $a = [];
+        foreach (self::cases() as $c) {
+            $a[$c->name] = $c->value;
+        }
+        return $a;
+    }
 }

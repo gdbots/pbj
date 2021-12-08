@@ -199,7 +199,7 @@ class PhpGenerator extends Generator
                 $imports[] = 'use Gdbots\Pbj\Enum\Format;';
             }
 
-            switch ($field->getType()->getTypeName()->getValue()) {
+            switch ($field->getType()->getTypeName()) {
                 case TypeName::INT_ENUM;
                 case TypeName::STRING_ENUM;
                     $enum = $field->getEnum();
@@ -237,7 +237,7 @@ class PhpGenerator extends Generator
 
                 $field->getLanguage(static::LANGUAGE)->set(
                     'default',
-                    sprintf('%s::%s()', $this->enumToClassName($enum), strtoupper($enumKey))
+                    sprintf('%s::%s', $this->enumToClassName($enum), strtoupper($enumKey))
                 );
 
                 if (strlen($default) === 0) {

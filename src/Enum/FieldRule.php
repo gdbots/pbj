@@ -2,18 +2,24 @@
 
 namespace Gdbots\Pbjc\Enum;
 
-use Gdbots\Pbj\Enum;
-
-/**
- * @method static FieldRule A_SINGLE_VALUE()
- * @method static FieldRule A_SET()
- * @method static FieldRule A_LIST()
- * @method static FieldRule A_MAP()
- */
-final class FieldRule extends Enum
+enum FieldRule: string
 {
-    const A_SINGLE_VALUE = 'single';
-    const A_SET = 'set';
-    const A_LIST = 'list';
-    const A_MAP = 'map';
+    case A_SINGLE_VALUE = 'single';
+    case A_SET = 'set';
+    case A_LIST = 'list';
+    case A_MAP = 'map';
+
+    public static function create(string $value): self
+    {
+        return self::from($value);
+    }
+
+    public static function values(): array
+    {
+        $a = [];
+        foreach (self::cases() as $c) {
+            $a[$c->name] = $c->value;
+        }
+        return $a;
+    }
 }

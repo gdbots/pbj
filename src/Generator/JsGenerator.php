@@ -180,13 +180,13 @@ class JsGenerator extends Generator
 
         foreach ($fields as $field) {
             $options = $field->getLanguage(static::LANGUAGE);
-            $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports')));
+            $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports', '')));
 
             if ($field->getFormat()) {
                 $imports[] = "import Format from '@gdbots/pbj/enums/Format';";
             }
 
-            switch ($field->getType()->getTypeName()->getValue()) {
+            switch ($field->getType()->getTypeName()) {
                 case TypeName::INT_ENUM;
                 case TypeName::STRING_ENUM;
                     $enum = $field->getEnum();
@@ -228,7 +228,7 @@ class JsGenerator extends Generator
                     sprintf('%s.%s', $this->enumToClassName($enum), strtoupper($enumKey))
                 );
 
-                if (strlen($default) === 0) {
+                if (strlen($default ?? '') === 0) {
                     $field->getLanguage(static::LANGUAGE)->set('hide_default', true);
                 }
             }
