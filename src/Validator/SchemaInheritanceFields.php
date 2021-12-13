@@ -141,6 +141,10 @@ class SchemaInheritanceFields implements Constraint
                                                 $property->getName(),
                                                 $schemadId
                                             );
+
+                                            // fixme: needs to assert anyOf correctly.  ffs
+                                            $found = true;
+                                            $error = null;
                                         }
                                     }
                                 }
