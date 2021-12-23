@@ -10,6 +10,6 @@
 
 export default {
 {% for curie, schema in schemas %}
-  '{{ curie }}': () => import('{{ schema_to_native_class_path(schema) }}'),
+  '{{ curie }}': () => import('{{ schema_to_native_class_path(schema) }}.js'),
 {% endfor %}
 };

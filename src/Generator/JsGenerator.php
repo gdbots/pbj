@@ -86,15 +86,15 @@ class JsGenerator extends Generator
         $file .= "/{$className}";
 
         $imports = [
-            "import Message from '@gdbots/pbj/Message';",
-            "import Schema from '@gdbots/pbj/Schema';",
+            "import Message from '@gdbots/pbj/Message.js';",
+            "import Schema from '@gdbots/pbj/Schema.js';",
         ];
 
         foreach ($schema->getMixins() as $mixin) {
             $mixinOptions = $mixin->getLanguage(static::LANGUAGE)->get('insertion-points', []);
             if (isset($mixinOptions['methods'])) {
                 $imports[] = sprintf(
-                    "import %sMixin from '%s/%sMixin';",
+                    "import %sMixin from '%s/%sMixin.js';",
                     $this->schemaToFqClassName($mixin, true),
                     $this->schemaToNativeNamespace($mixin),
                     $this->schemaToClassName($mixin, true)
@@ -107,8 +107,8 @@ class JsGenerator extends Generator
 
         $fields = $this->resolveFields($schema);
         if (!empty($fields)) {
-            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder';";
-            $imports[] = "import T from '@gdbots/pbj/types';";
+            $imports[] = "import Fb from '@gdbots/pbj/FieldBuilder.js';";
+            $imports[] = "import T from '@gdbots/pbj/types/index.js';";
         }
 
         $imports = array_merge($imports, $this->extractImportsFromFields($fields));
@@ -183,7 +183,7 @@ class JsGenerator extends Generator
             $imports = array_merge($imports, explode(PHP_EOL, $options->get('imports', '')));
 
             if ($field->getFormat()) {
-                $imports[] = "import Format from '@gdbots/pbj/enums/Format';";
+                $imports[] = "import Format from '@gdbots/pbj/enums/Format.js';";
             }
 
             switch ($field->getType()->getTypeName()) {
@@ -191,7 +191,7 @@ class JsGenerator extends Generator
                 case TypeName::STRING_ENUM;
                     $enum = $field->getEnum();
                     $imports[] = sprintf(
-                        "import %s from '%s/%s';",
+                        "import %s from '%s/%s.js';",
                         $this->enumToClassName($enum),
                         $this->enumToNativeNamespace($enum),
                         $this->enumToClassName($enum)
